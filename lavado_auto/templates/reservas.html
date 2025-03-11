@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+{% load static %}
+<link href="{% static "estilos/estilos.css" %}" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+{% block content %}
+
+<!-- Inicio Page Header -->
+<div class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2>Reserva cita ahora</h2>
+            </div>
+            <div class="col-12">
+                <a href="">Home</a>
+                <a href="">Reservas</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fin Page Header -->
+
+{% load custom_tags %}
+<div class="container mt-3">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert 
+                {% if message.tags == 'success' %}alert-success
+                {% elif message.tags == 'error' %}alert-danger
+                {% elif message.tags == 'warning' %}alert-warning
+                {% else %}alert-info
+                {% endif %}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+<style>
+    .alert {
+        position: relative;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .alert .close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 0.5rem 0.75rem;
+    }
+</style>
+
+<!-- Inicio de ubicación -->
+<main class="location">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="section-header text-left">
+                    <p>Puntos de lavado</p>
+                    <h2>Ubicación del punto de lavado</h2>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="location-item custom-location-item">
+                            <i class="fa fa-map-marker-alt custom-icon"></i>
+                            <div class="location-text">
+                                <!-- Información de la empresa -->
+                                <div id="informacion_empresa" class="location-info">
+                                    <h3><strong></strong> <span id="empresa_nombre">Selecciona un punto de lavado</span>
+                                    </h3>
+                                    <p><strong>Dirección:</strong> <span id="empresa_direccion"></span></p>
+                                    <p><i class="fas fa-phone-alt"></i> <strong>Teléfono:</strong> <span
+                                            id="empresa_telefono"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="location-item custom-location-item">
+                            <i class="fa fa-map-marker-alt custom-icon"></i>
+                            <div class="location-text">
+                                <!-- Información del servicio -->
+                                <div id="informacion_servicio" class="location-info">
+                                    <h3><strong></strong> <span id="servicio_nombre">Selecciona un servicio</span></h3>
+                                    <p><strong>Descripcion</strong> <span id="servicio_descripcion"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna para el mapa y formulario -->
+            <div class="col-lg-5">
+                {% if request.user.is_authenticated %}
+                <!-- Formulario de reserva -->
+                <div class="location-form">
+                    <h3>Reserva tu cita</h3>
+                    <form action="" method="POST">
+                        {% csrf_token %}
+
+                        <!-- Select para empresas -->
+                        <fieldset class="service-type">
+                            <label for="empresa">Puntos:</label>
+                            <select id="id_empresa" name="id_empresa" required class="styled-select">
+                                {% for empresa in empresas %}
+                                <option value="{{ empresa.id_empresa }}">{{ empresa.nombre_empresa }}</option>
+                                {% endfor %}
+                            </select>
+                        </fieldset>
+
+                        <!-- Select para servicios (actualizado dinámicamente) -->
+                        <fieldset class="service-type">
+                            <label for="tipo_servicio">Tipo de servicio:</label>
+                            <select id="id_servicio" name="id_servicio" required class="styled-select">
+                                <option value="">Selecciona un servicio</option> <!-- Opción predeterminada -->
+                                {% for servicio in servicios %}
+                                <option value="{{ servicio.id_servicio }}">{{ servicio.nombre_servicio }}</option>
+                                {% empty %}
+                                <option value="">No hay servicios disponibles</option>
+                                <!-- Opción cuando no hay servicios -->
+                                {% endfor %}
+                            </select>
+                        </fieldset>
+
+                        <!-- Mostrar nombre y descripción del servicio seleccionado -->
+                        <div id="servicio_info">
+                            <h4 id="servicio_nombre">Selecciona un servicio</h4>
+                            <p id="servicio_descripcion">Selecciona un servicio para ver la descripción.</p>
+                        </div>
+
+                        <!-- Select para fechas -->
+                        <div class="control-group">
+                            <label for="fecha">Selecciona una fecha:</label>
+                            <select id="fecha" name="fecha" required class="styled-select">
+                                {% for dia in fechas_disponibles %}
+                                <option value="{{ dia|date:'Y-m-d' }}">{{ dia|date:'jS \d\e F, Y' }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Select para horas -->
+                        <div class="date-time">
+                            <label for="hora">Selecciona una hora:</label>
+                            <select id="hora" name="hora" required class="styled-select">
+                            </select>
+                        </div>
+
+                        <button class="btn btn-custom1" type="submit">Reservar</button>
+                    </form>
+                </div>
+                {% else %}
+                <!-- Si no está autenticado, mostrar un mensaje de advertencia -->
+                <div class="alert alert-warning text-center" role="alert">
+                    <strong>¡Atención!</strong> Debes <a href="{% url 'login' %}" class="alert-link">iniciar sesión</a>
+                    para reservar una cita.
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Mapa -->
+            <div class="col-md-12">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d31816.581663186567!2d-74.2064128!3d4.580966399999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2sco"
+                    width="100%" height="450"
+                    style="border:0; border-radius: 20px; box-shadow: 0 0 100px rgba(0, 0, 0, 0.5);" allowfullscreen
+                    loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+</main>
+
+<!-- Script AJAX para cargar servicios y horas -->
+<script>
+    // Maneja la selección de la empresa
+    document.getElementById('id_empresa').addEventListener('change', function() {
+        const empresaId = this.value;
+        // Cargar los servicios para la empresa seleccionada
+        if (empresaId) {
+            fetch(`/obtener-servicios/?empresa_id=${empresaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const servicioSelect = document.getElementById('id_servicio');
+                    servicioSelect.innerHTML = ''; // Limpiar opciones existentes
+                    if (data.servicios.length > 0) {
+                        data.servicios.forEach(servicio => {
+                            const option = document.createElement('option');
+                            option.value = servicio.id;
+                            option.textContent = servicio.nombre_servicio;
+                            servicioSelect.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.value = '';
+                        option.textContent = 'Selecciona un punto de lavado';
+                        servicioSelect.appendChild(option);
+                    }
+                })
+                .catch(error => console.error('Error al obtener los servicios:', error));
+            // Cargar la información de la empresa
+            fetch(`/obtener-info-empresa/?empresa_id=${empresaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('empresa_nombre').textContent = data.nombre || 'No disponible';
+                    document.getElementById('empresa_direccion').textContent = data.direccion ||
+                        'No disponible';
+                    document.getElementById('empresa_telefono').textContent = (data.telefono ||
+                        'No disponible');
+                })
+                .catch(error => console.error('Error al obtener la información de la empresa:', error));
+        }
+    });
+    // Maneja la selección del servicio
+    document.getElementById('id_servicio').addEventListener('change', async function() {
+        const servicioId = this.value; // Obtener el ID del servicio seleccionado
+        // Si se selecciona un servicio
+        if (servicioId) {
+            try {
+                const response = await fetch(`/obtener-info-servicio/?servicio_id=${servicioId}`);
+                // Verificar si la respuesta es exitosa
+                if (!response.ok) {
+                    throw new Error('Error al obtener la información del servicio');
+                }
+                const data = await response.json();
+                console.log(data); // Imprimir la respuesta para depuración
+                if (data.nombre_servicio && data.descripcion) {
+                    // Si la respuesta contiene los datos, mostrar el nombre y descripción
+                    document.getElementById('servicio_nombre').textContent = data.nombre_servicio;
+                    document.getElementById('servicio_descripcion').textContent = data.descripcion;
+                } else {
+                    // Si no se encuentran datos, mostrar mensaje de error
+                    document.getElementById('servicio_nombre').textContent = 'Servicio no encontrado';
+                    document.getElementById('servicio_descripcion').textContent = '';
+                }
+            } catch (error) {
+                console.error('Error al obtener la descripción del servicio:', error);
+                document.getElementById('servicio_nombre').textContent = 'Error al cargar el servicio';
+                document.getElementById('servicio_descripcion').textContent = 'Error la descripcion';
+            }
+        } else {
+            // Si no se selecciona un servicio, limpiar los campos
+            document.getElementById('servicio_nombre').textContent = 'Selecciona un servicio';
+            document.getElementById('servicio_descripcion').textContent = '';
+        }
+    });
+    // Actualización de las horas disponibles basado en la fecha seleccionada
+    document.getElementById('fecha').addEventListener('change', function() {
+        const selectedDate = this.value;
+        if (selectedDate) {
+            fetch(`/get-horas/?fecha=${selectedDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    const horaSelect = document.getElementById('hora');
+                    horaSelect.innerHTML = ''; // Limpiar opciones de horas
+                    if (data.horas) {
+                        data.horas.forEach(hora => {
+                            const option = document.createElement('option');
+                            option.value = hora;
+                            option.textContent = hora;
+                            horaSelect.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => console.error('Error al obtener las horas:', error));
+        }
+    });
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&callback=initMap" async defer></script>
+
+{% endblock %}

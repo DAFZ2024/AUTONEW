@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Autonew-lavado de autos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+</head>
+
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title has-text-centered">Iniciar Sesión</h1>
+    
+            <div class="columns is-centered">
+                <div class="column is-one-third">
+                    <div class="box">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="field">
+                                <label class="label">Nombre Usuario</label>
+                                <div class="control">
+                                    <input class="input" type="text" name="nombre_usuario" placeholder="Nombre de usuario" required>
+                                </div>
+                            </div>
+    
+                            <div class="field">
+                                <label class="label">Contraseña</label>
+                                <div class="control">
+                                    <input class="input" type="password" name="contrasena" placeholder="********" required>
+                                </div>
+                            </div>
+    
+                            <div class="field">
+                                <div class="control">
+                                    <button class="button is-link is-fullwidth" type="submit">Iniciar Sesión</button>
+                                </div>
+                            </div>
+                        </form>
+    
+                        <div class="has-text-centered">
+                            <a href="#">¿Olvidaste tu contraseña?</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+</body>
+
+</html>

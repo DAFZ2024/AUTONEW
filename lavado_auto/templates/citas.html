@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block content  %}
+{% load custom_tags %}
+<div class="container mt-3">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success
+                {% elif message.tags == 'error' %}alert-danger
+                {% elif message.tags == 'warning' %}alert-warning
+                {% else %}alert-info
+                {% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+<style>.alert {
+    position: relative;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
+
+.alert .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.5rem 0.75rem;
+}</style>
+<!-- Inicio Page Header -->
+<div class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2>Gestiona tus reservas</h2>
+            </div>
+            <div class="col-12">
+                <a href="#">Home</a>
+                <a href="#">Reservas</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fin Page Header -->
+
+<div class="container mt-4">
+    <h2>Mis Reservas No Completadas</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Servicio</th>
+                <th>Lugar</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reserva in reservas_no_completadas %}
+                <tr>
+                    <td>{{ reserva.servicio.nombre_servicio }}</td>
+                    <td>{{ reserva.empresa.nombre_empresa }}</td>
+                    <td>{{ reserva.fecha }}</td>
+                    <td>{{ reserva.hora }}</td>
+                    <td>{{ reserva.estado }}</td>
+                    <td>s
+                        <form method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" name="eliminar" value="{{ reserva.id_reserva }}" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                        <button class="btn btn-warning btn-sm" onclick="document.getElementById('edit-{{ reserva.id_reserva }}').style.display='block'">Editar</button>
+
+                        <div id="edit-{{ reserva.id_reserva }}" style="display:none; margin-top: 10px;">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="punto">Punto</label>
+                                    <select name="punto" class="form-control" required>
+                                        {% for empresa in empresas %}
+                                            <option value="{{ empresa.id_empresa }}" {% if reserva.empresa.id_empresa == empresa.id_empresa %}selected{% endif %}>{{ empresa.nombre_empresa }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="control-group">
+                                        <label for="fecha">Selecciona una fecha:</label>
+                                        <select name="fecha" id="fecha-{{ reserva.id_reserva }}" required>
+                                            {% for fecha in fechas_disponibles %}
+                                                <option value="{{ fecha|date:'Y-m-d' }}">{{ fecha|date:'jS \d\e F, Y' }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="date-time">
+                                        <label for="hora">Selecciona una hora:</label>
+                                        <select name="hora" id="hora-{{ reserva.id_reserva }}" required class="styled-select">
+                                            <!-- Las horas disponibles se llenarán con JavaScript -->
+                                        </select>
+                                    </div>
+                                    
+                                    <label for="servicio">Servicio</label>
+                                    <select name="servicio" class="form-control" required>
+                                        {% for servicio in servicios %}
+                                            <option value="{{ servicio.id_servicio }}" {% if reserva.servicio.id_servicio == servicio.id_servicio %}selected{% endif %}>{{ servicio.nombre_servicio }}</option>
+                                        {% endfor %}
+                                    </select>
+                        
+                                    <input type="hidden" name="id_reserva" value="{{ reserva.id_reserva }}">
+                                    <button type="submit" class="btn btn-success btn-sm">Actualizar</button>
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('edit-{{ reserva.id_reserva }}').style.display='none'">Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                        <script>
+                            document.getElementById('fecha-{{ reserva.id_reserva }}').addEventListener('change', function() {
+                                const fechaSeleccionada = this.value;
+                                const horaSelect = document.getElementById('hora-{{ reserva.id_reserva }}');
+
+                                // Lógica para obtener horas disponibles de la API
+                                fetch(`/api/hours/?fecha=${fechaSeleccionada}`)
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error('Error en la respuesta del servidor');
+                                        }
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        horaSelect.innerHTML = '';  // Limpiar horas
+                                        if (data.horas) {
+                                            data.horas.forEach(hora => {
+                                                const option = document.createElement('option');
+                                                option.value = hora;
+                                                option.textContent = hora;
+                                                horaSelect.appendChild(option);
+                                            });
+                                        } else if (data.error) {
+                                            alert(data.error);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error fetching hours:', error);
+                                        alert('Hubo un problema al cargar las horas.');
+                                    });
+                            });
+                        </script>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No tienes reservas no completadas.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 class="mt-4">Mis Reservas Completadas</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Servicio</th>
+                <th>Lugar</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reserva in reservas_completadas %}
+                <tr>
+                    <td>{{ reserva.servicio.nombre_servicio }}</td>
+                    <td>{{ reserva.empresa }}</td>
+                    <td>{{ reserva.fecha }}</td>
+                    <td>{{ reserva.hora }}</td>
+                    <td>{{ reserva.estado }}</td>
+                    <td>
+                        <form method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" name="eliminar" value="{{ reserva.id_reserva }}" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No tienes reservas completadas.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

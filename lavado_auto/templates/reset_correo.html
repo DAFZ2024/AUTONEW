@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load static %}
+{% block  content %}
+<div class="login">
+    <h1>Restablecimiento de contraseña</h1>
+    <form action=" method="post">
+        <input type="email" id="email" name="correo_usuario" placeholder="correo" required="required" />
+        <button type="submit" class="btn btn-primary btn-block btn-large">Restablecer.</button>
+    </form>
+</div>
+
+{% endblock  %}

@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+
+
+<!--Inicio Page Header  -->
+<div class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2>Planes</h2>
+            </div>
+            <div class="col-12">
+                <a href="">Home</a>
+                <a href="">Planes</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Fin  Page Header  -->
+
+
+
+<!-- Inicio Precio  -->
+<div class="price">
+    <div class="container">
+        <div class="section-header text-center">
+            <p>Planes de lavado</p>
+            <h2>Los mejores planes para ti</h2>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="price-item">
+                    <div class="price-header">
+                        <h3>Lavado basico</h3>
+                        <h2><span>$</span><strong>69</strong><span>.999</span></h2>
+                    </div>
+                    <div class="price-body">
+                        <ul>
+                            <li><i class="far fa-check-circle"></i>Acceso al servicio 2 veces por mes</li>
+                            <li><i class="far fa-check-circle"></i>Lavado de asientos</li>
+                            <li><i class="far fa-check-circle"></i>Limpieza con aspiradora </li>
+                            <li><i class="far fa-check-circle"></i>Lavado de exteriores</li>
+                            <li><i class="far fa-times-circle"></i>Lavado humedo de interiores</li>
+                            <li><i class="far fa-times-circle"></i>Limpieza de ventanas</li>
+                        </ul>
+                    </div>
+                    <div class="price-footer">
+                        <form id="payment-form" method="POST" action="https://gateway.payulatam.com/ppp-web-gateway/">
+                            <input type="hidden" name="merchantId" value="tu_merchant_id">
+                            <input type="hidden" name="accountId" value="tu_account_id">
+                            <input type="hidden" name="description" value="Descripción del producto">
+                            <input type="hidden" name="amount" value="69.999">
+                            <!-- Monto en COP -->
+                            <input type="hidden" name="currency" value="COP">
+                            <input type="hidden" name="test" value="1">
+                            <!-- 1 para pruebas, 0 para producción -->
+                            <input type="hidden" name="returnUrl" value="price.html">
+                            <input type="hidden" name="signature" value="firma_generada">
+                            <button type="submit" class="btn btn-custom">Comprar ahora</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="price-item featured-item">
+                    <div class="price-header">
+                        <h3>Limpieza premiun</h3>
+                        <h2><span>$</span><strong>99</strong><span>.999</span></h2>
+                    </div>
+                    <div class="price-body">
+                        <ul>
+                            <li><i class="far fa-check-circle"></i>Acceso al servicio 2 veces por mes</li>
+                            <li><i class="far fa-check-circle"></i>Lavado de asientos</li>
+                            <li><i class="far fa-check-circle"></i>Limpieza con aspiradora</li>
+                            <li><i class="far fa-check-circle"></i>Lavado de exteriores</li>
+                            <li><i class="far fa-check-circle"></i>Lavado humedo de interiores</li>
+                            <li><i class="far fa-times-circle"></i>Limpieza de ventanas</li>
+                        </ul>
+                    </div>
+                    <div class="price-footer">
+                        <form id="payment-form" method="POST" action="https://gateway.payulatam.com/ppp-web-gateway/">
+                            <input type="hidden" name="merchantId" value="tu_merchant_id">
+                            <input type="hidden" name="accountId" value="tu_account_id">
+                            <input type="hidden" name="description" value="Descripción del producto">
+                            <input type="hidden" name="amount" value="99.999">
+                            <!-- Monto en COP -->
+                            <input type="hidden" name="currency" value="COP">
+                            <input type="hidden" name="test" value="1">
+                            <!-- 1 para pruebas, 0 para producción -->
+                            <input type="hidden" name="returnUrl" value="price.html">
+                            <input type="hidden" name="signature" value="firma_generada">
+                            <button type="submit" class="btn btn-custom">Comprar ahora</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="price-item">
+                    <div class="price-header">
+                        <h3>Limpieza completa </h3>
+                        <h2><span>$</span><strong>139</strong><span>.999</span></h2>
+                    </div>
+                    <div class="price-body">
+                        <ul>
+                            <li><i class="far fa-check-circle"></i>Acceso al servicio 2 veces por mes</li>
+                            <li><i class="far fa-check-circle"></i>Lavado de asientos </li>
+                            <li><i class="far fa-check-circle"></i>Limpieza con aspiradora</li>
+                            <li><i class="far fa-check-circle"></i>Lavado de exteriores</li>
+                            <li><i class="far fa-check-circle"></i>Lavado humedo de interiores</li>
+                            <li><i class="far fa-check-circle"></i>Limpieza de ventanas</li>
+                        </ul>
+                    </div>
+                    <div class="price-footer">
+                        <form id="payment-form" method="POST" action="https://gateway.payulatam.com/ppp-web-gateway/">
+                            <input type="hidden" name="merchantId" value="tu_merchant_id">
+                            <input type="hidden" name="accountId" value="tu_account_id">
+                            <input type="hidden" name="description" value="Descripción del producto">
+                            <input type="hidden" name="amount" value="139.999">
+                            <!-- Monto en COP -->
+                            <input type="hidden" name="currency" value="COP">
+                            <input type="hidden" name="test" value="1">
+                            <!-- 1 para pruebas, 0 para producción -->
+                            <input type="hidden" name="returnUrl" value="price.html">
+                            <input type="hidden" name="signature" value="firma_generada">
+                            <button type="submit" class="btn btn-custom">Comprar ahora</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fin Precio  -->
+{% endblock  %}

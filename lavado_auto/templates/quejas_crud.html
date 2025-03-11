@@ -1,0 +1,92 @@
+{% extends "base_crud.html" %}
+{% block content %}
+{% load custom_tags %}
+<div class="container mt-3">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success
+                {% elif message.tags == 'error' %}alert-danger
+                {% elif message.tags == 'warning' %}alert-warning
+                {% else %}alert-info
+                {% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+<style>.alert {
+    position: relative;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
+
+.alert .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.5rem 0.75rem;
+}</style>
+<h1 class="text-center">QUEJAS DE NUESTROS CLIENTES</h1>
+<div class="container mt-4">
+    <h2>Quejas</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID de mensaje</th>
+                <th>Contenido</th>
+                <th>Fecha envio</th>
+                <th>Nombre completo usuario</th>
+                <th>Nombre de Usuario</th>
+                <th>Telefono de Usuario</th>
+                <th>estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for queja in quejas %}
+                <tr>
+                    <td>{{ queja.id_mensaje }}</td>
+                    <td>{{ queja.contenido }}</td>
+                    <td>{{ queja.fecha_envio }}</td>
+                    <td>{{ queja.usuario.nombre_completo }}</td>
+                    <td>{{ queja.usuario.nombre_usuario }}</td>
+                    <td>{{ queja.usuario.telefono }}</td>
+                    <td>{{ queja.estado }}</td>
+                    <td>
+                        <form method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" name="eliminar" value="{{ queja.id_mensaje }}" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                        <form method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button onclick="document.getElementById('edit-{{ queja.id_mensaje }}').style.display='block'" class="btn btn-success btn-sm">Contestar</button>
+                            <div id="edit-{{ queja.id_mensaje }}" style="display:none; margin-top: 10px;">
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <div class="form-group col-md-6">
+                                            <label for="respuesta">Respuesta</label>
+                                            <textarea name="respuesta" class="form-control pastel-input" required></textarea>
+                                        </div>                        
+                                        <input type="hidden" name="id_reserva" value="{{ queja.id_mensaje }}">
+                                        <button type="submit" class="btn btn-success btn-sm">Contestar</button>
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('edit-{{ queja.id_mensaje }}').style.display='none'">Cancelar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No hay quejas disponibles.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

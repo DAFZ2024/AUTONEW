@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<!-- Inicio Page Header  -->
+<div class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2>Servicios</h2>
+            </div>
+            <div class="col-12">
+                <a href="">Home</a>
+                <a href="">Servicios</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fin Page Header  -->
+
+<style>
+    .service-card {
+        transition: transform 0.3s;
+    }
+
+    .service-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .service-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .service-description {
+        color: #555;
+    }
+</style>
+</head>
+
+<body>
+    <img src="{% static 'img/carropng1.png' %}" class="moving-image" alt="Descripción de la imagen">
+    <style>
+        .moving-image {
+            position: fixed; /* Fija la imagen en la pantalla */
+            top: 15%; /* Centra verticalmente */
+            left: -400px; /* Comienza en el lado izquierdo */
+            width: 400px; /* Ajusta el tamaño según sea necesario */
+            transform: translateY(-50%); /* Ajusta para centrar verticalmente */
+            transition: left 0.1s; /* Transición suave al cambiar la posición */
+        }
+    </style>
+    <script>
+        window.addEventListener('scroll', function() {
+            const scrollY = window.scrollY; // Obtiene la posición de desplazamiento vertical
+            const movingImage = document.querySelector('.moving-image');
+            
+            // Ajusta la posición de la imagen en función del desplazamiento
+            movingImage.style.left = `${scrollY}px`;
+        });
+    </script>
+    <div class="container-fluid feature">
+        <div class="container">
+            <div class="text-center mx-auto pb-5">
+                <h1 class="display-5 text-capitalize mb-3">Somos los  <span class="text-primary">Mejores</span></h1>
+                <p class="mb-0">Descubre las características que nos hacen destacar en el mercado.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-xl-4">
+                    <div class="row gy-4">
+                        <div class="col-12">
+                            <div class="feature-item wow fadeInUp" data-wow-delay="0.1s">
+                                <div class="feature-icon">
+                                    <span class="fa fa-trophy fa-2x"></span>
+                                </div>
+                                <div class="ms-4">
+                                    <h5 class="mb-3">Servicios de primera clase </h5>
+                                    <p>Nuestro equipo de profecionales te prestaran un servicio de calidad</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="feature-item wow fadeInUp" data-wow-delay="0.3s">
+                                <div class="feature-icon">
+                                    <span class="fa fa-road fa-2x"></span>
+                                </div>
+                                <div class="ms-4">
+                                    <h5 class="mb-3">Confianza</h5>
+                                    <p>Tu seguridad es lo primordial y lo mas importante</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-xl-4 wow fadeInUp" data-wow-delay="0.2s">
+                    <img src="{% static 'img/features-img.png' %}" class="img-fluid w-100" alt="Features Image" style="object-fit: cover; border-radius: 10px;">
+                </div>
+                
+                <div class="col-xl-4">
+                    <div class="row gy-4">
+                        <div class="col-12">
+                            <div class="feature-item justify-content-end wow fadeInUp" data-wow-delay="0.1s">
+                                <div class="text-end me-4">
+                                    <h5 class="mb-3">Calidad al minimo costo</h5>
+                                    <p>Servicio de calidad sin afectar tu bolsillo</p>
+                                </div>
+                                <div class="feature-icon">
+                                    <span class="fa fa-tag fa-2x"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="feature-item justify-content-end wow fadeInUp" data-wow-delay="0.3s">
+                                <div class="text-end me-4">
+                                    <h5 class="mb-3">Increibles descuentos</h5>
+                                    <p> En autonew valoramos tu fidelidad con grandes descuentos en nuestros servicios</p>
+                                </div>
+                                <div class="feature-icon">
+                                    <span class="fa fa-map-pin fa-2x"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Los Mejores Servicios de Autolavado</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card service-card text-center">
+                    <img src="{% static 'img/carousel-3.jpg' %}" class="card-img-top" alt="Lavado Exterior">
+                    <div class="card-body">
+                        <h5 class="service-title">Lavado Exterior</h5>
+                        <p class="service-description">Eliminamos toda la suciedad y manchas de la pintura de tu auto,
+                            dejándolo brillante y como nuevo.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card service-card text-center">
+                    <img src="{% static 'img/carousel-2.jpg' %}" class="card-img-top" alt="Lavado Interior">
+                    <div class="card-body">
+                        <h5 class="service-title">Lavado Interior</h5>
+                        <p class="service-description">Limpieza profunda de tapicería y alfombrillas, asegurando que tu
+                            auto luzca y huela fresco.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card service-card text-center">
+                    <img src="{% static 'img/carousel-1.jpg' %}" class="card-img-top" alt="Pulido y Encerado">
+                    <div class="card-body">
+                        <h5 class="service-title">Pulido y Encerado</h5>
+                        <p class="service-description">Protegemos la pintura de tu auto con ceras de alta calidad para
+                            un acabado brillante y duradero.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Inicio de servicios -->
+    <div class="service">
+        <div class="container">
+            <div class="section-header text-center">
+                <p>¿Que Hacemos</p>
+                <h2>Servicio de lavado premiun</h2>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="service-item">
+                        <i class="flaticon-car-wash-1"></i>
+                        <h3>Lavado de exteriores </h3>
+                        <p>Ofrecemos una limpieza superior sin generar daños en tu vehiculo.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="service-item">
+                        <i class="flaticon-car-wash"></i>
+                        <h3>Lavado de interiores </h3>
+                        <p>Cuidamos cada paso para cuidar al maximo el interior de tu vehiculo.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="service-item">
+                        <i class="flaticon-vacuum-cleaner"></i>
+                        <h3>Limpieza con aspiradora</h3>
+                        <p>Cuidamos las partes mas delicadas de tu vehiculo.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="service-item">
+                        <i class="flaticon-seat"></i>
+                        <h3>Lavado de asientos</h3>
+                        <p>Cuidamos los materiales de la cogineria de tu vehiculo.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="service-item">
+                        <i class="flaticon-car-service"></i>
+                        <h3>Limpieza de ventanas</h3>
+                        <p>Limpiamos dejando tus ventanas relucientes sin ningun rasguño.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="service-item">
+                        <i class="flaticon-car-service-2"></i>
+                        <h3>Limpieza humeda</h3>
+                        <p>Realizamos la limpieza con materias de maxima calidad que ofrecen un cuidado total a las
+                            superficies de tu vehiculo.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="service-item">
+                        <i class="flaticon-car-wash"></i>
+                        <h3>Cambio de aceite</h3>
+                        <p>Evitamos que tu motor sufra desgastes.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="service-item">
+                        <i class="flaticon-brush-1"></i>
+                        <h3>Reparacion de frenos</h3>
+                        <p>Cambiamos las pastillas de tus frenos para mantener tu seguridad y la de tus seres queridos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- fin de servicios -->
+
+    <!-- Inicio de testimonios -->
+    <div class="testimonial">
+        <div class="container">
+            <div class="section-header text-center">
+                <p>Comentarios</p>
+                <h2>Que piensan nuestros clientes</h2>
+            </div>
+            <div class="owl-carousel testimonials-carousel">
+                {% for comentario in comentarios %}
+                <div class="testimonial-item">
+                    {% if comentario.usuario.profile_picture %}
+                    <img src="{{ comentario.usuario.profile_picture.url }}"
+                        alt="{{ comentario.usuario.nombre_usuario }}" class="img-fluid">
+                    {% else %}
+                    <img src="{% static '/img/sin rostro.jpg' %}" alt="Imagen por defecto" class="img-fluid">
+                    {% endif %}
+                    <div class="testimonial-text">
+                        <h3>{{ comentario.usuario.nombre_usuario }}</h3>
+                        <h4>{{ comentario.usuario.nombre_completo }} {{ comentario.usuario.last_name }}</h4>
+                        <p>{{ comentario.comentario }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- Fin testimonios -->
+
+
+{% endblock  %}

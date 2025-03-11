@@ -1,0 +1,78 @@
+{% extends "base_crud.html" %}
+
+{% block content %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Bienvenido a AutoNew</title>
+    {% load static %}
+    <!-- Estilo de plantilla -->
+    <link href="{% static "estilos/estilos.css" %}" rel="stylesheet" type="text/css" >
+</head>
+<body>
+
+    <main class="container mt-5 welcome-section">
+        <h1 class="welcome-title">BIENVENIDOS A AUTONEW</h1>
+        <p class="text-center">Aquí puedes realizar las siguientes acciones:</p>
+        <ul class="feature-list">
+            <li>
+                <a href="/usuarioscrud" class="text-decoration-none">
+                    Ver, eliminar y editar <span class="highlight">usuarios</span>
+                </a>
+            </li>
+            <li>
+                <a href="/citascrud" class="text-decoration-none">
+                    Ver, editar y eliminar <span class="highlight">citas</span>
+                </a>
+            </li>
+            <li>
+                <a href="/comentarioscrud" class="text-decoration-none">
+                    Ver y eliminar <span class="highlight">comentarios</span>
+                </a>
+            </li>
+            <li>
+                <a href="/quejascrud" class="text-decoration-none">
+                    Ver, contestar y eliminar <span class="highlight">quejas</span>
+                </a>
+            </li>
+            <li>
+                <a href="/servicioscrud" class="text-decoration-none">
+                    Ver, eliminar y crear <span class="highlight">servicios</span>
+                </a>
+            </li>
+            <li>
+                <a href="/empresascrud" class="text-decoration-none">
+                    Ver, eliminar y crear <span class="highlight">Empresas</span>
+                </a>
+            </li>
+        </ul>
+    </main>
+
+    <script>
+        window.addEventListener("beforeunload", function(event) {
+            // Enviar una solicitud al servidor para cerrar sesión
+            fetch("{% url 'logout_view' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'  // Incluir el token CSRF
+                },
+            }).then(response => {
+                // Opcional: manejar la respuesta si es necesario
+            }).catch(error => {
+                console.log('Error al cerrar sesión:', error);
+            });
+        });
+    </script>
+    
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+
+{% endblock  %}

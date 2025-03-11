@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block  content %}
+
+<!--Inicio Page Header  -->
+<div class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2>Nuestra historia</h2>
+            </div>
+            <div class="col-12">
+                <a href="">Home</a>
+                <a href="">Historia</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Fin  Page Header  -->
+
+<!-- About Start -->
+<div class="container-fluid py-5">
+    <div class="container pt-5 pb-3">
+        <h1 class="display-1 text-primary text-center"></h1>
+        <h1 class="display-4 text-uppercase text-center mb-5">Bienvenido a <span class="text-primary">Autonew</span></h1>
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                <img class="w-75 mb-4" src="{% static 'img/about.png' %}" alt="">
+                <p>
+                    En Autonew, nos enorgullece ser la plataforma líder en autolavados, comprometidos con ofrecerte los mejores servicios para el cuidado y mantenimiento de tu vehículo. Con más de 15 años de experiencia en el sector, hemos creado una red de autolavados de alta calidad que cumplen con los más altos estándares de limpieza, protección y cuidado para tu auto.
+
+Cada uno de los autolavados que forman parte de nuestra plataforma está respaldado por un equipo de profesionales altamente capacitados, que utilizan productos ecológicos y técnicas de vanguardia. Esto no solo asegura un resultado impecable, sino que también protege la pintura y los materiales de tu vehículo, alargando su vida útil y conservando su apariencia como nueva.
+
+En Autonew, nos esforzamos por ofrecerte un servicio personalizado y de calidad, porque sabemos que tu vehículo es una extensión de ti. Cada visita a nuestros autolavados es una experiencia única, donde tu confianza es nuestra principal prioridad. Nos aseguramos de que cada detalle se cuide con esmero, brindándote siempre la atención y el servicio que mereces.
+
+Confía en nosotros para mantener tu vehículo en las mejores condiciones y disfrutar de una experiencia de autolavado excepcional. ¡Tu auto, como nuevo, con el compromiso de calidad de Autonew!</p>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-lg-4 mb-2">
+                <div class="feature-box p-4 mb-4">
+                    <div class="icon-container d-flex align-items-center justify-content-center me-4">
+                        <i class="fa fa-2x fa-headset"></i>
+                    </div>
+                    <h4 class="text-uppercase m-0">Su opinion es lo mas importante</h4>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-2">
+                <div class="feature-box p-4 mb-4">
+                    <div class="icon-container d-flex align-items-center justify-content-center me-4">
+                        <i class="fa fa-2x fa-car"></i>
+                    </div>
+                    <h4 class="text-uppercase m-0">Tu auto en buenas manos</h4>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-2">
+                <div class="feature-box p-4 mb-4">
+                    <div class="icon-container d-flex align-items-center justify-content-center me-4">
+                        <i class="fa fa-2x fa-map-marker-alt"></i>
+                    </div>
+                    <h4 class="text-uppercase m-0">Diferentes ubicaciones</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- About End -->
+<img src="{% static 'img/carropng.png' %}" class="floating-image" alt="Descripción de la imagen">
+<style>
+    .floating-image {
+        position: fixed; /* Mantiene la imagen en la misma posición en la ventana */
+        top: 100px; /* Distancia desde el borde superior */
+        left: 1450px; /* Borde izquierdo */
+        width: 200px; /* Ajusta el tamaño según sea necesario */
+        filter: blur(0); /* Aplica el efecto blur */
+        transition: filter 0.3s ease; /* Transición suave al cambiar el efecto */
+    }
+    .floating-image:hover {
+        filter: blur(2px); /* Quita el blur al pasar el mouse */
+    }
+</style>
+<!-- About Start -->
+<div class="container-fluid overflow-hidden about py-5">
+    <div class="container py-5">
+        <div class="row g-5">
+            <div class="col-xl-6 wow fadeInLeft" data-wow-delay="0.2s">
+                <div class="about-item">
+                    <div class="pb-5">
+                        <h1 class="display-5 text-capitalize">Nuestra  <span class="text-primary">Empresa</span></h1>
+                        <p class="mb-0" style="color:black;">Autonew es una empresa con 15 años en el mercado de lavado y detallado de automotores, con un compromiso muy grando para con nuestros clientes y medio ambiente adoptando nuevas tegnologias.
+                        </p>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="about-item-inner border p-4">
+                                <div class="about-icon mb-4">
+                                    <img src="{% static 'img/about-icon-1.png' %}" class="img-fluid w-50 h-50" alt="Icon">
+                                </div>
+                                <h5 class="mb-3">Nuestra Vision </h5>
+                                <p class="mb-0">Tener presencias a nivel nacional en cada uno de los municipios.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="about-item-inner border p-4">
+                                <div class="about-icon mb-4">
+                                    <img src="{% static 'img/about-icon-2.png' %}" class="img-fluid h-50 w-50" alt="Icon">
+                                </div>
+                                <h5 class="mb-3">Nuestra Mision</h5>
+                                <p class="mb-0">Prestar un servicico de calidad cuidando al medio ambiente,y el bolsillo de nuestros clientes </p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-item my-4"style="color:black;" >En Autonew, entendemos que tu vehículo es una extensión de ti mismo. Por eso, nos dedicamos a ofrecerte un servicio de autolavado excepcional que no solo limpia tu auto, sino que también lo cuida.
+                    </p>
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="text-center rounded bg-secondary p-4">
+                                <h1 class="display-6 text-white">15</h1>
+                                <h5 class="text-light mb-0">Años de experiencia</h5>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="rounded">
+                                <p class="mb-2"><i class="fa fa-check-circle text-primary me-1"></i> Cientos de Vehículos Lavados Mensualmente</p>
+                                <p class="mb-2"><i class="fa fa-check-circle text-primary me-1"></i> Premios de Calidad</p>
+                                <p class="mb-2"><i class="fa fa-check-circle text-primary me-1"></i> Clientes Satisfechos</p>
+                                <p class="mb-0"><i class="fa fa-check-circle text-primary me-1"></i> Iniciativas Ecológicas</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-5 d-flex align-items-center">
+                            <a href="#" class="btn btn-primary rounded py-3 px-5">Mas sobre nosotros</a>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="d-flex align-items-center">
+                                <img src="{% static 'img/team-1.png' %}" class="img-fluid rounded-circle border border-4 border-secondary" style="width: 100px; height: 100px;" alt="Image">
+                                <div class="ms-4">
+                                    <h4>Andres forero</h4>
+                                    <p class="mb-0">CEO</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6 wow fadeInRight" data-wow-delay="0.2s">
+                <div class="about-img">
+                    <div class="img-1">
+                        <img src="{% static 'img/about-img.jpg' %}" class="img-fluid rounded h-100 w-100" alt="">
+                    </div>
+                    <div class="img-2">
+                        <img src="{% static 'img/about-img-1.jpg' %}" class="img-fluid rounded w-100" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- About End -->
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+
+{% comment %} <!--  Inicio Nosotros  -->
+<div class="about">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="about-img">
+                    <img src="{% static 'img/carousel-4.jpg' %}" alt="Image">
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="section-header text-left">
+                    <p>Nosotros</p>
+                    <h2>Lavado y detallado de autos</h2>
+                </div>
+                <div class="about-content">
+                    <p>
+                        Somos un establecimiento dedicado a cuidar y mantener tu vehiculo como nuevo, cuidando cada detalle de este mismo.
+                    </p>
+                    <ul>
+                        <li><i class="far fa-check-circle"></i>Lavados de asientos</li>
+                        <li><i class="far fa-check-circle"></i>Limpieza con aspiradora</li>
+                        <li><i class="far fa-check-circle"></i>Limpieza humeda de exteriores</li>
+                        <li><i class="far fa-check-circle"></i>Limpieza de ventanas </li>
+                    </ul>
+                    <a class="btn btn-custom" href="">Leer mas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fin Nosotros  --> {% endcomment %}
+{% endblock  %}

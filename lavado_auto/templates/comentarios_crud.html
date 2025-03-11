@@ -1,0 +1,69 @@
+{% extends "base_crud.html" %}
+{% block content %}
+{% load custom_tags %}
+<div class="container mt-3">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success
+                {% elif message.tags == 'error' %}alert-danger
+                {% elif message.tags == 'warning' %}alert-warning
+                {% else %}alert-info
+                {% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+<style>.alert {
+    position: relative;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
+
+.alert .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.5rem 0.75rem;
+}</style>
+<h1 class="text-center">COMENTARIOS</h1>
+<div class="container mt-4">
+    <h2>Comentarios</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID de mensaje</th>
+                <th>Comentarios</th>
+                <th>Fecha envio</th>
+                <th>Usuario Completo</th>
+                <th>Nombre de Usuario</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for comentario in comentarios %}
+                <tr>
+                    <td>{{ comentario.id_comentario }}</td>
+                    <td>{{ comentario.comentario }}</td>
+                    <td>{{ comentario.fecha }}</td>
+                    <td>{{ comentario.usuario.nombre_completo }}</td>
+                    <td>{{ comentario.usuario.nombre_usuario }}</td>
+                    <td>
+                        <form method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" name="eliminar" value="{{ comentario.id_comentario }}" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No hay comentarios disponibles.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

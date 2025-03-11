@@ -1,0 +1,545 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block  content %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Únete a AutoNew</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Agregar FontAwesome para los iconos -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <!-- Site Icons -->
+    <link rel="shortcut icon" href="#" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="#" />
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <!-- Pogo Slider CSS -->
+    <link rel="stylesheet" href="css/pogo-slider.min.css" />
+    <!-- Site CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" href="css/responsive.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/custom.css" />
+
+
+
+
+    <style>
+        /* Body y fondo general */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f8ff; /* Color de fondo suave y claro para la página */
+}
+
+/* Sección Hero */
+.hero-section {
+    background: linear-gradient(to bottom, #0c2331, #3a4d64);
+    color: white;
+    text-align: center;
+    padding: 100px 0;
+    animation: fadeIn 2s ease-out;
+}
+.hero-section h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #fff; /* Color blanco para el título */
+}
+.hero-section p {
+    font-size: 1.2rem;
+    color: #e0e0e0; /* Texto gris suave para el subtítulo */
+}
+
+/* Botón primario */
+.btn-primary {
+    background-color: #e6752c; /* Fondo en un color más oscuro para el botón */
+    border: none;
+}
+
+/* Sección de beneficios */
+.features-section {
+    background-color: #252848; /* Fondo blanco para las tarjetas */
+    padding: 50px 0;
+}
+
+/* Estilo de las tarjetas */
+.features-section .feature-card {
+    text-align: center;
+    border-radius: 50px;
+    border: 2px solid #155669;
+    padding: 30px;
+    transition: transform 0.5s ease, background-color 0.3s ease;
+    background: #e4e8f2;
+    box-shadow: 0 0 100px rgba(0, 0, 0, 0.3);
+    position: relative; /* Necesario para posicionar la imagen */
+    overflow: hidden; /* Para que la imagen no se desborde */
+}
+
+/* Hover en las tarjetas */
+.features-section .feature-card:hover {
+    transform: translateY(-10px); /* Efecto de elevación */
+    background-color: #e4e8f2; /* Color de fondo suave en hover */
+}
+
+/* Estilo de la imagen */
+.feature-card img {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 200px; /* Tamaño de la imagen en la parte superior */
+    object-fit: cover; /* Hace que la imagen cubra toda la zona */
+}
+
+/* Mostrar imagen cuando se hace hover sobre la tarjeta */
+.feature-card:hover img {
+    display: block;
+}
+
+/* Estilo del texto por defecto */
+.feature-card .text-initial {
+    display: block; /* Mostrar texto por defecto */
+    font-size: 1.5rem;
+    color: #060c08; /* Texto oscuro para el contraste */
+    font-weight: bold;
+    z-index: 1;
+}
+
+/* Ocultar texto por defecto cuando se hace hover sobre la tarjeta */
+.feature-card:hover .text-initial {
+    display: none;
+}
+
+/* Estilo del título debajo de la imagen */
+.feature-card h4 {
+    margin-top: 220px; /* Para que el texto esté debajo de la imagen */
+    z-index: 1; /* Asegura que el texto quede encima de la imagen */
+}
+
+/* Agregar estilo para el icono centrado */
+.feature-card .icon-center {
+    font-size: 6rem;
+    color: #060c08; /* Color complementario al fondo de las tarjetas */
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2; /* Asegura que el icono quede encima del contenido */
+    transition: opacity 0.3s ease; /* Añadido para una transición suave */
+}
+
+/* Hover en la tarjeta - Hacer desaparecer el icono */
+.feature-card:hover .icon-center {
+    opacity: 0; /* El icono desaparece cuando el mouse pasa por encima de toda la tarjeta */
+}
+
+#benefits .feature-card h4 {
+    color: #060c08;
+    font-size: 1.5rem; /* Ajusta el tamaño de la fuente */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Agrega una sombra sutil al texto */
+}
+
+
+/* Estilo para la sección de beneficios */
+#benefits {
+    background-color: #ffffff; /* Fondo blanco para la sección */
+    padding: 60px 0; /* Espaciado en la parte superior e inferior */
+    position: relative; /* Para poder posicionar la imagen por debajo de las tarjetas */
+    color: #060c08;
+}
+
+#benefits .container {
+    position: relative;
+    z-index: 1; /* Asegura que el contenido de la sección esté por encima de la imagen */
+}
+
+#benefits::after {
+    content: "";
+    position: absolute;
+    bottom: 300px; /* Coloca la imagen al fondo de la sección */
+    left: 85%; /* Centra la imagen horizontalmente */
+    transform: translateX(-50%); /* Ajuste para que la imagen esté centrada */
+    background-image: url('{% static "img/autolavado.png" %}');
+    background-size: contain; /* Mantiene la imagen proporcional sin estirarla */
+    background-repeat: no-repeat; /* No repite la imagen */
+    background-position: center; /* Centra la imagen dentro de su área */
+    
+    /* Ajusta el tamaño de la imagen */
+    width: 400px; /* Puedes ajustar este valor: 50%, 80%, 100%, o cualquier valor que prefieras */
+    height: 800px; /* Ajusta la altura de la imagen según lo que necesites (por ejemplo, 150px, 200px, 300px, etc.) */
+    
+    z-index: 0; /* Asegura que la imagen quede por debajo de las tarjetas */
+}
+
+
+
+/* Lista de beneficios */
+.benefits-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.benefits-list li {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: #252848; /* Texto blanco para la lista */
+}
+
+.benefits-list li:before {
+    content: "✔";
+    color: #ff7f50; /* Color naranja para el icono de check */
+    margin-right: 10px;
+}
+
+
+
+/* Animación para el fade-in */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+
+.service_section {
+position: relative;
+background-color: #f8f8f8;
+}
+
+.service_section .heading_container h2 {
+text-transform: none;
+}
+
+.service_section .box {
+margin: 45px 0;
+text-align: center;
+}
+
+.service_section .box .img-box {
+height: 65px;
+}
+
+.service_section .box .img-box img {
+height: 100%;
+-webkit-filter: brightness(0);
+filter: brightness(0);
+-webkit-transition: all 0.3s;
+transition: all 0.3s;
+}
+
+.service_section .box .detail-box {
+margin-top: 15px;
+}
+
+.service_section .box .detail-box h5 {
+font-weight: bold;
+text-transform: uppercase;
+}
+
+.service_section .box .detail-box a {
+color: #19c880;
+font-weight: 600;
+}
+
+.service_section .box .detail-box a:hover {
+color: #8019c8;
+}
+
+.service_section .box:hover .img-box img {
+-webkit-filter: brightness(1);
+filter: brightness(1);
+}
+
+
+.service_section {
+  text-align: center;
+}
+
+.service_section .heading_container {
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.service_section .service_container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  padding: 35px 0;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+.service_section .service_container .box {
+  margin: 25px 1%;
+  -ms-flex-preferred-size: 31%;
+      flex-basis: 31%;
+  padding: 35px 25px 25px;
+  border-radius: 15px;
+  -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+          box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+  border-top: 15px solid transparent;
+  overflow: hidden;
+  -webkit-transition: all .1s;
+  transition: all .1s;
+}
+
+.service_section .service_container .box .img-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 125px;
+}
+
+.service_section .service_container .box .img-box img {
+  width: 90px;
+}
+
+.service_section .service_container .box .detail-box {
+  margin-top: 25px;
+}
+
+.service_section .service_container .box .detail-box h5 {
+  color: #2e0e5f;
+  font-weight: 600;
+  position: relative;
+}
+
+.service_section .service_container .box:hover, .service_section .service_container .box.active {
+  border-top: 15px solid #512a97;
+}
+
+.service_section .btn-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin-top: 25px;
+}
+
+.service_section .btn-box a {
+  display: inline-block;
+  padding: 10px 35px;
+  background-color: #4b208c;
+  color: #ffffff;
+  border-radius: 35px;
+}
+
+.service_section .btn-box a:hover {
+  background-color: #5625a1;
+}
+
+
+
+
+/* ignore the code below */
+
+
+.link-area
+{
+  position:fixed;
+  bottom:20px;
+  left:20px;  
+  padding:15px;
+  border-radius:40px;
+  background:tomato;
+}
+.link-area a
+{
+  text-decoration:none;
+  color:#fff;
+  font-size:25px;
+}
+
+    </style>
+</head>
+<body>
+   
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1>Únete a AutoNew y lleva tu autolavado al siguiente nivel</h1>
+            <p>Más visibilidad, más clientes, más crecimiento. ¡Haz crecer tu negocio hoy mismo!</p>
+            <a href="#benefits" class="btn btn-primary btn-lg">Descubre los beneficios</a>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="features-section">
+        <div class="container text-center">
+            <h2 class="mb-5">¿Por qué ser parte de AutoNew?</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <div class="icon-center">
+                            <!-- Icono visible en el centro -->
+                            <i class="fas fa-bullhorn"></i> <!-- Puedes cambiar el ícono por cualquier otro -->
+                        </div>
+                        <div class="text-initial">Visibilidad</div> <!-- Texto que se muestra antes del hover -->
+                        <h4>Aumenta tu Visibilidad</h4>
+                        <p>Al ser parte de nuestra plataforma, tu autolavado aparecerá frente a más clientes potenciales.</p>
+                        <!-- Imagen que aparecerá al hacer hover -->
+                        <img src="{% static 'img/carousel-3.jpg' %}" alt="Visibilidad">
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <div class="icon-center">
+                            <i class="fas fa-users"></i> <!-- Icono visible en el centro -->
+                        </div>
+                        <div class="text-initial">Clientes</div> <!-- Texto que se muestra antes del hover -->
+                        <h4>Adquiere Más Clientes</h4>
+                        <p>Llegarás a más personas gracias a la facilidad de reserva en línea y la promoción de tu negocio.</p>
+                        <!-- Imagen que aparecerá al hacer hover -->
+                        <img src="{% static 'img/carousel-2.jpg' %}" alt="Clientes">
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <div class="icon-center">
+                            <i class="fas fa-chart-line"></i> <!-- Icono visible en el centro -->
+                        </div>
+                        <div class="text-initial">Crecimiento</div> <!-- Texto que se muestra antes del hover -->
+                        <h4>Crecimiento Empresarial</h4>
+                        <p>Disfruta de un aumento en tus reservas y la expansión de tu negocio en nuevas áreas.</p>
+                        <!-- Imagen que aparecerá al hacer hover -->
+                        <img src="{% static 'img/carousel-4.jpg' %}" alt="Crecimiento">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- service section -->
+
+    <section class="service_section">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6 col-lg-3">
+                    <div class="box ">
+                        <div class="img-box">
+                            <img src="{% static 'img/feature-1.png' %}" alt="">
+                        </div>
+                        <div class="detail-box">
+                            <h5>
+                                Rapides
+                            </h5>
+                            <p>
+                                No pierdad tiempo en publicidad con autonew la tienes a solo un click
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="box ">
+                        <div class="img-box">
+                            <img src="{% static 'img/feature-2.png' %}" alt="">
+                        </div>
+                        <div class="detail-box">
+                            <h5>
+                                Libertad
+                            </h5>
+                            <p>
+                                Tu escoges que servcios que quieres ofrecer 
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="box ">
+                        <div class="img-box">
+                            <img src="{% static 'img/feature-3.png' %}" alt="">
+                        </div>
+                        <div class="detail-box">
+                            <h5>
+                                Calidad
+                            </h5>
+                            <p>
+                                La mejor calidad la encontraras aqui
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="box ">
+                        <div class="img-box">
+                            <img src="{% static 'img/feature-4.png' %}" alt="">
+                        </div>
+                        <div class="detail-box">
+                            <h5>
+                                24x7 Soporte
+                            </h5>
+                            <p>
+                                Soporte a cualquier hora
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- end service section -->
+    
+    
+
+    
+    
+    
+    
+    <!--- ignore the code below-->
+    
+    <div class="link-area">
+      <a href="#" target="_blank">Click + info</a>
+    </div>
+
+
+    <!-- Benefits List -->
+    <section class="container py-5">
+        <h3 class="text-center mb-4">Beneficios Exclusivos al Unirte a AutoNew</h3>
+        <ul class="benefits-list">
+            <li>Visibilidad garantizada en nuestra plataforma.</li>
+            <li>Reservas de clientes fáciles y rápidas.</li>
+            <li>Acceso a promociones y descuentos exclusivos.</li>
+            <li>Soporte y capacitación personalizada.</li>
+            <li>Herramientas para gestionar tu negocio de manera eficiente.</li>
+        </ul>
+        <div class="text-center">
+            <a href="#" class="btn btn-primary btn-lg">Únete a AutoNew Ahora</a>
+        </div>
+    </section>
+
+<!-- Incluye jQuery, Popper.js y Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
+<!-- Incluye Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+</body>
+</html>
+
+
+
+
+
+
+{% endblock  %}

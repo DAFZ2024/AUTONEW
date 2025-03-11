@@ -1,0 +1,205 @@
+{% extends "base_crud.html" %}
+{% block content %}
+{% load custom_tags %}
+<div class="container mt-3">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success
+                {% elif message.tags == 'error' %}alert-danger
+                {% elif message.tags == 'warning' %}alert-warning
+                {% else %}alert-info
+                {% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+<style>.alert {
+    position: relative;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
+
+.alert .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.5rem 0.75rem;
+}</style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    {% load static %}
+    <!-- Estilo de plantilla -->
+    <link href="{% static "estilos/estilos.css" %}" rel="stylesheet" type="text/css" >
+<h1 class="text-center">NUESTROS USUARIOS</h1>
+
+<div class="container mt-4">
+    <div class="text-center mb-3">
+        <button id="toggleFormButton" class="btn btn-primary">Crear Nuevo Usuario</button>
+    </div>
+    
+    <div id="formContainer" class="form-container" style="max-width: 800px; margin: auto; display: none;">
+        <h3 class="form-title text-center">Crear Nuevo Usuario</h3>
+        <form method="POST" class="p-4 rounded">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="nombre_completo">Nombre Completo</label>
+                    <input type="text" name="nombre_completo" class="form-control pastel-input" required>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="nombre_usuario">Nombre Usuario</label>
+                    <input type="text" name="nombre_usuario" class="form-control pastel-input" required>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="correo">Correo</label>
+                    <input type="email" name="correo" class="form-control pastel-input" required>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="telefono">Teléfono</label>
+                    <input type="text" name="telefono" class="form-control pastel-input" required>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="direccion">Dirección</label>
+                    <input type="text" name="direccion" class="form-control pastel-input" required>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="rol">Rol</label>
+                    <select name="rol" class="form-control pastel-input" required>
+                        <option value="admin">Admin</option>
+                        <option value="cliente">Cliente</option>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="contrasena1">Contraseña</label>
+                    <input type="password" name="contrasena1" class="form-control pastel-input" required>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="contrasena2">Confirmar Contraseña</label>
+                    <input type="password" name="contrasena2" class="form-control pastel-input" required>
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-dark btn-block">Crear Usuario</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('toggleFormButton').onclick = function() {
+        var formContainer = document.getElementById('formContainer');
+        if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+            formContainer.style.display = 'block';
+            this.textContent = 'Cancelar';  // Cambia el texto del botón
+        } else {
+            formContainer.style.display = 'none';
+            this.textContent = 'Crear Nuevo Usuario';  // Restaura el texto original
+        }
+    };
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<div class="container mt-4">
+    <h2>Mis Usuarios</h2>
+    <div class="container mt-4">
+        <h2>Buscar Usuarios</h2>
+        <form method="GET" class="form-inline mb-4">
+            <input type="text" name="nombre_usuario" placeholder="Nombre Usuario" class="form-control mr-2">
+            <input type="email" name="correo" placeholder="Correo" class="form-control mr-2">
+            <input type="text" name="telefono" placeholder="Teléfono" class="form-control mr-2">
+            <select name="rol" class="form-control mr-2">
+                <option value="">Rol</option>
+                <option value="admin">Admin</option>
+                <option value="cliente">Cliente</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre completo</th>
+                <th>Nombre usuario</th>
+                <th>Correo</th>
+                <th>Telefono</th>
+                <th>Dirección</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ usuario.nombre_completo }}</td>
+                    <td>{{ usuario.nombre_usuario }}</td>
+                    <td>{{ usuario.correo }}</td>
+                    <td>{{ usuario.telefono }}</td>
+                    <td>{{ usuario.direccion }}</td>
+                    <td>{{ usuario.rol }}</td>
+                    <td>
+                        <form method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" name="eliminar" value="{{ usuario.id_usuario }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que quieres eliminar este usuario?');">Eliminar</button>
+                        </form>
+                        <button class="btn btn-warning btn-sm" onclick="document.getElementById('edit-{{ usuario.id_usuario }}').style.display='block'">Editar</button>
+
+                        <div id="edit-{{ usuario.id_usuario }}" style="display:none; margin-top: 10px;">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="nombre_completo">Nombre Completo</label>
+                                    <input type="text" name="nombre_completo" value="{{ usuario.nombre_completo }}" class="form-control" required>
+                        
+                                    <label for="nombre_usuario">Nombre Usuario</label>
+                                    <input type="text" name="nombre_usuario" value="{{ usuario.nombre_usuario }}" class="form-control" required>
+                        
+                                    <label for="correo">Correo</label>
+                                    <input type="email" name="correo" value="{{ usuario.correo }}" class="form-control" required>
+
+                                    <label for="telefono">Telefono</label>
+                                    <input type="text" name="telefono" value="{{ usuario.telefono }}" class="form-control" required>
+                        
+                                    <label for="direccion">Dirección</label>
+                                    <input type="text" name="direccion" value="{{ usuario.direccion }}" class="form-control" required>
+                        
+                                    <label for="rol">Rol</label>
+                                    <select name="rol" class="form-control" required>
+                                        <option value="admin" {% if usuario.rol == 'admin' %}selected{% endif %}>Admin</option>
+                                        <option value="cliente" {% if usuario.rol == 'cliente' %}selected{% endif %}>Cliente</option>
+                                    </select>
+                                    <label for="contrasena11">Nueva Contraseña (dejar en blanco si no desea cambiarla)</label>
+                                    <input type="password" name="contrasena11" class="form-control">
+
+                                    <label for="contrasena11">Confirmar Nueva Contraseña</label>
+                                    <input type="password" name="contrasena22" class="form-control">
+                                </div>
+                                <input type="hidden" name="id_usuario" value="{{ usuario.id_usuario }}">
+                                <button type="submit" class="btn btn-success btn-sm">Actualizar</button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('edit-{{ usuario.id_usuario }}').style.display='none'">Cancelar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No hay usuarios registrados.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

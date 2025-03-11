@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<body>
+    {% load custom_tags %}
+<div class="container mt-3">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success
+                {% elif message.tags == 'error' %}alert-danger
+                {% elif message.tags == 'warning' %}alert-warning
+                {% else %}alert-info
+                {% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+<style>.alert {
+    position: relative;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
+
+.alert .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.5rem 0.75rem;
+}</style>
+    <div class="container mt-5">
+        <h2>Actualizar Perfil</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="nombre_completo">Nombre Completo</label>
+                <input type="text" name="nombre_completo" value="{{ usuario.nombre_completo }}" class="form-control" required>
+    
+                <label for="nombre_usuario">Nombre Usuario</label>
+                <input type="text" name="nombre_usuario" value="{{ usuario.nombre_usuario }}" class="form-control" required>
+    
+                <label for="correo">Correo</label>
+                <input type="email" name="correo" value="{{ usuario.correo }}" class="form-control" required>
+    
+                <label for="telefono">Teléfono</label>
+                <input type="text" name="telefono" value="{{ usuario.telefono }}" class="form-control" required>
+    
+                <label for="direccion">Dirección</label>
+                <input type="text" name="direccion" value="{{ usuario.direccion }}" class="form-control" required>
+    
+                <div class="form-group">
+                    <label for="profile_picture">Foto de Perfil</label>
+                    <input type="file" class="form-control-file" id="profile_picture" name="profile_picture">
+                </div>
+                {% if usuario.profile_picture %}
+                    <div class="mb-3">
+                        <label>Imagen Actual:</label><br>
+                        <img src="{{ usuario.profile_picture.url }}" alt="Foto de Perfil" class="img-thumbnail" style="max-width: 150px;">
+                    </div>
+                {% endif %}
+    
+                <label for="contrasena11">Nueva Contraseña (dejar en blanco si no desea cambiarla)</label>
+                <input type="password" name="contrasena11" class="form-control">
+    
+                <label for="contrasena22">Confirmar Nueva Contraseña</label>
+                <input type="password" name="contrasena22" class="form-control">
+            </div>
+            <input type="hidden" name="id_usuario" value="{{ usuario.id_usuario }}">
+            <button type="submit" class="btn btn-success btn-sm">Actualizar</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+{% endblock %}

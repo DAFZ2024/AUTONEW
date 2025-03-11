@@ -1,0 +1,972 @@
+import http.client
+import json
+
+from django.shortcuts import render,redirect, get_object_or_404
+from django.http import HttpResponse,JsonResponse
+from django.contrib import messages
+from .models import Usuario,Comentario,MensajeQueja,Reserva,Servicio,Empresa,EmpresaServicio
+from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth.decorators import login_required
+from .forms import ComentarioForm, ReservaForm, UsuariosForm,ComentarioClienteForm,QuejaForm,ServicioForm,EmpresaForm,ProfileUserForm
+from datetime import datetime,timedelta
+from django.utils import timezone
+
+
+# Create your views here.
+
+
+
+def home(request):
+    comentarios = Comentario.objects.all().order_by('-fecha')  # Recupera todos los comentarios
+    return render(request, 'home.html', {'comentarios': comentarios})
+
+def empresas(request):
+    return render(request, 'empresas.html')
+
+def login(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    
+    if request.method == 'POST':
+
+        if 'nombre_completo' in request.POST: 
+            nombre_completo = request.POST['nombre_completo']
+            nombre_usuario = request.POST['nombre_usuario']
+            correo = request.POST['correo']
+            telefono = request.POST.get('telefono')
+            direccion = request.POST.get('direccion')
+            contrasena1 = request.POST['contrasena1']
+            contrasena2 = request.POST['contrasena2']
+
+            
+            if contrasena1 != contrasena2:
+                messages.error(request, "Las contraseñas no coinciden, intentalo de nuevo")
+                return redirect('login')
+
+            
+            if Usuario.objects.filter(nombre_usuario=nombre_usuario).exists():
+                messages.error(request, "El nombre de usuario  ya esta registrado, intenta con otro.")
+                return redirect('login')
+
+            if Usuario.objects.filter(correo=correo).exists():
+                messages.error(request, "El correo ya esta registrado, intenta con otro.")
+                return redirect('login')
+            # Concatenar el prefijo "57" al teléfono ingresado
+            telefono_completo = "57" + telefono
+
+            nuevo_usuario = Usuario.objects.create_user(
+                nombre_completo=nombre_completo,
+                nombre_usuario=nombre_usuario,
+                correo=correo,
+                telefono=telefono_completo,  # Guardar el número completo
+                direccion=direccion,
+                contrasena=contrasena1 
+            )
+            messages.success(request, "El usuario ha sido creado exitosamente. Ahora puedes iniciar sesión.")
+            return redirect('login')
+
+        
+        else:
+            nombre_usuario = request.POST['nombre_usuario']
+            contrasena = request.POST['contrasena']  
+            
+            usuario = authenticate(request, username=nombre_usuario, password=contrasena)
+            if usuario is not None:
+                auth_login(request, usuario)
+                messages.success(request, f'Bienvenido de nuevo, {usuario.nombre_usuario}!')
+                return redirect('home')
+            else:
+                messages.error(request, 'Usuario o contraseña incorrectos.')
+                return redirect('login')
+    else:
+        return render(request, 'login.html')
+    
+
+@login_required
+def perfil_usuario(request):
+    usuario = request.user  # Obtén el usuario actualmente autenticado
+    form = ProfileUserForm(instance=usuario)  # Crea un formulario con los datos del usuario
+
+    if request.method == 'POST':
+        form = ProfileUserForm(request.POST, request.FILES, instance=usuario)  # Incluye el usuario existente
+
+        if form.is_valid():
+            # Guardar los datos del usuario
+            form.save()  
+
+            # Manejar la actualización de la contraseña
+            contrasena11 = request.POST.get('contrasena11')
+            contrasena22 = request.POST.get('contrasena22')
+
+            # Solo cambiar la contraseña si ambos campos no están vacíos
+            if contrasena11 or contrasena22:
+                if contrasena11 == contrasena22:
+                    usuario.set_password(contrasena11)  # Cambia la contraseña del usuario
+                    usuario.save()  # Guarda el usuario después de cambiar la contraseña
+                else:
+                    messages.error(request, 'Las contraseñas no coinciden.')
+                    return redirect('perfil')
+
+            messages.success(request, 'El perfil ha sido actualizado.')
+            return redirect('home')  # Redirige a la página de perfil o donde desees
+
+    return render(request, 'perfil_usuario.html', {'usuario': usuario, 'form': form})
+
+@login_required
+def logout(request):
+    auth_logout(request)
+    return redirect('home')
+
+
+
+def nosotros(request):
+    return render(request, 'nosotros.html')
+
+
+
+def servicios(request):
+    comentarios = Comentario.objects.all().order_by('-fecha')  # Recupera todos los comentarios
+    return render(request, 'servicios.html', {'comentarios': comentarios})
+
+
+def reservas(request):
+    ahora = timezone.now()
+    hoy = ahora.date()
+    servicios = Servicio.objects.all()  # Obtener todos los servicios disponibles
+    empresas = Empresa.objects.all()    # Obtener todas las empresas disponibles
+    empresaservicio = EmpresaServicio.objects.all()
+
+    fecha_seleccionada = None
+    servicios_filtrados = []
+
+    # Inicializar la variable 'ocupadas' antes de cualquier otra cosa.
+    reservas_existentes = Reserva.objects.all()
+
+    ocupadas = {
+        "fechas": {reserva.fecha for reserva in reservas_existentes},
+        "horas": {}
+    }
+
+    for reserva in reservas_existentes:
+        if reserva.fecha not in ocupadas["horas"]:
+            ocupadas["horas"][reserva.fecha] = set()
+        ocupadas["horas"][reserva.fecha].add(reserva.hora.strftime('%H:%M'))  # Asegúrate de que las horas se formateen correctamente
+
+    if request.method == "POST":
+        opcion_empresa_id = request.POST.get('id_empresa')
+        fecha_seleccionada = request.POST.get('fecha')
+        hora = request.POST.get('hora')
+        usuario = request.user
+        servicio_id = request.POST.get('id_servicio')
+
+        try:
+            servicio = Servicio.objects.get(id_servicio=servicio_id)
+        except Servicio.DoesNotExist:
+            return HttpResponse("El servicio seleccionado no existe.")
+
+        if opcion_empresa_id:
+            try:
+                empresa = Empresa.objects.get(id_empresa=opcion_empresa_id)
+            except Empresa.DoesNotExist:
+                return HttpResponse("El punto seleccionado no existe.")
+
+            # Filtrar los servicios disponibles para la empresa seleccionada
+            servicios_filtrados = Servicio.objects.filter(id_servicio__in=EmpresaServicio.objects.filter(empresa=empresa).values('servicio'))
+
+            if not servicios_filtrados:
+                messages.error(request, "No hay servicios disponibles para la empresa seleccionada.")
+                return redirect('reservas')
+
+            # Verificar si la fecha y hora están ocupadas
+            if fecha_seleccionada in ocupadas["fechas"] and hora in ocupadas["horas"].get(fecha_seleccionada, set()):
+                return HttpResponse(f"Lo siento, la fecha {fecha_seleccionada} a las {hora} ya está ocupada.")
+
+            # Crear la reserva
+            reserva = Reserva(
+                empresa=empresa,
+                fecha=fecha_seleccionada,
+                hora=hora,
+                usuario=usuario,
+                servicio=servicio
+            )
+            reserva.save()
+            messages.success(request, f"Tu cita para {servicio.nombre_servicio} ha sido reservada para el {fecha_seleccionada} a las {hora}.")
+            return redirect('reservas')
+        else:
+            return HttpResponse("No se ha seleccionado un punto.")
+
+    horas_disponibles = {}
+    for i in range(15):
+        fecha = hoy + timedelta(days=i)
+        horas_disponibles[fecha] = []
+
+        for h in range(8, 21):  # Cambié el rango para extender el horario hasta las 8:00 PM
+            hora_formateada = f"{h:02}:00"  # Asegúrate de que la hora esté bien formateada
+
+            if fecha == hoy and h < ahora.hour:
+                continue
+
+            # Verifica si la hora está ocupada para esta fecha
+            if hora_formateada not in ocupadas["horas"].get(fecha, set()):
+                horas_disponibles[fecha].append(hora_formateada)
+
+    fechas_disponibles = [hoy + timedelta(days=i) for i in range(15)]
+
+    return render(request, 'reservas.html', {
+        'ocupadas': ocupadas,
+        'horas_disponibles': horas_disponibles,
+        'fechas_disponibles': fechas_disponibles,
+        'hoy': hoy,
+        'servicios_filtrados': servicios_filtrados,
+        'empresas': empresas,
+        'servicios': servicios,  
+        'empresaservicio': empresaservicio
+    })
+
+def obtener_info_empresa(request):
+    empresa_id = request.GET.get('empresa_id')
+    if empresa_id:
+        try:
+            empresa = Empresa.objects.get(id_empresa=empresa_id)
+            data = {
+                'nombre': empresa.nombre_empresa,
+                'direccion': empresa.direccion,
+                'telefono': empresa.telefono,
+            }
+            return JsonResponse(data)
+        except Empresa.DoesNotExist:
+            return JsonResponse({'error': 'Empresa no encontrada'}, status=404)
+    return JsonResponse({'error': 'ID de empresa no proporcionado'}, status=400)
+
+
+
+
+def obtener_servicios(request):
+    empresa_id = request.GET.get('empresa_id')  # Obtener el id de la empresa desde la URL
+    if empresa_id:
+        # Obtener los servicios de la empresa seleccionada
+        servicios = Servicio.objects.filter(id_servicio__in=EmpresaServicio.objects.filter(empresa_id=empresa_id).values('servicio'))
+        
+        # Crear una lista con los servicios
+        servicios_data = [{'id': servicio.id_servicio, 'nombre_servicio': servicio.nombre_servicio} for servicio in servicios]
+
+        return JsonResponse({'servicios': servicios_data})
+    
+    # Si no se encuentra la empresa o no se pasa el id, devolver una lista vacía
+    return JsonResponse({'servicios': []})
+
+
+
+
+def obtener_info_servicio(request):
+    servicio_id = request.GET.get('servicio_id')  # Obtener el ID del servicio desde el GET
+    empresa_id = request.GET.get('empresa_id')  # Obtener el ID de la empresa desde el GET
+    
+    if not servicio_id:
+        return JsonResponse({'error': 'ID de servicio no proporcionado'}, status=400)
+    
+    if not empresa_id:
+        return JsonResponse({'error': 'ID de empresa no proporcionado'}, status=400)
+
+    try:
+        # Comprobar si el servicio está asociado a la empresa
+        empresa_servicio = EmpresaServicio.objects.filter(empresa_id=empresa_id, servicio_id=servicio_id).first()
+        
+        if not empresa_servicio:
+            return JsonResponse({'error': 'El servicio no está asignado a esta empresa'}, status=404)
+
+        # Obtener el servicio por su ID
+        servicio = Servicio.objects.get(id=servicio_id)
+        response_data = {
+            'nombre_servicio': servicio.nombre_servicio,
+            'descripcion': servicio.descripcion
+        }
+        return JsonResponse(response_data)  # Responder con JSON
+        
+    except Servicio.DoesNotExist:
+        return JsonResponse({'error': 'Servicio no encontrado'}, status=404)
+
+
+
+
+
+
+def planes(request):
+    return render(request, 'planes.html')
+
+
+@login_required
+def citas(request):
+    ahora = datetime.now()
+    hoy = ahora.date()
+    
+    # Obtener reservas del usuario actual en estado 'no_completado' y 'completado'
+    reservas_no_completadas = Reserva.objects.filter(estado='no_completado', usuario=request.user)
+    reservas_completadas = Reserva.objects.filter(estado='completado', usuario=request.user)
+    servicios = Servicio.objects.all() 
+    empresas = Empresa.objects.all()
+
+    horas_disponibles = {}
+    ocupadas = {
+        "fechas": {reserva.fecha for reserva in reservas_no_completadas},
+        "horas": {}
+    }
+
+    # Obtener horas ocupadas de reservas no completadas
+    for reserva in reservas_no_completadas:
+        if reserva.fecha not in ocupadas["horas"]:
+            ocupadas["horas"][reserva.fecha] = set()
+        ocupadas["horas"][reserva.fecha].add(reserva.hora.strftime('%H:%M'))
+
+    # Filtrar fechas y horas disponibles desde hoy
+    for i in range(15):  # Desde hoy hasta 15 días adelante
+        fecha = hoy + timedelta(days=i)
+        horas_disponibles[fecha] = []
+
+        for h in range(8, 16):  # De 08:00 a 15:00
+            hora_formateada = f"{h:01}:00"
+
+            # Si la fecha es hoy, verifica que la hora no haya pasado
+            if fecha == hoy and h < ahora.hour:
+                continue  # Ignora horas pasadas para hoy
+
+            # Verifica si la hora está ocupada en la fecha seleccionada
+            if hora_formateada not in ocupadas["horas"].get(fecha, set()):
+                horas_disponibles[fecha].append(hora_formateada)
+
+    if request.method == "POST":
+        # Manejar la eliminación de reservas
+        if 'eliminar' in request.POST:
+            reserva_id = request.POST.get('eliminar')
+            reserva = get_object_or_404(Reserva, id_reserva=reserva_id, usuario=request.user)  # Filtrar por usuario
+            reserva.delete()
+            messages.error(request, 'Reserva eliminada con éxito.')
+            return redirect('citas')
+        
+        # Manejar la creación o edición de reservas
+        if 'id_reserva' in request.POST:  # Para editar
+            reserva_id = request.POST.get('id_reserva')
+            reserva = get_object_or_404(Reserva, id_reserva=reserva_id, usuario=request.user)  # Filtrar por usuario
+
+            # Actualiza la reserva
+            reserva.empresa_id = request.POST.get('empresa')  # Actualiza el lugar
+            reserva.fecha = request.POST.get('fecha')  # Actualiza la fecha
+            reserva.hora = request.POST.get('hora')  # Actualiza la hora
+            reserva.servicio_id = request.POST.get('servicio')  # Actualiza el servicio
+            reserva.save()
+            messages.success(request, 'Reserva actualizada con éxito.')
+            return redirect('citas')
+        else:  # Para crear
+            form = ReservaForm(request.POST)
+            if form.is_valid():
+                reserva = form.save(commit=False)
+                reserva.usuario = request.user  # Asignar el usuario actual
+                reserva.save()
+                messages.success(request, 'Reserva creada con éxito.')
+                return redirect('citas')
+    else:
+        form = ReservaForm()
+
+    # Generar lista de fechas disponibles
+    fechas_disponibles = [hoy + timedelta(days=i) for i in range(15)] 
+
+    # Renderiza la vista con los datos necesarios
+    return render(request, 'citas.html', {
+        'reservas_no_completadas': reservas_no_completadas,
+        'reservas_completadas': reservas_completadas,
+        'form': form,
+        'servicios': servicios,
+        'empresas': empresas,
+        'horas_disponibles': horas_disponibles,
+        'fechas_disponibles': fechas_disponibles,
+        'hoy': hoy,
+    })
+
+
+
+
+@login_required
+def contacto(request):
+    if request.method == 'POST':
+        contenido = request.POST.get('contenido')
+
+        if contenido:
+            mensaje = MensajeQueja(contenido=contenido, usuario=request.user)
+            mensaje.save()
+            messages.success(request, "Tu mensaje ha sido enviado exitosamente y sera respondido en el menor tiempo posible.")
+            return redirect('contacto')  
+        else:
+            messages.error(request, "Por favor, ingresa un mensaje.")
+            return redirect('contacto') 
+
+    return render(request, 'contacto.html') 
+
+def resetCorreo(request):
+    return render(request, 'reset_correo.html')
+def resetContrasena(request):
+    return render(request, 'reset_contrasena.html')
+
+
+@login_required
+def comentarios(request):
+    if request.method == 'POST':
+        form = ComentarioClienteForm(request.POST)
+        if form.is_valid():
+            comentario = form.save(commit=False)  
+            comentario.usuario = request.user  
+            comentario.save() 
+            messages.success(request, "Tu comentario ha sido enviado")
+            return redirect('comentarios')  
+
+    else:
+        form = ComentarioClienteForm()
+
+    return render(request, 'comentarios.html', {'form': form})
+
+
+
+def get_horas(request):
+    if request.method == "GET":
+        fecha = request.GET.get('fecha')
+        if fecha:
+            try:
+                # Convierte la fecha en objeto datetime
+                fecha_obj = datetime.strptime(fecha, '%Y-%m-%d').date()
+
+                # Verifica que la fecha no sea pasada
+                if fecha_obj < timezone.now().date():
+                    return JsonResponse({'error': 'La fecha seleccionada ya ha pasado.'}, status=400)
+
+                # Obtén todas las reservas para la fecha seleccionada
+                reservas_existentes = Reserva.objects.filter(fecha=fecha_obj)
+
+                # Obtén las horas ocupadas para esa fecha
+                horas_ocupadas = set(reserva.hora.strftime('%H:%M') for reserva in reservas_existentes)
+
+                # Genera las horas disponibles de 08:00 a 15:00
+                horas_disponibles = []
+                for h in range(8, 16):  # De 08:00 a 15:00
+                    hora_formateada = f"{h:02}:00"
+                    if hora_formateada not in horas_ocupadas:
+                        horas_disponibles.append(hora_formateada)
+
+                return JsonResponse({'horas': horas_disponibles})
+
+            except ValueError:
+                return JsonResponse({'error': 'Formato de fecha inválido. Use YYYY-MM-DD.'}, status=400)
+
+    return JsonResponse({'horas': []})
+    
+
+############################################################ comienzo de crud
+
+
+def login_crud(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
+    if request.method == 'POST':
+        nombre_usuario = request.POST['nombre_usuario']
+        contrasena = request.POST['contrasena']  
+
+        # Autenticación del usuario
+        usuario = authenticate(request, nombre_usuario=nombre_usuario, password=contrasena)
+        if usuario is not None:
+            auth_login(request, usuario)  # Iniciar sesión con el usuario autenticado
+            messages.success(request, f'Bienvenido de nuevo, {usuario.nombre_usuario}!')
+            
+            # Si el usuario es específico, mostrar contenido personalizado
+            if usuario.nombre_usuario == 'aaa':
+                return render(request, 'empresas_crud.html')
+            
+            # Si es un usuario general, redirigir al home
+            return redirect('homecrud')
+        else:
+            messages.error(request, 'Usuario o contraseña incorrectos.')
+            return redirect('logincrud')
+
+    return render(request, 'login_crud.html')
+    
+
+def logout_view(request):
+    logout(request)  # Cerrar sesión
+    messages.success(request, 'Has cerrado sesión correctamente.')
+    return redirect('home')  # Redirigir a la página de login
+
+
+def comentarios_crud(request):
+    comentarios =Comentario.objects.all()
+
+    if request.method == "POST":
+        # Manejar la eliminación de comenatrios
+        if 'eliminar' in request.POST:
+            comentario_id = request.POST.get('eliminar')
+            comentario = get_object_or_404(Comentario, id_comentario=comentario_id)
+            comentario.delete()
+            messages.error(request, 'El comentario se a eliminado.')
+            return redirect('comentarioscrud')
+    else:
+        form = ComentarioForm()
+    return render(request, 'comentarios_crud.html', {'comentarios': comentarios, 'form': form})
+
+
+
+
+def quejas_crud(request):
+    quejas =MensajeQueja.objects.all()
+
+    if request.method == "POST":
+        # Manejar la eliminación de comenatrios
+        if 'eliminar' in request.POST:
+            queja_id = request.POST.get('eliminar')
+            queja = get_object_or_404(MensajeQueja, id_mensaje=queja_id)
+            queja.delete()
+            messages.error(request, 'La queja se a eliminado.')
+            return redirect('quejascrud')
+
+    if request.method == "POST":
+        # Manejar la respuesta a la queja
+        if 'id_reserva' in request.POST:
+            respuesta = request.POST.get('respuesta')
+            queja_id = request.POST.get('id_reserva')
+            queja = get_object_or_404(MensajeQueja, id_mensaje=queja_id)
+
+            # Obtener el usuario asociado a la queja (ajusta según tu modelo)
+            usuario = get_object_or_404(Usuario, id_usuario=queja.usuario_id)  # Asumiendo que hay un campo id_usuario en MensajeQueja
+
+            # Aquí puedes guardar la respuesta en tu modelo si es necesario
+            queja.respuesta = respuesta
+            queja.save()
+
+            messages.success(request, 'La respuesta se ha enviado.')
+
+            # Enviar mensaje de WhatsApp
+            try:
+                conn = http.client.HTTPSConnection("kqqk31.api.infobip.com")
+                payload = json.dumps({
+                    "messages": [
+                        {
+                            "from": "447860099299",  # Tu número de WhatsApp
+                            "to": usuario.telefono,  # Número del destinatario desde la tabla Usuario
+                            "messageId": "c2dbb13f-2a4a-48d7-97c2-085d5d3d6108",
+                            "content": {
+                                "templateName": "message_test",
+                                "templateData": {
+                                    "body": {
+                                        "placeholders": [respuesta]  # Usar la respuesta como contenido
+                                    }
+                                },
+                                "language": "es"
+                            }
+                        }
+                    ]
+                })
+                headers = {
+                    'Authorization': 'App e5eb011e80db665606dd35c15e897846-c8cf84ba-fd3f-401e-a267-7e95cc6bce48',
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+                conn.request("POST", "/whatsapp/1/message/template", payload, headers)
+                res = conn.getresponse()
+                data = res.read()
+                print(data.decode("utf-8"))  # Puedes usar logging en lugar de print
+            except Exception as e:
+                print("Error al enviar mensaje:", e)
+                messages.error(request, 'Error al enviar el mensaje de WhatsApp.')
+
+            return redirect('quejascrud')
+    else:
+        form = QuejaForm()
+    return render(request, 'quejas_crud.html', {'quejas': quejas, 'form': form})
+
+
+
+def usuarios_crud(request):
+    usuarios = Usuario.objects.all()
+    form = UsuariosForm() 
+
+
+    # Filtrar según los parámetros de búsqueda
+    nombre_usuario = request.GET.get('nombre_usuario', '')
+    correo = request.GET.get('correo', '')
+    telefono = request.GET.get('telefono', '')
+    rol = request.GET.get('rol', '')
+
+    if nombre_usuario:
+        usuarios = usuarios.filter(nombre_usuario__icontains=nombre_usuario)
+    if correo:
+        usuarios = usuarios.filter(correo__icontains=correo)
+    if telefono:
+        usuarios = usuarios.filter(telefono__icontains=telefono)
+    if rol:
+        usuarios = usuarios.filter(rol=rol)
+
+
+    if request.method == "POST":
+        # Manejar la eliminación de los usuarios
+        if 'eliminar' in request.POST:
+            usuario_id  = request.POST.get('eliminar')
+            usuario = get_object_or_404(Usuario, id_usuario=usuario_id)
+            usuario.delete()
+            messages.error(request, 'El usuario a sido eliminado.')
+            return redirect('usuarioscrud')
+        
+
+
+        # Manejar la creación de nuevos usuarios
+        if 'nombre_completo' in request.POST and 'id_usuario' not in request.POST:
+            contrasena1 = request.POST.get('contrasena1')
+            contrasena2= request.POST.get('contrasena2')
+            nombre_usuario = request.POST.get('nombre_usuario')
+            correo = request.POST.get('correo')
+            telefono = request.POST.get('telefono')
+
+
+            # Verificar si el nombre de usuario ya está en uso
+            if Usuario.objects.filter(nombre_usuario=nombre_usuario).exists():
+                messages.error(request, 'El nombre de usuario ya está en uso.')
+            # Verificar si el correo ya está en uso
+            elif Usuario.objects.filter(correo=correo).exists():
+                messages.error(request, 'El correo ya está en uso.')
+
+            else:
+
+                # Concatenar el prefijo "57" al teléfono ingresado
+                telefono_completo = "57" + telefono
+                if contrasena1 == contrasena2:
+                    nuevo_usuario = Usuario(
+                        nombre_completo=request.POST.get('nombre_completo'),
+                        nombre_usuario=nombre_usuario,
+                        correo=correo,
+                        telefono=telefono_completo,  # Guardar el número completo
+                        direccion=request.POST.get('direccion'),
+                        rol=request.POST.get('rol'),
+                        password=make_password(contrasena1)  # Hash de la contraseña
+                    )
+                    nuevo_usuario.save()
+                    messages.success(request, 'El usuario ha sido creado.')
+                    return redirect('usuarioscrud')
+                else:
+                    messages.error(request, 'Las contraseñas no coinciden.')
+                    return redirect('usuarioscrud')
+
+        # Manejar la actualización de usuarios
+        if 'id_usuario' in request.POST:
+            usuario_id = request.POST.get('id_usuario')
+            usuario = get_object_or_404(Usuario, id_usuario=usuario_id)
+            usuario.nombre_completo = request.POST.get('nombre_completo')
+            usuario.nombre_usuario = request.POST.get('nombre_usuario')
+            usuario.correo = request.POST.get('correo')
+            usuario.direccion = request.POST.get('direccion')
+            usuario.rol = request.POST.get('rol')
+
+            # Actualizar la contraseña solo si se proporciona una nueva
+            contrasena11 = request.POST.get('contrasena11')
+            contrasena22= request.POST.get('contrasena22')
+
+            # Solo actualizar la contraseña si el campo no está vacío
+            if contrasena11:
+                if contrasena11 ==contrasena22:
+                    usuario.password = make_password(contrasena11)
+                else:
+                    messages.error(request, 'Las contraseñas no coinciden.')
+                    return redirect('usuarioscrud')
+
+            # Guardar los cambios en el usuario
+            usuario.save()
+            messages.success(request, 'El usuario ha sido actualizado.')
+            return redirect('usuarioscrud')
+
+    else:
+        form = UsuariosForm()
+
+    return render(request, 'usuarios_crud.html', {'usuarios': usuarios, 'form': form})
+
+
+
+
+
+def citas_crud(request):
+    ahora = datetime.now()
+    hoy = ahora.date()
+    
+    # Obtener reservas en estado 'no_completado' ordenadas por fecha y hora
+    reservas = Reserva.objects.filter(estado='no_completado').order_by('fecha', 'hora')
+    servicios = Servicio.objects.all() 
+    empresas = Empresa.objects.all()
+
+    horas_disponibles = {}
+    ocupadas = {
+        "fechas": {reserva.fecha for reserva in reservas},
+        "horas": {}
+    }
+
+    # Obtener horas ocupadas
+    for reserva in reservas:
+        if reserva.fecha not in ocupadas["horas"]:
+            ocupadas["horas"][reserva.fecha] = set()
+        ocupadas["horas"][reserva.fecha].add(reserva.hora.strftime('%H:%M'))
+
+    # Filtrar fechas y horas disponibles desde hoy
+    for i in range(15):  # Desde hoy hasta 15 días adelante
+        fecha = hoy + timedelta(days=i)
+        horas_disponibles[fecha] = []
+
+        for h in range(8, 16):  # De 08:00 a 15:00
+            hora_formateada = f"{h:01}:00"
+
+            # Si la fecha es hoy, verifica que la hora no haya pasado
+            if fecha == hoy and h < ahora.hour:
+                continue  # Ignora horas pasadas para hoy
+
+            # Verifica si la hora está ocupada en la fecha seleccionada
+            if hora_formateada not in ocupadas["horas"].get(fecha, set()):
+                horas_disponibles[fecha].append(hora_formateada)
+
+    if request.method == "POST":
+        # Manejar la eliminación de reservas
+        if 'eliminar' in request.POST:
+            reserva_id = request.POST.get('eliminar')
+            reserva = get_object_or_404(Reserva, id_reserva=reserva_id)
+            reserva.delete()
+            messages.error(request, 'Reserva eliminada con éxito.')
+            return redirect('citascrud')
+
+        # Manejar la creación o edición de reservas
+        if 'id_reserva' in request.POST:  # Para editar
+            reserva_id = request.POST.get('id_reserva')
+            reserva = get_object_or_404(Reserva, id_reserva=reserva_id)
+
+            # Actualiza la reserva
+            reserva.punto_id = request.POST.get('punto')  # Actualiza el lugar
+            reserva.fecha = request.POST.get('fecha')  # Actualiza la fecha
+            reserva.hora = request.POST.get('hora')  # Actualiza la hora
+            reserva.servicio_id = request.POST.get('servicio')  # Actualiza el servicio
+            reserva.save()
+            messages.success(request, 'Reserva actualizada con éxito.')
+            return redirect('citascrud')
+        else:  # Para crear
+            form = ReservaForm(request.POST)
+            if form.is_valid():
+                reserva = form.save(commit=False)
+                reserva.usuario = request.user  # Asignar el usuario actual
+                reserva.save()
+                messages.success(request, 'Reserva creada con éxito.')
+                return redirect('citascrud')
+    else:
+        form = ReservaForm()
+
+    # Generar lista de fechas disponibles
+    fechas_disponibles = [hoy + timedelta(days=i) for i in range(15)] 
+
+    # Renderiza la vista con los datos necesarios
+    return render(request, 'citas_crud.html', {
+        'reservas': reservas,
+        'form': form,
+        'servicios': servicios,
+        'empresas': empresas,
+        'horas_disponibles': horas_disponibles,
+        'fechas_disponibles': fechas_disponibles,
+        'hoy': hoy,
+    })
+
+
+
+def citascom_crud(request):
+    reservas = Reserva.objects.filter(estado='completado')
+    servicios = Servicio.objects.all() 
+    empresas = Empresa.objects.all()
+
+    if request.method == "POST":
+        # Manejar la eliminación de reservas
+        if 'eliminar' in request.POST:
+            reserva_id = request.POST.get('eliminar')
+            reserva = get_object_or_404(Reserva, id_reserva=reserva_id)
+            reserva.delete()
+            messages.error(request, 'Reserva eliminada con éxito.')
+            return redirect('citascomcrud')
+
+    return render(request,'citascom_crud.html',{
+                'reservas': reservas,
+                'servicios': servicios})
+
+
+
+def cambiar_estado_reserva(request, reserva_id):
+    reserva = get_object_or_404(Reserva, id_reserva=reserva_id)
+    
+    if reserva.estado == 'no_completado':
+        reserva.estado = 'completado'
+        reserva.save()
+        messages.success(request, 'La reserva ha sido marcada como completada.')
+    else:
+        messages.info(request, 'La reserva ya está completada.')
+
+    return redirect('citascrud') 
+
+
+def servicios_crud(request):
+    servicios = Servicio.objects.all()
+    form = ServicioForm()
+
+    # Filtrar según los parámetros de búsqueda
+    nombre_servicio = request.GET.get('nombre_servicio', '')
+    if nombre_servicio:
+        servicios = servicios.filter(nombre_servicio__icontains=nombre_servicio)
+
+    if request.method == "POST":
+        # Manejar la eliminación de los servicios
+        if 'eliminar' in request.POST:
+            servicio_id = request.POST.get('eliminar')
+            servicio_a_eliminar = get_object_or_404(Servicio, id_servicio=servicio_id)
+            servicio_a_eliminar.delete()
+            messages.error(request, 'El Servicio ha sido eliminado.')
+            return redirect('servicioscrud')
+
+        # Manejar la creación de nuevos servicios
+        if 'nombre_servicio' in request.POST and 'id_servicio' not in request.POST:
+            nombre_servicio = request.POST.get('nombre_servicio')
+            descripcion = request.POST.get('descripcion')
+            precio = request.POST.get('precio')
+
+            nuevo_servicio = Servicio(
+                nombre_servicio=nombre_servicio,
+                descripcion=descripcion,
+                precio=precio
+            )
+            nuevo_servicio.save()
+            messages.success(request, 'El servicio ha sido creado.')
+            return redirect('servicioscrud')
+
+        # Manejar la actualización de servicios
+        if 'id_servicio' in request.POST:
+            servicio_id = request.POST.get('id_servicio')
+            servicio = get_object_or_404(Servicio, id_servicio=servicio_id)
+
+            # Obtener los nuevos valores desde el POST
+            nuevo_nombre_servicio = request.POST.get('nombre_servicio')
+            nueva_descripcion = request.POST.get('descripcion')
+            nuevo_precio = request.POST.get('precio')
+
+            # Solo actualizar si se proporciona un nuevo valor
+            if nuevo_nombre_servicio:
+                servicio.nombre_servicio = nuevo_nombre_servicio
+
+            if nueva_descripcion:
+                servicio.descripcion = nueva_descripcion
+
+            if nuevo_precio:
+                servicio.precio = nuevo_precio
+
+            servicio.save()
+            messages.success(request, 'El servicio ha sido actualizado.')
+            return redirect('servicioscrud')
+
+        # Manejar la asignación/desasignación de empresas
+        if 'asignar_empresa' in request.POST:
+            servicio_id = request.POST.get('servicio_id')
+            servicio = get_object_or_404(Servicio, id_servicio=servicio_id)
+            empresa_ids = request.POST.getlist('empresas')  # Recoge las empresas seleccionadas
+
+            # Obtener las empresas que ya están asociadas al servicio
+            empresas_asociadas = EmpresaServicio.objects.filter(servicio=servicio)
+
+            # Eliminar las relaciones de empresa-servicio que no están seleccionadas
+            for empresa_servicio in empresas_asociadas:
+                if str(empresa_servicio.empresa.id_empresa) not in empresa_ids:
+                    empresa_servicio.delete()
+
+            # Crear las relaciones de empresa-servicio para las empresas nuevas seleccionadas
+            for empresa_id in empresa_ids:
+                empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+                # Crear la relación solo si no existe ya
+                if not EmpresaServicio.objects.filter(servicio=servicio, empresa=empresa).exists():
+                    EmpresaServicio.objects.create(empresa=empresa, servicio=servicio)
+
+            messages.success(request, 'Las empresas han sido asignadas o desasignadas correctamente al servicio.')
+            return redirect('servicioscrud')
+
+    else:
+        form = ServicioForm()
+
+    # Obtener la lista de empresas disponibles
+    empresas = Empresa.objects.all()
+
+    # Obtener las empresas asociadas a cada servicio
+    for servicio in servicios:
+        servicio.empresas_asociadas = EmpresaServicio.objects.filter(servicio=servicio).values_list('empresa', flat=True)
+
+    return render(request, 'servicios_crud.html', {'servicios': servicios, 'form': form, 'empresas': empresas})
+
+
+
+
+def empresas_crud(request):
+    empresas = Empresa.objects.all()
+    form = EmpresaForm()  # Si estás usando un formulario de Django para crear y actualizar empresas
+
+    # Filtrar según los parámetros de búsqueda
+    nombre_empresa = request.GET.get('nombre_empresa', '')
+
+    if nombre_empresa:
+        empresas = empresas.filter(nombre_empresa__icontains=nombre_empresa)
+
+    if request.method == "POST":
+        # Manejar la eliminación de empresas
+        if 'eliminar' in request.POST:
+            empresa_id = request.POST.get('eliminar')
+            empresa_a_eliminar = get_object_or_404(Empresa, id_empresa=empresa_id)
+            empresa_a_eliminar.delete()
+            messages.error(request, 'La empresa ha sido eliminada.')
+            return redirect('empresascrud')
+
+        # Manejar la creación de una nueva empresa
+        if 'nombre_empresa' in request.POST and 'id_empresa' not in request.POST:
+            nombre_empresa = request.POST.get('nombre_empresa')
+            direccion = request.POST.get('direccion')
+            telefono = request.POST.get('telefono')  # Capturar el teléfono
+            email = request.POST.get('email')  # Capturar el email
+
+            nueva_empresa = Empresa(
+                nombre_empresa=nombre_empresa,
+                direccion=direccion,
+                telefono=telefono,
+                email=email
+            )
+            nueva_empresa.save()
+            messages.success(request, 'La empresa ha sido creada.')
+            return redirect('empresascrud')
+
+        # Manejar la actualización de la empresa
+        if 'id_empresa' in request.POST:
+            empresa_id = request.POST.get('id_empresa')
+            empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+            # Obtener los nuevos valores desde el POST
+            nuevo_nombre_empresa = request.POST.get('nombre_empresa')
+            nueva_direccion = request.POST.get('direccion')
+            nuevo_telefono = request.POST.get('telefono')
+            nuevo_email = request.POST.get('email')
+
+            # Solo actualizar si se proporciona un nuevo valor
+            if nuevo_nombre_empresa:
+                empresa.nombre_empresa = nuevo_nombre_empresa
+            if nueva_direccion:
+                empresa.direccion = nueva_direccion
+            if nuevo_telefono:
+                empresa.telefono = nuevo_telefono
+            if nuevo_email:
+                empresa.email = nuevo_email
+
+            empresa.save()
+            messages.success(request, 'La empresa ha sido actualizada.')
+            return redirect('empresascrud')
+
+    return render(request, 'empresas_crud.html', {'empresas': empresas, 'form': form})
+
+
+
+
+def home_crud(request):
+    return render(request, 'home_crud.html')

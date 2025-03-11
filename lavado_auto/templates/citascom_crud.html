@@ -1,0 +1,74 @@
+{% extends "base_crud.html" %}
+{% block content %}
+{% load custom_tags %}
+<div class="container mt-3">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success
+                {% elif message.tags == 'error' %}alert-danger
+                {% elif message.tags == 'warning' %}alert-warning
+                {% else %}alert-info
+                {% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+<style>.alert {
+    position: relative;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
+
+.alert .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.5rem 0.75rem;
+}</style>
+<h1 class="text-center">CITAS COMPLETAS</h1>
+
+<div class="container mt-4">
+    <h2>Citas Completas</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID de Reserva</th>
+                <th>Opción de Lugar</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Servicio</th>
+                <th>Nombre Completo</th>  
+                <th>Nombre de Usuario</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reserva in reservas %}
+                <tr>
+                    <td>{{ reserva.id_reserva }}</td>
+                    <td>{{ reserva.opcion_lugar }}</td>
+                    <td>{{ reserva.fecha }}</td>
+                    <td>{{ reserva.hora }}</td>
+                    <td>{{ reserva.servicio.nombre_servicio }}</td>
+                    <td>{{ reserva.usuario.nombre_completo }}</td> 
+                    <td>{{ reserva.usuario.nombre_usuario }}</td> 
+                    <td>
+                        <form method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" name="eliminar" value="{{ reserva.id_reserva }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que quieres eliminar esta cita?');">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No tienes reservas.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

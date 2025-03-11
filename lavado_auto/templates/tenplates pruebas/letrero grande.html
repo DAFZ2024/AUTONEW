@@ -1,0 +1,113 @@
+
+<style>
+    @import url(https://fonts.bunny.net/css?family=changa:400,700|hanken-grotesk:400,700);
+
+body {
+	min-height: 100svh;
+	display: grid;
+	place-content: center;
+	font-family: 'Hanken Grotesk', sans-serif;
+  background: black;
+  color: white;
+  overflow: hidden;
+}
+
+.expansion{
+  --clr: rgba(255 255 255 / .25);
+  --clr-1: red;
+  --clr-2: orange;
+  --clr-3: yellow;
+  --clr-4: green;
+  --clr-5: aqua;
+  --clr-6: blue;
+  --clr-7: purple;
+/*  outline: 1px dashed red;*/
+  position: relative;
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+  font-size: 10rem;
+  line-height: 1;
+  color: transparent;
+  background-clip: text; 
+  background-image: linear-gradient(90deg,
+    transparent 10px,
+    var(--clr-1) 10px, 
+    var(--clr-2) 94px, 
+    var(--clr-3) 210px, 
+    var(--clr-4) 322px, 
+    var(--clr-5) 395px, 
+    var(--clr-6) 520px, 
+    var(--clr-7) 597px
+  );
+
+  
+  &::before,
+  &::after{
+    content: '';
+    position: absolute;
+    inset: 0svh 0;
+    animation: expand 1000ms ease-in-out forwards ;
+    z-index: -1;
+    background: 
+      linear-gradient(to bottom, black, transparent, black),
+      linear-gradient(90deg,
+        transparent 10px,
+        var(--clr-1) 10px, 
+        var(--clr-1) 32px,
+        transparent 32px,
+        transparent 94px,
+        var(--clr-2) 94px,
+        var(--clr-2) 120px,
+        transparent 120px, 
+        transparent 210px, 
+        var(--clr-3) 210px, 
+        var(--clr-3) 232px, 
+        transparent 232px, 
+        transparent 320px, 
+        var(--clr-4) 320px, 
+        var(--clr-4) 341px,
+        transparent 341px,
+        transparent 395px,
+        var(--clr-5) 395px, 
+        var(--clr-5) 417px, 
+        transparent 417px,
+        transparent 498px,
+        var(--clr-6) 498px, 
+        var(--clr-6) 520px, 
+        transparent 520px,
+        transparent 597px,
+        var(--clr-7) 597px,
+        var(--clr-7) 619px,
+        transparent 619px
+      );
+    filter: blur(50px);
+  }
+  &::after{
+    filter: blur(2px);
+    opacity: .5;
+  }
+  &:hover::before,
+  &:hover::after{
+    animation: un-expand 1000ms ease-in-out forwards ;
+  }
+}
+@keyframes expand{
+  from{
+    inset: 0svh 0;
+  }to{
+    inset: -30svh 0;
+  }
+}
+@keyframes un-expand{
+  to{
+    inset: 0svh 0;
+  }
+  from{
+    inset: -30svh 0;
+  }
+}
+
+</style>
+
+<p class="expansion">EXPANSE</p>

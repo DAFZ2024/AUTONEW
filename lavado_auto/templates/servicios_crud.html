@@ -1,0 +1,152 @@
+{% extends "base_crud.html" %}
+
+{% block content %}
+{% load custom_tags %}
+<div class="container mt-3">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success
+                {% elif message.tags == 'error' %}alert-danger
+                {% elif message.tags == 'warning' %}alert-warning
+                {% else %}alert-info
+                {% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+<style>
+    .alert {
+        position: relative;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .alert .close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 0.5rem 0.75rem;
+    }
+</style>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+{% load static %}
+<link href="{% static 'estilos/estilos.css' %}" rel="stylesheet" type="text/css">
+
+<h1 class="text-center">NUESTROS SERVICIOS</h1>
+
+<div class="container mt-4">
+    <div class="text-center mb-3">
+        <button id="toggleFormButton" class="btn btn-primary">Crear Nuevo servicio</button>
+    </div>
+    
+    <div id="formContainer" class="form-container" style="max-width: 800px; margin: auto; display: none;">
+        <h3 class="form-title text-center">Crear Nuevo servicio</h3>
+        <form method="POST" class="p-4 rounded">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="nombre_servicio">Nombre Servicio</label>
+                    <input type="text" name="nombre_servicio" class="form-control pastel-input" required>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="descripcion">Descripcion</label>
+                    <input type="text" name="descripcion" class="form-control pastel-input" required>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="precio">Precio</label>
+                    <input type="text" name="precio" class="form-control pastel-input" required>
+                </div>
+
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-dark btn-block">Crear Servicio</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('toggleFormButton').onclick = function() {
+        var formContainer = document.getElementById('formContainer');
+        if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+            formContainer.style.display = 'block';
+            this.textContent = 'Cancelar';  // Cambia el texto del botón
+        } else {
+            formContainer.style.display = 'none';
+            this.textContent = 'Crear Nuevo Servicio';  // Restaura el texto original
+        }
+    };
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<div class="container mt-4">
+    <h2>Mis Servicios</h2>
+    <div class="container mt-4">
+        <h2>Buscar Servicios</h2>
+        <form method="GET" class="form-inline mb-4">
+            <input type="text" name="nombre_servicio" placeholder="Nombre servicio" class="form-control mr-2">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id servicio</th>
+                <th>Nombre servicio</th>
+                <th>Descripcion</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for servicio in servicios %}
+                <tr>
+                    <td>{{ servicio.id_servicio }}</td>
+                    <td>{{ servicio.nombre_servicio }}</td>
+                    <td>{{ servicio.descripcion }}</td>
+                    <td>{{ servicio.precio }}</td>
+                    <td>
+                        <form method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" name="eliminar" value="{{ servicio.id_servicio }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que quieres eliminar este servicio?');">Eliminar</button>
+                        </form>
+                        <button class="btn btn-warning btn-sm" onclick="document.getElementById('edit-{{ servicio.id_servicio }}').style.display='block'">Editar</button>
+                        <button class="btn btn-info btn-sm" onclick="document.getElementById('empresa-{{ servicio.id_servicio }}').style.display='block'">Asignar Empresa</button>
+
+                        <!-- Formulario de Asignar Empresa -->
+                        <div id="empresa-{{ servicio.id_servicio }}" style="display:none; margin-top: 10px;">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="servicio_id" value="{{ servicio.id_servicio }}">
+                                <div class="form-group">
+                                    <label>Selecciona una empresa</label><br>
+                                    {% for empresa in empresas %}
+                                        <input type="checkbox" name="empresas" value="{{ empresa.id_empresa }}"
+                                            {% if empresa.id_empresa in servicio.empresas_asociadas %}checked{% endif %}> {{ empresa.nombre_empresa }}<br>
+                                    {% endfor %}
+                                </div>
+                                <button type="submit" name="asignar_empresa" class="btn btn-success btn-sm">Asignar</button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('empresa-{{ servicio.id_servicio }}').style.display='none'">Cancelar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No hay servicios registrados.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
