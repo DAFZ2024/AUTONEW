@@ -1,74 +1,115 @@
 {% extends "base_crud.html" %}
 {% block content %}
 {% load custom_tags %}
-<div class="container mt-3">
+<div class="container-fluid px-4 mt-4">
+    <!-- Notificaciones -->
     {% if messages %}
         {% for message in messages %}
-            <div class="alert 
+            <div class="alert alert-dismissible fade show
                 {% if message.tags == 'success' %}alert-success
                 {% elif message.tags == 'error' %}alert-danger
                 {% elif message.tags == 'warning' %}alert-warning
-                {% else %}alert-info
-                {% endif %}">
+                {% else %}alert-primary
+                {% endif %}" role="alert">
                 {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endfor %}
     {% endif %}
-</div>
-<style>.alert {
-    position: relative;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1rem;
-    border: 1px solid transparent;
-    border-radius: 0.25rem;
-}
 
-.alert .close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 0.5rem 0.75rem;
-}</style>
-<h1 class="text-center">CITAS COMPLETAS</h1>
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Gestión de Citas Completas</h1>
+    </div>
 
-<div class="container mt-4">
-    <h2>Citas Completas</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID de Reserva</th>
-                <th>Opción de Lugar</th>
-                <th>Fecha</th>
-                <th>Hora</th>
-                <th>Servicio</th>
-                <th>Nombre Completo</th>  
-                <th>Nombre de Usuario</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for reserva in reservas %}
-                <tr>
-                    <td>{{ reserva.id_reserva }}</td>
-                    <td>{{ reserva.opcion_lugar }}</td>
-                    <td>{{ reserva.fecha }}</td>
-                    <td>{{ reserva.hora }}</td>
-                    <td>{{ reserva.servicio.nombre_servicio }}</td>
-                    <td>{{ reserva.usuario.nombre_completo }}</td> 
-                    <td>{{ reserva.usuario.nombre_usuario }}</td> 
-                    <td>
-                        <form method="POST" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" name="eliminar" value="{{ reserva.id_reserva }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que quieres eliminar esta cita?');">Eliminar</button>
-                        </form>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="6">No tienes reservas.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Tarjeta contenedora -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center bg-primary text-white">
+            <h6 class="m-0 font-weight-bold">Listado de Citas</h6>
+            <div>
+                <span class="badge bg-light text-dark">{{ reservas|length }} citas registradas</span>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Lugar</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Servicio</th>
+                            <th>Cliente</th>
+                            <th>Usuario</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reserva in reservas %}
+                            <tr>
+                                <td><span class="badge bg-secondary">#{{ reserva.id_reserva }}</span></td>
+                                <td>{{ reserva.empresa.nombre_empresa }}</td>
+                                <td><span class="text-nowrap">{{ reserva.fecha }}</span></td>
+                                <td>{{ reserva.hora }}</td>
+                                <td>
+                                    {% for servicio in reserva.servicios.all %}
+    <span class="badge bg-info text-dark">{{ servicio.nombre_servicio }}</span>
+{% endfor %}
+                                </td>
+                                <td>{{ reserva.usuario.nombre_completo }}</td>
+                                <td><small class="text-muted">@{{ reserva.usuario.nombre_usuario }}</small></td>
+                                <td>
+                                    <form method="POST" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" name="eliminar" value="{{ reserva.id_reserva }}" 
+                                            class="btn btn-outline-danger btn-sm" 
+                                            onclick="return confirm('¿Estás seguro de eliminar esta cita?');">
+                                            <i class="fas fa-trash-alt"></i> Eliminar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="8" class="text-center py-4">
+                                    <i class="fas fa-calendar-times fa-2x text-muted mb-2"></i>
+                                    <p class="text-muted">No hay citas registradas</p>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Estilos adicionales -->
+<style>
+    .card {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+    
+    .badge {
+        font-weight: 500;
+        padding: 0.35em 0.65em;
+    }
+    
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .text-nowrap {
+        white-space: nowrap;
+    }
+</style>
 {% endblock %}

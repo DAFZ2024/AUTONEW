@@ -8,22 +8,29 @@ from django.db import models
 # Create your models here.
 
 class UsuarioManager(BaseUserManager):
-    def create_user(self, nombre_usuario, correo, contrasena=None, **extra_fields):
+    def create_user(self, nombre_usuario, correo, password=None, **extra_fields):
         if not correo:
-            raise ValueError('El correo debe ser proporcionado')
+            raise ValueError('El usuario debe tener un correo electrónico')
+        if not nombre_usuario:
+            raise ValueError('El usuario debe tener un nombre de usuario')
+        
         correo = self.normalize_email(correo)
         user = self.model(nombre_usuario=nombre_usuario, correo=correo, **extra_fields)
-        user.set_password(contrasena) 
+        user.set_password(password)  # Esto encripta la contraseña automáticamente
         user.save(using=self._db)
         return user
-
-    def create_superuser(self, nombre_usuario, correo, contrasena=None, **extra_fields):
+    
+    def create_superuser(self, nombre_usuario, correo, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-
-        user = self.create_user(nombre_usuario, correo, contrasena, **extra_fields)
-        user.save(using=self._db)  # Agrega esta línea para guardar el superusuario
-        return user
+        extra_fields.setdefault('rol', 'admin')
+        
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+        
+        return self.create_user(nombre_usuario, correo, password, **extra_fields)
 
 class Usuario(AbstractBaseUser, PermissionsMixin):
     id_usuario = models.AutoField(primary_key=True)
@@ -33,19 +40,28 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     correo = models.EmailField(unique=True)
     telefono = models.CharField(max_length=15, blank=True)
     direccion = models.CharField(max_length=255, blank=True)
-    contrasena = models.CharField(max_length=255)
-    last_login = models.DateTimeField(null=True, blank=True)
+    # Removemos el campo contrasena porque AbstractBaseUser ya maneja password
     token_reset = models.CharField(max_length=255, null=True, blank=True)
-    rol = models.CharField(max_length=50, choices=(('cliente', 'Cliente'), ('admin', 'Administrador')), default='cliente')
+    rol = models.CharField(
+        max_length=50, 
+        choices=(('cliente', 'Cliente'), ('admin', 'Administrador')), 
+        default='cliente'
+    )
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
     objects = UsuarioManager()
 
-
     USERNAME_FIELD = 'nombre_usuario'
     REQUIRED_FIELDS = ['correo']
+    
+    def __str__(self):
+        return self.nombre_usuario
+    
+    class Meta:
+        verbose_name = 'Usuario'
+        verbose_name_plural = 'Usuarios'
 
 
 class Servicio(models.Model):

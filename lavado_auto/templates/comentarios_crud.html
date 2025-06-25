@@ -1,10 +1,251 @@
 {% extends "base_crud.html" %}
 {% block content %}
 {% load custom_tags %}
-<div class="container mt-3">
+
+<style>
+/* Estilos modernos para el template */
+.modern-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.modern-alert {
+    position: relative;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    border: none;
+    border-radius: 12px;
+    border-left: 4px solid;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    animation: slideInDown 0.5s ease-out;
+}
+
+.modern-alert.alert-success {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+    border-left-color: #10b981;
+    color: #065f46;
+}
+
+.modern-alert.alert-danger {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%);
+    border-left-color: #ef4444;
+    color: #7f1d1d;
+}
+
+.modern-alert.alert-warning {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%);
+    border-left-color: #f59e0b;
+    color: #78350f;
+}
+
+.modern-alert.alert-info {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
+    border-left-color: #3b82f6;
+    color: #1e3a8a;
+}
+
+.content-section {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.section-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+.modern-table-container {
+    overflow-x: auto;
+    background: white;
+}
+
+.modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.modern-table thead {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+}
+
+.modern-table thead th {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    font-weight: 600;
+    color: white;
+    border: none;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+}
+
+.modern-table tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: all 0.3s ease;
+}
+
+.modern-table tbody tr:hover {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.modern-table td {
+    padding: 1rem 1.5rem;
+    vertical-align: middle;
+    border: none;
+    color: #334155;
+}
+
+.modern-table td:first-child {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.comment-text {
+    max-width: 300px;
+    word-wrap: break-word;
+    line-height: 1.5;
+}
+
+.date-cell {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.user-full-name {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.username {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-style: italic;
+}
+
+.modern-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.modern-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.btn-danger-modern {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.btn-danger-modern:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #64748b;
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .modern-container {
+        padding: 0 15px;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .modern-table {
+        font-size: 0.85rem;
+    }
+    
+    .modern-table thead th,
+    .modern-table td {
+        padding: 0.75rem 1rem;
+    }
+    
+    .comment-text {
+        max-width: 200px;
+    }
+}
+</style>
+
+<div class="modern-container">
+    <!-- Mensajes de alerta modernos -->
     {% if messages %}
         {% for message in messages %}
-            <div class="alert 
+            <div class="modern-alert 
                 {% if message.tags == 'success' %}alert-success
                 {% elif message.tags == 'error' %}alert-danger
                 {% elif message.tags == 'warning' %}alert-warning
@@ -14,56 +255,74 @@
             </div>
         {% endfor %}
     {% endif %}
-</div>
-<style>.alert {
-    position: relative;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1rem;
-    border: 1px solid transparent;
-    border-radius: 0.25rem;
-}
 
-.alert .close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 0.5rem 0.75rem;
-}</style>
-<h1 class="text-center">COMENTARIOS</h1>
-<div class="container mt-4">
-    <h2>Comentarios</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID de mensaje</th>
-                <th>Comentarios</th>
-                <th>Fecha envio</th>
-                <th>Usuario Completo</th>
-                <th>Nombre de Usuario</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for comentario in comentarios %}
-                <tr>
-                    <td>{{ comentario.id_comentario }}</td>
-                    <td>{{ comentario.comentario }}</td>
-                    <td>{{ comentario.fecha }}</td>
-                    <td>{{ comentario.usuario.nombre_completo }}</td>
-                    <td>{{ comentario.usuario.nombre_usuario }}</td>
-                    <td>
-                        <form method="POST" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" name="eliminar" value="{{ comentario.id_comentario }}" class="btn btn-danger btn-sm">Eliminar</button>
-                        </form>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="6">No hay comentarios disponibles.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Header de la página -->
+    <div class="page-header">
+        <h1 class="page-title">💬 Gestión de Comentarios</h1>
+    </div>
+
+    <!-- Sección principal de contenido -->
+    <div class="content-section">
+        <div class="section-header">
+            <h2 class="section-title">Lista de Comentarios</h2>
+        </div>
+        
+        <div class="modern-table-container">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Comentario</th>
+                        <th>Fecha de Envío</th>
+                        <th>Usuario</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for comentario in comentarios %}
+                        <tr>
+                            <td>#{{ comentario.id_comentario }}</td>
+                            <td>
+                                <div class="comment-text">
+                                    {{ comentario.comentario }}
+                                </div>
+                            </td>
+                            <td class="date-cell">
+                                {{ comentario.fecha|date:"d/m/Y H:i" }}
+                            </td>
+                            <td>
+                                <div class="user-info">
+                                    <span class="user-full-name">{{ comentario.usuario.nombre_completo }}</span>
+                                    <span class="username">@{{ comentario.usuario.nombre_usuario }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <form method="POST" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" 
+                                            name="eliminar" 
+                                            value="{{ comentario.id_comentario }}" 
+                                            class="modern-btn btn-danger-modern"
+                                            onclick="return confirm('¿Estás seguro de que deseas eliminar este comentario?')">
+                                        🗑️ Eliminar
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">📝</div>
+                                    <div class="empty-state-text">No hay comentarios disponibles</div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+
 {% endblock %}

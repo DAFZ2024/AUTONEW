@@ -1,205 +1,691 @@
 {% extends "base_crud.html" %}
 {% block content %}
 {% load custom_tags %}
-<div class="container mt-3">
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert 
-                {% if message.tags == 'success' %}alert-success
-                {% elif message.tags == 'error' %}alert-danger
-                {% elif message.tags == 'warning' %}alert-warning
-                {% else %}alert-info
-                {% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-</div>
-<style>.alert {
-    position: relative;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1rem;
-    border: 1px solid transparent;
-    border-radius: 0.25rem;
-}
 
-.alert .close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 0.5rem 0.75rem;
-}</style>
+<head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     {% load static %}
-    <!-- Estilo de plantilla -->
-    <link href="{% static "estilos/estilos.css" %}" rel="stylesheet" type="text/css" >
-<h1 class="text-center">NUESTROS USUARIOS</h1>
-
-<div class="container mt-4">
-    <div class="text-center mb-3">
-        <button id="toggleFormButton" class="btn btn-primary">Crear Nuevo Usuario</button>
-    </div>
+    <link href="{% static "estilos/estilos.css" %}" rel="stylesheet" type="text/css">
     
-    <div id="formContainer" class="form-container" style="max-width: 800px; margin: auto; display: none;">
-        <h3 class="form-title text-center">Crear Nuevo Usuario</h3>
-        <form method="POST" class="p-4 rounded">
-            {% csrf_token %}
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label for="nombre_completo">Nombre Completo</label>
-                    <input type="text" name="nombre_completo" class="form-control pastel-input" required>
-                </div>
-
-                <div class="form-group col-md-6">
-                    <label for="nombre_usuario">Nombre Usuario</label>
-                    <input type="text" name="nombre_usuario" class="form-control pastel-input" required>
-                </div>
-
-                <div class="form-group col-md-6">
-                    <label for="correo">Correo</label>
-                    <input type="email" name="correo" class="form-control pastel-input" required>
-                </div>
-
-                <div class="form-group col-md-6">
-                    <label for="telefono">Teléfono</label>
-                    <input type="text" name="telefono" class="form-control pastel-input" required>
-                </div>
-
-                <div class="form-group col-md-6">
-                    <label for="direccion">Dirección</label>
-                    <input type="text" name="direccion" class="form-control pastel-input" required>
-                </div>
-
-                <div class="form-group col-md-6">
-                    <label for="rol">Rol</label>
-                    <select name="rol" class="form-control pastel-input" required>
-                        <option value="admin">Admin</option>
-                        <option value="cliente">Cliente</option>
-                    </select>
-                </div>
-
-                <div class="form-group col-md-6">
-                    <label for="contrasena1">Contraseña</label>
-                    <input type="password" name="contrasena1" class="form-control pastel-input" required>
-                </div>
-
-                <div class="form-group col-md-6">
-                    <label for="contrasena2">Confirmar Contraseña</label>
-                    <input type="password" name="contrasena2" class="form-control pastel-input" required>
-                </div>
-            </div>
-            <div class="text-center">
-                <button type="submit" class="btn btn-dark btn-block">Crear Usuario</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<script>
-    document.getElementById('toggleFormButton').onclick = function() {
-        var formContainer = document.getElementById('formContainer');
-        if (formContainer.style.display === 'none' || formContainer.style.display === '') {
-            formContainer.style.display = 'block';
-            this.textContent = 'Cancelar';  // Cambia el texto del botón
-        } else {
-            formContainer.style.display = 'none';
-            this.textContent = 'Crear Nuevo Usuario';  // Restaura el texto original
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            --danger-gradient: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+            --card-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            --hover-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            --border-radius: 12px;
         }
-    };
-</script>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-<div class="container mt-4">
-    <h2>Mis Usuarios</h2>
-    <div class="container mt-4">
-        <h2>Buscar Usuarios</h2>
-        <form method="GET" class="form-inline mb-4">
-            <input type="text" name="nombre_usuario" placeholder="Nombre Usuario" class="form-control mr-2">
-            <input type="email" name="correo" placeholder="Correo" class="form-control mr-2">
-            <input type="text" name="telefono" placeholder="Teléfono" class="form-control mr-2">
-            <select name="rol" class="form-control mr-2">
-                <option value="">Rol</option>
-                <option value="admin">Admin</option>
-                <option value="cliente">Cliente</option>
-            </select>
-            <button type="submit" class="btn btn-primary">Buscar</button>
-        </form>
-    </div>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Nombre completo</th>
-                <th>Nombre usuario</th>
-                <th>Correo</th>
-                <th>Telefono</th>
-                <th>Dirección</th>
-                <th>Rol</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for usuario in usuarios %}
-                <tr>
-                    <td>{{ usuario.nombre_completo }}</td>
-                    <td>{{ usuario.nombre_usuario }}</td>
-                    <td>{{ usuario.correo }}</td>
-                    <td>{{ usuario.telefono }}</td>
-                    <td>{{ usuario.direccion }}</td>
-                    <td>{{ usuario.rol }}</td>
-                    <td>
-                        <form method="POST" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" name="eliminar" value="{{ usuario.id_usuario }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que quieres eliminar este usuario?');">Eliminar</button>
-                        </form>
-                        <button class="btn btn-warning btn-sm" onclick="document.getElementById('edit-{{ usuario.id_usuario }}').style.display='block'">Editar</button>
+        .page-header {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
 
-                        <div id="edit-{{ usuario.id_usuario }}" style="display:none; margin-top: 10px;">
-                            <form method="POST">
-                                {% csrf_token %}
-                                <div class="form-group">
-                                    <label for="nombre_completo">Nombre Completo</label>
-                                    <input type="text" name="nombre_completo" value="{{ usuario.nombre_completo }}" class="form-control" required>
-                        
-                                    <label for="nombre_usuario">Nombre Usuario</label>
-                                    <input type="text" name="nombre_usuario" value="{{ usuario.nombre_usuario }}" class="form-control" required>
-                        
-                                    <label for="correo">Correo</label>
-                                    <input type="email" name="correo" value="{{ usuario.correo }}" class="form-control" required>
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
 
-                                    <label for="telefono">Telefono</label>
-                                    <input type="text" name="telefono" value="{{ usuario.telefono }}" class="form-control" required>
-                        
-                                    <label for="direccion">Dirección</label>
-                                    <input type="text" name="direccion" value="{{ usuario.direccion }}" class="form-control" required>
-                        
-                                    <label for="rol">Rol</label>
-                                    <select name="rol" class="form-control" required>
-                                        <option value="admin" {% if usuario.rol == 'admin' %}selected{% endif %}>Admin</option>
-                                        <option value="cliente" {% if usuario.rol == 'cliente' %}selected{% endif %}>Cliente</option>
-                                    </select>
-                                    <label for="contrasena11">Nueva Contraseña (dejar en blanco si no desea cambiarla)</label>
-                                    <input type="password" name="contrasena11" class="form-control">
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            animation: fadeInUp 0.8s ease-out;
+        }
 
-                                    <label for="contrasena11">Confirmar Nueva Contraseña</label>
-                                    <input type="password" name="contrasena22" class="form-control">
-                                </div>
-                                <input type="hidden" name="id_usuario" value="{{ usuario.id_usuario }}">
-                                <button type="submit" class="btn btn-success btn-sm">Actualizar</button>
-                                <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('edit-{{ usuario.id_usuario }}').style.display='none'">Cancelar</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="6">No hay usuarios registrados.</td>
-                </tr>
+        .alert {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.5rem;
+            animation: slideInDown 0.5s ease-out;
+        }
+
+        .alert-success { background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); }
+        .alert-danger { background: linear-gradient(135deg, #f8d7da 0%, #f1b0b7 100%); }
+        .alert-warning { background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); }
+        .alert-info { background: linear-gradient(135deg, #d1ecf1 0%, #b8daff 100%); }
+
+        .form-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .form-title {
+            color: #2d3748;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+
+        .pastel-input, .form-control {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            margin-bottom: 0.5rem;
+        }
+
+        .pastel-input:focus, .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+            outline: none;
+        }
+
+        .btn {
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-dark {
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            box-shadow: 0 4px 15px rgba(45, 55, 72, 0.3);
+        }
+
+        .btn-dark:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(45, 55, 72, 0.4);
+        }
+
+        .btn-danger {
+            background: var(--danger-gradient);
+            box-shadow: 0 4px 15px rgba(253, 121, 168, 0.3);
+        }
+
+        .btn-warning {
+            background: var(--warning-gradient);
+            color: #2d3748;
+            box-shadow: 0 4px 15px rgba(255, 234, 167, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success-gradient);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+            color: #4a5568;
+            box-shadow: 0 4px 15px rgba(226, 232, 240, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .search-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            animation: fadeInUp 0.7s ease-out;
+        }
+
+        .search-title {
+            color: #2d3748;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .table-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .table {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 1rem;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table tbody tr:hover {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            transform: scale(1.01);
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            border: none;
+        }
+
+        .edit-form {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-top: 1rem;
+            border: 1px solid #e2e8f0;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-gradient);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .form-inline .form-control {
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 500px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .form-inline {
+                flex-direction: column;
+            }
+            
+            .form-inline .form-control {
+                margin-right: 0;
+                margin-bottom: 1rem;
+                width: 100%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .table-responsive {
+                border-radius: var(--border-radius);
+            }
+        }
+
+        .icon-user {
+            color: #667eea;
+            margin-right: 0.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mensajes de estado -->
+    <div class="container mt-3">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert 
+                    {% if message.tags == 'success' %}alert-success
+                    {% elif message.tags == 'error' %}alert-danger
+                    {% elif message.tags == 'warning' %}alert-warning
+                    {% else %}alert-info
+                    {% endif %}">
+                    <i class="fas fa-check-circle me-2"></i>
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span>&times;</span>
+                    </button>
+                </div>
             {% endfor %}
-        </tbody>
-    </table>
+        {% endif %}
+    </div>
+
+    <!-- Header de la página -->
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-users icon-user"></i>
+                GESTIÓN DE USUARIOS
+            </h1>
+            <p class="text-muted mt-2">Administra y controla todos los usuarios del sistema</p>
+        </div>
+
+        <!-- Estadísticas rápidas -->
+        <div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-number">{{ total_usuarios }}</div>
+        <div class="stat-label">Total Usuarios</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ total_admins }}</div>
+        <div class="stat-label">Administradores</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ total_clientes }}</div>
+        <div class="stat-label">Clientes</div>
+    </div>
 </div>
+
+        <!-- Botón para crear usuario -->
+        <div class="text-center mb-4">
+            <button id="toggleFormButton" class="btn btn-primary">
+                <i class="fas fa-user-plus me-2"></i>
+                Crear Nuevo Usuario
+            </button>
+        </div>
+        
+        <!-- Formulario de creación -->
+        <div id="formContainer" class="form-container" style="display: none;">
+            <h3 class="form-title text-center">
+                <i class="fas fa-user-plus me-2"></i>
+                Crear Nuevo Usuario
+            </h3>
+            <form method="POST" class="p-2">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="nombre_completo">
+                            <i class="fas fa-user me-1"></i>
+                            Nombre Completo
+                        </label>
+                        <input type="text" name="nombre_completo" class="form-control pastel-input" required>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="nombre_usuario">
+                            <i class="fas fa-at me-1"></i>
+                            Nombre Usuario
+                        </label>
+                        <input type="text" name="nombre_usuario" class="form-control pastel-input" required>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="correo">
+                            <i class="fas fa-envelope me-1"></i>
+                            Correo
+                        </label>
+                        <input type="email" name="correo" class="form-control pastel-input" required>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="telefono">
+                            <i class="fas fa-phone me-1"></i>
+                            Teléfono
+                        </label>
+                        <input type="text" name="telefono" class="form-control pastel-input" required>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="direccion">
+                            <i class="fas fa-map-marker-alt me-1"></i>
+                            Dirección
+                        </label>
+                        <input type="text" name="direccion" class="form-control pastel-input" required>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="rol">
+                            <i class="fas fa-user-tag me-1"></i>
+                            Rol
+                        </label>
+                        <select name="rol" class="form-control pastel-input" required>
+                            <option value="admin">Admin</option>
+                            <option value="cliente">Cliente</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="contrasena1">
+                            <i class="fas fa-lock me-1"></i>
+                            Contraseña
+                        </label>
+                        <input type="password" name="contrasena1" class="form-control pastel-input" required>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="contrasena2">
+                            <i class="fas fa-lock me-1"></i>
+                            Confirmar Contraseña
+                        </label>
+                        <input type="password" name="contrasena2" class="form-control pastel-input" required>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-dark btn-block">
+                        <i class="fas fa-save me-2"></i>
+                        Crear Usuario
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sección de búsqueda -->
+        <div class="search-section">
+            <h3 class="search-title">
+                <i class="fas fa-search"></i>
+                Buscar Usuarios
+            </h3>
+            <form method="GET" class="form-inline">
+                <input type="text" name="nombre_usuario" placeholder="Nombre Usuario" class="form-control">
+                <input type="email" name="correo" placeholder="Correo" class="form-control">
+                <input type="text" name="telefono" placeholder="Teléfono" class="form-control">
+                <select name="rol" class="form-control">
+                    <option value="">Todos los Roles</option>
+                    <option value="admin">Admin</option>
+                    <option value="cliente">Cliente</option>
+                </select>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search me-1"></i>
+                    Buscar
+                </button>
+            </form>
+        </div>
+
+        <!-- Tabla de usuarios -->
+        <div class="table-section">
+            <h3 class="mb-4">
+                <i class="fas fa-list me-2"></i>
+                Lista de Usuarios
+            </h3>
+            
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-user me-1"></i>Nombre Completo</th>
+                            <th><i class="fas fa-at me-1"></i>Usuario</th>
+                            <th><i class="fas fa-envelope me-1"></i>Correo</th>
+                            <th><i class="fas fa-phone me-1"></i>Teléfono</th>
+                            <th><i class="fas fa-map-marker-alt me-1"></i>Dirección</th>
+                            <th><i class="fas fa-user-tag me-1"></i>Rol</th>
+                            <th><i class="fas fa-cogs me-1"></i>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usuario in usuarios %}
+                            <tr>
+                                <td><strong>{{ usuario.nombre_completo }}</strong></td>
+                                <td>{{ usuario.nombre_usuario }}</td>
+                                <td>{{ usuario.correo }}</td>
+                                <td>{{ usuario.telefono }}</td>
+                                <td>{{ usuario.direccion }}</td>
+                                <td>
+                                    <span class="badge badge-{% if usuario.rol == 'admin' %}primary{% else %}success{% endif %}">
+                                        {{ usuario.rol|title }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <form method="POST" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" name="eliminar" value="{{ usuario.id_usuario }}" 
+                                                    class="btn btn-danger btn-sm" 
+                                                    onclick="return confirm('¿Estás seguro de que quieres eliminar este usuario?');">
+                                                <i class="fas fa-trash me-1"></i>Eliminar
+                                            </button>
+                                        </form>
+                                        <button class="btn btn-warning btn-sm" 
+                                                onclick="document.getElementById('edit-{{ usuario.id_usuario }}').style.display='block'">
+                                            <i class="fas fa-edit me-1"></i>Editar
+                                        </button>
+                                    </div>
+
+                                    <div id="edit-{{ usuario.id_usuario }}" class="edit-form" style="display:none;">
+                                        <h5 class="mb-3">
+                                            <i class="fas fa-user-edit me-2"></i>
+                                            Editar Usuario
+                                        </h5>
+                                        <form method="POST">
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <label for="nombre_completo">Nombre Completo</label>
+                                                <input type="text" name="nombre_completo" value="{{ usuario.nombre_completo }}" class="form-control" required>
+                                    
+                                                <label for="nombre_usuario">Nombre Usuario</label>
+                                                <input type="text" name="nombre_usuario" value="{{ usuario.nombre_usuario }}" class="form-control" required>
+                                    
+                                                <label for="correo">Correo</label>
+                                                <input type="email" name="correo" value="{{ usuario.correo }}" class="form-control" required>
+
+                                                <label for="telefono">Telefono</label>
+                                                <input type="text" name="telefono" value="{{ usuario.telefono }}" class="form-control" required>
+                                    
+                                                <label for="direccion">Dirección</label>
+                                                <input type="text" name="direccion" value="{{ usuario.direccion }}" class="form-control" required>
+                                    
+                                                <label for="rol">Rol</label>
+                                                <select name="rol" class="form-control" required>
+                                                    <option value="admin" {% if usuario.rol == 'admin' %}selected{% endif %}>Admin</option>
+                                                    <option value="cliente" {% if usuario.rol == 'cliente' %}selected{% endif %}>Cliente</option>
+                                                </select>
+                                                
+                                                <label for="contrasena11">Nueva Contraseña (dejar en blanco si no desea cambiarla)</label>
+                                                <input type="password" name="contrasena11" class="form-control">
+
+                                                <label for="contrasena22">Confirmar Nueva Contraseña</label>
+                                                <input type="password" name="contrasena22" class="form-control">
+                                            </div>
+                                            <input type="hidden" name="id_usuario" value="{{ usuario.id_usuario }}">
+                                            <div class="action-buttons mt-3">
+                                                <button type="submit" class="btn btn-success btn-sm">
+                                                    <i class="fas fa-save me-1"></i>Actualizar
+                                                </button>
+                                                <button type="button" class="btn btn-secondary btn-sm" 
+                                                        onclick="document.getElementById('edit-{{ usuario.id_usuario }}').style.display='none'">
+                                                    <i class="fas fa-times me-1"></i>Cancelar
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty-state">
+                                        <i class="fas fa-users"></i>
+                                        <h4>No hay usuarios registrados</h4>
+                                        <p>Comienza creando tu primer usuario</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('toggleFormButton').onclick = function() {
+            var formContainer = document.getElementById('formContainer');
+            if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+                formContainer.style.display = 'block';
+                this.innerHTML = '<i class="fas fa-times me-2"></i>Cancelar';
+            } else {
+                formContainer.style.display = 'none';
+                this.innerHTML = '<i class="fas fa-user-plus me-2"></i>Crear Nuevo Usuario';
+            }
+        };
+
+        // Animación suave para formularios de edición
+        document.addEventListener('DOMContentLoaded', function() {
+            const editButtons = document.querySelectorAll('[onclick*="edit-"]');
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    setTimeout(() => {
+                        const editForm = button.nextElementSibling;
+                        if (editForm && editForm.style.display === 'block') {
+                            editForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }
+                    }, 100);
+                });
+            });
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
 {% endblock content %}

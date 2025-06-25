@@ -2,69 +2,627 @@
 {% load static %}
 {% block content %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 {% load custom_tags %}
-<div class="container mt-3">
+<div class="notifications-container">
     {% if messages %}
         {% for message in messages %}
-            <div class="alert 
-                {% if message.tags == 'success' %}alert-success
-                {% elif message.tags == 'error' %}alert-danger
-                {% elif message.tags == 'warning' %}alert-warning
-                {% else %}alert-info
+            <div class="notification-modern 
+                {% if message.tags == 'success' %}notification-success
+                {% elif message.tags == 'error' %}notification-error
+                {% elif message.tags == 'warning' %}notification-warning
+                {% else %}notification-info
                 {% endif %}">
-                {{ message }}
+                <div class="notification-content">
+                    <div class="notification-icon">
+                        {% if message.tags == 'success' %}✓
+                        {% elif message.tags == 'error' %}✗
+                        {% elif message.tags == 'warning' %}⚠
+                        {% else %}ℹ
+                        {% endif %}
+                    </div>
+                    <span class="notification-text">{{ message }}</span>
+                </div>
+                <button class="notification-dismiss" onclick="this.parentElement.remove()">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <path d="M13 1L1 13M1 1L13 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
             </div>
         {% endfor %}
     {% endif %}
 </div>
-<style>.alert {
-    position: relative;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1rem;
-    border: 1px solid transparent;
-    border-radius: 0.25rem;
-}
-
-.alert .close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 0.5rem 0.75rem;
-}</style>
-<main class="container">
-    <div class="columns is-centered mt-5">
-        <div class="column is-half">
-            <div class="box">
-                <h2 class="title has-text-centered mb-4">Deja tu comentario</h2>
-                {% if user.is_authenticated %}
-                    <form action="" method="POST">
-                        {% csrf_token %}
-                        <div class="field">
-                            <label class="label">Comentario</label>
-                            <div class="control">
-                                {{ form.as_p|safe }} <!-- Asegúrate de que los campos del formulario sean compatibles con Bulma -->
-                            </div>
-                        </div>
-                        <div class="field">
-                            <div class="control">
-                                <button type="submit" class="button is-primary is-fullwidth">Enviar Comentario</button>
-                            </div>
-                        </div>
-                    </form>
-                {% else %}
-                    <p class="has-text-centered">Debes estar <a href="{% url 'login' %}">logueado</a> para dejar un comentario.</p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</main>
 
 <style>
-    .box {
-        padding: 2rem;
+    :root {
+        --primary-gradient: linear-gradient(135deg, #7F53AC 0%, #647DEE 100%);
+        --surface-dark: #23272F;
+        --surface-lighter: #2D3142;
+        --border-subtle: rgba(201, 182, 228, 0.15);
+        --text-primary: #F4F4F5;
+        --text-secondary: #A1A1AA;
+        --text-muted: #7C7C8A;
+        --accent-glow: rgba(127, 83, 172, 0.18);
+        --shadow-soft: 0 1px 3px 0 rgba(127, 83, 172, 0.08), 0 1px 2px 0 rgba(100, 125, 222, 0.06);
+        --shadow-medium: 0 4px 6px -1px rgba(127, 83, 172, 0.10), 0 2px 4px -1px rgba(100, 125, 222, 0.08);
+        --shadow-large: 0 10px 15px -3px rgba(127, 83, 172, 0.12), 0 4px 6px -2px rgba(100, 125, 222, 0.10);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: linear-gradient(135deg, #0c2331 0%, #1a3a4a 100%);
+        min-height: 100vh;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--text-primary);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        padding-top: 30px;
+    }
+
+    /* Notifications */
+    .notifications-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1100;
+        max-width: 400px;
+        width: 100%;
+    }
+
+    .notification-modern {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        margin-bottom: 12px;
+        border-radius: 12px;
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-subtle);
+        box-shadow: var(--shadow-medium);
+        animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: all 0.3s ease;
+    }
+
+    .notification-modern:hover {
+        transform: translateX(-4px);
+        box-shadow: var(--shadow-large);
+    }
+
+    .notification-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+    }
+
+    .notification-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    .notification-success {
+        background: rgba(61, 213, 152, 0.12);
+        border-color: rgba(61, 213, 152, 0.22);
+        color: #3DD598;
+    }
+
+    .notification-success .notification-icon {
+        background: rgba(61, 213, 152, 0.18);
+        color: #3DD598;
+    }
+
+    .notification-error {
+        background: rgba(255, 107, 107, 0.12);
+        border-color: rgba(255, 107, 107, 0.22);
+        color: #FF6B6B;
+    }
+
+    .notification-error .notification-icon {
+        background: rgba(255, 107, 107, 0.18);
+        color: #FF6B6B;
+    }
+
+    .notification-warning {
+        background: rgba(255, 209, 102, 0.12);
+        border-color: rgba(255, 209, 102, 0.22);
+        color: #FFD166;
+    }
+
+    .notification-warning .notification-icon {
+        background: rgba(255, 209, 102, 0.18);
+        color: #FFD166;
+    }
+
+    .notification-info {
+        background: rgba(91, 192, 235, 0.12);
+        border-color: rgba(91, 192, 235, 0.22);
+        color: #5BC0EB;
+    }
+
+    .notification-info .notification-icon {
+        background: rgba(91, 192, 235, 0.18);
+        color: #5BC0EB;
+    }
+
+    .notification-dismiss {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .notification-dismiss:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+    }
+
+    /* Main Layout */
+    .main-wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        position: relative;
+    }
+
+    .form-container {
+        width: 100%;
+        max-width: 480px;
+        position: relative;
+    }
+
+    /* Card Design */
+    .comment-card {
+        background: var(--surface-dark);
+        backdrop-filter: blur(40px);
+        border: 1px solid var(--border-subtle);
+        border-radius: 24px;
+        padding: 48px 40px;
+        box-shadow: var(--shadow-large);
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .comment-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: var(--primary-gradient);
+        opacity: 0.8;
+    }
+
+    .comment-card::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+        opacity: 0.3;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    /* Header */
+    .form-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .form-title {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        margin-bottom: 8px;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.2;
+    }
+
+    .form-subtitle {
+        color: var(--text-secondary);
+        font-size: 16px;
+        font-weight: 400;
+    }
+
+    /* Form Elements */
+    .form-group {
+        margin-bottom: 24px;
+        position: relative;
+    }
+
+    .form-label {
+        display: block;
+        color: var(--text-primary);
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        letter-spacing: 0.025em;
+    }
+
+    .form-input {
+        width: 100%;
+        background: var(--surface-lighter);
+        border: 1px solid var(--border-subtle);
+        border-radius: 12px;
+        padding: 16px 20px;
+        font-size: 16px;
+        font-weight: 400;
+        color: var(--text-primary);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        backdrop-filter: blur(10px);
+        resize: vertical;
+        min-height: 120px;
+        font-family: inherit;
+        line-height: 1.5;
+    }
+
+    .form-input::placeholder {
+        color: var(--text-muted);
+        font-weight: 400;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #3ecf8e;
+        background: rgba(30, 41, 59, 0.95);
+        box-shadow: 
+            0 0 0 3px rgba(62, 207, 142, 0.1),
+            var(--shadow-medium);
+        transform: translateY(-1px);
+    }
+
+    .form-input:focus::placeholder {
+        opacity: 0.7;
+        transform: translateY(-2px);
+    }
+
+    /* Submit Button */
+    .submit-button {
+        width: 100%;
+        background: var(--primary-gradient);
+        border: none;
+        border-radius: 12px;
+        padding: 16px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 
+            var(--shadow-medium),
+            0 0 0 1px rgba(255, 255, 255, 0.05);
+        position: relative;
+        overflow: hidden;
+        letter-spacing: 0.025em;
+    }
+
+    .submit-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.6s ease;
+    }
+
+    .submit-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 
+            0 8px 25px -5px rgba(62, 207, 142, 0.4),
+            0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .submit-button:hover::before {
+        left: 100%;
+    }
+
+    .submit-button:active {
+        transform: translateY(-1px);
+    }
+
+    /* Login Message */
+    .login-prompt {
+        text-align: center;
+        padding: 40px 32px;
+        border: 2px dashed var(--border-subtle);
+        border-radius: 16px;
+        background: rgba(15, 23, 42, 0.5);
+    }
+
+    .login-icon {
+        width: 48px;
+        height: 48px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        opacity: 0.9;
+    }
+
+    .login-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+    }
+
+    .login-text {
+        color: var(--text-secondary);
+        margin-bottom: 24px;
+        line-height: 1.6;
+    }
+
+    .login-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        background: var(--surface-lighter);
+        color: var(--text-primary);
+        text-decoration: none;
         border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: 1px solid var(--border-subtle);
+    }
+
+    .login-link:hover {
+        background: var(--primary-gradient);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-medium);
+        color: white !important;
+    }
+
+    /* New styles for modern form */
+    .modern-form .input-wrapper {
+        background: var(--surface-lighter);
+        border-radius: 14px;
+        padding: 18px 22px 10px 22px;
+        box-shadow: 0 2px 12px 0 rgba(127, 83, 172, 0.07);
+        border: 1.5px solid var(--border-subtle);
+        margin-bottom: 24px;
+        transition: border 0.3s;
+    }
+    .modern-form .input-wrapper:focus-within {
+        border: 1.5px solid #7F53AC;
+        box-shadow: 0 0 0 2px #7F53AC33;
+    }
+    .modern-form label.form-label {
+        font-size: 15px;
+        font-weight: 600;
+        color: #7F53AC;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        letter-spacing: 0.01em;
+    }
+    .modern-form textarea.form-input {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding-left: 0;
+        padding-right: 0;
+        min-height: 100px;
+        color: var(--text-primary);
+        font-size: 16px;
+        resize: vertical;
+    }
+    .modern-form textarea.form-input:focus {
+        outline: none;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(100px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 640px) {
+        .notifications-container {
+            top: 10px;
+            right: 10px;
+            left: 10px;
+            max-width: none;
+        }
+
+        .main-wrapper {
+            padding: 20px 16px;
+        }
+
+        .comment-card {
+            padding: 32px 24px;
+            border-radius: 20px;
+        }
+
+        .form-title {
+            font-size: 24px;
+        }
+
+        .form-input {
+            padding: 14px 16px;
+            font-size: 15px;
+        }
+
+        .submit-button {
+            padding: 14px 20px;
+            font-size: 15px;
+        }
+
+        .login-prompt {
+            padding: 32px 24px;
+        }
+    }
+
+    /* Accessibility */
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+
+    /* Focus visible for keyboard navigation */
+    .submit-button:focus-visible,
+    .form-input:focus-visible,
+    .login-link:focus-visible,
+    .notification-dismiss:focus-visible {
+        outline: 2px solid #3ecf8e;
+        outline-offset: 2px;
+    }
+
+    /* Dark mode enhancements */
+    @media (prefers-color-scheme: dark) {
+        .comment-card {
+            background: rgba(15, 23, 42, 0.98);
+        }
     }
 </style>
+
+<div class="main-wrapper">
+    <div class="form-container">
+        <div class="comment-card">
+            <div class="form-header">
+                <h1 class="form-title">Comparte tu opinión</h1>
+                <p class="form-subtitle">Tu comentario es importante para nosotros</p>
+            </div>
+
+            {% if user.is_authenticated %}
+                <form method="POST" action="" class="modern-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="input-wrapper">
+                            <label class="form-label" for="comment">
+                                <svg width="20" height="20" fill="none" style="vertical-align: middle; margin-right: 8px;">
+                                    <circle cx="10" cy="10" r="9" stroke="#7F53AC" stroke-width="2"/>
+                                    <path d="M6 10h8M10 6v8" stroke="#7F53AC" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                Tu comentario
+                            </label>
+                            {{ form.as_p|safe }}
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-button">
+                        <span style="vertical-align: middle; margin-right: 8px;">
+                            <svg width="18" height="18" fill="none" style="vertical-align: middle;">
+                                <path d="M2 9l7 7 7-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M9 2v13" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        Publicar comentario
+                    </button>
+                </form>
+            {% else %}
+                <div class="login-prompt">
+                    <div class="login-icon">👤</div>
+                    <h2 class="login-title">Inicia sesión</h2>
+                    <p class="login-text">Para compartir tu opinión, necesitas estar autenticado en el sistema.</p>
+                    <a href="{% url 'login' %}" class="login-link">
+                        <span>Acceder</span>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-hide notifications after 5 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    const notifications = document.querySelectorAll('.notification-modern');
+    notifications.forEach(notification => {
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100px)';
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, 5000);
+    });
+});
+
+// Form enhancement
+document.addEventListener('DOMContentLoaded', function() {
+    const textarea = document.querySelector('textarea');
+    if (textarea) {
+        // Add classes to Django form elements
+        textarea.classList.add('form-input');
+        
+        // Auto-resize textarea
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.max(this.scrollHeight, 120) + 'px';
+        });
+        
+        // Add placeholder if not present
+        if (!textarea.placeholder) {
+            textarea.placeholder = 'Escribe tu comentario aquí...';
+        }
+    }
+    
+    // Add label class to Django labels
+    const labels = document.querySelectorAll('label');
+    labels.forEach(label => {
+        label.classList.add('form-label');
+    });
+});
+</script>
+
 {% endblock %}

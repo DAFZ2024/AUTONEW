@@ -1,65 +1,382 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<!-- Inicio Page Header  -->
-<div class="page-header">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h2>Servicios</h2>
-            </div>
-            <div class="col-12">
-                <a href="">Home</a>
-                <a href="">Servicios</a>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Fin Page Header  -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios | AutoNew</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 
-<style>
-    .service-card {
-        transition: transform 0.3s;
-    }
-
-    .service-card:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .service-title {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-top: 10px;
-    }
-
-    .service-description {
-        color: #555;
-    }
-</style>
-</head>
-
-<body>
-    <img src="{% static 'img/carropng1.png' %}" class="moving-image" alt="Descripción de la imagen">
     <style>
-        .moving-image {
-            position: fixed; /* Fija la imagen en la pantalla */
-            top: 15%; /* Centra verticalmente */
-            left: -400px; /* Comienza en el lado izquierdo */
-            width: 400px; /* Ajusta el tamaño según sea necesario */
-            transform: translateY(-50%); /* Ajusta para centrar verticalmente */
-            transition: left 0.1s; /* Transición suave al cambiar la posición */
+        :root {
+            --primary-dark: #0c2331;
+            --secondary-dark: #1a3a4a;
+            --tertiary-dark: #2c4a5a;
+            --accent-gold: #ffd700;
+            --accent-gold-dark: #e6c200;
+            --accent-light-blue: #4a90a4;
+            --accent-blue-light: #6ba4b8;
+            --text-light: #ffffff;
+            --text-muted: #b8c5d1;
+            --text-gold: #f4e976;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-bg-hover: rgba(255, 255, 255, 0.12);
+            --card-dark: rgba(26, 58, 74, 0.15);
+            --card-dark-hover: rgba(26, 58, 74, 0.25);
+            --shadow-light: rgba(255, 215, 0, 0.2);
+            --shadow-dark: rgba(12, 35, 49, 0.4);
+            --border-subtle: rgba(255, 215, 0, 0.1);
+            --border-active: rgba(255, 215, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 50%, var(--tertiary-dark) 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding-top:60px;
+        }
+        
+        /* Partículas de fondo animadas */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 215, 0, 0.4);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
+        }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+            padding: 80px 0;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 3px solid var(--accent-gold);
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z" fill="rgba(255,215,0,0.08)"/></svg>') no-repeat bottom;
+            background-size: cover;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .page-header h2 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--text-light), var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: slideInDown 1s ease-out;
+            text-shadow: 2px 2px 4px var(--shadow-dark);
+        }
+
+        .breadcrumb {
+            background: transparent !important;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            align-items: center;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .breadcrumb a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--accent-gold);
+        }
+
+        .breadcrumb::after {
+            content: '>';
+            color: var(--accent-gold);
+            font-weight: bold;
+        }
+
+        /* Sección de características */
+        .feature {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .feature::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+        }
+
+        .feature .text-center h1 {
+            color: var(--text-light);
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .feature .text-center .text-primary {
+            color: var(--accent-gold) !important;
+        }
+
+        .feature .text-center p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .feature .feature-item {
+            display: flex;
+            align-items: center;
+            border-radius: 15px;
+            transition: all 0.4s ease;
+            padding: 30px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 25px var(--shadow-dark);
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 20px;
+        }
+
+        .feature .feature-item:hover {
+            transform: translateY(-8px);
+            background: var(--card-bg-hover);
+            box-shadow: 0 15px 35px var(--shadow-dark), 0 0 20px var(--shadow-light);
+            border-color: var(--border-active);
+        }
+
+        .feature .feature-icon span {
+            width: 80px; 
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            background: linear-gradient(135deg, var(--secondary-dark), var(--accent-light-blue));
+            border-radius: 50%;
+            font-size: 2.2rem;
+            margin-right: 25px;
+            box-shadow: 0 4px 15px rgba(74, 144, 164, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .feature .feature-item:hover .feature-icon span {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dark));
+            transform: scale(1.1);
+        }
+
+        .feature h5 {
+            font-weight: 700;
+            color: var(--text-light);
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .feature p {
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+
+        /* Servicios en grid */
+        .service {
+            background: linear-gradient(135deg, var(--tertiary-dark) 0%, var(--primary-dark) 100%);
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .service::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.08) 0%, transparent 50%);
+        }
+
+        .section-header {
+            margin-bottom: 60px;
+        }
+
+        .section-header p {
+            color: var(--accent-gold);
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .section-header h2 {
+            color: var(--text-light);
+            font-weight: 700;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px var(--shadow-dark);
+        }
+
+        .service .service-item {
+            background: var(--card-dark);
+            border-radius: 15px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.4s ease;
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .service .service-item:hover {
+            transform: translateY(-8px);
+            background: var(--card-dark-hover);
+            box-shadow: 0 15px 35px var(--shadow-dark), 0 0 25px var(--shadow-light);
+            border-color: var(--border-active);
+        }
+
+        .service .service-item i {
+            color: var(--accent-gold);
+            font-size: 4rem;
+            line-height: 4rem;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.3));
+        }
+
+        .service .service-item:hover i {
+            color: var(--text-gold);
+            transform: scale(1.1);
+            filter: drop-shadow(0 6px 12px rgba(255, 215, 0, 0.5));
+        }
+
+        .service .service-item h3 {
+            color: var(--text-light);
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .service .service-item:hover h3 {
+            color: var(--accent-gold);
+        }
+
+        .service .service-item p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            transition: color 0.3s ease;
+        }
+
+        .service .service-item:hover p {
+            color: var(--text-light);
+        }
+
+
+        /* Animaciones */
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .feature .feature-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .feature .feature-icon span {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            
+            .page-header h2 {
+                font-size: 2.5rem;
+            }
+            
+            .moving-image {
+                display: none;
+            }
+        }
+
+        /* Efectos adicionales */
+        .wow {
+            animation-duration: 1s;
+            animation-fill-mode: both;
+        }
+
+        .fadeInUp {
+            animation-name: fadeInUp;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
-    <script>
-        window.addEventListener('scroll', function() {
-            const scrollY = window.scrollY; // Obtiene la posición de desplazamiento vertical
-            const movingImage = document.querySelector('.moving-image');
-            
-            // Ajusta la posición de la imagen en función del desplazamiento
-            movingImage.style.left = `${scrollY}px`;
-        });
-    </script>
+</head>
+<body>
+
+    <!-- Partículas de fondo -->
+    <div class="particles"></div>
+
+    <!-- Características principales -->
     <div class="container-fluid feature">
         <div class="container">
             <div class="text-center mx-auto pb-5">
@@ -75,8 +392,8 @@
                                     <span class="fa fa-trophy fa-2x"></span>
                                 </div>
                                 <div class="ms-4">
-                                    <h5 class="mb-3">Servicios de primera clase </h5>
-                                    <p>Nuestro equipo de profecionales te prestaran un servicio de calidad</p>
+                                    <h5 class="mb-3">Servicios de primera clase</h5>
+                                    <p>Nuestro equipo de profesionales te prestará un servicio de calidad</p>
                                 </div>
                             </div>
                         </div>
@@ -87,22 +404,21 @@
                                 </div>
                                 <div class="ms-4">
                                     <h5 class="mb-3">Confianza</h5>
-                                    <p>Tu seguridad es lo primordial y lo mas importante</p>
+                                    <p>Tu seguridad es lo primordial y lo más importante</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-12 col-xl-4 wow fadeInUp" data-wow-delay="0.2s">
-                    <img src="{% static 'img/features-img.png' %}" class="img-fluid w-100" alt="Features Image" style="object-fit: cover; border-radius: 10px;">
+                    <img src="{% static 'img/features-img.png' %}" class="img-fluid w-100" alt="Features Image" style="object-fit: cover; border-radius: 15px; box-shadow: 0 15px 35px rgba(12, 35, 49, 0.3);">
                 </div>
-                
                 <div class="col-xl-4">
                     <div class="row gy-4">
                         <div class="col-12">
                             <div class="feature-item justify-content-end wow fadeInUp" data-wow-delay="0.1s">
                                 <div class="text-end me-4">
-                                    <h5 class="mb-3">Calidad al minimo costo</h5>
+                                    <h5 class="mb-3">Calidad al mínimo costo</h5>
                                     <p>Servicio de calidad sin afectar tu bolsillo</p>
                                 </div>
                                 <div class="feature-icon">
@@ -110,12 +426,11 @@
                                 </div>
                             </div>
                         </div>
-                        
                         <div class="col-12">
                             <div class="feature-item justify-content-end wow fadeInUp" data-wow-delay="0.3s">
                                 <div class="text-end me-4">
-                                    <h5 class="mb-3">Increibles descuentos</h5>
-                                    <p> En autonew valoramos tu fidelidad con grandes descuentos en nuestros servicios</p>
+                                    <h5 class="mb-3">Increíbles descuentos</h5>
+                                    <p>En AutoNew valoramos tu fidelidad con grandes descuentos en nuestros servicios</p>
                                 </div>
                                 <div class="feature-icon">
                                     <span class="fa fa-map-pin fa-2x"></span>
@@ -128,143 +443,99 @@
         </div>
     </div>
 
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">Los Mejores Servicios de Autolavado</h2>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card service-card text-center">
-                    <img src="{% static 'img/carousel-3.jpg' %}" class="card-img-top" alt="Lavado Exterior">
-                    <div class="card-body">
-                        <h5 class="service-title">Lavado Exterior</h5>
-                        <p class="service-description">Eliminamos toda la suciedad y manchas de la pintura de tu auto,
-                            dejándolo brillante y como nuevo.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card service-card text-center">
-                    <img src="{% static 'img/carousel-2.jpg' %}" class="card-img-top" alt="Lavado Interior">
-                    <div class="card-body">
-                        <h5 class="service-title">Lavado Interior</h5>
-                        <p class="service-description">Limpieza profunda de tapicería y alfombrillas, asegurando que tu
-                            auto luzca y huela fresco.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card service-card text-center">
-                    <img src="{% static 'img/carousel-1.jpg' %}" class="card-img-top" alt="Pulido y Encerado">
-                    <div class="card-body">
-                        <h5 class="service-title">Pulido y Encerado</h5>
-                        <p class="service-description">Protegemos la pintura de tu auto con ceras de alta calidad para
-                            un acabado brillante y duradero.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!-- Inicio de servicios -->
+    <!-- Servicios en grid -->
     <div class="service">
         <div class="container">
             <div class="section-header text-center">
-                <p>¿Que Hacemos</p>
-                <h2>Servicio de lavado premiun</h2>
+                <p>¿Qué Hacemos?</p>
+                <h2>Servicio de lavado premium</h2>
             </div>
             <div class="row">
                 <div class="col-lg-3 col-md-6">
                     <div class="service-item">
-                        <i class="flaticon-car-wash-1"></i>
-                        <h3>Lavado de exteriores </h3>
-                        <p>Ofrecemos una limpieza superior sin generar daños en tu vehiculo.</p>
+                        <i class="fas fa-car"></i>
+                        <h3>Lavado de exteriores</h3>
+                        <p>Ofrecemos una limpieza superior sin generar daños en tu vehículo.</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="service-item">
-                        <i class="flaticon-car-wash"></i>
-                        <h3>Lavado de interiores </h3>
-                        <p>Cuidamos cada paso para cuidar al maximo el interior de tu vehiculo.</p>
+                        <i class="fas fa-spray-can"></i>
+                        <h3>Lavado de interiores</h3>
+                        <p>Cuidamos cada paso para cuidar al máximo el interior de tu vehículo.</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="service-item">
-                        <i class="flaticon-vacuum-cleaner"></i>
+                        <i class="fas fa-broom"></i>
                         <h3>Limpieza con aspiradora</h3>
-                        <p>Cuidamos las partes mas delicadas de tu vehiculo.</p>
+                        <p>Cuidamos las partes más delicadas de tu vehículo.</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="service-item">
-                        <i class="flaticon-seat"></i>
+                        <i class="fas fa-couch"></i>
                         <h3>Lavado de asientos</h3>
-                        <p>Cuidamos los materiales de la cogineria de tu vehiculo.</p>
+                        <p>Cuidamos los materiales de la cojinería de tu vehículo.</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="service-item">
-                        <i class="flaticon-car-service"></i>
+                        <i class="fas fa-window-maximize"></i>
                         <h3>Limpieza de ventanas</h3>
-                        <p>Limpiamos dejando tus ventanas relucientes sin ningun rasguño.</p>
+                        <p>Limpiamos dejando tus ventanas relucientes sin ningún rasguño.</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="service-item">
-                        <i class="flaticon-car-service-2"></i>
-                        <h3>Limpieza humeda</h3>
-                        <p>Realizamos la limpieza con materias de maxima calidad que ofrecen un cuidado total a las
-                            superficies de tu vehiculo.</p>
+                        <i class="fas fa-tint"></i>
+                        <h3>Limpieza húmeda</h3>
+                        <p>Realizamos limpieza con materiales de máxima calidad que ofrecen un cuidado total de tu vehículo.</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="service-item">
-                        <i class="flaticon-car-wash"></i>
+                        <i class="fas fa-oil-can"></i>
                         <h3>Cambio de aceite</h3>
                         <p>Evitamos que tu motor sufra desgastes.</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="service-item">
-                        <i class="flaticon-brush-1"></i>
-                        <h3>Reparacion de frenos</h3>
-                        <p>Cambiamos las pastillas de tus frenos para mantener tu seguridad y la de tus seres queridos.
-                        </p>
+                        <i class="fas fa-tools"></i>
+                        <h3>Reparación de frenos</h3>
+                        <p>Cambiamos las pastillas de tus frenos para mantener tu seguridad y la de tus seres queridos.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- fin de servicios -->
 
-    <!-- Inicio de testimonios -->
-    <div class="testimonial">
-        <div class="container">
-            <div class="section-header text-center">
-                <p>Comentarios</p>
-                <h2>Que piensan nuestros clientes</h2>
-            </div>
-            <div class="owl-carousel testimonials-carousel">
-                {% for comentario in comentarios %}
-                <div class="testimonial-item">
-                    {% if comentario.usuario.profile_picture %}
-                    <img src="{{ comentario.usuario.profile_picture.url }}"
-                        alt="{{ comentario.usuario.nombre_usuario }}" class="img-fluid">
-                    {% else %}
-                    <img src="{% static '/img/sin rostro.jpg' %}" alt="Imagen por defecto" class="img-fluid">
-                    {% endif %}
-                    <div class="testimonial-text">
-                        <h3>{{ comentario.usuario.nombre_usuario }}</h3>
-                        <h4>{{ comentario.usuario.nombre_completo }} {{ comentario.usuario.last_name }}</h4>
-                        <p>{{ comentario.comentario }}</p>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    <!-- Fin testimonios -->
+    <!-- Agrega Owl Carousel si no está incluido aún -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('.testimonials-carousel').owlCarousel({
+                loop:true,
+                margin:30,
+                nav:false,
+                dots:true,
+                autoplay:true,
+                autoplayTimeout:5000,
+                responsive:{
+                    0:{ items:1 },
+                    768:{ items:2 },
+                    992:{ items:3 }
+                }
+            });
+        });
+    </script>
 
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-{% endblock  %}
+{% endblock %}

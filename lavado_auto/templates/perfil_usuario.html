@@ -4,7 +4,384 @@
 
 <body>
     {% load custom_tags %}
-<div class="container mt-3">
+
+<style>
+:root {
+    --primary-blue: #0c2331;
+    --secondary-blue: #1e3557;
+    --accent-red: #E81C2E;
+    --accent-green: #00ff87;
+    --text-light: #f1f1f1;
+    --text-muted: #bfc9d1;
+    --glass-bg: rgba(12, 35, 49, 0.85);
+    --glass-light: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 12px 40px rgba(0, 0, 0, 0.15);
+    --shadow-strong: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Poppins', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    color: var(--text-light);
+    padding-top: 120px;
+    overflow-x: hidden;
+}
+
+/* Mensaje de alerta moderno */
+.alert-container {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    z-index: 1060;
+    max-width: 400px;
+}
+
+.alert {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    color: white;
+    box-shadow: var(--shadow-medium);
+    animation: slideInRight 0.5s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.alert::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent-red), var(--accent-green));
+}
+
+.alert-success::before { background: var(--accent-green); }
+.alert-danger::before { background: var(--accent-red); }
+.alert-warning::before { background: #f39c12; }
+.alert-info::before { background: #3498db; }
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Contenedor principal */
+.profile-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.profile-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(25px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 3rem;
+    box-shadow: var(--shadow-strong);
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--accent-red), var(--accent-green));
+}
+
+/* Header del formulario */
+.profile-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+}
+
+.profile-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.5px;
+}
+
+.profile-subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 400;
+}
+
+/* Grid de formulario */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    position: relative;
+}
+
+.form-group-full {
+    grid-column: 1 / -1;
+}
+
+/* Labels modernos */
+.form-label {
+    display: block;
+    color: var(--text-light);
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Inputs modernos */
+.form-input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid var(--glass-border);
+    border-radius: 12px;
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent-green);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 4px rgba(0, 255, 135, 0.1);
+    transform: translateY(-2px);
+}
+
+.form-input::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Input de archivo personalizado */
+.file-input-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.file-input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.file-input-label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px dashed var(--glass-border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text-muted);
+}
+
+.file-input-label:hover {
+    border-color: var(--accent-green);
+    background: rgba(0, 255, 135, 0.05);
+    color: var(--accent-green);
+}
+
+.file-input-icon {
+    font-size: 1.5rem;
+}
+
+/* Imagen actual */
+.current-image {
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.current-image-label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--glass-border);
+    box-shadow: var(--shadow-medium);
+    transition: all 0.3s ease;
+}
+
+.profile-image:hover {
+    transform: scale(1.05);
+    border-color: var(--accent-green);
+}
+
+/* Sección de contraseñas */
+.password-section {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 0;
+}
+
+.password-section-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Botón de actualizar */
+.btn-update {
+    background: linear-gradient(135deg, var(--accent-green) 0%, #00d970 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 8px 25px rgba(0, 255, 135, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-update::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-update:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(0, 255, 135, 0.4);
+}
+
+.btn-update:hover::before {
+    left: 100%;
+}
+
+.btn-update:active {
+    transform: translateY(0);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .profile-card {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+        border-radius: 16px;
+    }
+    
+    .profile-title {
+        font-size: 2rem;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .password-section {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding-top: 100px;
+    }
+    
+    .profile-card {
+        padding: 1.5rem 1rem;
+    }
+    
+    .profile-title {
+        font-size: 1.8rem;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.profile-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.form-group {
+    animation: fadeInUp 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.2s; }
+.form-group:nth-child(3) { animation-delay: 0.3s; }
+.form-group:nth-child(4) { animation-delay: 0.4s; }
+.form-group:nth-child(5) { animation-delay: 0.5s; }
+.form-group:nth-child(6) { animation-delay: 0.6s; }
+</style>
+
+<!-- Contenedor de alertas -->
+<div class="alert-container">
     {% if messages %}
         {% for message in messages %}
             <div class="alert 
@@ -13,69 +390,224 @@
                 {% elif message.tags == 'warning' %}alert-warning
                 {% else %}alert-info
                 {% endif %}">
+                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-triangle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
                 {{ message }}
             </div>
         {% endfor %}
     {% endif %}
 </div>
-<style>.alert {
-    position: relative;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1rem;
-    border: 1px solid transparent;
-    border-radius: 0.25rem;
-}
 
-.alert .close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 0.5rem 0.75rem;
-}</style>
-    <div class="container mt-5">
-        <h2>Actualizar Perfil</h2>
+<!-- Contenedor principal -->
+<div class="profile-container">
+    <div class="profile-card">
+        <!-- Header -->
+        <div class="profile-header">
+            <h1 class="profile-title">
+                <i class="fas fa-user-edit me-3"></i>
+                Actualizar Perfil
+            </h1>
+            <p class="profile-subtitle">Mantén tu información actualizada y segura</p>
+        </div>
+
+        <!-- Formulario -->
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="form-group">
-                <label for="nombre_completo">Nombre Completo</label>
-                <input type="text" name="nombre_completo" value="{{ usuario.nombre_completo }}" class="form-control" required>
-    
-                <label for="nombre_usuario">Nombre Usuario</label>
-                <input type="text" name="nombre_usuario" value="{{ usuario.nombre_usuario }}" class="form-control" required>
-    
-                <label for="correo">Correo</label>
-                <input type="email" name="correo" value="{{ usuario.correo }}" class="form-control" required>
-    
-                <label for="telefono">Teléfono</label>
-                <input type="text" name="telefono" value="{{ usuario.telefono }}" class="form-control" required>
-    
-                <label for="direccion">Dirección</label>
-                <input type="text" name="direccion" value="{{ usuario.direccion }}" class="form-control" required>
-    
+            
+            <!-- Grid de campos principales -->
+            <div class="form-grid">
                 <div class="form-group">
-                    <label for="profile_picture">Foto de Perfil</label>
-                    <input type="file" class="form-control-file" id="profile_picture" name="profile_picture">
+                    <label class="form-label" for="nombre_completo">
+                        <i class="fas fa-user me-2"></i>Nombre Completo
+                    </label>
+                    <input type="text" 
+                           id="nombre_completo"
+                           name="nombre_completo" 
+                           value="{{ usuario.nombre_completo }}" 
+                           class="form-input" 
+                           placeholder="Ingresa tu nombre completo"
+                           required>
                 </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="nombre_usuario">
+                        <i class="fas fa-at me-2"></i>Nombre Usuario
+                    </label>
+                    <input type="text" 
+                           id="nombre_usuario"
+                           name="nombre_usuario" 
+                           value="{{ usuario.nombre_usuario }}" 
+                           class="form-input" 
+                           placeholder="Tu nombre de usuario"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="correo">
+                        <i class="fas fa-envelope me-2"></i>Correo Electrónico
+                    </label>
+                    <input type="email" 
+                           id="correo"
+                           name="correo" 
+                           value="{{ usuario.correo }}" 
+                           class="form-input" 
+                           placeholder="tu@email.com"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="telefono">
+                        <i class="fas fa-phone me-2"></i>Teléfono
+                    </label>
+                    <input type="text" 
+                           id="telefono"
+                           name="telefono" 
+                           value="{{ usuario.telefono }}" 
+                           class="form-input" 
+                           placeholder="+57 300 123 4567"
+                           required>
+                </div>
+
+                <div class="form-group form-group-full">
+                    <label class="form-label" for="direccion">
+                        <i class="fas fa-map-marker-alt me-2"></i>Dirección
+                    </label>
+                    <input type="text" 
+                           id="direccion"
+                           name="direccion" 
+                           value="{{ usuario.direccion }}" 
+                           class="form-input" 
+                           placeholder="Tu dirección completa"
+                           required>
+                </div>
+            </div>
+
+            <!-- Sección de foto de perfil -->
+            <div class="form-group form-group-full">
+                <label class="form-label">
+                    <i class="fas fa-camera me-2"></i>Foto de Perfil
+                </label>
+                
+                <div class="file-input-wrapper">
+                    <input type="file" 
+                           class="file-input" 
+                           id="profile_picture" 
+                           name="profile_picture"
+                           accept="image/*">
+                    <label for="profile_picture" class="file-input-label">
+                        <i class="fas fa-cloud-upload-alt file-input-icon"></i>
+                        <span>Seleccionar nueva imagen o arrastrar aquí</span>
+                    </label>
+                </div>
+                
                 {% if usuario.profile_picture %}
-                    <div class="mb-3">
-                        <label>Imagen Actual:</label><br>
-                        <img src="{{ usuario.profile_picture.url }}" alt="Foto de Perfil" class="img-thumbnail" style="max-width: 150px;">
+                    <div class="current-image">
+                        <span class="current-image-label">Imagen Actual:</span>
+                        <img src="{{ usuario.profile_picture.url }}" 
+                             alt="Foto de Perfil" 
+                             class="profile-image">
                     </div>
                 {% endif %}
-    
-                <label for="contrasena11">Nueva Contraseña (dejar en blanco si no desea cambiarla)</label>
-                <input type="password" name="contrasena11" class="form-control">
-    
-                <label for="contrasena22">Confirmar Nueva Contraseña</label>
-                <input type="password" name="contrasena22" class="form-control">
             </div>
+
+            <!-- Sección de contraseñas -->
+            <div class="password-section">
+                <h3 class="password-section-title">
+                    <i class="fas fa-lock"></i>
+                    Cambiar Contraseña
+                </h3>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="contrasena11">
+                            <i class="fas fa-key me-2"></i>Nueva Contraseña
+                        </label>
+                        <input type="password" 
+                               id="contrasena11"
+                               name="contrasena11" 
+                               class="form-input" 
+                               placeholder="Dejar en blanco para mantener actual">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="contrasena22">
+                            <i class="fas fa-check-double me-2"></i>Confirmar Contraseña
+                        </label>
+                        <input type="password" 
+                               id="contrasena22"
+                               name="contrasena22" 
+                               class="form-input" 
+                               placeholder="Confirma tu nueva contraseña">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campo oculto y botón -->
             <input type="hidden" name="id_usuario" value="{{ usuario.id_usuario }}">
-            <button type="submit" class="btn btn-success btn-sm">Actualizar</button>
+            
+            <div class="text-center">
+                <button type="submit" class="btn-update">
+                    <i class="fas fa-save me-2"></i>
+                    Actualizar Perfil
+                </button>
+            </div>
         </form>
     </div>
+</div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+// Auto-hide alerts
+document.addEventListener('DOMContentLoaded', function() {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            alert.style.animation = 'slideOutRight 0.5s ease-in forwards';
+            setTimeout(() => {
+                alert.remove();
+            }, 500);
+        }, 5000);
+    });
+});
+
+// File input enhancement
+document.getElementById('profile_picture').addEventListener('change', function(e) {
+    const fileName = e.target.files[0]?.name;
+    const label = document.querySelector('.file-input-label span');
+    if (fileName) {
+        label.textContent = `Archivo seleccionado: ${fileName}`;
+        label.parentElement.style.borderColor = 'var(--accent-green)';
+        label.parentElement.style.backgroundColor = 'rgba(0, 255, 135, 0.1)';
+    }
+});
+
+// Password confirmation validation
+document.getElementById('contrasena22').addEventListener('input', function() {
+    const password = document.getElementById('contrasena11').value;
+    const confirmPassword = this.value;
+    
+    if (password && confirmPassword && password !== confirmPassword) {
+        this.style.borderColor = 'var(--accent-red)';
+    } else {
+        this.style.borderColor = 'var(--glass-border)';
+    }
+});
+
+// Smooth scroll animation for any navigation
+document.addEventListener('DOMContentLoaded', function() {
+    const profileCard = document.querySelector('.profile-card');
+    profileCard.style.opacity = '0';
+    profileCard.style.transform = 'translateY(30px)';
+    
+    setTimeout(() => {
+        profileCard.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+        profileCard.style.opacity = '1';
+        profileCard.style.transform = 'translateY(0)';
+    }, 100);
+});
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 {% endblock %}

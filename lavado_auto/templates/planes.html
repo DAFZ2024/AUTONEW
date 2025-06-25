@@ -1,137 +1,649 @@
 {% extends "base.html" %}
 {% load static %}
+
+
 {% block content %}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0c2331 0%, #1a3a4a 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-top:60px;
+            
+        }
 
+        /* Partículas de fondo animadas */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
 
-<!--Inicio Page Header  -->
-<div class="page-header">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h2>Planes</h2>
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 215, 0, 0.3);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
+        }
+
+        /* Header */
+        .page-header {
+            background: rgba(12, 35, 49, 1); /* Fondo más sólido */
+            /* Puedes quitar el blur si quieres más opacidad */
+            /* backdrop-filter: blur(10px); */
+            padding: 60px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header .container {
+            background: transparent;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z" fill="rgba(255,215,0,0.08)"/></svg>') no-repeat bottom;
+            background-size: cover;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .page-header h2 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ffffff, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: slideInDown 1s ease-out;
+        }
+
+        .breadcrumb {
+            background: transparent !important;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            align-items: center;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .breadcrumb a {
+            color: #b8c5d1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #ffd700;
+        }
+
+        .breadcrumb::after {
+            content: '>';
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        /* Sección principal */
+        .pricing-section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .section-header p {
+            color: #ffd700;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .section-header p::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+        }
+
+        .section-header h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .section-header .subtitle {
+            color: #b8c5d1;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Cards de precios */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .pricing-card:hover::before {
+            opacity: 1;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-20px) scale(1.02);
+            border-color: rgba(255, 215, 0, 0.3);
+            box-shadow: 0 30px 60px rgba(255, 215, 0, 0.2);
+        }
+
+        .pricing-card.featured {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05));
+            border: 2px solid #ffd700;
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::after {
+            content: 'MÁS POPULAR';
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #0c2331;
+            padding: 8px 40px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transform: rotate(45deg);
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .plan-price {
+            margin-bottom: 30px;
+        }
+
+        .plan-price .currency {
+            font-size: 1.5rem;
+            color: #ffd700;
+            vertical-align: top;
+        }
+
+        .plan-price .amount {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1;
+        }
+
+        .plan-price .decimal {
+            font-size: 2rem;
+            color: #b8c5d1;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin: 40px 0;
+            text-align: left;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 0;
+            color: #e1e8ed;
+            font-size: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            animation: slideInLeft 0.6s ease-out forwards;
+        }
+
+        .plan-features li:nth-child(1) { animation-delay: 0.1s; }
+        .plan-features li:nth-child(2) { animation-delay: 0.2s; }
+        .plan-features li:nth-child(3) { animation-delay: 0.3s; }
+        .plan-features li:nth-child(4) { animation-delay: 0.4s; }
+        .plan-features li:nth-child(5) { animation-delay: 0.5s; }
+        .plan-features li:nth-child(6) { animation-delay: 0.6s; }
+
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .feature-icon.included {
+            background: linear-gradient(45deg, #00c851, #00ff41);
+            color: #ffffff;
+        }
+
+        .feature-icon.not-included {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+            border: 1px solid rgba(255, 68, 68, 0.3);
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #0c2331;
+            border: none;
+            border-radius: 50px;
+            padding: 16px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Animaciones */
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header h2 {
+                font-size: 2.5rem;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .plan-price .amount {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas de fondo -->
+    <div class="particles"></div>
+
+    <!-- Sección de precios -->
+    <div class="pricing-section">
+        <div class="container">
+            <div class="section-header">
+                <p>Planes de Lavado Premium</p>
+                <h2>Elige el plan perfecto para tu vehículo</h2>
+                <p class="subtitle">Servicios profesionales de lavado y detallado con la más alta calidad y tecnología avanzada</p>
             </div>
-            <div class="col-12">
-                <a href="">Home</a>
-                <a href="">Planes</a>
+
+            <div class="pricing-grid">
+                <!-- Plan Básico -->
+                <div class="pricing-card">
+                    <h3 class="plan-name">Lavado Básico</h3>
+                    <div class="plan-price">
+                        <span class="currency">$</span>
+                        <span class="amount">69</span>
+                        <span class="decimal">.999</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li>
+                            <span class="feature-icon included">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            Acceso al servicio 2 veces por mes
+                        </li>
+                        <li>
+                            <span class="feature-icon included">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            Lavado completo de asientos
+                        </li>
+                        <li>
+                            <span class="feature-icon included">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            Limpieza profunda con aspiradora
+                        </li>
+                        <li>
+                            <span class="feature-icon included">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            Lavado profesional de exteriores
+                        </li>
+                        <li>
+                            <span class="feature-icon not-included">
+                                <i class="fas fa-times"></i>
+                            </span>
+                            Lavado húmedo de interiores
+                        </li>
+                        <li>
+                            <span class="feature-icon not-included">
+                                <i class="fas fa-times"></i>
+                            </span>
+                            Limpieza especializada de ventanas
+                        </li>
+                    </ul>
+                    <form method="POST" action="https://gateway.payulatam.com/ppp-web-gateway/">
+                        <input type="hidden" name="merchantId" value="tu_merchant_id">
+                        <input type="hidden" name="accountId" value="tu_account_id">
+                        <input type="hidden" name="description" value="Plan Lavado Básico">
+                        <input type="hidden" name="amount" value="69.999">
+                        <input type="hidden" name="currency" value="COP">
+                        <input type="hidden" name="test" value="1">
+                        <input type="hidden" name="returnUrl" value="price.html">
+                        <input type="hidden" name="signature" value="firma_generada">
+                        <button type="submit" class="cta-button">Comenzar Ahora</button>
+                    </form>
+                </div>
+
+                <!-- Plan Premium -->
+                <div class="pricing-card featured">
+                    <h3 class="plan-name">Limpieza Premium</h3>
+                    <div class="plan-price">
+                        <span class="currency">$</span>
+                        <span class="amount">99</span>
+                        <span class="decimal">.999</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li>
+                            <span class="feature-icon included">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            Acceso al servicio 2 veces por mes
+                        </li>
+                        <li>
+                            <span class="feature-icon included">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            Lavado completo de asientos
+                        </li>
+                        <li>
+                            <span class="feature-icon included">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            Limpieza profunda con aspiradora
+                        </li>
+                        <li>
+                            <span class="feature-icon included">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            Lavado profesional de exteriores
+                        </li>
+                        <li>
+                            <span class="feature-icon included">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            Lavado húmedo de interiores
+                        </li>
+                        <li>
+                            <span class="feature-icon not-included">
+                                <i class="fas fa-times"></i>
+                            </span>
+                            Limpieza especializada de ventanas
+                        </li>
+                    </ul>
+                    <form method="POST" action="https://gateway.payulatam.com/ppp-web-gateway/">
+                        <input type="hidden" name="merchantId" value="tu_merchant_id">
+                        <input type="hidden" name="accountId" value="tu_account_id">
+                        <input type="hidden" name="description" value="Plan Limpieza Premium">
+                        <input type="hidden" name="amount" value="99.999">
+                        <input type="hidden" name="currency" value="COP">
+                        <input type="hidden" name="test" value="1">
+                        <input type="hidden" name="returnUrl" value="price.html">
+                        <input type="hidden" name="signature" value="firma_generada">
+                        <button type="submit" class="cta-button">Elegir Premium</button>
+                    </form>
+                </div>
+
+                <!-- Plan Completo -->
+                <div class="pricing-card">
+                    <h3 class="plan-name">Limpieza Completa</h3>
+                    <div class="plan-price">
+                        <span class="currency">$</span>
+                        <span class="amount">139</span>
+                        <span class="decimal">.999</span>
+                    </div>
+                    <ul class="plan-features">
+                        <li>
+                            <span class="feature-icon included">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            Acceso al servicio 2 veces por mes
+                        </li>
+                        <li>
+                            <span class="feature-icon included">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            Lavado completo de asientos
+                        </li>
+                        <li>
+                            <span class="feature-icon included">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            Limpieza profunda con aspiradora
+                        </li>
+                        <li>
+                            <span class="feature-icon included">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            Lavado profesional de exteriores
+                        </li>
+                        <li>
+                            <span class="feature-icon included">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            Lavado húmedo de interiores
+                        </li>
+                        <li>
+                            <span class="feature-icon included">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            Limpieza especializada de ventanas
+                        </li>
+                    </ul>
+                    <form method="POST" action="https://gateway.payulatam.com/ppp-web-gateway/">
+                        <input type="hidden" name="merchantId" value="tu_merchant_id">
+                        <input type="hidden" name="accountId" value="tu_account_id">
+                        <input type="hidden" name="description" value="Plan Limpieza Completa">
+                        <input type="hidden" name="amount" value="139.999">
+                        <input type="hidden" name="currency" value="COP">
+                        <input type="hidden" name="test" value="1">
+                        <input type="hidden" name="returnUrl" value="price.html">
+                        <input type="hidden" name="signature" value="firma_generada">
+                        <button type="submit" class="cta-button">Plan Completo</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<!--Fin  Page Header  -->
 
+    <script>
+        // Crear partículas animadas
+        function createParticles() {
+            const particlesContainer = document.querySelector('.particles');
+            const particleCount = 50;
 
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
 
-<!-- Inicio Precio  -->
-<div class="price">
-    <div class="container">
-        <div class="section-header text-center">
-            <p>Planes de lavado</p>
-            <h2>Los mejores planes para ti</h2>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="price-item">
-                    <div class="price-header">
-                        <h3>Lavado basico</h3>
-                        <h2><span>$</span><strong>69</strong><span>.999</span></h2>
-                    </div>
-                    <div class="price-body">
-                        <ul>
-                            <li><i class="far fa-check-circle"></i>Acceso al servicio 2 veces por mes</li>
-                            <li><i class="far fa-check-circle"></i>Lavado de asientos</li>
-                            <li><i class="far fa-check-circle"></i>Limpieza con aspiradora </li>
-                            <li><i class="far fa-check-circle"></i>Lavado de exteriores</li>
-                            <li><i class="far fa-times-circle"></i>Lavado humedo de interiores</li>
-                            <li><i class="far fa-times-circle"></i>Limpieza de ventanas</li>
-                        </ul>
-                    </div>
-                    <div class="price-footer">
-                        <form id="payment-form" method="POST" action="https://gateway.payulatam.com/ppp-web-gateway/">
-                            <input type="hidden" name="merchantId" value="tu_merchant_id">
-                            <input type="hidden" name="accountId" value="tu_account_id">
-                            <input type="hidden" name="description" value="Descripción del producto">
-                            <input type="hidden" name="amount" value="69.999">
-                            <!-- Monto en COP -->
-                            <input type="hidden" name="currency" value="COP">
-                            <input type="hidden" name="test" value="1">
-                            <!-- 1 para pruebas, 0 para producción -->
-                            <input type="hidden" name="returnUrl" value="price.html">
-                            <input type="hidden" name="signature" value="firma_generada">
-                            <button type="submit" class="btn btn-custom">Comprar ahora</button>
-                        </form>
+        // Inicializar partículas cuando la página carga
+        document.addEventListener('DOMContentLoaded', createParticles);
 
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="price-item featured-item">
-                    <div class="price-header">
-                        <h3>Limpieza premiun</h3>
-                        <h2><span>$</span><strong>99</strong><span>.999</span></h2>
-                    </div>
-                    <div class="price-body">
-                        <ul>
-                            <li><i class="far fa-check-circle"></i>Acceso al servicio 2 veces por mes</li>
-                            <li><i class="far fa-check-circle"></i>Lavado de asientos</li>
-                            <li><i class="far fa-check-circle"></i>Limpieza con aspiradora</li>
-                            <li><i class="far fa-check-circle"></i>Lavado de exteriores</li>
-                            <li><i class="far fa-check-circle"></i>Lavado humedo de interiores</li>
-                            <li><i class="far fa-times-circle"></i>Limpieza de ventanas</li>
-                        </ul>
-                    </div>
-                    <div class="price-footer">
-                        <form id="payment-form" method="POST" action="https://gateway.payulatam.com/ppp-web-gateway/">
-                            <input type="hidden" name="merchantId" value="tu_merchant_id">
-                            <input type="hidden" name="accountId" value="tu_account_id">
-                            <input type="hidden" name="description" value="Descripción del producto">
-                            <input type="hidden" name="amount" value="99.999">
-                            <!-- Monto en COP -->
-                            <input type="hidden" name="currency" value="COP">
-                            <input type="hidden" name="test" value="1">
-                            <!-- 1 para pruebas, 0 para producción -->
-                            <input type="hidden" name="returnUrl" value="price.html">
-                            <input type="hidden" name="signature" value="firma_generada">
-                            <button type="submit" class="btn btn-custom">Comprar ahora</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="price-item">
-                    <div class="price-header">
-                        <h3>Limpieza completa </h3>
-                        <h2><span>$</span><strong>139</strong><span>.999</span></h2>
-                    </div>
-                    <div class="price-body">
-                        <ul>
-                            <li><i class="far fa-check-circle"></i>Acceso al servicio 2 veces por mes</li>
-                            <li><i class="far fa-check-circle"></i>Lavado de asientos </li>
-                            <li><i class="far fa-check-circle"></i>Limpieza con aspiradora</li>
-                            <li><i class="far fa-check-circle"></i>Lavado de exteriores</li>
-                            <li><i class="far fa-check-circle"></i>Lavado humedo de interiores</li>
-                            <li><i class="far fa-check-circle"></i>Limpieza de ventanas</li>
-                        </ul>
-                    </div>
-                    <div class="price-footer">
-                        <form id="payment-form" method="POST" action="https://gateway.payulatam.com/ppp-web-gateway/">
-                            <input type="hidden" name="merchantId" value="tu_merchant_id">
-                            <input type="hidden" name="accountId" value="tu_account_id">
-                            <input type="hidden" name="description" value="Descripción del producto">
-                            <input type="hidden" name="amount" value="139.999">
-                            <!-- Monto en COP -->
-                            <input type="hidden" name="currency" value="COP">
-                            <input type="hidden" name="test" value="1">
-                            <!-- 1 para pruebas, 0 para producción -->
-                            <input type="hidden" name="returnUrl" value="price.html">
-                            <input type="hidden" name="signature" value="firma_generada">
-                            <button type="submit" class="btn btn-custom">Comprar ahora</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Fin Precio  -->
+        // Animación de entrada para las tarjetas
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationDelay = `${index * 0.2}s`;
+                    entry.target.classList.add('animate');
+                }
+            });
+        }, observerOptions);
+
+        // Observar las tarjetas de precios
+        document.querySelectorAll('.pricing-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
 {% endblock  %}

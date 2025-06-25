@@ -1,10 +1,367 @@
 {% extends "base_crud.html" %}
 {% block content %}
 {% load custom_tags %}
-<div class="container mt-3">
+
+<style>
+    :root {
+        --primary-color: #667eea;
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success-color: #48bb78;
+        --danger-color: #f56565;
+        --warning-color: #ed8936;
+        --info-color: #4299e1;
+        --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        --card-shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
+        --border-radius: 12px;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 3rem;
+        border-radius: 0 0 2rem 2rem;
+        box-shadow: var(--card-shadow);
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0;
+        text-align: center;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-subtitle {
+        text-align: center;
+        opacity: 0.9;
+        margin-top: 0.5rem;
+        font-size: 1.1rem;
+    }
+
+    /* Alertas modernas */
+    .modern-alert {
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        backdrop-filter: blur(10px);
+        box-shadow: var(--card-shadow);
+        transition: var(--transition);
+        animation: slideInDown 0.5s ease-out;
+    }
+
+    .modern-alert::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+    }
+
+    .modern-alert.alert-success {
+        background: rgba(72, 187, 120, 0.1);
+        color: #2f855a;
+        border-left: 4px solid var(--success-color);
+    }
+
+    .modern-alert.alert-success::before {
+        background: var(--success-color);
+    }
+
+    .modern-alert.alert-danger {
+        background: rgba(245, 101, 101, 0.1);
+        color: #c53030;
+        border-left: 4px solid var(--danger-color);
+    }
+
+    .modern-alert.alert-danger::before {
+        background: var(--danger-color);
+    }
+
+    .modern-alert.alert-warning {
+        background: rgba(237, 137, 54, 0.1);
+        color: #c05621;
+        border-left: 4px solid var(--warning-color);
+    }
+
+    .modern-alert.alert-warning::before {
+        background: var(--warning-color);
+    }
+
+    .modern-alert.alert-info {
+        background: rgba(66, 153, 225, 0.1);
+        color: #2b6cb0;
+        border-left: 4px solid var(--info-color);
+    }
+
+    .modern-alert.alert-info::before {
+        background: var(--info-color);
+    }
+
+    /* Contenedor principal */
+    .main-container {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--card-shadow);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        transition: var(--transition);
+    }
+
+    .main-container:hover {
+        box-shadow: var(--card-shadow-hover);
+    }
+
+    /* Tabla moderna */
+    .modern-table {
+        background: white;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        border: none;
+    }
+
+    .modern-table thead {
+        background: var(--primary-gradient);
+        color: white;
+    }
+
+    .modern-table thead th {
+        border: none;
+        padding: 1.25rem 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.875rem;
+        letter-spacing: 0.05em;
+    }
+
+    .modern-table tbody tr {
+        transition: var(--transition);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .modern-table tbody tr:hover {
+        background: rgba(102, 126, 234, 0.05);
+        transform: translateY(-1px);
+    }
+
+    .modern-table tbody td {
+        padding: 1.25rem 1rem;
+        border: none;
+        vertical-align: middle;
+    }
+
+    .modern-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    /* Botones modernos */
+    .modern-btn {
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: var(--transition);
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .modern-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .modern-btn.btn-danger {
+        background: linear-gradient(135deg, #f56565, #e53e3e);
+        color: white;
+    }
+
+    .modern-btn.btn-success {
+        background: linear-gradient(135deg, #48bb78, #38a169);
+        color: white;
+    }
+
+    .modern-btn.btn-secondary {
+        background: linear-gradient(135deg, #a0aec0, #718096);
+        color: white;
+    }
+
+    .modern-btn.btn-primary {
+        background: var(--primary-gradient);
+        color: white;
+    }
+
+    /* Formulario de respuesta */
+    .response-form {
+        background: linear-gradient(135deg, #f7fafc, #edf2f7);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        margin-top: 1rem;
+        border: 1px solid rgba(102, 126, 234, 0.1);
+        animation: slideIn 0.3s ease-out;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #4a5568;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-control {
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: var(--transition);
+        font-size: 0.875rem;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        outline: none;
+    }
+
+    /* Estados de queja */
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .status-pendiente {
+        background: rgba(237, 137, 54, 0.1);
+        color: #c05621;
+    }
+
+    .status-resuelta {
+        background: rgba(72, 187, 120, 0.1);
+        color: #2f855a;
+    }
+
+    .status-en-proceso {
+        background: rgba(66, 153, 225, 0.1);
+        color: #2b6cb0;
+    }
+
+    /* Animaciones */
+    @keyframes slideInDown {
+        from {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateY(10px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
+        }
+        
+        .main-container {
+            padding: 1rem;
+        }
+        
+        .modern-table {
+            font-size: 0.875rem;
+        }
+        
+        .modern-table thead th,
+        .modern-table tbody td {
+            padding: 0.75rem 0.5rem;
+        }
+    }
+
+    /* Contenido de celda mejorado */
+    .cell-content {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .cell-content.expandable {
+        cursor: pointer;
+        position: relative;
+    }
+
+    .cell-content.expandable:hover {
+        background: rgba(102, 126, 234, 0.05);
+        border-radius: 4px;
+        padding: 0.25rem;
+    }
+
+    /* Acciones */
+    .actions-container {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #718096;
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+</style>
+
+<!-- Header de la página -->
+<div class="page-header">
+    <div class="container">
+        <h1 class="page-title">📋 Gestión de Quejas</h1>
+        <p class="page-subtitle">Sistema de atención al cliente</p>
+    </div>
+</div>
+
+<!-- Contenedor de mensajes -->
+<div class="container">
     {% if messages %}
         {% for message in messages %}
-            <div class="alert 
+            <div class="modern-alert 
                 {% if message.tags == 'success' %}alert-success
                 {% elif message.tags == 'error' %}alert-danger
                 {% elif message.tags == 'warning' %}alert-warning
@@ -15,78 +372,178 @@
         {% endfor %}
     {% endif %}
 </div>
-<style>.alert {
-    position: relative;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1rem;
-    border: 1px solid transparent;
-    border-radius: 0.25rem;
+
+<!-- Contenido principal -->
+<div class="container">
+    <div class="main-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h3 mb-0" style="color: #4a5568; font-weight: 700;">
+                💬 Quejas de Clientes
+            </h2>
+            <div class="d-flex gap-2">
+                <span class="badge bg-primary">{{ quejas|length }} Total</span>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table modern-table">
+                <thead>
+                    <tr>
+                        <th>🆔 ID</th>
+                        <th>📝 Contenido</th>
+                        <th>📅 Fecha</th>
+                        <th>👤 Cliente</th>
+                        <th>📧 Usuario</th>
+                        <th>📞 Teléfono</th>
+                        <th>📊 Estado</th>
+                        <th>⚡ Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for queja in quejas %}
+                        <tr>
+                            <td>
+                                <span class="badge bg-light text-dark">#{{ queja.id_mensaje }}</span>
+                            </td>
+                            <td>
+                                <div class="cell-content expandable" title="{{ queja.contenido }}">
+                                    {{ queja.contenido|truncatechars:50 }}
+                                </div>
+                            </td>
+                            <td>
+                                <small class="text-muted">{{ queja.fecha_envio|date:"d/m/Y" }}</small>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="me-2">
+                                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.875rem; color: white;">
+                                            {{ queja.usuario.nombre_completo|first|upper }}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold">{{ queja.usuario.nombre_completo }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <code class="bg-light p-1 rounded">{{ queja.usuario.nombre_usuario }}</code>
+                            </td>
+                            <td>
+                                <a href="tel:{{ queja.usuario.telefono }}" class="text-decoration-none">
+                                    {{ queja.usuario.telefono }}
+                                </a>
+                            </td>
+                            <td>
+                                <span class="status-badge 
+                                    {% if queja.estado == 'Pendiente' %}status-pendiente
+                                    {% elif queja.estado == 'Resuelta' %}status-resuelta
+                                    {% else %}status-en-proceso
+                                    {% endif %}">
+                                    {{ queja.estado }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="actions-container">
+                                    <form method="POST" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" name="eliminar" value="{{ queja.id_mensaje }}" 
+                                                class="modern-btn btn-danger btn-sm"
+                                                onclick="return confirm('¿Estás seguro de eliminar esta queja?')">
+                                            🗑️ Eliminar
+                                        </button>
+                                    </form>
+                                    
+                                    <button onclick="toggleResponseForm('{{ queja.id_mensaje }}')" 
+                                            class="modern-btn btn-success btn-sm">
+                                        💬 Contestar
+                                    </button>
+                                </div>
+
+                                <!-- Formulario de respuesta -->
+                                <div id="edit-{{ queja.id_mensaje }}" class="response-form" style="display:none;">
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="respuesta-{{ queja.id_mensaje }}">
+                                                ✍️ Tu respuesta
+                                            </label>
+                                            <textarea name="respuesta" 
+                                                    id="respuesta-{{ queja.id_mensaje }}"
+                                                    class="form-control" 
+                                                    rows="4"
+                                                    placeholder="Escribe tu respuesta profesional aquí..."
+                                                    required></textarea>
+                                        </div>
+                                        
+                                        <input type="hidden" name="id_reserva" value="{{ queja.id_mensaje }}">
+                                        
+                                        <div class="d-flex gap-2">
+                                            <button type="submit" class="modern-btn btn-primary">
+                                                📤 Enviar Respuesta
+                                            </button>
+                                            <button type="button" class="modern-btn btn-secondary" 
+                                                    onclick="toggleResponseForm('{{ queja.id_mensaje }}')">
+                                                ❌ Cancelar
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="8">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">📭</div>
+                                    <h5>No hay quejas disponibles</h5>
+                                    <p class="text-muted">¡Excelente! No tienes quejas pendientes por revisar.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleResponseForm(id) {
+    const form = document.getElementById('edit-' + id);
+    if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'block';
+        // Enfocar el textarea
+        const textarea = form.querySelector('textarea');
+        if (textarea) {
+            setTimeout(() => textarea.focus(), 100);
+        }
+    } else {
+        form.style.display = 'none';
+    }
 }
 
-.alert .close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 0.5rem 0.75rem;
-}</style>
-<h1 class="text-center">QUEJAS DE NUESTROS CLIENTES</h1>
-<div class="container mt-4">
-    <h2>Quejas</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID de mensaje</th>
-                <th>Contenido</th>
-                <th>Fecha envio</th>
-                <th>Nombre completo usuario</th>
-                <th>Nombre de Usuario</th>
-                <th>Telefono de Usuario</th>
-                <th>estado</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for queja in quejas %}
-                <tr>
-                    <td>{{ queja.id_mensaje }}</td>
-                    <td>{{ queja.contenido }}</td>
-                    <td>{{ queja.fecha_envio }}</td>
-                    <td>{{ queja.usuario.nombre_completo }}</td>
-                    <td>{{ queja.usuario.nombre_usuario }}</td>
-                    <td>{{ queja.usuario.telefono }}</td>
-                    <td>{{ queja.estado }}</td>
-                    <td>
-                        <form method="POST" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" name="eliminar" value="{{ queja.id_mensaje }}" class="btn btn-danger btn-sm">Eliminar</button>
-                        </form>
-                        <form method="POST" style="display:inline;">
-                            {% csrf_token %}
-                            <button onclick="document.getElementById('edit-{{ queja.id_mensaje }}').style.display='block'" class="btn btn-success btn-sm">Contestar</button>
-                            <div id="edit-{{ queja.id_mensaje }}" style="display:none; margin-top: 10px;">
-                                <form method="POST">
-                                    {% csrf_token %}
-                                    <div class="form-group">
-                                        <div class="form-group col-md-6">
-                                            <label for="respuesta">Respuesta</label>
-                                            <textarea name="respuesta" class="form-control pastel-input" required></textarea>
-                                        </div>                        
-                                        <input type="hidden" name="id_reserva" value="{{ queja.id_mensaje }}">
-                                        <button type="submit" class="btn btn-success btn-sm">Contestar</button>
-                                        <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('edit-{{ queja.id_mensaje }}').style.display='none'">Cancelar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="6">No hay quejas disponibles.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+// Efecto de expansión para contenido largo
+document.querySelectorAll('.cell-content.expandable').forEach(cell => {
+    cell.addEventListener('click', function() {
+        const fullText = this.getAttribute('title');
+        if (fullText && fullText.length > 50) {
+            if (this.textContent.length > 50) {
+                this.textContent = fullText.substring(0, 50) + '...';
+            } else {
+                this.textContent = fullText;
+            }
+        }
+    });
+});
+
+// Auto-cerrar alertas después de 5 segundos
+setTimeout(() => {
+    document.querySelectorAll('.modern-alert').forEach(alert => {
+        alert.style.transition = 'opacity 0.5s ease-out';
+        alert.style.opacity = '0';
+        setTimeout(() => alert.remove(), 500);
+    });
+}, 5000);
+</script>
+
 {% endblock content %}

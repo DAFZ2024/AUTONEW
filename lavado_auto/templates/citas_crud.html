@@ -1,163 +1,506 @@
 {% extends "base_crud.html" %}
 
-
 {% block content %}
 {% load custom_tags %}
-<div class="container mt-3">
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert 
-                {% if message.tags == 'success' %}alert-success
-                {% elif message.tags == 'error' %}alert-danger
-                {% elif message.tags == 'warning' %}alert-warning
-                {% else %}alert-info
-                {% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-</div>
-<style>.alert {
-    position: relative;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1rem;
-    border: 1px solid transparent;
-    border-radius: 0.25rem;
-}
 
-.alert .close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 0.5rem 0.75rem;
-}</style>
-<h1 class="text-center">CITAS PENDIENTES</h1>
+<style>
+    :root {
+        --primary-color: #667eea;
+        --secondary-color: #764ba2;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --info-color: #3b82f6;
+        --light-bg: #f8fafc;
+        --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
 
+    body {
+        background: linear-gradient(135deg,rgb(235, 237, 245) 0%,rgb(245, 237, 253) 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-<div class="container mt-4">
-    <h2>Citas Pendientes</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID de Reserva</th>
-                <th>Lugar</th>
-                <th>Fecha</th>
-                <th>Hora</th>
-                <th>Servicio</th>
-                <th>Nombre Completo</th>  
-                <th>Nombre de Usuario</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for reserva in reservas %}
-                <tr>
-                    <td>{{ reserva.id_reserva }}</td>
-                    <td>{{ reserva.empresa.nombre_empresa }}</td>
-                    <td>{{ reserva.fecha }}</td>
-                    <td>{{ reserva.hora|date:"h:i A" }}</td>
-                    <td>{{ reserva.servicio.nombre_servicio }}</td>
-                    <td>{{ reserva.usuario.nombre_completo }}</td> 
-                    <td>{{ reserva.usuario.nombre_usuario }}</td> 
-                    <td>{{ reserva.estado }}</td>
-                    <td>
-                        <div class="btn-group" role="group" aria-label="Acciones">
-                            {% if reserva.estado == 'no_completado' %}
-                                <form method="POST" action="{% url 'cambiar_estado_reserva' reserva.id_reserva %}" class="d-inline">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-success btn-sm">Completar</button>
-                                </form>
-                            {% endif %}
-                            
-                            <form method="POST" class="d-inline">
-                                {% csrf_token %}
-                                <button type="submit" name="eliminar" value="{{ reserva.id_reserva }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que quieres eliminar esta cita?');">Eliminar</button>
-                            </form>
+    .main-container {
+        background: var(--light-bg);
+        border-radius: 20px;
+        box-shadow: var(--card-shadow);
+        margin: 2rem auto;
+        padding: 0;
+        overflow: hidden;
+        max-width: 1400px;
+    }
 
-                            <button class="btn btn-warning btn-sm" onclick="document.getElementById('edit-{{ reserva.id_reserva }}').style.display='block'">Editar</button>
-                        </div>
+    .header-section {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
 
-                        <div id="edit-{{ reserva.id_reserva }}" style="display:none; margin-top: 10px;">
-                            <form method="POST">
-                                {% csrf_token %}
-                                <div class="form-group">
-                                    <label for="empresa">Lugar</label>
-                                    <select name="empresa" class="form-control" required>
-                                        {% for empresa in empresas %}
-                                            <option value="{{ empresa.id_empresa }}" {% if reserva.empresa.id_empresa == empresa.id_empresa %}selected{% endif %}>{{ empresa.nombre_empresa }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <label for="servicio">Servicio</label>
-                                    <select name="servicio" class="form-control" required>
-                                        {% for servicio in servicios %}
-                                            <option value="{{ servicio.id_servicio }}" {% if reserva.servicio.id_servicio == servicio.id_servicio %}selected{% endif %}>{{ servicio.nombre_servicio }}</option>
-                                        {% endfor %}
-                                    </select>
+    .header-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="25" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="25" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        pointer-events: none;
+    }
 
-                                    <label for="fecha">Selecciona una fecha:</label>
-                                    <select name="fecha" id="fecha-{{ reserva.id_reserva }}" required class="form-control">
-                                        {% for fecha in fechas_disponibles %}
-                                            <option value="{{ fecha|date:'Y-m-d' }}">{{ fecha|date:'jS \d\e F, Y' }}</option>
-                                        {% endfor %}
-                                    </select>
+    .header-section h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+    }
 
-                                    <label for="hora">Selecciona una hora:</label>
-                                    <select name="hora" id="hora-{{ reserva.id_reserva }}" required class="form-control styled-select">
-                                        <!-- Las horas disponibles se llenarán con JavaScript -->
-                                    </select>
-                                    
-                        
-                                    <input type="hidden" name="id_reserva" value="{{ reserva.id_reserva }}">
-                                    <div class="mt-2">
-                                        <button type="submit" class="btn btn-success btn-sm">Actualizar</button>
-                                        <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('edit-{{ reserva.id_reserva }}').style.display='none'">Cancelar</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+    .content-section {
+        padding: 2rem;
+    }
 
-                        <script>
-                            document.getElementById('fecha-{{ reserva.id_reserva }}').addEventListener('change', function() {
-                                const fechaSeleccionada = this.value;
-                                const horaSelect = document.getElementById('hora-{{ reserva.id_reserva }}');
+    .alert {
+        border: none;
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
 
-                                // Lógica para obtener horas disponibles de la API
-                                fetch(`/api/hours/?fecha=${fechaSeleccionada}`)
-                                    .then(response => {
-                                        if (!response.ok) {
-                                            throw new Error('Error en la respuesta del servidor');
-                                        }
-                                        return response.json();
-                                    })
-                                    .then(data => {
-                                        horaSelect.innerHTML = '';  // Limpiar horas
-                                        if (data.horas) {
-                                            data.horas.forEach(hora => {
-                                                const option = document.createElement('option');
-                                                option.value = hora;
-                                                option.textContent = hora;
-                                                horaSelect.appendChild(option);
-                                            });
-                                        } else if (data.error) {
-                                            alert(data.error);
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error fetching hours:', error);
-                                        alert('Hubo un problema al cargar las horas.');
-                                    });
-                            });
-                        </script>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="9">No tienes reservas pendientes.</td>
-                </tr>
+    .alert-success {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+    }
+
+    .alert-warning {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+    }
+
+    .alert-info {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+    }
+
+    .alert .close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 0.5rem 0.75rem;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        opacity: 0.8;
+    }
+
+    .table-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+        margin-top: 2rem;
+    }
+
+    .table-header {
+        background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+        padding: 1.5rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .table-header h2 {
+        margin: 0;
+        color: #1e293b;
+        font-weight: 600;
+        font-size: 1.5rem;
+    }
+
+    .table {
+        margin: 0;
+        border: none;
+    }
+
+    .table thead th {
+        background: #f8fafc;
+        border: none;
+        font-weight: 600;
+        color: #475569;
+        padding: 1rem;
+        text-transform: uppercase;
+        font-size: 0.875rem;
+        letter-spacing: 0.5px;
+    }
+
+    .table tbody td {
+        padding: 1rem;
+        border: none;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+
+    .table tbody tr:hover {
+        background: #f8fafc;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn {
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin: 0.25rem;
+        min-width: 80px;
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, var(--success-color), #059669);
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: linear-gradient(135deg, #059669, #047857);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        color: white;
+    }
+
+    .btn-warning {
+        background: linear-gradient(135deg, var(--warning-color), #d97706);
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background: linear-gradient(135deg, #d97706, #b45309);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        color: white;
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, var(--danger-color), #dc2626);
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        color: white;
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #6b7280, #4b5563);
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: linear-gradient(135deg, #4b5563, #374151);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
+        color: white;
+    }
+
+    .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+
+    .edit-form {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+        border: 2px solid #e2e8f0;
+        display: none;
+    }
+
+    .form-control {
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-size: 0.875rem;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        outline: none;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .no-appointments {
+        background: white;
+        border-radius: 16px;
+        padding: 3rem;
+        text-align: center;
+        box-shadow: var(--card-shadow);
+        margin-top: 2rem;
+    }
+
+    .no-appointments h3 {
+        color: #4b5563;
+        margin-bottom: 0.5rem;
+    }
+
+    .no-appointments p {
+        color: #6b7280;
+        margin: 0;
+    }
+
+    @media (max-width: 768px) {
+        .main-container {
+            margin: 1rem;
+            border-radius: 16px;
+        }
+
+        .header-section {
+            padding: 1.5rem;
+        }
+
+        .header-section h1 {
+            font-size: 2rem;
+        }
+
+        .content-section {
+            padding: 1rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .btn {
+            min-width: auto;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-group {
+            flex-direction: column;
+        }
+    }
+
+    .fade-in {
+        animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="main-container fade-in">
+    <!-- Header Section -->
+    <div class="header-section">
+        <h1>📅 CITAS PENDIENTES</h1>
+    </div>
+
+    <!-- Content Section -->
+    <div class="content-section">
+        <!-- Messages (tu código original) -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert 
+                    {% if message.tags == 'success' %}alert-success
+                    {% elif message.tags == 'error' %}alert-danger
+                    {% elif message.tags == 'warning' %}alert-warning
+                    {% else %}alert-info
+                    {% endif %}">
+                    {{ message }}
+                </div>
             {% endfor %}
-        </tbody>
-    </table>
+        {% endif %}
+
+        <!-- Table Container -->
+        <div class="table-container">
+            <div class="table-header">
+                <h2>📋 Citas Pendientes</h2>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>🔢 ID de Reserva</th>
+                            <th>📍 Lugar</th>
+                            <th>📅 Fecha</th>
+                            <th>🕐 Hora</th>
+                            <th>🛎️ Servicio</th>
+                            <th>👤 Nombre Completo</th>  
+                            <th>🏷️ Nombre de Usuario</th>
+                            <th>🚩 Estado</th>
+                            <th>⚙️ Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reserva in reservas %}
+                            <tr>
+                                <td><strong>{{ reserva.id_reserva }}</strong></td>
+                                <td>{{ reserva.empresa.nombre_empresa }}</td>
+                                <td>{{ reserva.fecha }}</td>
+                                <td>{{ reserva.hora|date:"h:i A" }}</td>
+                                <td>{{ reserva.servicio.nombre_servicio }}</td>
+                                <td>{{ reserva.usuario.nombre_completo }}</td> 
+                                <td>{{ reserva.usuario.nombre_usuario }}</td> 
+                                <td>
+                                    <span class="badge {% if reserva.estado == 'no_completado' %}bg-warning{% else %}bg-success{% endif %} text-dark">
+                                        {{ reserva.estado }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Acciones">
+                                        <!-- Botón Completar (solo si no está completado) -->
+                                        {% if reserva.estado == 'no_completado' %}
+                                            <form method="POST" action="{% url 'cambiar_estado_reserva' reserva.id_reserva %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-success btn-sm">✅ Completar</button>
+                                            </form>
+                                        {% endif %}
+                                        
+                                        <!-- Botón Eliminar -->
+                                        <form method="POST" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" name="eliminar" value="{{ reserva.id_reserva }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que quieres eliminar esta cita?');">🗑️ Eliminar</button>
+                                        </form>
+
+                                        <!-- Botón Editar -->
+                                        <button class="btn btn-warning btn-sm" onclick="toggleEdit('edit-{{ reserva.id_reserva }}')">✏️ Editar</button>
+                                    </div>
+
+                                    <!-- Formulario de Edición (tu código original) -->
+                                    <div id="edit-{{ reserva.id_reserva }}" class="edit-form">
+                                        <form method="POST">
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <label for="empresa">🏢 Lugar</label>
+                                                <select name="empresa" class="form-control" required>
+                                                    {% for empresa in empresas %}
+                                                        <option value="{{ empresa.id_empresa }}" {% if reserva.empresa.id_empresa == empresa.id_empresa %}selected{% endif %}>{{ empresa.nombre_empresa }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                
+                                                <label for="servicio">🛎️ Servicio</label>
+                                                <select name="servicio" class="form-control" required>
+                                                    {% for servicio in servicios %}
+                                                        <option value="{{ servicio.id_servicio }}" {% if reserva.servicio.id_servicio == servicio.id_servicio %}selected{% endif %}>{{ servicio.nombre_servicio }}</option>
+                                                    {% endfor %}
+                                                </select>
+
+                                                <label for="fecha">📅 Selecciona una fecha:</label>
+                                                <select name="fecha" id="fecha-{{ reserva.id_reserva }}" required class="form-control">
+                                                    {% for fecha in fechas_disponibles %}
+                                                        <option value="{{ fecha|date:'Y-m-d' }}">{{ fecha|date:'jS \d\e F, Y' }}</option>
+                                                    {% endfor %}
+                                                </select>
+
+                                                <label for="hora">🕐 Selecciona una hora:</label>
+                                                <select name="hora" id="hora-{{ reserva.id_reserva }}" required class="form-control styled-select">
+                                                    <!-- Las horas disponibles se llenarán con JavaScript -->
+                                                </select>
+                                                
+                                                <input type="hidden" name="id_reserva" value="{{ reserva.id_reserva }}">
+                                                
+                                                <div class="mt-3">
+                                                    <button type="submit" class="btn btn-success btn-sm">💾 Actualizar</button>
+                                                    <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEdit('edit-{{ reserva.id_reserva }}')">❌ Cancelar</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <!-- Tu JavaScript original para cargar horas -->
+                                    <script>
+                                        document.getElementById('fecha-{{ reserva.id_reserva }}').addEventListener('change', function() {
+                                            const fechaSeleccionada = this.value;
+                                            const horaSelect = document.getElementById('hora-{{ reserva.id_reserva }}');
+
+                                            // Lógica para obtener horas disponibles de la API
+                                            fetch(`/api/hours/?fecha=${fechaSeleccionada}`)
+                                                .then(response => {
+                                                    if (!response.ok) {
+                                                        throw new Error('Error en la respuesta del servidor');
+                                                    }
+                                                    return response.json();
+                                                })
+                                                .then(data => {
+                                                    horaSelect.innerHTML = '';  // Limpiar horas
+                                                    if (data.horas) {
+                                                        data.horas.forEach(hora => {
+                                                            const option = document.createElement('option');
+                                                            option.value = hora;
+                                                            option.textContent = hora;
+                                                            horaSelect.appendChild(option);
+                                                        });
+                                                    } else if (data.error) {
+                                                        alert(data.error);
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error fetching hours:', error);
+                                                    alert('Hubo un problema al cargar las horas.');
+                                                });
+                                        });
+                                    </script>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <!-- Estado vacío mejorado -->
+                            <tr>
+                                <td colspan="9" class="text-center py-5">
+                                    <div class="no-appointments-inline">
+                                        <h4 style="color: #6b7280; margin-bottom: 0.5rem;">📅 No tienes reservas pendientes</h4>
+                                        <p style="color: #9ca3af; margin: 0;">Todas tus citas están al día</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- JavaScript para toggle de formularios de edición -->
+<script>
+    function toggleEdit(elementId) {
+        const editForm = document.getElementById(elementId);
+        if (editForm.style.display === 'none' || editForm.style.display === '') {
+            // Cerrar todos los otros formularios
+            document.querySelectorAll('.edit-form').forEach(form => {
+                form.style.display = 'none';
+            });
+            // Mostrar el formulario actual
+            editForm.style.display = 'block';
+            editForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+            editForm.style.display = 'none';
+        }
+    }
+</script>
 
 {% endblock content %}

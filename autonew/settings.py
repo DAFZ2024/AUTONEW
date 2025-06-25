@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'lavado_auto',
+    'tailwind',
 ]
+
+TAILWIND_APP_NAME = 'theme'
 
 
 MIDDLEWARE = [

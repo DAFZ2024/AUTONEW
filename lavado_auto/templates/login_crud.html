@@ -2,53 +2,407 @@
 <html lang="es">
 
 <head>
+    {% load static %}
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Autonew-lavado de autos</title>
+    <title>Autonew - Administrador</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0c2331 0%, #1a3a4a 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .login-card {
+            background: rgba(26, 58, 74, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            padding: 3rem;
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #4a9eff, #00d4ff, #4a9eff);
+        }
+
+        .brand-section {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .brand-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #4a9eff 0%, #00d4ff 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 20px rgba(74, 158, 255, 0.3);
+        }
+
+        .brand-logo i {
+            font-size: 2rem;
+            color: white;
+        }
+
+        .main-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #b0c4de;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .admin-badge {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(135deg, #4a9eff 0%, #00d4ff 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            box-shadow: 0 5px 15px rgba(74, 158, 255, 0.3);
+        }
+
+        .admin-badge i {
+            margin-right: 0.5rem;
+        }
+
+        .form-field {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #b0c4de;
+            z-index: 2;
+        }
+
+        .custom-input {
+            padding-left: 3rem !important;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            height: 3.2rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .custom-input::placeholder {
+            color: #b0c4de;
+        }
+
+        .custom-input:focus {
+            border-color: #4a9eff;
+            box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+            outline: none;
+        }
+
+        .custom-label {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .login-button {
+            background: linear-gradient(135deg, #4a9eff 0%, #00d4ff 100%);
+            border: none;
+            border-radius: 12px;
+            height: 3.2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(74, 158, 255, 0.4);
+            background: linear-gradient(135deg, #5ba8ff 0%, #1ae0ff 100%);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .forgot-password {
+            color: #4a9eff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: #00d4ff;
+            text-decoration: underline;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(26, 58, 74, 0.9);
+            color: #4a9eff;
+            border: 2px solid rgba(74, 158, 255, 0.3);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-button:hover {
+            background: rgba(74, 158, 255, 0.2);
+            color: #00d4ff;
+            border-color: #4a9eff;
+            transform: translateX(-3px);
+            box-shadow: 0 8px 20px rgba(74, 158, 255, 0.3);
+        }
+
+        .form-container {
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .login-card {
+                margin: 1rem;
+                padding: 2rem;
+            }
+            
+            .back-button {
+                top: 1rem;
+                left: 1rem;
+                width: 45px;
+                height: 45px;
+            }
+        }
+
+        /* Floating particles effect */
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .shape {
+            position: absolute;
+            background: rgba(74, 158, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            border-radius: 30%;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+    </style>
 </head>
 
 <body>
-    <section class="section">
-        <div class="container">
-            <h1 class="title has-text-centered">Iniciar Sesión</h1>
-    
-            <div class="columns is-centered">
-                <div class="column is-one-third">
-                    <div class="box">
-                        <form method="POST">
-                            {% csrf_token %}
-                            <div class="field">
-                                <label class="label">Nombre Usuario</label>
-                                <div class="control">
-                                    <input class="input" type="text" name="nombre_usuario" placeholder="Nombre de usuario" required>
-                                </div>
-                            </div>
-    
-                            <div class="field">
-                                <label class="label">Contraseña</label>
-                                <div class="control">
-                                    <input class="input" type="password" name="contrasena" placeholder="********" required>
-                                </div>
-                            </div>
-    
-                            <div class="field">
-                                <div class="control">
-                                    <button class="button is-link is-fullwidth" type="submit">Iniciar Sesión</button>
-                                </div>
-                            </div>
-                        </form>
-    
-                        <div class="has-text-centered">
-                            <a href="#">¿Olvidaste tu contraseña?</a>
+    <!-- Floating background shapes -->
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <!-- Back button -->
+    <button class="back-button" onclick="goHome()" title="Regresar al inicio">
+        <i class="fas fa-arrow-left"></i>
+    </button>
+
+    <section class="login-container">
+        <div class="login-card">
+            <div class="brand-section">
+                <div class="brand-logo">
+                    <img src="{% static 'lavado_auto/static/media/logo.png' %}" alt="Logo Autonew" style="width: 48px; height: 48px;">
+                </div>
+                <h1 class="main-title">AUTONEW</h1>
+                <p class="subtitle">Sistema de Administración</p>
+                <div class="admin-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    Acceso de Administrador
+                </div>
+            </div>
+
+            <div class="form-container">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="form-field">
+                        <label class="custom-label">Nombre de Usuario</label>
+                        <div class="input-group">
+                            <span class="input-icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <input class="input custom-input" 
+                                   type="text" 
+                                   name="nombre_usuario" 
+                                   placeholder="Ingrese su nombre de usuario" 
+                                   required>
                         </div>
                     </div>
+
+                    <div class="form-field">
+                        <label class="custom-label">Contraseña</label>
+                        <div class="input-group">
+                            <span class="input-icon">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <input class="input custom-input" 
+                                   type="password" 
+                                   name="contrasena" 
+                                   placeholder="Ingrese su contraseña" 
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <button class="button login-button is-fullwidth" type="submit">
+                            <i class="fas fa-sign-in-alt" style="margin-right: 0.5rem;"></i>
+                            Iniciar Sesión
+                        </button>
+                    </div>
+                </form>
+
+                <div class="has-text-centered" style="margin-top: 1.5rem;">
+                    <a href="#" class="forgot-password">
+                        <i class="fas fa-question-circle" style="margin-right: 0.3rem;"></i>
+                        ¿Olvidaste tu contraseña?
+                    </a>
                 </div>
             </div>
         </div>
     </section>
-    
 
+    <script>
+        function goHome() {
+            // Aquí puedes cambiar la URL por la página de inicio de tu aplicación
+            window.location.href = '/'; // o la ruta que corresponda a tu página principal
+        }
+
+        // Efecto de enfoque automático
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstInput = document.querySelector('input[name="nombre_usuario"]');
+            if (firstInput) {
+                firstInput.focus();
+            }
+        });
+
+        // Efecto de typing para el placeholder
+        function typeEffect(element, text, speed = 100) {
+            let i = 0;
+            element.placeholder = '';
+            const timer = setInterval(() => {
+                if (i < text.length) {
+                    element.placeholder += text.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(timer);
+                }
+            }, speed);
+        }
+
+        // Aplicar efecto de typing a los inputs cuando se enfocan por primera vez
+        document.querySelectorAll('.custom-input').forEach(input => {
+            let hasBeenFocused = false;
+            input.addEventListener('focus', function() {
+                if (!hasBeenFocused) {
+                    const originalPlaceholder = this.placeholder;
+                    typeEffect(this, originalPlaceholder, 50);
+                    hasBeenFocused = true;
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -6,48 +6,405 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Bienvenido a AutoNew</title>
     {% load static %}
     <!-- Estilo de plantilla -->
-    <link href="{% static "estilos/estilos.css" %}" rel="stylesheet" type="text/css" >
-</head>
-<body>
+    <link href="{% static "estilos/estilos.css" %}" rel="stylesheet" type="text/css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --danger-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --info-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --hover-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            --border-radius: 15px;
+        }
 
-    <main class="container mt-5 welcome-section">
-        <h1 class="welcome-title">BIENVENIDOS A AUTONEW</h1>
-        <p class="text-center">Aquí puedes realizar las siguientes acciones:</p>
-        <ul class="feature-list">
-            <li>
-                <a href="/usuarioscrud" class="text-decoration-none">
-                    Ver, eliminar y editar <span class="highlight">usuarios</span>
-                </a>
-            </li>
-            <li>
-                <a href="/citascrud" class="text-decoration-none">
-                    Ver, editar y eliminar <span class="highlight">citas</span>
-                </a>
-            </li>
-            <li>
-                <a href="/comentarioscrud" class="text-decoration-none">
-                    Ver y eliminar <span class="highlight">comentarios</span>
-                </a>
-            </li>
-            <li>
-                <a href="/quejascrud" class="text-decoration-none">
-                    Ver, contestar y eliminar <span class="highlight">quejas</span>
-                </a>
-            </li>
-            <li>
-                <a href="/servicioscrud" class="text-decoration-none">
-                    Ver, eliminar y crear <span class="highlight">servicios</span>
-                </a>
-            </li>
-            <li>
-                <a href="/empresascrud" class="text-decoration-none">
-                    Ver, eliminar y crear <span class="highlight">Empresas</span>
-                </a>
-            </li>
-        </ul>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .dashboard-container {
+            padding: 2rem 0;
+        }
+
+        .welcome-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .welcome-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            color: #6c757d;
+            font-weight: 400;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--hover-shadow);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            transition: height 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            height: 6px;
+        }
+
+        .feature-card.usuarios::before { background: var(--primary-gradient); }
+        .feature-card.citas::before { background: var(--secondary-gradient); }
+        .feature-card.comentarios::before { background: var(--success-gradient); }
+        .feature-card.quejas::before { background: var(--warning-gradient); }
+        .feature-card.servicios::before { background: var(--danger-gradient); }
+        .feature-card.empresas::before { background: var(--info-gradient); }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-icon.usuarios { background: var(--primary-gradient); }
+        .feature-icon.citas { background: var(--secondary-gradient); }
+        .feature-icon.comentarios { background: var(--success-gradient); }
+        .feature-icon.quejas { background: var(--warning-gradient); }
+        .feature-icon.servicios { background: var(--danger-gradient); }
+        .feature-icon.empresas { background: var(--info-gradient); }
+
+        .feature-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            color: #2d3748;
+        }
+
+        .feature-description {
+            color: #718096;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .feature-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .action-badge {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .stats-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            padding: 1rem;
+            border-radius: 10px;
+            background: linear-gradient(145deg, #f8f9ff, #e8ecff);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+        .feature-card:nth-child(4) { animation-delay: 0.4s; }
+        .feature-card:nth-child(5) { animation-delay: 0.5s; }
+        .feature-card:nth-child(6) { animation-delay: 0.6s; }
+
+        @media (max-width: 768px) {
+            .welcome-title {
+                font-size: 2.5rem;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .feature-card {
+                padding: 1.5rem;
+            }
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-circle:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-circle:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 70%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .floating-circle:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 40%;
+            left: 80%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="floating-elements">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+    </div>
+
+    <main class="container dashboard-container">
+        <div class="welcome-header">
+            <h1 class="welcome-title">AUTONEW</h1>
+            <p class="welcome-subtitle">Panel de Administración Completo</p>
+        </div>
+
+        <div class="stats-section">
+            <h3 class="mb-3">Gestión Integral del Sistema</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">Módulos</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Funcional</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Disponible</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <a href="/usuarioscrud" class="feature-card usuarios">
+                <div class="feature-icon usuarios">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="feature-title">Gestión de Usuarios</h3>
+                <p class="feature-description">
+                    Administra completamente la base de usuarios del sistema con herramientas avanzadas de gestión.
+                </p>
+                <div class="feature-actions">
+                    <span class="action-badge">Ver</span>
+                    <span class="action-badge">Eliminar</span>
+                    <span class="action-badge">Editar</span>
+                </div>
+            </a>
+
+            <a href="/citascrud" class="feature-card citas">
+                <div class="feature-icon citas">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3 class="feature-title">Control de Citas</h3>
+                <p class="feature-description">
+                    Supervisa y administra todas las citas programadas en el sistema de manera eficiente.
+                </p>
+                <div class="feature-actions">
+                    <span class="action-badge">Ver</span>
+                    <span class="action-badge">Editar</span>
+                    <span class="action-badge">Eliminar</span>
+                </div>
+            </a>
+
+            <a href="/comentarioscrud" class="feature-card comentarios">
+                <div class="feature-icon comentarios">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h3 class="feature-title">Moderación de Comentarios</h3>
+                <p class="feature-description">
+                    Revisa y modera los comentarios de usuarios para mantener la calidad del contenido.
+                </p>
+                <div class="feature-actions">
+                    <span class="action-badge">Ver</span>
+                    <span class="action-badge">Eliminar</span>
+                </div>
+            </a>
+
+            <a href="/quejascrud" class="feature-card quejas">
+                <div class="feature-icon quejas">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="feature-title">Atención de Quejas</h3>
+                <p class="feature-description">
+                    Gestiona las quejas de usuarios proporcionando respuestas rápidas y efectivas.
+                </p>
+                <div class="feature-actions">
+                    <span class="action-badge">Ver</span>
+                    <span class="action-badge">Contestar</span>
+                    <span class="action-badge">Eliminar</span>
+                </div>
+            </a>
+
+            <a href="/servicioscrud" class="feature-card servicios">
+                <div class="feature-icon servicios">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h3 class="feature-title">Administración de Servicios</h3>
+                <p class="feature-description">
+                    Crea, modifica y administra todos los servicios disponibles en la plataforma.
+                </p>
+                <div class="feature-actions">
+                    <span class="action-badge">Ver</span>
+                    <span class="action-badge">Eliminar</span>
+                    <span class="action-badge">Crear</span>
+                </div>
+            </a>
+
+            <a href="/empresascrud" class="feature-card empresas">
+                <div class="feature-icon empresas">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h3 class="feature-title">Gestión de Empresas</h3>
+                <p class="feature-description">
+                    Administra el registro y información de empresas asociadas al sistema.
+                </p>
+                <div class="feature-actions">
+                    <span class="action-badge">Ver</span>
+                    <span class="action-badge">Eliminar</span>
+                    <span class="action-badge">Crear</span>
+                </div>
+            </a>
+        </div>
     </main>
 
     <script>
@@ -65,14 +422,26 @@
                 console.log('Error al cerrar sesión:', error);
             });
         });
+
+        // Efecto de partículas suave
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.feature-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
     </script>
-    
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-</html>
 
-
-{% endblock  %}
+{% endblock %}

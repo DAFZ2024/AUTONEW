@@ -4,7 +4,7 @@ import json
 from django.shortcuts import render,redirect, get_object_or_404
 from django.http import HttpResponse,JsonResponse
 from django.contrib import messages
-from .models import Usuario,Comentario,MensajeQueja,Reserva,Servicio,Empresa,EmpresaServicio
+from .models import Usuario,Comentario,MensajeQueja,Reserva,Servicio,Empresa,EmpresaServicio, ReservaServicio
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
@@ -136,83 +136,99 @@ def reservas(request):
     servicios = Servicio.objects.all()  # Obtener todos los servicios disponibles
     empresas = Empresa.objects.all()    # Obtener todas las empresas disponibles
     empresaservicio = EmpresaServicio.objects.all()
-
+    
     fecha_seleccionada = None
     servicios_filtrados = []
-
+    
     # Inicializar la variable 'ocupadas' antes de cualquier otra cosa.
     reservas_existentes = Reserva.objects.all()
-
+    
     ocupadas = {
         "fechas": {reserva.fecha for reserva in reservas_existentes},
         "horas": {}
     }
-
+    
     for reserva in reservas_existentes:
         if reserva.fecha not in ocupadas["horas"]:
             ocupadas["horas"][reserva.fecha] = set()
-        ocupadas["horas"][reserva.fecha].add(reserva.hora.strftime('%H:%M'))  # Asegúrate de que las horas se formateen correctamente
-
+        ocupadas["horas"][reserva.fecha].add(reserva.hora.strftime('%H:%M'))
+    
     if request.method == "POST":
         opcion_empresa_id = request.POST.get('id_empresa')
         fecha_seleccionada = request.POST.get('fecha')
         hora = request.POST.get('hora')
         usuario = request.user
         servicio_id = request.POST.get('id_servicio')
-
+        
         try:
             servicio = Servicio.objects.get(id_servicio=servicio_id)
         except Servicio.DoesNotExist:
-            return HttpResponse("El servicio seleccionado no existe.")
-
+            messages.error(request, "El servicio seleccionado no existe.")
+            return redirect('reservas')
+        
         if opcion_empresa_id:
             try:
                 empresa = Empresa.objects.get(id_empresa=opcion_empresa_id)
             except Empresa.DoesNotExist:
-                return HttpResponse("El punto seleccionado no existe.")
-
+                messages.error(request, "El punto seleccionado no existe.")
+                return redirect('reservas')
+            
             # Filtrar los servicios disponibles para la empresa seleccionada
-            servicios_filtrados = Servicio.objects.filter(id_servicio__in=EmpresaServicio.objects.filter(empresa=empresa).values('servicio'))
-
+            servicios_filtrados = Servicio.objects.filter(
+                id_servicio__in=EmpresaServicio.objects.filter(empresa=empresa).values('servicio')
+            )
+            
             if not servicios_filtrados:
                 messages.error(request, "No hay servicios disponibles para la empresa seleccionada.")
                 return redirect('reservas')
-
+            
+            # Verificar que el servicio seleccionado esté disponible para esta empresa
+            if servicio not in servicios_filtrados:
+                messages.error(request, "El servicio seleccionado no está disponible para esta empresa.")
+                return redirect('reservas')
+            
             # Verificar si la fecha y hora están ocupadas
-            if fecha_seleccionada in ocupadas["fechas"] and hora in ocupadas["horas"].get(fecha_seleccionada, set()):
-                return HttpResponse(f"Lo siento, la fecha {fecha_seleccionada} a las {hora} ya está ocupada.")
-
+            fecha_obj = datetime.strptime(fecha_seleccionada, '%Y-%m-%d').date()
+            if fecha_obj in ocupadas["fechas"] and hora in ocupadas["horas"].get(fecha_obj, set()):
+                messages.error(request, f"Lo siento, la fecha {fecha_seleccionada} a las {hora} ya está ocupada.")
+                return redirect('reservas')
+            
             # Crear la reserva
             reserva = Reserva(
                 empresa=empresa,
                 fecha=fecha_seleccionada,
                 hora=hora,
-                usuario=usuario,
-                servicio=servicio
+                usuario=usuario
             )
             reserva.save()
+            
+            # Crear la relación entre reserva y servicio
+            ReservaServicio.objects.create(reserva=reserva, servicio=servicio)
+            
             messages.success(request, f"Tu cita para {servicio.nombre_servicio} ha sido reservada para el {fecha_seleccionada} a las {hora}.")
             return redirect('reservas')
         else:
-            return HttpResponse("No se ha seleccionado un punto.")
-
+            messages.error(request, "No se ha seleccionado un punto.")
+            return redirect('reservas')
+    
+    # Generar horas disponibles
     horas_disponibles = {}
     for i in range(15):
         fecha = hoy + timedelta(days=i)
         horas_disponibles[fecha] = []
-
-        for h in range(8, 21):  # Cambié el rango para extender el horario hasta las 8:00 PM
-            hora_formateada = f"{h:02}:00"  # Asegúrate de que la hora esté bien formateada
-
+        
+        for h in range(8, 21):  # De 8:00 AM a 8:00 PM
+            hora_formateada = f"{h:02}:00"
+            
             if fecha == hoy and h < ahora.hour:
                 continue
-
+            
             # Verifica si la hora está ocupada para esta fecha
             if hora_formateada not in ocupadas["horas"].get(fecha, set()):
                 horas_disponibles[fecha].append(hora_formateada)
-
+    
     fechas_disponibles = [hoy + timedelta(days=i) for i in range(15)]
-
+    
     return render(request, 'reservas.html', {
         'ocupadas': ocupadas,
         'horas_disponibles': horas_disponibles,
@@ -220,74 +236,121 @@ def reservas(request):
         'hoy': hoy,
         'servicios_filtrados': servicios_filtrados,
         'empresas': empresas,
-        'servicios': servicios,  
+        'servicios': servicios,
         'empresaservicio': empresaservicio
     })
 
+# Vista para obtener servicios por empresa (AJAX)
+def obtener_servicios(request):
+    empresa_id = request.GET.get('empresa_id')
+    if empresa_id:
+        try:
+            empresa = Empresa.objects.get(id_empresa=empresa_id)
+            servicios = Servicio.objects.filter(
+                id_servicio__in=EmpresaServicio.objects.filter(empresa=empresa).values('servicio')
+            )
+            servicios_data = [
+                {
+                    'id_servicio': servicio.id_servicio,
+                    'nombre_servicio': servicio.nombre_servicio,
+                    'descripcion': servicio.descripcion,
+                    'precio': servicio.precio
+                } for servicio in servicios
+            ]
+            empresa_data = {
+                'nombre_empresa': empresa.nombre_empresa,
+                'direccion': empresa.direccion,
+                'telefono': empresa.telefono
+            }
+            return JsonResponse({'servicios': servicios_data, 'empresa': empresa_data})
+        except Empresa.DoesNotExist:
+            return JsonResponse({'servicios': [], 'empresa': None})
+    return JsonResponse({'servicios': [], 'empresa': None})
+
+# Vista para obtener información de la empresa (AJAX)
 def obtener_info_empresa(request):
     empresa_id = request.GET.get('empresa_id')
     if empresa_id:
         try:
             empresa = Empresa.objects.get(id_empresa=empresa_id)
-            data = {
+            return JsonResponse({
                 'nombre': empresa.nombre_empresa,
                 'direccion': empresa.direccion,
-                'telefono': empresa.telefono,
-            }
-            return JsonResponse(data)
+                'telefono': empresa.telefono
+            })
         except Empresa.DoesNotExist:
-            return JsonResponse({'error': 'Empresa no encontrada'}, status=404)
-    return JsonResponse({'error': 'ID de empresa no proporcionado'}, status=400)
+            return JsonResponse({
+                'nombre': 'No disponible',
+                'direccion': 'No disponible',
+                'telefono': 'No disponible'
+            })
+    return JsonResponse({
+        'nombre': 'No disponible',
+        'direccion': 'No disponible',
+        'telefono': 'No disponible'
+    })
 
-
-
-
-def obtener_servicios(request):
-    empresa_id = request.GET.get('empresa_id')  # Obtener el id de la empresa desde la URL
-    if empresa_id:
-        # Obtener los servicios de la empresa seleccionada
-        servicios = Servicio.objects.filter(id_servicio__in=EmpresaServicio.objects.filter(empresa_id=empresa_id).values('servicio'))
-        
-        # Crear una lista con los servicios
-        servicios_data = [{'id': servicio.id_servicio, 'nombre_servicio': servicio.nombre_servicio} for servicio in servicios]
-
-        return JsonResponse({'servicios': servicios_data})
-    
-    # Si no se encuentra la empresa o no se pasa el id, devolver una lista vacía
-    return JsonResponse({'servicios': []})
-
-
-
-
+# Vista para obtener información del servicio (AJAX)
 def obtener_info_servicio(request):
-    servicio_id = request.GET.get('servicio_id')  # Obtener el ID del servicio desde el GET
-    empresa_id = request.GET.get('empresa_id')  # Obtener el ID de la empresa desde el GET
-    
-    if not servicio_id:
-        return JsonResponse({'error': 'ID de servicio no proporcionado'}, status=400)
-    
-    if not empresa_id:
-        return JsonResponse({'error': 'ID de empresa no proporcionado'}, status=400)
+    servicio_id = request.GET.get('servicio_id')
+    if servicio_id:
+        try:
+            servicio = Servicio.objects.get(id_servicio=servicio_id)
+            return JsonResponse({
+                'nombre_servicio': servicio.nombre_servicio,
+                'descripcion': servicio.descripcion,
+                'precio': servicio.precio
+            })
+        except Servicio.DoesNotExist:
+            return JsonResponse({
+                'nombre_servicio': 'Servicio no encontrado',
+                'descripcion': 'No disponible',
+                'precio': 0
+            })
+    return JsonResponse({
+        'nombre_servicio': 'Selecciona un servicio',
+        'descripcion': '',
+        'precio': 0
+    })
 
-    try:
-        # Comprobar si el servicio está asociado a la empresa
-        empresa_servicio = EmpresaServicio.objects.filter(empresa_id=empresa_id, servicio_id=servicio_id).first()
-        
-        if not empresa_servicio:
-            return JsonResponse({'error': 'El servicio no está asignado a esta empresa'}, status=404)
+# Vista para obtener horas disponibles (AJAX)
+def get_horas(request):
+    empresa_id = request.GET.get('empresa_id')
+    servicio_id = request.GET.get('servicio_id')
+    fecha_str = request.GET.get('fecha')
+    if empresa_id and servicio_id and fecha_str:
+        try:
+            fecha_obj = datetime.strptime(fecha_str, '%Y-%m-%d').date()
+            if fecha_obj < timezone.now().date():
+                return JsonResponse({'horas': []})
 
-        # Obtener el servicio por su ID
-        servicio = Servicio.objects.get(id=servicio_id)
-        response_data = {
-            'nombre_servicio': servicio.nombre_servicio,
-            'descripcion': servicio.descripcion
-        }
-        return JsonResponse(response_data)  # Responder con JSON
-        
-    except Servicio.DoesNotExist:
-        return JsonResponse({'error': 'Servicio no encontrado'}, status=404)
+            reservas_existentes = Reserva.objects.filter(
+                empresa_id=empresa_id,
+                fecha=fecha_obj
+            )
 
+            # Solo toma las reservas que tengan el servicio seleccionado
+            reservas_con_servicio = []
+            for reserva in reservas_existentes:
+                if ReservaServicio.objects.filter(reserva=reserva, servicio_id=servicio_id).exists():
+                    reservas_con_servicio.append(reserva)
 
+            horas_ocupadas = set(reserva.hora.strftime('%H:%M') for reserva in reservas_con_servicio)
+
+            horas_disponibles = []
+            for h in range(8, 21):  # 8:00 a 20:00
+                hora_formateada = f"{h:02}:00"
+                if fecha_obj == timezone.now().date() and h < timezone.now().hour:
+                    continue
+                if hora_formateada not in horas_ocupadas:
+                    horas_disponibles.append(hora_formateada)
+
+            return JsonResponse({'horas': horas_disponibles})
+
+        except ValueError:
+            return JsonResponse({'horas': []})
+
+    return JsonResponse({'horas': []})
 
 
 
@@ -301,9 +364,17 @@ def citas(request):
     ahora = datetime.now()
     hoy = ahora.date()
     
-    # Obtener reservas del usuario actual en estado 'no_completado' y 'completado'
-    reservas_no_completadas = Reserva.objects.filter(estado='no_completado', usuario=request.user)
-    reservas_completadas = Reserva.objects.filter(estado='completado', usuario=request.user)
+    # Obtener reservas del usuario actual con prefetch_related para optimizar
+    reservas_no_completadas = Reserva.objects.filter(
+        estado='no_completado', 
+        usuario=request.user
+    ).prefetch_related('servicios', 'empresa')
+    
+    reservas_completadas = Reserva.objects.filter(
+        estado='completado', 
+        usuario=request.user
+    ).prefetch_related('servicios', 'empresa')
+    
     servicios = Servicio.objects.all() 
     empresas = Empresa.objects.all()
 
@@ -375,7 +446,6 @@ def citas(request):
     return render(request, 'citas.html', {
         'reservas_no_completadas': reservas_no_completadas,
         'reservas_completadas': reservas_completadas,
-        'form': form,
         'servicios': servicios,
         'empresas': empresas,
         'horas_disponibles': horas_disponibles,
@@ -427,37 +497,45 @@ def comentarios(request):
 
 
 def get_horas(request):
-    if request.method == "GET":
-        fecha = request.GET.get('fecha')
-        if fecha:
-            try:
-                # Convierte la fecha en objeto datetime
-                fecha_obj = datetime.strptime(fecha, '%Y-%m-%d').date()
+    empresa_id = request.GET.get('empresa_id')
+    servicio_id = request.GET.get('servicio_id')
+    fecha_str = request.GET.get('fecha')
+    if empresa_id and servicio_id and fecha_str:
+        try:
+            fecha_obj = datetime.strptime(fecha_str, '%Y-%m-%d').date()
+            if fecha_obj < timezone.now().date():
+                return JsonResponse({'horas': []})
 
-                # Verifica que la fecha no sea pasada
-                if fecha_obj < timezone.now().date():
-                    return JsonResponse({'error': 'La fecha seleccionada ya ha pasado.'}, status=400)
+            reservas_existentes = Reserva.objects.filter(
+                empresa_id=empresa_id,
+                fecha=fecha_obj
+            )
 
-                # Obtén todas las reservas para la fecha seleccionada
-                reservas_existentes = Reserva.objects.filter(fecha=fecha_obj)
+            # Solo toma las reservas que tengan el servicio seleccionado
+            reservas_con_servicio = []
+            for reserva in reservas_existentes:
+                if ReservaServicio.objects.filter(reserva=reserva, servicio_id=servicio_id).exists():
+                    reservas_con_servicio.append(reserva)
 
-                # Obtén las horas ocupadas para esa fecha
-                horas_ocupadas = set(reserva.hora.strftime('%H:%M') for reserva in reservas_existentes)
+            horas_ocupadas = set(reserva.hora.strftime('%H:%M') for reserva in reservas_con_servicio)
 
-                # Genera las horas disponibles de 08:00 a 15:00
-                horas_disponibles = []
-                for h in range(8, 16):  # De 08:00 a 15:00
-                    hora_formateada = f"{h:02}:00"
-                    if hora_formateada not in horas_ocupadas:
-                        horas_disponibles.append(hora_formateada)
+            horas_disponibles = []
+            for h in range(8, 21):  # 8:00 a 20:00
+                hora_formateada = f"{h:02}:00"
+                if fecha_obj == timezone.now().date() and h < timezone.now().hour:
+                    continue
+                if hora_formateada not in horas_ocupadas:
+                    horas_disponibles.append(hora_formateada)
 
-                return JsonResponse({'horas': horas_disponibles})
+            return JsonResponse({'horas': horas_disponibles})
 
-            except ValueError:
-                return JsonResponse({'error': 'Formato de fecha inválido. Use YYYY-MM-DD.'}, status=400)
+        except ValueError:
+            return JsonResponse({'horas': []})
 
     return JsonResponse({'horas': []})
-    
+
+
+
 
 ############################################################ comienzo de crud
 
@@ -465,27 +543,27 @@ def get_horas(request):
 def login_crud(request):
     if request.user.is_authenticated:
         return redirect('home')
-
+    
     if request.method == 'POST':
         nombre_usuario = request.POST['nombre_usuario']
-        contrasena = request.POST['contrasena']  
-
+        contrasena = request.POST['contrasena']
+        
         # Autenticación del usuario
-        usuario = authenticate(request, nombre_usuario=nombre_usuario, password=contrasena)
+        usuario = authenticate(request, username=nombre_usuario, password=contrasena)
+        
         if usuario is not None:
-            auth_login(request, usuario)  # Iniciar sesión con el usuario autenticado
-            messages.success(request, f'Bienvenido de nuevo, {usuario.nombre_usuario}!')
-            
-            # Si el usuario es específico, mostrar contenido personalizado
-            if usuario.nombre_usuario == 'aaa':
-                return render(request, 'empresas_crud.html')
-            
-            # Si es un usuario general, redirigir al home
-            return redirect('homecrud')
+            # Verificar si el usuario tiene rol de admin
+            if usuario.rol == 'admin':
+                auth_login(request, usuario)  # Iniciar sesión con el usuario autenticado
+                messages.success(request, f'Bienvenido administrador, {usuario.nombre_usuario}!')
+                return render(request, 'home_crud.html')
+            else:
+                messages.error(request, 'Acceso denegado. Solo los administradores pueden acceder.')
+                return redirect('logincrud')
         else:
             messages.error(request, 'Usuario o contraseña incorrectos.')
             return redirect('logincrud')
-
+    
     return render(request, 'login_crud.html')
     
 
@@ -586,6 +664,10 @@ def usuarios_crud(request):
     usuarios = Usuario.objects.all()
     form = UsuariosForm() 
 
+    # Calcular estadísticas ANTES de aplicar filtros de búsqueda
+    total_usuarios = usuarios.count()
+    total_admins = usuarios.filter(rol='admin').count()
+    total_clientes = usuarios.filter(rol='cliente').count()
 
     # Filtrar según los parámetros de búsqueda
     nombre_usuario = request.GET.get('nombre_usuario', '')
@@ -602,7 +684,6 @@ def usuarios_crud(request):
     if rol:
         usuarios = usuarios.filter(rol=rol)
 
-
     if request.method == "POST":
         # Manejar la eliminación de los usuarios
         if 'eliminar' in request.POST:
@@ -612,8 +693,6 @@ def usuarios_crud(request):
             messages.error(request, 'El usuario a sido eliminado.')
             return redirect('usuarioscrud')
         
-
-
         # Manejar la creación de nuevos usuarios
         if 'nombre_completo' in request.POST and 'id_usuario' not in request.POST:
             contrasena1 = request.POST.get('contrasena1')
@@ -622,16 +701,13 @@ def usuarios_crud(request):
             correo = request.POST.get('correo')
             telefono = request.POST.get('telefono')
 
-
             # Verificar si el nombre de usuario ya está en uso
             if Usuario.objects.filter(nombre_usuario=nombre_usuario).exists():
                 messages.error(request, 'El nombre de usuario ya está en uso.')
             # Verificar si el correo ya está en uso
             elif Usuario.objects.filter(correo=correo).exists():
                 messages.error(request, 'El correo ya está en uso.')
-
             else:
-
                 # Concatenar el prefijo "57" al teléfono ingresado
                 telefono_completo = "57" + telefono
                 if contrasena1 == contrasena2:
@@ -667,7 +743,7 @@ def usuarios_crud(request):
 
             # Solo actualizar la contraseña si el campo no está vacío
             if contrasena11:
-                if contrasena11 ==contrasena22:
+                if contrasena11 == contrasena22:
                     usuario.password = make_password(contrasena11)
                 else:
                     messages.error(request, 'Las contraseñas no coinciden.')
@@ -681,11 +757,16 @@ def usuarios_crud(request):
     else:
         form = UsuariosForm()
 
-    return render(request, 'usuarios_crud.html', {'usuarios': usuarios, 'form': form})
+    # Contexto con estadísticas calculadas
+    context = {
+        'usuarios': usuarios, 
+        'form': form,
+        'total_usuarios': total_usuarios,
+        'total_admins': total_admins,
+        'total_clientes': total_clientes,
+    }
 
-
-
-
+    return render(request, 'usuarios_crud.html', context)
 
 def citas_crud(request):
     ahora = datetime.now()
@@ -789,7 +870,8 @@ def citascom_crud(request):
 
     return render(request,'citascom_crud.html',{
                 'reservas': reservas,
-                'servicios': servicios})
+                'servicios': servicios,
+                'empresas': empresas })
 
 
 
