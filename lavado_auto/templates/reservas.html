@@ -1,119 +1,47 @@
 {% extends "base.html" %}
 {% load static %}
-<link href="{% static "estilos/estilos.css" %}" rel="stylesheet" type="text/css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
 {% block content %}
 
 <style>
-/* ==================== VARIABLES CSS ==================== */
-:root {
-    --primary-color: #6366f1;
-    --primary-dark: #4f46e5;
-    --primary-light: #818cf8;
-    --secondary-color: #0f172a;
-    --secondary-light: #1e293b;
-    --accent-color: #06b6d4;
-    --accent-light: #67e8f9;
-    --success-color: #10b981;
-    --warning-color: #f59e0b;
-    --error-color: #ef4444;
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-muted: #94a3b8;
-    --border-color: #334155;
-    --border-light: #475569;
-    --glass-bg: rgba(15, 23, 42, 0.8);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    --radius-sm: 0.375rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
-    --radius-xl: 1rem;
-    --radius-2xl: 1.5rem;
+/* Animaciones personalizadas */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* ==================== BASE STYLES ==================== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-    color: var(--text-primary);
-    min-height: 100vh;
-    line-height: 1.6;
-    overflow-x: hidden;
-    padding-top:120px;
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
 }
 
-/* ==================== BACKGROUND PATTERN ==================== */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: 
-        radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: -1;
+/* Clases de animación */
+.animate-fadeInUp {
+    animation: fadeInUp 0.8s ease-out;
 }
 
-/* ==================== CONTAINER STYLES ==================== */
-.modern-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem 1rem;
+.animate-slideInRight {
+    animation: slideInRight 0.8s ease-out;
 }
 
-/* ==================== HEADER SECTION ==================== */
-.modern-header {
-    text-align: center;
-    margin-bottom: 4rem;
-    position: relative;
+.loading-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    border-radius: 50%;
+    border-top-color: #3b82f6;
+    animation: spin 1s ease-in-out infinite;
 }
 
-.modern-header::before {
-    content: '';
-    position: absolute;
-    top: -2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-    border-radius: 2px;
-}
-
-.modern-header h1 {
-    font-family: 'Poppins', sans-serif;
-    font-size: 3.5rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-light) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 1rem;
-    letter-spacing: -0.02em;
-}
-
-.modern-header p {
-    font-size: 1.25rem;
-    color: var(--text-secondary);
-    font-weight: 400;
-    max-width: 600px;
-    margin: 0 auto;
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 /* ==================== MESSAGES STYLES ==================== */
@@ -623,186 +551,207 @@ body::before {
     }
 }
 
-/* ==================== UTILITY CLASSES ==================== */
-.text-gradient {
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.hidden {
-    display: none;
-}
-
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}
 </style>
 
 {% load custom_tags %}
 
-<!-- Messages Container -->
-<div class="modern-messages" id="messagesContainer">
-    {% if messages %}
-    {% for message in messages %}
-    <div class="modern-alert {% if message.tags == 'success' %}modern-alert-success{% elif message.tags == 'error' %}modern-alert-error{% elif message.tags == 'warning' %}modern-alert-warning{% else %}modern-alert-info{% endif %}">
-        {{ message }}
-        <button type="button" class="alert-close" onclick="this.parentElement.remove();">
-            <i class="fas fa-times"></i>
-        </button>
+<!-- Fondo blanco con elementos decorativos -->
+<div class="bg-white min-h-screen pt-20 md:pt-24">
+    <!-- Elementos decorativos de fondo -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-200/30 to-slate-200/30 rounded-full blur-3xl opacity-60 animate-pulse"></div>
+        <div class="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-slate-200/30 to-gray-200/30 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/2 left-1/4 w-64 h-64 bg-gradient-to-br from-blue-200/30 to-slate-200/30 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 4s;"></div>
     </div>
-    {% endfor %}
-    {% endif %}
-</div>
 
-<div class="modern-container">
-    <!-- Header Section -->
-    <header class="modern-header fade-in-up">
-        <h1>Sistema de Reservas</h1>
-        <p>Reserva tu cita de manera rápida y sencilla. Selecciona el punto de lavado, el servicio que necesitas y la fecha que más te convenga.</p>
-    </header>
-
-    <!-- Main Layout -->
-    <div class="modern-layout">
-        <!-- Information Section -->
-        <div class="info-section">
-            <!-- Washing Point Info Card -->
-            <div class="info-card fade-in-up">
-                <div class="info-card-header">
-                    <div class="info-card-icon">
-                        <i class="fas fa-map-marker-alt"></i>
+    <div class="container mx-auto px-6 relative z-10 max-w-7xl">
+        <!-- Notificaciones -->
+        {% if messages %}
+            <div class="fixed top-24 right-4 z-50 max-w-md">
+                {% for message in messages %}
+                    <div class="mb-4 p-4 rounded-xl border-l-4 animate-slideInRight shadow-lg
+                        {% if message.tags == 'success' %}bg-green-50 border-green-500 text-green-700
+                        {% elif message.tags == 'error' %}bg-red-50 border-red-500 text-red-700
+                        {% elif message.tags == 'warning' %}bg-yellow-50 border-yellow-500 text-yellow-700
+                        {% else %}bg-blue-50 border-blue-500 text-blue-700
+                        {% endif %}">
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium">{{ message }}</span>
+                            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                     </div>
-                    <h2 class="info-card-title">Punto de Lavado</h2>
-                </div>
-                <div class="info-card-content" id="informacion_empresa">
-                    <div class="info-item">
-                        <i class="fas fa-building"></i>
-                        <span class="info-label">Nombre:</span>
-                        <span class="info-value" id="empresa_nombre">Selecciona un punto de lavado</span>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span class="info-label">Dirección:</span>
-                        <span class="info-value" id="empresa_direccion">-</span>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-phone"></i>
-                        <span class="info-label">Teléfono:</span>
-                        <span class="info-value" id="empresa_telefono">-</span>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
+        {% endif %}
 
-            <!-- Service Info Card -->
-            <div class="info-card fade-in-up">
-                <div class="info-card-header">
-                    <div class="info-card-icon">
-                        <i class="fas fa-car-wash"></i>
-                    </div>
-                    <h2 class="info-card-title">Servicio Seleccionado</h2>
+        <!-- Hero Section -->
+        <section class="relative bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 rounded-3xl p-8 md:p-12 mb-12 overflow-hidden animate-fadeInUp">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="mb-6">
+                    <span class="inline-block px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-semibold rounded-full uppercase tracking-wider mb-6">
+                        Sistema de Reservas
+                    </span>
                 </div>
-                <div class="info-card-content" id="informacion_servicio">
-                    <div class="info-item">
-                        <i class="fas fa-tag"></i>
-                        <span class="info-label">Servicio:</span>
-                        <span class="info-value" id="servicio_nombre">Selecciona un servicio</span>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6">
+                    <span class="bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
+                        Reserva tu
+                    </span>
+                    <br>
+                    <span class="bg-gradient-to-r from-blue-600 to-slate-800 bg-clip-text text-transparent">
+                        Cita Ideal
+                    </span>
+                </h1>
+                <p class="text-xl text-gray-600 leading-relaxed">
+                    Reserva tu cita de manera rápida y sencilla. Selecciona el punto de lavado, el servicio que necesitas y la fecha que más te convenga.
+                </p>
+            </div>
+        </section>
+
+        <!-- Layout Principal -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <!-- Sección de Información -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Tarjeta de Punto de Lavado -->
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 animate-fadeInUp">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-map-marker-alt text-white text-xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-800">Punto de Lavado</h2>
                     </div>
-                    <div class="info-item">
-                        <i class="fas fa-info-circle"></i>
-                        <span class="info-label">Descripción:</span>
-                        <span class="info-value" id="servicio_descripcion">-</span>
+                    <div class="space-y-4" id="informacion_empresa">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-building text-blue-500 w-5"></i>
+                            <span class="text-gray-600 font-medium">Nombre:</span>
+                            <span class="text-slate-800 font-semibold" id="empresa_nombre">Selecciona un punto de lavado</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-map-marker-alt text-blue-500 w-5"></i>
+                            <span class="text-gray-600 font-medium">Dirección:</span>
+                            <span class="text-slate-800" id="empresa_direccion">-</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-phone text-blue-500 w-5"></i>
+                            <span class="text-gray-600 font-medium">Teléfono:</span>
+                            <span class="text-slate-800" id="empresa_telefono">-</span>
+                        </div>
                     </div>
-                    <div id="precio_servicio" class="hidden">
-                        <div class="price-badge">
-                            <i class="fas fa-dollar-sign"></i>
-                            <span>Precio: $<span id="servicio_precio">0</span></span>
+                </div>
+
+                <!-- Tarjeta de Servicio -->
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 animate-fadeInUp" style="animation-delay: 0.2s;">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-car-wash text-white text-xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-800">Servicio Seleccionado</h2>
+                    </div>
+                    <div class="space-y-4" id="informacion_servicio">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-tag text-blue-500 w-5"></i>
+                            <span class="text-gray-600 font-medium">Servicio:</span>
+                            <span class="text-slate-800 font-semibold" id="servicio_nombre">Selecciona un servicio</span>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-info-circle text-blue-500 w-5 mt-1"></i>
+                            <span class="text-gray-600 font-medium">Descripción:</span>
+                            <span class="text-slate-800" id="servicio_descripcion">-</span>
+                        </div>
+                        <div id="precio_servicio" class="hidden">
+                            <div class="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-xl font-semibold">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span>Precio: $<span id="servicio_precio">0</span></span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Form Section -->
-        <div class="form-section">
-            {% if request.user.is_authenticated %}
-            <div class="modern-form fade-in-up">
-                <h2 class="form-title">Reserva tu Cita</h2>
-                <form action="{% url 'reservas' %}" method="POST" id="reservationForm">
-                    {% csrf_token %}
+            <!-- Sección del Formulario -->
+            <div class="lg:col-span-1">
+                {% if request.user.is_authenticated %}
+                    <div class="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 animate-fadeInUp sticky top-8" style="animation-delay: 0.4s;">
+                        <h2 class="text-2xl font-bold text-slate-800 text-center mb-6 bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
+                            Reserva tu Cita
+                        </h2>
+                        
+                        <form action="{% url 'reservas' %}" method="POST" id="reservationForm" class="space-y-6">
+                            {% csrf_token %}
 
-                    <div class="form-group">
-                        <label for="id_empresa" class="form-label">
-                            <i class="fas fa-building"></i>
-                            Punto de Lavado
-                        </label>
-                        <select id="id_empresa" name="id_empresa" required class="form-select">
-                            <option value="">Selecciona un punto de lavado</option>
-                            {% for empresa in empresas %}
-                            <option value="{{ empresa.id_empresa }}">{{ empresa.nombre_empresa }}</option>
-                            {% endfor %}
-                        </select>
+                            <!-- Punto de Lavado -->
+                            <div>
+                                <label for="id_empresa" class="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                                    <i class="fas fa-building text-blue-500"></i>
+                                    Punto de Lavado
+                                </label>
+                                <select id="id_empresa" name="id_empresa" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 transition-all duration-300">
+                                    <option value="">Selecciona un punto de lavado</option>
+                                    {% for empresa in empresas %}
+                                        <option value="{{ empresa.id_empresa }}">{{ empresa.nombre_empresa }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Tipo de Servicio -->
+                            <div>
+                                <label for="id_servicio" class="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                                    <i class="fas fa-car-wash text-blue-500"></i>
+                                    Tipo de Servicio
+                                </label>
+                                <select id="id_servicio" name="id_servicio" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 transition-all duration-300" disabled>
+                                    <option value="">Primero selecciona un punto de lavado</option>
+                                </select>
+                            </div>
+
+                            <!-- Fecha -->
+                            <div>
+                                <label for="fecha" class="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                                    <i class="fas fa-calendar-alt text-blue-500"></i>
+                                    Fecha
+                                </label>
+                                <select id="fecha" name="fecha" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 transition-all duration-300">
+                                    {% for dia in fechas_disponibles %}
+                                        <option value="{{ dia|date:'Y-m-d' }}">{{ dia|date:'l, j \d\e F \d\e Y' }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Hora -->
+                            <div>
+                                <label for="hora" class="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                                    <i class="fas fa-clock text-blue-500"></i>
+                                    Hora
+                                </label>
+                                <select id="hora" name="hora" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 transition-all duration-300" disabled>
+                                    <option value="">Primero selecciona una fecha</option>
+                                </select>
+                            </div>
+
+                            <!-- Botón de Reserva -->
+                            <button type="submit" id="btnReservar" disabled class="w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-xl hover:-translate-y-1 transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none flex items-center justify-center gap-3 text-lg uppercase tracking-wide">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Confirmar Reserva</span>
+                            </button>
+                        </form>
                     </div>
-
-                    <div class="form-group">
-                        <label for="id_servicio" class="form-label">
-                            <i class="fas fa-car-wash"></i>
-                            Tipo de Servicio
-                        </label>
-                        <select id="id_servicio" name="id_servicio" required class="form-select">
-                            <option value="">Primero selecciona un punto de lavado</option>
-                        </select>
+                {% else %}
+                    <div class="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-2xl p-8 text-center animate-fadeInUp" style="animation-delay: 0.4s;">
+                        <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-user-lock text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800 mb-4">Acceso Requerido</h3>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            Para realizar una reserva necesitas iniciar sesión en tu cuenta. Si no tienes una cuenta, puedes crear una de forma gratuita.
+                        </p>
+                        <a href="{% url 'login' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-semibold rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Iniciar Sesión</span>
+                        </a>
                     </div>
-
-                    <div class="form-group">
-                        <label for="fecha" class="form-label">
-                            <i class="fas fa-calendar-alt"></i>
-                            Fecha
-                        </label>
-                        <select id="fecha" name="fecha" required class="form-select">
-                            {% for dia in fechas_disponibles %}
-                            <option value="{{ dia|date:'Y-m-d' }}">{{ dia|date:'l, j \d\e F \d\e Y' }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="hora" class="form-label">
-                            <i class="fas fa-clock"></i>
-                            Hora
-                        </label>
-                        <select id="hora" name="hora" required class="form-select">
-                            <option value="">Primero selecciona una fecha</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="modern-button" id="btnReservar" disabled>
-                        <i class="fas fa-calendar-check"></i>
-                        Confirmar Reserva
-                    </button>
-                </form>
+                {% endif %}
             </div>
-            {% else %}
-            <div class="auth-notice fade-in-up">
-                <div class="auth-notice-icon">
-                    <i class="fas fa-user-lock"></i>
-                </div>
-                <h3>Acceso Requerido</h3>
-                <p>Para realizar una reserva necesitas iniciar sesión en tu cuenta. Si no tienes una cuenta, puedes crear una de forma gratuita.</p>
-                <a href="{% url 'login' %}" class="auth-link">
-                    <i class="fas fa-sign-in-alt"></i>
-                    Iniciar Sesión
-                </a>
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>
@@ -832,7 +781,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const hora = horaSelect?.value;
         
         if (btnReservar) {
-            btnReservar.disabled = !(empresa && servicio && fecha && hora);
+            const isValid = empresa && servicio && fecha && hora;
+            btnReservar.disabled = !isValid;
+            
+            if (isValid) {
+                btnReservar.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                btnReservar.classList.add('bg-gradient-to-r', 'from-blue-600', 'to-blue-700', 'hover:shadow-xl', 'hover:-translate-y-1');
+            } else {
+                btnReservar.classList.add('bg-gray-400', 'cursor-not-allowed');
+                btnReservar.classList.remove('bg-gradient-to-r', 'from-blue-600', 'to-blue-700', 'hover:shadow-xl', 'hover:-translate-y-1');
+            }
         }
     }
 
@@ -840,11 +798,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function showLoading(select, message) {
         select.innerHTML = `<option value="">${message}</option>`;
         select.disabled = true;
+        select.classList.add('opacity-50');
     }
 
     // Utility function to hide loading state
     function hideLoading(select) {
         select.disabled = false;
+        select.classList.remove('opacity-50');
     }
 
     // Handle company selection
@@ -884,7 +844,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         } else {
                             servicioSelect.innerHTML = '<option value="">No hay servicios disponibles</option>';
                         }
-                        servicioSelect.disabled = false;
 
                         // Mostrar información de la empresa
                         if (data.empresa) {
@@ -953,7 +912,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                 option.textContent = hora;
                                 horaSelect.appendChild(option);
                             });
-                            horaSelect.disabled = false;
                         } else {
                             horaSelect.innerHTML = '<option value="">No hay horas disponibles</option>';
                             horaSelect.disabled = true;
@@ -979,6 +937,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Validar formulario al cargar
     validarFormulario();
+
+    // Animar elementos con delay
+    const animatedElements = document.querySelectorAll('.animate-fadeInUp');
+    animatedElements.forEach((element, index) => {
+        element.style.animationDelay = `${index * 0.1}s`;
+    });
 });
 </script>
 {% endblock %}

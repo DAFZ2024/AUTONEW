@@ -3,533 +3,187 @@
 {% block content %}
 
 <style>
-    body {
-        background: linear-gradient(135deg, #0c2331 0%, #1a3a4a 100%);
-        min-height: 100vh;
-        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        padding-top:80px;
-    }
+/* Animaciones personalizadas */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-    .contact {
-        position: relative;
-        width: 100%;
-        padding: 60px 0;
-        display: flex; 
-        justify-content: center;
-        flex-direction: column; 
-        align-items: center; 
-        background: transparent;
-    }
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
 
-    /* Efectos de glassmorphism modernos */
-    .glass-card {
-        background: rgba(32, 64, 80, 0.85);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(62, 198, 224, 0.2);
-        border-radius: 24px;
-        box-shadow: 
-            0 8px 32px rgba(0, 0, 0, 0.3),
-            0 0 0 1px rgba(255, 255, 255, 0.05);
-        position: relative;
-        overflow: hidden;
-    }
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
 
-    .glass-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(62, 198, 224, 0.4), transparent);
-    }
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
 
-    .contact .contact-info {
-        width: 90%; 
-        max-width: 800px; 
-        margin-bottom: 40px;
-        padding: 40px 35px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+/* Clases de animación */
+.animate-fadeInUp {
+    animation: fadeInUp 0.8s ease-out;
+}
 
-    .contact .contact-info:hover {
-        transform: translateY(-5px);
-        box-shadow: 
-            0 12px 40px rgba(0, 0, 0, 0.4),
-            0 0 0 1px rgba(62, 198, 224, 0.3);
-    }
+.animate-slideInLeft {
+    animation: slideInLeft 0.8s ease-out;
+}
 
-    .contact .contact-info h2 {
-        color: #ffffff;
-        font-size: 28px;
-        font-weight: 600;
-        margin-bottom: 35px;
-        text-align: center; 
-        letter-spacing: -0.5px;
-        background: linear-gradient(135deg, #3ec6e0, #b2ebf2);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .contact .contact-info-item {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        margin-bottom: 32px;
-        padding: 20px;
-        border-radius: 16px;
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(62, 198, 224, 0.1);
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-
-    .contact .contact-info-item:hover {
-        background: rgba(62, 198, 224, 0.08);
-        border-color: rgba(62, 198, 224, 0.3);
-        transform: translateX(8px);
-    }
-
-    .contact .contact-info-icon {
-        width: 60px;
-        height: 60px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, rgba(62, 198, 224, 0.2), rgba(26, 58, 74, 0.8));
-        border-radius: 16px;
-        border: 2px solid rgba(62, 198, 224, 0.4);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .contact .contact-info-icon::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-        transition: left 0.5s ease;
-    }
-
-    .contact .contact-info-item:hover .contact-info-icon::before {
-        left: 100%;
-    }
-
-    .contact .contact-info-icon i {
-        margin: 0;
-        color: #3ec6e0;
-        font-size: 22px;
-        z-index: 1;
-    }
-
-    .contact .contact-info-icon .fa-envelope {
-        font-size: 28px;
-    }
-
-    .contact .contact-info-text {
-        padding-left: 24px;
-        flex: 1;
-    }
-
-    .contact .contact-info-text h3 {
-        margin: 0 0 8px 0;
-        color: #ffffff;
-        font-size: 18px;
-        font-weight: 600;
-        letter-spacing: -0.3px;
-    }
-
-    .contact .contact-info-text p {
-        margin: 0;
-        color: #b2ebf2;
-        font-size: 16px;
-        font-weight: 400;
-        opacity: 0.9;
-    }
-
-    .contact .contact-form {
-        position: relative;
-        width: 90%; 
-        max-width: 800px; 
-        margin-bottom: 40px;
-        padding: 40px 35px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .contact .contact-form:hover {
-        transform: translateY(-5px);
-        box-shadow: 
-            0 12px 40px rgba(0, 0, 0, 0.4),
-            0 0 0 1px rgba(62, 198, 224, 0.3);
-    }
-
-    .contact .contact-form h2 {
-        color: #ffffff;
-        font-size: 28px;
-        font-weight: 600;
-        margin-bottom: 35px;
-        text-align: center;
-        letter-spacing: -0.5px;
-        background: linear-gradient(135deg, #3ec6e0, #b2ebf2);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .form-group {
-        position: relative;
-        margin-bottom: 24px;
-    }
-
-    .contact .contact-form input,
-    .contact .contact-form textarea {
-        width: 100%;
-        padding: 18px 20px;
-        border-radius: 12px;
-        border: 1px solid rgba(62, 198, 224, 0.3);
-        background: rgba(16, 37, 53, 0.8);
-        color: #ffffff;
-        font-size: 16px;
-        font-weight: 400;
-        transition: all 0.3s ease;
-        backdrop-filter: blur(10px);
-        position: relative;
-    }
-
-    .contact .contact-form input:focus,
-    .contact .contact-form textarea:focus {
-        border: 2px solid #3ec6e0;
-        outline: none;
-        background: rgba(22, 52, 74, 0.9);
-        box-shadow: 
-            0 0 0 4px rgba(62, 198, 224, 0.1),
-            0 4px 20px rgba(62, 198, 224, 0.2);
-        transform: translateY(-2px);
-    }
-
-    .contact .contact-form input::placeholder,
-    .contact .contact-form textarea::placeholder {
-        color: rgba(178, 235, 242, 0.6);
-        font-weight: 400;
-    }
-
-    .contact .contact-form textarea {
-        height: 140px; 
-        resize: vertical;
-        min-height: 100px;
-    }
-
-    .contact .help-block ul {
-        margin: 0;
-        padding: 0;
-        list-style-type: none;
-    }
-
-    .contact .btn-custom {
-        background: linear-gradient(135deg, #3ec6e0 0%, #1a8ca8 100%);
-        color: #ffffff;
-        border: none;
-        border-radius: 12px;
-        padding: 16px 40px;
-        font-weight: 600;
-        font-size: 16px;
-        letter-spacing: 0.5px;
-        transition: all 0.3s ease;
-        box-shadow: 
-            0 4px 15px rgba(62, 198, 224, 0.3),
-            0 0 0 1px rgba(255, 255, 255, 0.1);
-        position: relative;
-        overflow: hidden;
-        cursor: pointer;
-        text-transform: uppercase;
-    }
-
-    .contact .btn-custom::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: left 0.5s ease;
-    }
-
-    .contact .btn-custom:hover::before {
-        left: 100%;
-    }
-
-    .contact .btn-custom:hover {
-        background: linear-gradient(135deg, #1a8ca8 0%, #3ec6e0 100%);
-        transform: translateY(-2px);
-        box-shadow: 
-            0 8px 25px rgba(62, 198, 224, 0.4),
-            0 0 0 1px rgba(255, 255, 255, 0.2);
-    }
-
-    .contact .btn-custom:active {
-        transform: translateY(0);
-    }
-
-    .contact iframe {
-        width: 90%; 
-        max-width: 800px; 
-        height: 450px;
-        border-radius: 24px;
-        border: 2px solid rgba(62, 198, 224, 0.3);
-        margin-bottom: 30px;
-        transition: all 0.3s ease;
-        box-shadow: 
-            0 8px 32px rgba(0, 0, 0, 0.3),
-            0 0 0 1px rgba(255, 255, 255, 0.05);
-    }
-
-    .contact iframe:hover {
-        transform: translateY(-5px);
-        box-shadow: 
-            0 12px 40px rgba(0, 0, 0, 0.4),
-            0 0 0 2px rgba(62, 198, 224, 0.4);
-    }
-
-    .section-header {
-        margin-bottom: 50px;
-        text-align: center;
-    }
-
-    .section-header p {
-        color: rgba(178, 235, 242, 0.8);
-        font-size: 18px;
-        font-weight: 400;
-        margin-bottom: 12px;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-    }
-
-    .section-header h2 {
-        color: #ffffff;
-        font-size: 36px;
-        font-weight: 700;
-        letter-spacing: -1px;
-        margin: 0;
-        background: linear-gradient(135deg, #3ec6e0, #b2ebf2, #ffffff);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    /* Alertas modernas */
-    .alert {
-        position: relative;
-        padding: 16px 20px;
-        margin-bottom: 20px;
-        border-radius: 12px;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(62, 198, 224, 0.3);
-        color: #ffffff;
-        font-weight: 500;
-    }
-
-    .alert-success {
-        background: rgba(76, 175, 80, 0.15);
-        border-color: rgba(76, 175, 80, 0.4);
-        box-shadow: 0 4px 20px rgba(76, 175, 80, 0.1);
-    }
-
-    .alert-danger {
-        background: rgba(229, 57, 53, 0.15);
-        border-color: rgba(229, 57, 53, 0.4);
-        box-shadow: 0 4px 20px rgba(229, 57, 53, 0.1);
-    }
-
-    .alert-warning {
-        background: rgba(255, 179, 0, 0.15);
-        border-color: rgba(255, 179, 0, 0.4);
-        box-shadow: 0 4px 20px rgba(255, 179, 0, 0.1);
-    }
-
-    .alert-info {
-        background: rgba(62, 198, 224, 0.15);
-        border-color: rgba(62, 198, 224, 0.4);
-        box-shadow: 0 4px 20px rgba(62, 198, 224, 0.1);
-    }
-
-    .alert .close {
-        position: absolute;
-        top: 12px;
-        right: 16px;
-        color: #ffffff;
-        opacity: 0.7;
-        transition: opacity 0.3s ease;
-    }
-
-    .alert .close:hover {
-        opacity: 1;
-    }
-
-    /* Clase para alertas fijas */
-    .alert-fixed {
-        margin-top: 90px; /* igual o mayor a la altura de tu navbar */
-        z-index: 1100;
-        position: relative;
-    }
-
-    /* Responsive mejorado */
-    @media (max-width: 768px) {
-        .contact {
-            padding: 40px 0;
-        }
-        
-        .contact .contact-info,
-        .contact .contact-form {
-            width: 95%;
-            padding: 30px 25px;
-        }
-        
-        .section-header h2 {
-            font-size: 28px;
-        }
-        
-        .contact .contact-info h2,
-        .contact .contact-form h2 {
-            font-size: 24px;
-        }
-        
-        .contact .contact-info-item {
-            padding: 16px;
-        }
-        
-        .contact .contact-info-icon {
-            width: 50px;
-            height: 50px;
-        }
-        
-        .contact iframe {
-            height: 300px;
-        }
-    }
-
-    /* Animaciones sutiles */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .contact > * {
-        animation: fadeInUp 0.6s ease-out;
-    }
-
-    .contact .contact-info {
-        animation-delay: 0.1s;
-    }
-
-    .contact .contact-form {
-        animation-delay: 0.2s;
-    }
-
-    .contact iframe {
-        animation-delay: 0.3s;
-    }
+.animate-slideInRight {
+    animation: slideInRight 0.8s ease-out;
+}
 </style>
 
 {% load custom_tags %}
-<div class="container mt-3 alert-fixed">
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert 
-                {% if message.tags == 'success' %}alert-success
-                {% elif message.tags == 'error' %}alert-danger
-                {% elif message.tags == 'warning' %}alert-warning
-                {% else %}alert-info
-                {% endif %}">
-                {{ message }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        {% endfor %}
-    {% endif %}
-</div>
 
-<!-- Inicio de contacto -->
-<div class="contact">
-    <div class="container">
-        <div class="section-header">
-            <p>Ponte en contacto</p>
-            <h2>Contacto para cualquier consulta o queja</h2>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="contact-info glass-card">
-                    <h2>Información de contacto</h2>
-                    <div class="contact-info-item">
-                        <div class="contact-info-icon">
-                            <i class="far fa-clock"></i>
-                        </div>
-                        <div class="contact-info-text">
-                            <h3>Hora de apertura</h3>
-                            <p>Lunes - Viernes, 8:00 am - 4:00 pm</p>
-                        </div>
-                    </div>
-                    <div class="contact-info-item">
-                        <div class="contact-info-icon">
-                            <i class="fa fa-phone-alt"></i>
-                        </div>
-                        <div class="contact-info-text">
-                            <h3>Llámanos</h3>
-                            <p>3114996440</p>
+<!-- Fondo blanco con elementos decorativos -->
+<div class="bg-white min-h-screen pt-20 md:pt-24">
+    <!-- Elementos decorativos de fondo -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-200/30 to-slate-200/30 rounded-full blur-3xl opacity-60 animate-pulse"></div>
+        <div class="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-slate-200/30 to-gray-200/30 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/2 left-1/4 w-64 h-64 bg-gradient-to-br from-blue-200/30 to-slate-200/30 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 4s;"></div>
+    </div>
+
+    <div class="container mx-auto px-6 relative z-10 max-w-7xl">
+        <!-- Notificaciones -->
+        {% if messages %}
+            <div class="fixed top-24 right-4 z-50 max-w-md">
+                {% for message in messages %}
+                    <div class="mb-4 p-4 rounded-xl border-l-4 animate-slideInRight shadow-lg
+                        {% if message.tags == 'success' %}bg-green-50 border-green-500 text-green-700
+                        {% elif message.tags == 'error' %}bg-red-50 border-red-500 text-red-700
+                        {% elif message.tags == 'warning' %}bg-yellow-50 border-yellow-500 text-yellow-700
+                        {% else %}bg-blue-50 border-blue-500 text-blue-700
+                        {% endif %}">
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium">{{ message }}</span>
+                            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                     </div>
-                    <div class="contact-info-item">
-                        <div class="contact-info-icon">
-                            <i class="fas fa-envelope"></i>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Hero Section -->
+        <section class="relative bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 rounded-3xl p-8 md:p-12 mb-12 overflow-hidden animate-fadeInUp">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="mb-6">
+                    <span class="inline-block px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-semibold rounded-full uppercase tracking-wider mb-6">
+                        Ponte en contacto
+                    </span>
+                </div>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6">
+                    <span class="bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
+                        Contacto para
+                    </span>
+                    <br>
+                    <span class="bg-gradient-to-r from-blue-600 to-slate-800 bg-clip-text text-transparent">
+                        Consultas
+                    </span>
+                </h1>
+                <p class="text-xl text-gray-600 leading-relaxed">
+                    Estamos aquí para ayudarte con cualquier consulta o queja que tengas
+                </p>
+            </div>
+        </section>
+
+        <!-- Layout Principal -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
+            <!-- Información de Contacto -->
+            <div class="animate-slideInLeft">
+                <div class="bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl transition-all duration-300">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-slate-800 bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
+                            Información de contacto
+                        </h2>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <!-- Horarios -->
+                        <div class="flex items-center p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 group">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                <i class="far fa-clock text-white text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-slate-800">Hora de apertura</h3>
+                                <p class="text-gray-600">Lunes - Viernes, 8:00 am - 4:00 pm</p>
+                            </div>
                         </div>
-                        <div class="contact-info-text">
-                            <h3>Email</h3>
-                            <p>autonew@gmail.com</p>
+
+                        <!-- Teléfono -->
+                        <div class="flex items-center p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 group">
+                            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                <i class="fa fa-phone-alt text-white text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-slate-800">Llámanos</h3>
+                                <p class="text-gray-600">3114996440</p>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="flex items-center p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 group">
+                            <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-envelope text-white text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-slate-800">Email</h3>
+                                <p class="text-gray-600">autonew@gmail.com</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-7">
-                <div class="contact-form glass-card">
-                    <h2>Envíanos un mensaje</h2>
-                    <div id="success"></div>
-                    <form action="{% url 'contacto' %}" method="POST" autocomplete="off">
+            <!-- Formulario de Contacto -->
+            <div class="animate-slideInRight">
+                <div class="bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl transition-all duration-300">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-slate-800 bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
+                            Envíanos un mensaje
+                        </h2>
+                    </div>
+                    
+                    <form action="{% url 'contacto' %}" method="POST" autocomplete="off" class="space-y-6">
                         {% csrf_token %}
-                        <div class="form-group" style="margin-bottom: 32px;">
-                            <label for="contenido" style="font-weight:600; color:#3ec6e0; display:flex; align-items:center; margin-bottom:10px;">
-                                <svg width="22" height="22" fill="none" style="margin-right:8px;">
-                                    <rect x="2" y="4" width="18" height="14" rx="4" stroke="#3ec6e0" stroke-width="2"/>
-                                    <path d="M4 7l7 5 7-5" stroke="#3ec6e0" stroke-width="2" stroke-linecap="round"/>
-                                </svg>
+                        
+                        <div>
+                            <label for="contenido" class="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+                                <div class="w-5 h-5 flex items-center justify-center">
+                                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-blue-500">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26c.3.16.68.16.98 0L20 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
                                 Tu mensaje
                             </label>
-                            <textarea class="form-control"
-                                      name="contenido"
-                                      id="contenido"
-                                      placeholder="Escribe tu mensaje aquí..."
-                                      required
-                                      style="background:rgba(16,37,53,0.8); border:1.5px solid rgba(62,198,224,0.3); color:#fff; font-size:16px; border-radius:12px; min-height:120px; padding:18px 20px; resize:vertical; transition:all 0.3s;">
-                            </textarea>
-                            <p class="help-block text-danger"></p>
+                            <textarea 
+                                name="contenido"
+                                id="contenido"
+                                required
+                                rows="6"
+                                placeholder="Escribe tu mensaje aquí..."
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 transition-all duration-300 resize-vertical min-h-32"
+                            ></textarea>
                         </div>
-                        <div class="text-center">
-                            <button class="btn btn-custom" type="submit" id="sendMessageButton" style="display:flex; align-items:center; justify-content:center; gap:8px;">
-                                <svg width="20" height="20" fill="none">
-                                    <circle cx="10" cy="10" r="9" stroke="#fff" stroke-width="2"/>
-                                    <path d="M7 10h6M10 7v6" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-                                </svg>
-                                Enviar mensaje
+                        
+                        <div class="pt-4">
+                            <button 
+                                type="submit" 
+                                id="sendMessageButton"
+                                class="w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3 text-lg uppercase tracking-wide group"
+                            >
+                                <div class="w-5 h-5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                    </svg>
+                                </div>
+                                <span>Enviar mensaje</span>
                             </button>
                         </div>
                     </form>
@@ -538,6 +192,5 @@
         </div>
     </div>
 </div>
-<!-- Fin de contacto -->
 
 {% endblock  %}

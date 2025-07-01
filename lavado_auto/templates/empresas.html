@@ -1,683 +1,345 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block  content %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Únete a AutoNew</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Agregar FontAwesome para los iconos -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Site Icons -->
-    <link rel="shortcut icon" href="#" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="#" />
+{% block content %}
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css" />
-    <!-- Pogo Slider CSS -->
-    <link rel="stylesheet" href="css/pogo-slider.min.css" />
-    <!-- Site CSS -->
-    <link rel="stylesheet" href="css/style.css" />
-    <!-- Responsive CSS -->
-    <link rel="stylesheet" href="css/responsive.css" />
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/custom.css" />
-
-    <style>
-        /* Body y fondo general */
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0c2331 0%, #1a3a4a 100%);
-            min-height: 100vh;
-            line-height: 1.6;
-        }
-
-        /* Sección Hero */
-        .hero-section {
-            background: linear-gradient(135deg, #0c2331 0%, #1a3a4a 50%, #2c4d63 100%);
-            color: white;
-            text-align: center;
-            padding: 120px 0;
-            animation: fadeIn 2s ease-out;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="%23ffffff" opacity="0.03"><polygon points="0,0 1000,0 1000,100 0,80"/></svg>');
-            background-size: cover;
-        }
-
-        .hero-section .container {
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-section h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: #ffffff;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-section p {
-            font-size: 1.3rem;
-            color: #cbd5e1;
-            font-weight: 400;
-            max-width: 600px;
-            margin: 0 auto 2rem;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Botón primario mejorado */
-        .btn-primary {
-            background: linear-gradient(135deg, #e6752c 0%, #ff8c42 100%);
-            border: none;
-            box-shadow: 0 8px 25px rgba(230, 117, 44, 0.4);
-            transition: all 0.4s ease;
-            font-weight: 600;
-            font-size: 1.1rem;
-            padding: 15px 40px;
-            border-radius: 50px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.6s;
-        }
-
-        .btn-primary:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #d4641f 0%, #e6752c 100%);
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(230, 117, 44, 0.5);
-            color: #ffffff;
-        }
-
-        /* Sección de beneficios mejorada */
-        .features-section {
-            background: linear-gradient(135deg, #1a3a4a 0%, #2c4d63 100%);
-            padding: 80px 0;
-            position: relative;
-        }
-
-        .features-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="%23ffffff" opacity="0.02"><circle cx="100" cy="50" r="30"/><circle cx="300" cy="20" r="20"/><circle cx="500" cy="70" r="25"/><circle cx="700" cy="40" r="15"/><circle cx="900" cy="60" r="35"/></svg>');
-            background-repeat: repeat;
-        }
-
-        .features-section h2 {
-            color: #ffffff;
-            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
-            margin-bottom: 4rem;
-            font-weight: 700;
-            font-size: 2.8rem;
-            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* Tarjetas mejoradas */
-        .features-section .feature-card {
-            text-align: center;
-            border-radius: 25px;
-            border: 2px solid rgba(61, 90, 115, 0.6);
-            padding: 40px 30px;
-            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            background: rgba(28, 48, 68, 0.9);
-            box-shadow: 0 10px 30px rgba(12, 35, 49, 0.5);
-            position: relative;
-            overflow: hidden;
-            color: #fff;
-            backdrop-filter: blur(10px);
-            height: 350px;
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(230, 117, 44, 0.1) 0%, rgba(255, 140, 66, 0.1) 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .feature-card:hover::before {
-            opacity: 1;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-20px) scale(1.02);
-            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-            box-shadow: 0 20px 40px rgba(12, 35, 49, 0.7);
-            border-color: #e6752c;
-        }
-
-        .feature-card img {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            border-radius: 23px 23px 0 0;
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover img {
-            display: block;
-        }
-
-        .feature-card .text-initial {
-            display: block;
-            font-size: 1.8rem;
-            color: #e2e8f0;
-            font-weight: 600;
-            z-index: 1;
-            margin-top: 80px;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-        }
-
-        .feature-card:hover .text-initial {
-            display: none;
-        }
-
-        .feature-card h4 {
-            margin-top: 240px;
-            z-index: 1;
-            color: #1e293b;
-            font-weight: 700;
-            font-size: 1.4rem;
-            text-shadow: none;
-        }
-
-        .feature-card p {
-            color: #64748b;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-
-        .feature-card .icon-center {
-            font-size: 7rem;
-            color: #e6752c;
-            position: absolute;
-            top: 25%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 2;
-            transition: all 0.4s ease;
-            text-shadow: 0 0 20px rgba(230, 117, 44, 0.3);
-        }
-
-        .feature-card:hover .icon-center {
-            opacity: 0;
-            transform: translate(-50%, -50%) scale(0.8);
-        }
-
-        /* Sección de beneficios mejorada */
-        #benefits {
-            background: linear-gradient(135deg, #2c4d63 0%, #1a3a4a 100%);
-            padding: 80px 0;
-            position: relative;
-            color: #ffffff;
-        }
-
-        #benefits .container {
-            position: relative;
-            z-index: 1;
-        }
-
-        #benefits::after {
-            content: "";
-            position: absolute;
-            bottom: 300px;
-            left: 85%;
-            transform: translateX(-50%);
-            background-image: url('{% static "img/autolavado.png" %}');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            width: 300px;
-            height: 600px;
-            z-index: 0;
-            opacity: 0.8;
-        }
-
-        /* Sección de servicios mejorada */
-        .service_section {
-            position: relative;
-            background: linear-gradient(135deg, #1a3a4a 0%, #0c2331 100%);
-            padding: 80px 0;
-            overflow: hidden;
-        }
-
-        .service_section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="%23ffffff" opacity="0.01"><polygon points="0,0 100,0 100,100 0,100"/></svg>');
-            background-size: 50px 50px;
-        }
-
-        .service_section .heading_container h2 {
-            text-transform: none;
-            color: #ffffff;
-            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
-            font-weight: 700;
-            font-size: 2.8rem;
-            margin-bottom: 3rem;
-            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .service_section .service_container .box {
-            margin: 25px 1%;
-            flex-basis: 22%;
-            padding: 40px 25px 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(12, 35, 49, 0.5);
-            border-top: 4px solid transparent;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            position: relative;
-        }
-
-        .service_section .service_container .box::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(230, 117, 44, 0.1) 0%, rgba(255, 140, 66, 0.1) 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .service_section .service_container .box:hover::before {
-            opacity: 1;
-        }
-
-        .service_section .service_container .box .img-box {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 120px;
-            margin-bottom: 20px;
-        }
-
-        .service_section .service_container .box .img-box img {
-            width: 80px;
-            height: 80px;
-            filter: brightness(1.2) contrast(1.1);
-            transition: all 0.4s ease;
-        }
-
-        .service_section .service_container .box:hover .img-box img {
-            transform: scale(1.1);
-            filter: brightness(1.4) contrast(1.2);
-        }
-
-        .service_section .service_container .box .detail-box h5 {
-            color: #ffffff;
-            font-weight: 600;
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-        }
-
-        .service_section .service_container .box .detail-box p {
-            color: #cbd5e1;
-            font-weight: 400;
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-
-        .service_section .service_container .box:hover, 
-        .service_section .service_container .box.active {
-            border-top: 4px solid #e6752c;
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(12, 35, 49, 0.7);
-        }
-
-        .service_section .service_container .box:hover .detail-box h5 {
-            color: #e6752c;
-        }
-
-        /* Lista de beneficios mejorada */
-        .benefits-list {
-            list-style-type: none;
-            padding: 0;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 3rem;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .benefits-list li {
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-            color: #e2e8f0;
-            font-weight: 500;
-            padding: 10px 0;
-            transition: all 0.3s ease;
-        }
-
-        .benefits-list li:hover {
-            color: #ffffff;
-            transform: translateX(10px);
-        }
-
-        .benefits-list li:before {
-            content: "✓";
-            color: #e6752c;
-            margin-right: 20px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            text-shadow: 0 0 10px rgba(230, 117, 44, 0.5);
-        }
-
-        /* Sección de contenedor mejorada */
-        .container.py-5 {
-            background: linear-gradient(135deg, #0c2331 0%, #1a3a4a 100%);
-            border-radius: 25px;
-            margin-top: 3rem;
-            margin-bottom: 3rem;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .container.py-5::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(230, 117, 44, 0.05) 0%, rgba(255, 140, 66, 0.05) 100%);
-        }
-
-        .container.py-5 h3 {
-            color: #ffffff;
-            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
-            font-weight: 700;
-            font-size: 2.2rem;
-            margin-bottom: 2rem;
-            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* Link area mejorado */
-        .link-area {
-            position: fixed;
-            bottom: 30px;
-            left: 30px;
-            padding: 15px 20px;
-            border-radius: 50px;
-            background: linear-gradient(135deg, #e6752c 0%, #ff8c42 100%);
-            box-shadow: 0 8px 25px rgba(230, 117, 44, 0.4);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .link-area:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(230, 117, 44, 0.5);
-        }
-
-        .link-area a {
-            text-decoration: none;
-            color: #fff;
-            font-size: 1rem;
-            font-weight: 600;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Animaciones mejoradas */
-        @keyframes fadeIn {
-            from { 
-                opacity: 0; 
-                transform: translateY(30px);
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        /* Responsive mejorado */
-        @media (max-width: 768px) {
-            .hero-section h1 {
-                font-size: 2.5rem;
-            }
-            
-            .hero-section p {
-                font-size: 1.1rem;
-            }
-            
-            .features-section h2 {
-                font-size: 2.2rem;
-            }
-            
-            .service_section .service_container .box {
-                flex-basis: 45%;
-                margin: 15px 2.5%;
-            }
-            
-            .feature-card {
-                height: auto;
-                min-height: 300px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .service_section .service_container .box {
-                flex-basis: 90%;
-                margin: 15px 5%;
-            }
-        }
-    </style>
-</head>
-<body>
+<!-- Empresas con Tailwind CSS -->
+<div class="bg-white pt-20 md:pt-24">
     <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container">
-            <h1>Únete a AutoNew y lleva tu autolavado al siguiente nivel</h1>
-            <p>Más visibilidad, más clientes, más crecimiento. ¡Haz crecer tu negocio hoy mismo!</p>
-            <a href="#benefits" class="btn btn-primary btn-lg">Descubre los beneficios</a>
+    <section class="relative bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 min-h-screen flex items-center overflow-hidden">
+        <!-- Elementos decorativos de fondo -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-200/50 to-slate-200/50 rounded-full blur-3xl opacity-60 animate-pulse"></div>
+            <div class="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-slate-200/50 to-gray-200/50 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 2s;"></div>
+            <div class="absolute top-1/2 left-1/4 w-64 h-64 bg-gradient-to-br from-blue-200/50 to-slate-200/50 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 4s;"></div>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="animate-fadeInUp">
+                    <span class="inline-block px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-semibold rounded-full uppercase tracking-wider mb-6">
+                        🚀 Revoluciona tu negocio
+                    </span>
+                </div>
+                <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 animate-fadeInUp" style="animation-delay: 0.2s;">
+                    <span class="bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
+                        Transforma tu autolavado
+                    </span>
+                    <br>
+                    <span class="bg-gradient-to-r from-blue-600 to-slate-800 bg-clip-text text-transparent">
+                        con AutoNew
+                    </span>
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed animate-fadeInUp" style="animation-delay: 0.4s;">
+                    Conecta con más clientes, aumenta tus ventas y haz crecer tu negocio de forma inteligente
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fadeInUp" style="animation-delay: 0.6s;">
+                    <a href="#stats" class="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 hover:from-blue-700 hover:to-blue-800">
+                        Comenzar ahora
+                    </a>
+                    <a href="#features" class="px-8 py-4 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                        Más información
+                    </a>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- Benefits Section -->
-    <section id="benefits" class="features-section">
-        <div class="container text-center">
-            <h2 class="mb-5">¿Por qué ser parte de AutoNew?</h2>
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <div class="feature-card">
-                        <div class="icon-center">
-                            <i class="fas fa-bullhorn"></i>
-                        </div>
-                        <div class="text-initial">Visibilidad</div>
-                        <h4>Aumenta tu Visibilidad</h4>
-                        <p>Al ser parte de nuestra plataforma, tu autolavado aparecerá frente a más clientes potenciales.</p>
-                        <img src="{% static 'img/carousel-3.jpg' %}" alt="Visibilidad">
-                    </div>
+    <!-- Sección de estadísticas -->
+    <section id="stats" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="inline-block px-4 py-2 bg-blue-100 text-blue-600 text-sm font-semibold rounded-full uppercase tracking-wider mb-4">
+                    Nuestros Números
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
+                    Resultados que <span class="text-blue-600">Hablan por Sí Solos</span>
+                </h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl p-8 hover:shadow-lg transition-all duration-300">
+                    <div class="text-5xl font-extrabold text-blue-600 mb-4">500+</div>
+                    <div class="text-xl text-slate-700 font-semibold">Autolavados registrados</div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <div class="feature-card">
-                        <div class="icon-center">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="text-initial">Clientes</div>
-                        <h4>Adquiere Más Clientes</h4>
-                        <p>Llegarás a más personas gracias a la facilidad de reserva en línea y la promoción de tu negocio.</p>
-                        <img src="{% static 'img/carousel-2.jpg' %}" alt="Clientes">
-                    </div>
+                <div class="text-center bg-gradient-to-br from-slate-50 to-gray-50 rounded-2xl p-8 hover:shadow-lg transition-all duration-300">
+                    <div class="text-5xl font-extrabold text-blue-600 mb-4">10k+</div>
+                    <div class="text-xl text-slate-700 font-semibold">Clientes satisfechos</div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <div class="feature-card">
-                        <div class="icon-center">
-                            <i class="fas fa-chart-line"></i>
+                <div class="text-center bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl p-8 hover:shadow-lg transition-all duration-300">
+                    <div class="text-5xl font-extrabold text-blue-600 mb-4">95%</div>
+                    <div class="text-xl text-slate-700 font-semibold">Tasa de satisfacción</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Características modernas -->
+    <section id="features" class="py-20 bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="inline-block px-4 py-2 bg-blue-100 text-blue-600 text-sm font-semibold rounded-full uppercase tracking-wider mb-4">
+                    Ventajas Exclusivas
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
+                    ¿Por qué elegir <span class="text-blue-600">AutoNew?</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Te ofrecemos las mejores herramientas para hacer crecer tu negocio de autolavado
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-rocket text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Visibilidad Máxima</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Tu autolavado aparecerá en los primeros resultados de búsqueda, llegando a miles de clientes potenciales cada día.
+                    </p>
+                </div>
+
+                <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200">
+                    <div class="w-16 h-16 bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-users text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Más Clientes</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Sistema de reservas online que facilita a los clientes encontrar y reservar tus servicios las 24 horas del día.
+                    </p>
+                </div>
+
+                <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-chart-line text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Crecimiento Garantizado</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Herramientas analíticas que te ayudan a entender a tus clientes y optimizar tu negocio para máxima rentabilidad.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Servicios en grid moderno -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="inline-block px-4 py-2 bg-blue-100 text-blue-600 text-sm font-semibold rounded-full uppercase tracking-wider mb-4">
+                    Lo que Ofrecemos
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
+                    Nuestros <span class="text-blue-600">Servicios</span>
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-bolt text-white"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-800 mb-2">Velocidad</h4>
+                    <p class="text-gray-600 text-sm">Registro instantáneo y publicidad inmediata</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-slate-50 to-gray-50 rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-hand-paper text-white"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-800 mb-2">Libertad Total</h4>
+                    <p class="text-gray-600 text-sm">Controla qué servicios ofrecer y cuándo</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-star text-white"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-800 mb-2">Calidad Premium</h4>
+                    <p class="text-gray-600 text-sm">Solo los mejores</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-headset text-white"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-800 mb-2">Soporte 24/7</h4>
+                    <p class="text-gray-600 text-sm">Asistencia completa cuando la necesites</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-white"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-800 mb-2">Seguro</h4>
+                    <p class="text-gray-600 text-sm">100% confiable</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline de beneficios -->
+    <section class="py-20 bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="inline-block px-4 py-2 bg-blue-100 text-blue-600 text-sm font-semibold rounded-full uppercase tracking-wider mb-4">
+                    Tu Proceso
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
+                    Tu Camino al <span class="text-blue-600">Éxito</span>
+                </h2>
+            </div>
+
+            <div class="max-w-4xl mx-auto">
+                <div class="space-y-12">
+                    <!-- Step 1 -->
+                    <div class="flex items-start space-x-6">
+                        <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                            1
                         </div>
-                        <div class="text-initial">Crecimiento</div>
-                        <h4>Crecimiento Empresarial</h4>
-                        <p>Disfruta de un aumento en tus reservas y la expansión de tu negocio en nuevas áreas.</p>
-                        <img src="{% static 'img/carousel-4.jpg' %}" alt="Crecimiento">
+                        <div class="flex-1 bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+                            <h3 class="text-xl font-bold text-slate-800 mb-3">Visibilidad Garantizada</h3>
+                            <p class="text-gray-600 leading-relaxed">
+                                Tu negocio aparecerá en nuestra plataforma con máxima visibilidad ante miles de usuarios activos.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="flex items-start space-x-6">
+                        <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-slate-500 to-slate-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                            2
+                        </div>
+                        <div class="flex-1 bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+                            <h3 class="text-xl font-bold text-slate-800 mb-3">Reservas Automatizadas</h3>
+                            <p class="text-gray-600 leading-relaxed">
+                                Sistema de reservas online que funciona 24/7, capturando clientes incluso cuando duermes.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="flex items-start space-x-6">
+                        <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                            3
+                        </div>
+                        <div class="flex-1 bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+                            <h3 class="text-xl font-bold text-slate-800 mb-3">Promociones Exclusivas</h3>
+                            <p class="text-gray-600 leading-relaxed">
+                                Acceso a campañas promocionales y descuentos especiales para atraer más clientes.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="flex items-start space-x-6">
+                        <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                            4
+                        </div>
+                        <div class="flex-1 bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+                            <h3 class="text-xl font-bold text-slate-800 mb-3">Capacitación Personalizada</h3>
+                            <p class="text-gray-600 leading-relaxed">
+                                Formación completa para optimizar tu negocio y maximizar tus ganancias.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Step 5 -->
+                    <div class="flex items-start space-x-6">
+                        <div class="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                            5
+                        </div>
+                        <div class="flex-1 bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+                            <h3 class="text-xl font-bold text-slate-800 mb-3">Herramientas Avanzadas</h3>
+                            <p class="text-gray-600 leading-relaxed">
+                                Dashboard completo con métricas, análisis y herramientas de gestión empresarial.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Service Section -->
-    <section class="service_section">
-        <div class="container-fluid">
-            <div class="heading_container text-center mb-5">
-                <h2>Nuestros Servicios</h2>
-            </div>
-            <div class="service_container">
-                <div class="box">
-                    <div class="img-box">
-                        <img src="{% static 'img/feature-1.png' %}" alt="">
-                    </div>
-                    <div class="detail-box">
-                        <h5>Rapidez</h5>
-                        <p>No pierdas tiempo en publicidad con AutoNew la tienes a solo un click</p>
-                    </div>
-                </div>
-                <div class="box">
-                    <div class="img-box">
-                        <img src="{% static 'img/feature-2.png' %}" alt="">
-                    </div>
-                    <div class="detail-box">
-                        <h5>Libertad</h5>
-                        <p>Tú escoges qué servicios quieres ofrecer</p>
-                    </div>
-                </div>
-                <div class="box">
-                    <div class="img-box">
-                        <img src="{% static 'img/feature-3.png' %}" alt="">
-                    </div>
-                    <div class="detail-box">
-                        <h5>Calidad</h5>
-                        <p>La mejor calidad la encontrarás aquí</p>
-                    </div>
-                </div>
-                <div class="box">
-                    <div class="img-box">
-                        <img src="{% static 'img/feature-4.png' %}" alt="">
-                    </div>
-                    <div class="detail-box">
-                        <h5>24x7 Soporte</h5>
-                        <p>Soporte a cualquier hora del día</p>
-                    </div>
+    <!-- CTA Final -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto text-center bg-gradient-to-br from-blue-50 to-slate-50 rounded-3xl p-12 border border-blue-100">
+                <h2 class="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
+                    ¿Listo para <span class="text-blue-600">comenzar?</span>
+                </h2>
+                <p class="text-xl text-gray-600 mb-8 leading-relaxed">
+                    Únete a la revolución de autolavados digitales y lleva tu negocio al siguiente nivel
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#" class="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 hover:from-blue-700 hover:to-blue-800">
+                        Comenzar Ahora
+                    </a>
+                    <a href="#" class="px-8 py-4 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                        Más Información
+                    </a>
                 </div>
             </div>
         </div>
     </section>
+</div>
 
-    <!-- Link Area -->
-    <div class="link-area">
-        <a href="#" target="_blank">+ Info</a>
-    </div>
+<!-- Botón flotante de ayuda -->
+<div class="fixed bottom-6 right-6 z-50">
+    <button class="w-14 h-14 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center">
+        <i class="fas fa-question text-lg"></i>
+    </button>
+</div>
 
-    <!-- Benefits List -->
-    <section class="container py-5">
-        <h3 class="text-center mb-4">Beneficios Exclusivos al Unirte a AutoNew</h3>
-        <ul class="benefits-list">
-            <li>Visibilidad garantizada en nuestra plataforma</li>
-            <li>Reservas de clientes fáciles y rápidas</li>
-            <li>Acceso a promociones y descuentos exclusivos</li>
-            <li>Soporte y capacitación personalizada</li>
-            <li>Herramientas para gestionar tu negocio de manera eficiente</li>
-        </ul>
-        <div class="text-center mt-4">
-            <a href="#" class="btn btn-primary btn-lg">Únete a AutoNew Ahora</a>
-        </div>
-    </section>
+<!-- Estilos CSS personalizados -->
+<style>
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    .animate-fadeInUp {
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+</style>
 
-{% endblock  %}
+<script>
+    // Smooth scrolling para los enlaces
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Animaciones al hacer scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-fadeInUp');
+            }
+        });
+    }, observerOptions);
+
+    // Observar elementos que necesitan animación
+    document.querySelectorAll('.group, .stat-card, .timeline-item').forEach(el => {
+        observer.observe(el);
+    });
+</script>
+{% endblock %}

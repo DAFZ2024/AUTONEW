@@ -2,510 +2,330 @@
 {% block content %}
 {% load custom_tags %}
 
-<style>
-    :root {
-        --primary-color: #667eea;
-        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        --success-color: #48bb78;
-        --danger-color: #f56565;
-        --warning-color: #ed8936;
-        --info-color: #4299e1;
-        --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        --card-shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
-        --border-radius: 12px;
-        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    body {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        min-height: 100vh;
-    }
-
-    .page-header {
-        background: var(--primary-gradient);
-        color: white;
-        padding: 3rem 0;
-        margin-bottom: 3rem;
-        border-radius: 0 0 2rem 2rem;
-        box-shadow: var(--card-shadow);
-    }
-
-    .page-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin: 0;
-        text-align: center;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .page-subtitle {
-        text-align: center;
-        opacity: 0.9;
-        margin-top: 0.5rem;
-        font-size: 1.1rem;
-    }
-
-    /* Alertas modernas */
-    .modern-alert {
-        border: none;
-        border-radius: var(--border-radius);
-        padding: 1.25rem 1.5rem;
-        margin-bottom: 1.5rem;
-        position: relative;
-        backdrop-filter: blur(10px);
-        box-shadow: var(--card-shadow);
-        transition: var(--transition);
-        animation: slideInDown 0.5s ease-out;
-    }
-
-    .modern-alert::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        border-radius: var(--border-radius) var(--border-radius) 0 0;
-    }
-
-    .modern-alert.alert-success {
-        background: rgba(72, 187, 120, 0.1);
-        color: #2f855a;
-        border-left: 4px solid var(--success-color);
-    }
-
-    .modern-alert.alert-success::before {
-        background: var(--success-color);
-    }
-
-    .modern-alert.alert-danger {
-        background: rgba(245, 101, 101, 0.1);
-        color: #c53030;
-        border-left: 4px solid var(--danger-color);
-    }
-
-    .modern-alert.alert-danger::before {
-        background: var(--danger-color);
-    }
-
-    .modern-alert.alert-warning {
-        background: rgba(237, 137, 54, 0.1);
-        color: #c05621;
-        border-left: 4px solid var(--warning-color);
-    }
-
-    .modern-alert.alert-warning::before {
-        background: var(--warning-color);
-    }
-
-    .modern-alert.alert-info {
-        background: rgba(66, 153, 225, 0.1);
-        color: #2b6cb0;
-        border-left: 4px solid var(--info-color);
-    }
-
-    .modern-alert.alert-info::before {
-        background: var(--info-color);
-    }
-
-    /* Contenedor principal */
-    .main-container {
-        background: white;
-        border-radius: var(--border-radius);
-        box-shadow: var(--card-shadow);
-        padding: 2rem;
-        margin-bottom: 2rem;
-        transition: var(--transition);
-    }
-
-    .main-container:hover {
-        box-shadow: var(--card-shadow-hover);
-    }
-
-    /* Tabla moderna */
-    .modern-table {
-        background: white;
-        border-radius: var(--border-radius);
-        overflow: hidden;
-        box-shadow: var(--card-shadow);
-        border: none;
-    }
-
-    .modern-table thead {
-        background: var(--primary-gradient);
-        color: white;
-    }
-
-    .modern-table thead th {
-        border: none;
-        padding: 1.25rem 1rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.875rem;
-        letter-spacing: 0.05em;
-    }
-
-    .modern-table tbody tr {
-        transition: var(--transition);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .modern-table tbody tr:hover {
-        background: rgba(102, 126, 234, 0.05);
-        transform: translateY(-1px);
-    }
-
-    .modern-table tbody td {
-        padding: 1.25rem 1rem;
-        border: none;
-        vertical-align: middle;
-    }
-
-    .modern-table tbody tr:last-child {
-        border-bottom: none;
-    }
-
-    /* Botones modernos */
-    .modern-btn {
-        border: none;
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-        font-weight: 600;
-        font-size: 0.875rem;
-        transition: var(--transition);
-        cursor: pointer;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .modern-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    }
-
-    .modern-btn.btn-danger {
-        background: linear-gradient(135deg, #f56565, #e53e3e);
-        color: white;
-    }
-
-    .modern-btn.btn-success {
-        background: linear-gradient(135deg, #48bb78, #38a169);
-        color: white;
-    }
-
-    .modern-btn.btn-secondary {
-        background: linear-gradient(135deg, #a0aec0, #718096);
-        color: white;
-    }
-
-    .modern-btn.btn-primary {
-        background: var(--primary-gradient);
-        color: white;
-    }
-
-    /* Formulario de respuesta */
-    .response-form {
-        background: linear-gradient(135deg, #f7fafc, #edf2f7);
-        border-radius: var(--border-radius);
-        padding: 1.5rem;
-        margin-top: 1rem;
-        border: 1px solid rgba(102, 126, 234, 0.1);
-        animation: slideIn 0.3s ease-out;
-    }
-
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-        font-weight: 600;
-        color: #4a5568;
-        margin-bottom: 0.5rem;
-        display: block;
-    }
-
-    .form-control {
-        border: 2px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 0.75rem 1rem;
-        transition: var(--transition);
-        font-size: 0.875rem;
-    }
-
-    .form-control:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        outline: none;
-    }
-
-    /* Estados de queja */
-    .status-badge {
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    .status-pendiente {
-        background: rgba(237, 137, 54, 0.1);
-        color: #c05621;
-    }
-
-    .status-resuelta {
-        background: rgba(72, 187, 120, 0.1);
-        color: #2f855a;
-    }
-
-    .status-en-proceso {
-        background: rgba(66, 153, 225, 0.1);
-        color: #2b6cb0;
-    }
-
-    /* Animaciones */
-    @keyframes slideInDown {
-        from {
-            transform: translateY(-20px);
-            opacity: 0;
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    {% load static %}
+    
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        to {
-            transform: translateY(0);
-            opacity: 1;
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-    }
 
-    @keyframes slideIn {
-        from {
-            transform: translateY(10px);
-            opacity: 0;
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out;
         }
-        to {
-            transform: translateY(0);
-            opacity: 1;
+
+        .animate-slideInDown {
+            animation: slideInDown 0.5s ease-out;
         }
-    }
+    </style>
+</head>
 
-    /* Responsive */
-    @media (max-width: 768px) {
-        .page-title {
-            font-size: 2rem;
-        }
-        
-        .main-container {
-            padding: 1rem;
-        }
-        
-        .modern-table {
-            font-size: 0.875rem;
-        }
-        
-        .modern-table thead th,
-        .modern-table tbody td {
-            padding: 0.75rem 0.5rem;
-        }
-    }
-
-    /* Contenido de celda mejorado */
-    .cell-content {
-        max-width: 200px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .cell-content.expandable {
-        cursor: pointer;
-        position: relative;
-    }
-
-    .cell-content.expandable:hover {
-        background: rgba(102, 126, 234, 0.05);
-        border-radius: 4px;
-        padding: 0.25rem;
-    }
-
-    /* Acciones */
-    .actions-container {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 3rem;
-        color: #718096;
-    }
-
-    .empty-state-icon {
-        font-size: 4rem;
-        margin-bottom: 1rem;
-        opacity: 0.5;
-    }
-</style>
-
-<!-- Header de la página -->
-<div class="page-header">
-    <div class="container">
-        <h1 class="page-title">📋 Gestión de Quejas</h1>
-        <p class="page-subtitle">Sistema de atención al cliente</p>
+<body class="bg-white min-h-screen">
+    <!-- Elementos decorativos de fondo -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-200/30 to-slate-200/30 rounded-full blur-3xl opacity-60"></div>
+        <div class="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-slate-200/30 to-gray-200/30 rounded-full blur-3xl opacity-60"></div>
     </div>
-</div>
 
-<!-- Contenedor de mensajes -->
-<div class="container">
-    {% if messages %}
-        {% for message in messages %}
-            <div class="modern-alert 
-                {% if message.tags == 'success' %}alert-success
-                {% elif message.tags == 'error' %}alert-danger
-                {% elif message.tags == 'warning' %}alert-warning
-                {% else %}alert-info
-                {% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-</div>
+    <!-- Contenido principal -->
+    <main class="relative z-10 pt-8">
 
-<!-- Contenido principal -->
-<div class="container">
-    <div class="main-container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="h3 mb-0" style="color: #4a5568; font-weight: 700;">
-                💬 Quejas de Clientes
-            </h2>
-            <div class="d-flex gap-2">
-                <span class="badge bg-primary">{{ quejas|length }} Total</span>
-            </div>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table modern-table">
-                <thead>
-                    <tr>
-                        <th>🆔 ID</th>
-                        <th>📝 Contenido</th>
-                        <th>📅 Fecha</th>
-                        <th>👤 Cliente</th>
-                        <th>📧 Usuario</th>
-                        <th>📞 Teléfono</th>
-                        <th>📊 Estado</th>
-                        <th>⚡ Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for queja in quejas %}
-                        <tr>
-                            <td>
-                                <span class="badge bg-light text-dark">#{{ queja.id_mensaje }}</span>
-                            </td>
-                            <td>
-                                <div class="cell-content expandable" title="{{ queja.contenido }}">
-                                    {{ queja.contenido|truncatechars:50 }}
-                                </div>
-                            </td>
-                            <td>
-                                <small class="text-muted">{{ queja.fecha_envio|date:"d/m/Y" }}</small>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="me-2">
-                                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.875rem; color: white;">
-                                            {{ queja.usuario.nombre_completo|first|upper }}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="fw-semibold">{{ queja.usuario.nombre_completo }}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <code class="bg-light p-1 rounded">{{ queja.usuario.nombre_usuario }}</code>
-                            </td>
-                            <td>
-                                <a href="tel:{{ queja.usuario.telefono }}" class="text-decoration-none">
-                                    {{ queja.usuario.telefono }}
-                                </a>
-                            </td>
-                            <td>
-                                <span class="status-badge 
-                                    {% if queja.estado == 'Pendiente' %}status-pendiente
-                                    {% elif queja.estado == 'Resuelta' %}status-resuelta
-                                    {% else %}status-en-proceso
-                                    {% endif %}">
-                                    {{ queja.estado }}
-                                </span>
-                            </td>
-                            <td>
-                                <div class="actions-container">
-                                    <form method="POST" style="display:inline;">
-                                        {% csrf_token %}
-                                        <button type="submit" name="eliminar" value="{{ queja.id_mensaje }}" 
-                                                class="modern-btn btn-danger btn-sm"
-                                                onclick="return confirm('¿Estás seguro de eliminar esta queja?')">
-                                            🗑️ Eliminar
-                                        </button>
-                                    </form>
-                                    
-                                    <button onclick="toggleResponseForm('{{ queja.id_mensaje }}')" 
-                                            class="modern-btn btn-success btn-sm">
-                                        💬 Contestar
-                                    </button>
-                                </div>
-
-                                <!-- Formulario de respuesta -->
-                                <div id="edit-{{ queja.id_mensaje }}" class="response-form" style="display:none;">
-                                    <form method="POST">
-                                        {% csrf_token %}
-                                        <div class="form-group">
-                                            <label for="respuesta-{{ queja.id_mensaje }}">
-                                                ✍️ Tu respuesta
-                                            </label>
-                                            <textarea name="respuesta" 
-                                                    id="respuesta-{{ queja.id_mensaje }}"
-                                                    class="form-control" 
-                                                    rows="4"
-                                                    placeholder="Escribe tu respuesta profesional aquí..."
-                                                    required></textarea>
-                                        </div>
-                                        
-                                        <input type="hidden" name="id_reserva" value="{{ queja.id_mensaje }}">
-                                        
-                                        <div class="d-flex gap-2">
-                                            <button type="submit" class="modern-btn btn-primary">
-                                                📤 Enviar Respuesta
-                                            </button>
-                                            <button type="button" class="modern-btn btn-secondary" 
-                                                    onclick="toggleResponseForm('{{ queja.id_mensaje }}')">
-                                                ❌ Cancelar
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="8">
-                                <div class="empty-state">
-                                    <div class="empty-state-icon">📭</div>
-                                    <h5>No hay quejas disponibles</h5>
-                                    <p class="text-muted">¡Excelente! No tienes quejas pendientes por revisar.</p>
-                                </div>
-                            </td>
-                        </tr>
+        <div class="max-w-7xl mx-auto px-6">
+            <!-- Mensajes de estado -->
+            {% if messages %}
+                <div class="mb-6 space-y-3">
+                    {% for message in messages %}
+                        <div class="p-4 rounded-2xl shadow-lg animate-slideInDown {% if message.tags == 'success' %}bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 text-green-800{% elif message.tags == 'error' %}bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 text-red-800{% elif message.tags == 'warning' %}bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 text-yellow-800{% else %}bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-blue-800{% endif %}">
+                            <div class="flex items-center">
+                                <i class="fas fa-info-circle mr-3 text-lg"></i>
+                                <span class="font-medium">{{ message }}</span>
+                                <button type="button" class="ml-auto text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.style.display='none'">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
                     {% endfor %}
-                </tbody>
-            </table>
+                </div>
+            {% endif %}
+
+            <!-- Header de la página -->
+            <div class="text-center mb-12 animate-fadeInUp">
+                <div class="inline-block px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-semibold rounded-full uppercase tracking-wider mb-6">
+                    Gestión de Quejas
+                </div>
+                <h1 class="text-5xl md:text-6xl font-extrabold mb-4">
+                    <span class="bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
+                        <i class="fas fa-comments mr-4"></i>QUEJAS
+                    </span>
+                </h1>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Sistema de atención al cliente para gestionar quejas y comentarios
+                </p>
+            </div>
+
+            <!-- Estadísticas rápidas -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 animate-fadeInUp" style="animation-delay: 0.2s;">
+                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                        </div>
+                        <span class="text-3xl font-bold text-red-600">{{ quejas|length }}</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-800">Total Quejas</h3>
+                    <p class="text-gray-600 text-sm">Quejas registradas</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-clock text-white text-xl"></i>
+                        </div>
+                        <span class="text-3xl font-bold text-yellow-600">0</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-800">Pendientes</h3>
+                    <p class="text-gray-600 text-sm">Por responder</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-check-circle text-white text-xl"></i>
+                        </div>
+                        <span class="text-3xl font-bold text-green-600">0</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-800">Resueltas</h3>
+                    <p class="text-gray-600 text-sm">Completadas</p>
+                </div>
+            </div>
+
+            <!-- Contenedor principal de la tabla -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-200 animate-fadeInUp" style="animation-delay: 0.4s;">
+                <!-- Header del contenedor -->
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-800 mb-1">
+                                <i class="fas fa-comments mr-2 text-blue-600"></i>
+                                Quejas de Clientes
+                            </h2>
+                            <p class="text-gray-600">Gestiona las quejas y comentarios de los usuarios</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
+                                {{ quejas|length }} Total
+                            </div>
+                            <a href="#" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                                <i class="fas fa-plus mr-2"></i>
+                                Nueva Queja
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla responsive -->
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-hashtag mr-2"></i>ID
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-file-alt mr-2"></i>Contenido
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-calendar mr-2"></i>Fecha
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-user mr-2"></i>Cliente
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-at mr-2"></i>Usuario
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-phone mr-2"></i>Teléfono
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-chart-bar mr-2"></i>Estado
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-cogs mr-2"></i>Acciones
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for queja in quejas %}
+                                <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-xs font-mono rounded-md">
+                                            #{{ queja.id_mensaje }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="max-w-xs">
+                                            <p class="text-sm text-gray-900 truncate cursor-pointer hover:text-blue-600 transition-colors" 
+                                               title="{{ queja.contenido }}" 
+                                               onclick="toggleContent(this, '{{ queja.contenido }}')">
+                                                {{ queja.contenido|truncatechars:50 }}
+                                            </p>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-sm text-gray-500">
+                                            {{ queja.fecha_envio|date:"d/m/Y" }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">
+                                                {{ queja.usuario.nombre_completo|first|upper }}
+                                            </div>
+                                            <div>
+                                                <div class="text-sm font-medium text-gray-900">
+                                                    {{ queja.usuario.nombre_completo }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-block px-2 py-1 bg-gray-100 text-gray-600 text-xs font-mono rounded-md">
+                                            {{ queja.usuario.nombre_usuario }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <a href="tel:{{ queja.usuario.telefono }}" 
+                                           class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors">
+                                            {{ queja.usuario.telefono }}
+                                        </a>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                                            {% if queja.estado == 'Pendiente' %}bg-yellow-100 text-yellow-800
+                                            {% elif queja.estado == 'Resuelta' %}bg-green-100 text-green-800
+                                            {% elif queja.estado == 'En Proceso' %}bg-blue-100 text-blue-800
+                                            {% else %}bg-red-100 text-red-800
+                                            {% endif %}">
+                                            {% if queja.estado %}
+                                                {{ queja.estado }}
+                                            {% else %}
+                                                NO RESPONDIDO
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center space-x-2">
+                                            <!-- Botón eliminar -->
+                                            <form method="POST" style="display:inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" 
+                                                        name="eliminar" 
+                                                        value="{{ queja.id_mensaje }}" 
+                                                        class="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200"
+                                                        onclick="return confirm('¿Estás seguro de eliminar esta queja?')"
+                                                        title="Eliminar queja">
+                                                    <i class="fas fa-trash text-xs"></i>
+                                                </button>
+                                            </form>
+                                            
+                                            <!-- Botón responder -->
+                                            <button onclick="toggleResponseForm('{{ queja.id_mensaje }}')" 
+                                                    class="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200"
+                                                    title="Responder queja">
+                                                <i class="fas fa-reply text-xs"></i>
+                                            </button>
+                                        </div>
+
+                                        <!-- Formulario de respuesta -->
+                                        <div id="edit-{{ queja.id_mensaje }}" class="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-xl" style="display:none;">
+                                            <form method="POST" class="space-y-4">
+                                                {% csrf_token %}
+                                                <div>
+                                                    <label for="respuesta-{{ queja.id_mensaje }}" 
+                                                           class="block text-sm font-semibold text-gray-700 mb-2">
+                                                        <i class="fas fa-pen mr-2 text-blue-600"></i>Tu respuesta
+                                                    </label>
+                                                    <textarea name="respuesta" 
+                                                            id="respuesta-{{ queja.id_mensaje }}"
+                                                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-white resize-none" 
+                                                            rows="3"
+                                                            placeholder="Escribe tu respuesta profesional aquí..."
+                                                            required></textarea>
+                                                </div>
+                                                
+                                                <input type="hidden" name="id_reserva" value="{{ queja.id_mensaje }}">
+                                                
+                                                <div class="flex space-x-2">
+                                                    <button type="submit" 
+                                                            class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-300">
+                                                        <i class="fas fa-paper-plane mr-2"></i>Enviar
+                                                    </button>
+                                                    <button type="button" 
+                                                            class="px-4 py-2 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600 transition-colors duration-300" 
+                                                            onclick="toggleResponseForm('{{ queja.id_mensaje }}')">
+                                                        <i class="fas fa-times mr-2"></i>Cancelar
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="8" class="px-6 py-12 text-center">
+                                        <div class="flex flex-col items-center justify-center">
+                                            <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
+                                            <h3 class="text-lg font-semibold text-gray-700 mb-2">No hay quejas disponibles</h3>
+                                            <p class="text-gray-500">¡Excelente! No tienes quejas pendientes por revisar.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginación -->
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-2xl">
+                    <div class="flex items-center justify-center space-x-2">
+                        <button class="px-3 py-2 border border-gray-300 text-gray-500 rounded-lg hover:bg-white transition-colors">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="px-3 py-2 bg-blue-600 text-white rounded-lg font-semibold">1</button>
+                        <button class="px-3 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-white transition-colors">2</button>
+                        <button class="px-3 py-2 border border-gray-300 text-gray-500 rounded-lg hover:bg-white transition-colors">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
+    </main>
+
+    <!-- Footer -->
+    <div class="text-center py-8 text-gray-500 text-sm border-t border-gray-200 mt-12 bg-white">
+        © 2025 Gestión de Quejas. Todos los derechos reservados.
     </div>
-</div>
+</body>
 
 <script>
 function toggleResponseForm(id) {
@@ -522,28 +342,51 @@ function toggleResponseForm(id) {
     }
 }
 
-// Efecto de expansión para contenido largo
-document.querySelectorAll('.cell-content.expandable').forEach(cell => {
-    cell.addEventListener('click', function() {
-        const fullText = this.getAttribute('title');
-        if (fullText && fullText.length > 50) {
-            if (this.textContent.length > 50) {
-                this.textContent = fullText.substring(0, 50) + '...';
-            } else {
-                this.textContent = fullText;
-            }
+// Función para expandir/contraer contenido
+function toggleContent(element, fullText) {
+    if (fullText && fullText.length > 50) {
+        if (element.textContent.length > 50) {
+            element.textContent = fullText.substring(0, 50) + '...';
+        } else {
+            element.textContent = fullText;
         }
-    });
-});
+    }
+}
 
 // Auto-cerrar alertas después de 5 segundos
 setTimeout(() => {
-    document.querySelectorAll('.modern-alert').forEach(alert => {
-        alert.style.transition = 'opacity 0.5s ease-out';
-        alert.style.opacity = '0';
-        setTimeout(() => alert.remove(), 500);
+    document.querySelectorAll('.animate-slideInDown').forEach(alert => {
+        if (alert.classList.contains('bg-gradient-to-r')) {
+            alert.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+            alert.style.opacity = '0';
+            alert.style.transform = 'translateY(-10px)';
+            setTimeout(() => alert.remove(), 300);
+        }
     });
 }, 5000);
+
+// Animación de entrada para elementos
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+// Observar elementos con animación
+document.querySelectorAll('.animate-fadeInUp').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+    observer.observe(el);
+});
 </script>
 
 {% endblock content %}

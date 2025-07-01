@@ -1,675 +1,414 @@
 {% extends "base_crud.html" %}
-
 {% block content %}
-{% load custom_tags %}
 {% load static %}
 
-<style>
-/* Estilos modernos para servicios */
-.modern-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.page-header {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-    color: white;
-    padding: 3rem 0;
-    margin-bottom: 2rem;
-    border-radius: 16px;
-    text-align: center;
-    box-shadow: 0 20px 40px rgba(79, 70, 229, 0.3);
-    position: relative;
-    overflow: hidden;
-}
-
-.page-header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="25" cy="75" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-}
-
-.page-title {
-    font-size: 3rem;
-    font-weight: 800;
-    margin: 0;
-    text-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    position: relative;
-    z-index: 1;
-}
-
-.modern-alert {
-    position: relative;
-    padding: 1.25rem 1.75rem;
-    margin-bottom: 1.5rem;
-    border: none;
-    border-radius: 12px;
-    border-left: 4px solid;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    animation: slideInDown 0.6s ease-out;
-}
-
-.modern-alert.alert-success {
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(22, 163, 74, 0.05) 100%);
-    border-left-color: #22c55e;
-    color: #15803d;
-}
-
-.modern-alert.alert-danger {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.05) 100%);
-    border-left-color: #ef4444;
-    color: #b91c1c;
-}
-
-.modern-alert.alert-warning {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.05) 100%);
-    border-left-color: #f59e0b;
-    color: #92400e;
-}
-
-.modern-alert.alert-info {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.05) 100%);
-    border-left-color: #3b82f6;
-    color: #1d4ed8;
-}
-
-.action-bar {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 2rem;
-}
-
-.modern-btn {
-    border: none;
-    border-radius: 12px;
-    padding: 0.75rem 2rem;
-    font-weight: 600;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: none;
-    letter-spacing: 0.3px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    position: relative;
-    overflow: hidden;
-}
-
-.modern-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: left 0.5s;
-}
-
-.modern-btn:hover::before {
-    left: 100%;
-}
-
-.modern-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-}
-
-.btn-primary-modern {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-    color: white;
-}
-
-.btn-primary-modern:hover {
-    background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
-}
-
-.form-container {
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-    overflow: hidden;
-    margin-bottom: 3rem;
-    border: 1px solid rgba(79, 70, 229, 0.1);
-}
-
-.form-header {
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-    padding: 2rem;
-    text-align: center;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.form-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin: 0;
-}
-
-.form-body {
-    padding: 2.5rem;
-}
-
-.modern-form-group {
-    margin-bottom: 1.75rem;
-}
-
-.modern-label {
-    display: block;
-    font-weight: 600;
-    color: #374151;
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
-}
-
-.modern-input {
-    width: 100%;
-    padding: 1rem 1.25rem;
-    border: 2px solid #e5e7eb;
-    border-radius: 12px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    background: #f9fafb;
-}
-
-.modern-input:focus {
-    outline: none;
-    border-color: #4f46e5;
-    background: white;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-    transform: translateY(-1px);
-}
-
-.btn-dark-modern {
-    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-    color: white;
-    width: 100%;
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
-    font-weight: 700;
-}
-
-.btn-dark-modern:hover {
-    background: linear-gradient(135deg, #111827 0%, #030712 100%);
-}
-
-.content-section {
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-    overflow: hidden;
-    margin-bottom: 2rem;
-}
-
-.section-header {
-    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-    padding: 2rem;
-    border-bottom: 1px solid #e2e8f0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.section-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin: 0;
-}
-
-.search-form {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.search-input {
-    padding: 0.75rem 1rem;
-    border: 2px solid #e5e7eb;
-    border-radius: 10px;
-    min-width: 250px;
-    font-size: 0.95rem;
-    background: white;
-}
-
-.search-input:focus {
-    outline: none;
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-}
-
-.btn-search {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 10px;
-    font-weight: 600;
-}
-
-.modern-table-container {
-    overflow-x: auto;
-    background: white;
-}
-
-.modern-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
-}
-
-.modern-table thead {
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-}
-
-.modern-table thead th {
-    padding: 1.25rem 1.5rem;
-    text-align: left;
-    font-weight: 700;
-    color: white;
-    border: none;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 0.5px;
-}
-
-.modern-table tbody tr {
-    border-bottom: 1px solid #f1f5f9;
-    transition: all 0.3s ease;
-}
-
-.modern-table tbody tr:hover {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-}
-
-.modern-table td {
-    padding: 1.25rem 1.5rem;
-    vertical-align: middle;
-    border: none;
-    color: #374151;
-}
-
-.modern-table td:first-child {
-    font-weight: 700;
-    color: #1e293b;
-}
-
-.service-name {
-    font-weight: 600;
-    color: #4f46e5;
-}
-
-.service-description {
-    max-width: 200px;
-    word-wrap: break-word;
-    line-height: 1.5;
-    color: #6b7280;
-}
-
-.service-price {
-    font-weight: 700;
-    color: #059669;
-    font-size: 1.1rem;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    align-items: center;
-}
-
-.btn-sm-modern {
-    padding: 0.5rem 1rem;
-    font-size: 0.8rem;
-    font-weight: 600;
-    border-radius: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    transition: all 0.3s ease;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-danger-modern {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    color: white;
-}
-
-.btn-warning-modern {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    color: white;
-}
-
-.btn-info-modern {
-    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-    color: white;
-}
-
-.btn-success-modern {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
-}
-
-.btn-secondary-modern {
-    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-    color: white;
-}
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(5px);
-    z-index: 1000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-}
-
-.modal-content {
-    background: white;
-    border-radius: 16px;
-    max-width: 500px;
-    width: 100%;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
-}
-
-.modal-header {
-    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-    padding: 1.5rem 2rem;
-    border-bottom: 1px solid #e2e8f0;
-    border-radius: 16px 16px 0 0;
-}
-
-.modal-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin: 0;
-}
-
-.modal-body {
-    padding: 2rem;
-}
-
-.checkbox-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.checkbox-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    background: #f9fafb;
-    border-radius: 8px;
-    transition: background 0.3s ease;
-}
-
-.checkbox-item:hover {
-    background: #f3f4f6;
-}
-
-.checkbox-item input[type="checkbox"] {
-    width: 1.2rem;
-    height: 1.2rem;
-    cursor: pointer;
-}
-
-.checkbox-label {
-    font-weight: 500;
-    color: #374151;
-    cursor: pointer;
-}
-
-.empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    color: #6b7280;
-}
-
-.empty-state-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-    opacity: 0.5;
-}
-
-.empty-state-text {
-    font-size: 1.2rem;
-    font-weight: 500;
-}
-
-@keyframes slideInDown {
-    from {
-        transform: translateY(-30px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-@media (max-width: 768px) {
-    .modern-container {
-        padding: 0 15px;
-    }
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    .page-title {
-        font-size: 2.5rem;
-    }
-    
-    .section-header {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .search-form {
-        width: 100%;
-        justify-content: center;
-    }
-    
-    .search-input {
-        min-width: 200px;
-    }
-    
-    .action-buttons {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .btn-sm-modern {
-        justify-content: center;
-    }
-}
-</style>
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<link href="{% static 'estilos/estilos.css' %}" rel="stylesheet" type="text/css">
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-<div class="modern-container">
-    <!-- Mensajes de alerta modernos -->
-    {% if messages %}
-        {% for message in messages %}
-            <div class="modern-alert 
-                {% if message.tags == 'success' %}alert-success
-                {% elif message.tags == 'error' %}alert-danger
-                {% elif message.tags == 'warning' %}alert-warning
-                {% else %}alert-info
-                {% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out;
+        }
 
-    <!-- Header de la página -->
-    <div class="page-header">
-        <h1 class="page-title">🛠️ Gestión de Servicios</h1>
+        .animate-slideInDown {
+            animation: slideInDown 0.5s ease-out;
+        }
+    </style>
+</head>
+
+<body class="bg-white min-h-screen">
+    <!-- Elementos decorativos de fondo -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-200/30 to-slate-200/30 rounded-full blur-3xl opacity-60"></div>
+        <div class="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-slate-200/30 to-gray-200/30 rounded-full blur-3xl opacity-60"></div>
     </div>
 
-    <!-- Botón para crear servicio -->
-    <div class="action-bar">
-        <button id="toggleFormButton" class="modern-btn btn-primary-modern">
-            ✨ Crear Nuevo Servicio
-        </button>
-    </div>
-
-    <!-- Formulario de creación -->
-    <div id="formContainer" class="form-container" style="display: none;">
-        <div class="form-header">
-            <h3 class="form-title">🆕 Crear Nuevo Servicio</h3>
-        </div>
-        <div class="form-body">
-            <form method="POST">
-                {% csrf_token %}
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="modern-form-group">
-                            <label for="nombre_servicio" class="modern-label">Nombre del Servicio</label>
-                            <input type="text" name="nombre_servicio" class="modern-input" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="modern-form-group">
-                            <label for="precio" class="modern-label">Precio</label>
-                            <input type="text" name="precio" class="modern-input" required>
-                        </div>
-                    </div>
-                </div>
-                <div class="modern-form-group">
-                    <label for="descripcion" class="modern-label">Descripción</label>
-                    <input type="text" name="descripcion" class="modern-input" required>
-                </div>
-                <button type="submit" class="modern-btn btn-dark-modern">
-                    🚀 Crear Servicio
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Sección principal de contenido -->
-    <div class="content-section">
-        <div class="section-header">
-            <h2 class="section-title">📋 Lista de Servicios</h2>
-            <form method="GET" class="search-form">
-                <input type="text" name="nombre_servicio" placeholder="🔍 Buscar servicio..." class="search-input" value="{{ request.GET.nombre_servicio }}">
-                <button type="submit" class="modern-btn btn-search">Buscar</button>
-            </form>
-        </div>
-        
-        <div class="modern-table-container">
-            <table class="modern-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Servicio</th>
-                        <th>Descripción</th>
-                        <th>Precio</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for servicio in servicios %}
-                        <tr>
-                            <td>#{{ servicio.id_servicio }}</td>
-                            <td class="service-name">{{ servicio.nombre_servicio }}</td>
-                            <td class="service-description">{{ servicio.descripcion }}</td>
-                            <td class="service-price">${{ servicio.precio }}</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <form method="POST" style="display:inline;">
-                                        {% csrf_token %}
-                                        <button type="submit" name="eliminar" value="{{ servicio.id_servicio }}" 
-                                                class="btn-sm-modern btn-danger-modern" 
-                                                onclick="return confirm('¿Estás seguro de que quieres eliminar este servicio?');">
-                                            🗑️ Eliminar
-                                        </button>
-                                    </form>
-                                    <button class="btn-sm-modern btn-warning-modern" 
-                                            onclick="document.getElementById('edit-{{ servicio.id_servicio }}').style.display='block'">
-                                        ✏️ Editar
-                                    </button>
-                                    <button class="btn-sm-modern btn-info-modern" 
-                                            onclick="openModal('empresa-{{ servicio.id_servicio }}')">
-                                        🏢 Asignar Empresa
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <!-- Modal de Asignar Empresa -->
-                        <div id="empresa-{{ servicio.id_servicio }}" class="modal-overlay" onclick="closeModal('empresa-{{ servicio.id_servicio }}')">
-                            <div class="modal-content" onclick="event.stopPropagation()">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">🏢 Asignar Empresas - {{ servicio.nombre_servicio }}</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <form method="POST">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="servicio_id" value="{{ servicio.id_servicio }}">
-                                        <div class="modern-form-group">
-                                            <label class="modern-label">Selecciona las empresas:</label>
-                                            <div class="checkbox-group">
-                                                {% for empresa in empresas %}
-                                                    <div class="checkbox-item">
-                                                        <input type="checkbox" name="empresas" value="{{ empresa.id_empresa }}"
-                                                            {% if empresa.id_empresa in servicio.empresas_asociadas %}checked{% endif %}
-                                                            id="empresa-{{ servicio.id_servicio }}-{{ empresa.id_empresa }}">
-                                                        <label for="empresa-{{ servicio.id_servicio }}-{{ empresa.id_empresa }}" class="checkbox-label">
-                                                            {{ empresa.nombre_empresa }}
-                                                        </label>
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                        <div class="action-buttons">
-                                            <button type="submit" name="asignar_empresa" class="modern-btn btn-success-modern">
-                                                ✅ Asignar
-                                            </button>
-                                            <button type="button" class="modern-btn btn-secondary-modern" 
-                                                    onclick="closeModal('empresa-{{ servicio.id_servicio }}')">
-                                                ❌ Cancelar
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
+    <!-- Contenido principal -->
+    <main class="relative z-10 pt-8">
+        <div class="max-w-7xl mx-auto px-6">
+            <!-- Mensajes de estado -->
+            {% if messages %}
+                <div class="mb-6 space-y-3">
+                    {% for message in messages %}
+                        <div class="p-4 rounded-2xl shadow-lg animate-slideInDown {% if message.tags == 'success' %}bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 text-green-800{% elif message.tags == 'error' %}bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 text-red-800{% elif message.tags == 'warning' %}bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 text-yellow-800{% else %}bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-blue-800{% endif %}">
+                            <div class="flex items-center">
+                                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-3 text-lg"></i>
+                                <span class="font-medium">{{ message }}</span>
+                                <button type="button" class="ml-auto text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.style.display='none'">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
                         </div>
-
-                    {% empty %}
-                        <tr>
-                            <td colspan="5">
-                                <div class="empty-state">
-                                    <div class="empty-state-icon">🛠️</div>
-                                    <div class="empty-state-text">No hay servicios registrados</div>
-                                </div>
-                            </td>
-                        </tr>
                     {% endfor %}
-                </tbody>
-            </table>
+                </div>
+            {% endif %}
+
+            <!-- Header de la página -->
+            <div class="text-center mb-12 animate-fadeInUp">
+                <div class="inline-block px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-semibold rounded-full uppercase tracking-wider mb-6">
+                    Gestión de Servicios
+                </div>
+                <h1 class="text-5xl md:text-6xl font-extrabold mb-4">
+                    <span class="bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
+                        <i class="fas fa-concierge-bell mr-4"></i>SERVICIOS
+                    </span>
+                </h1>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Administra y controla todos los servicios del sistema de manera eficiente
+                </p>
+            </div>
+
+            <!-- Estadísticas rápidas -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 animate-fadeInUp" style="animation-delay: 0.2s;">
+                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-concierge-bell text-white text-xl"></i>
+                        </div>
+                        <span class="text-3xl font-bold text-blue-600">{{ servicios|length }}</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-800">Total Servicios</h3>
+                    <p class="text-gray-600 text-sm">Servicios registrados</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-building text-white text-xl"></i>
+                        </div>
+                        <span class="text-3xl font-bold text-purple-600">{{ empresas|length }}</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-800">Empresas</h3>
+                    <p class="text-gray-600 text-sm">Empresas disponibles</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-link text-white text-xl"></i>
+                        </div>
+                        <span class="text-3xl font-bold text-green-600">{{ total_asignaciones }}</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-800">Asignaciones</h3>
+                    <p class="text-gray-600 text-sm">Servicios asignados</p>
+                </div>
+            </div>
+
+            <!-- Botón para crear servicio -->
+            <div class="text-center mb-8 animate-fadeInUp" style="animation-delay: 0.4s;">
+                <button id="toggleFormButton" class="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                    <i class="fas fa-plus mr-2"></i>
+                    Crear Nuevo Servicio
+                </button>
+            </div>
+
+        
+            <!-- Formulario de creación -->
+            <div id="formContainer" class="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 mb-8 animate-fadeInUp" style="display: none; animation-delay: 0.6s;">
+                <div class="text-center mb-8">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-2">
+                        <i class="fas fa-plus-circle mr-2 text-blue-600"></i>
+                        Crear Nuevo Servicio
+                    </h3>
+                    <div class="w-20 h-1 bg-gradient-to-r from-blue-600 to-blue-500 rounded-full mx-auto"></div>
+                </div>
+                
+                <form method="POST" class="space-y-6">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="nombre_servicio" class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-concierge-bell mr-2 text-blue-600"></i>Nombre del Servicio
+                            </label>
+                            <input type="text" name="nombre_servicio" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-gray-50 focus:bg-white" placeholder="Ej: Lavado Completo" required>
+                        </div>
+
+                        <div>
+                            <label for="precio" class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-dollar-sign mr-2 text-blue-600"></i>Precio
+                            </label>
+                            <input type="text" name="precio" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-gray-50 focus:bg-white" placeholder="Ej: $500" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="descripcion" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-align-left mr-2 text-blue-600"></i>Descripción
+                        </label>
+                        <input type="text" name="descripcion" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-gray-50 focus:bg-white" placeholder="Descripción del servicio" required>
+                    </div>
+                    
+                    <div class="text-center pt-6">
+                        <button type="submit" class="px-8 py-4 bg-gradient-to-r from-slate-800 to-slate-700 text-white font-semibold rounded-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                            <i class="fas fa-rocket mr-2"></i>
+                            Crear Servicio
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Sección de búsqueda -->
+            <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 mb-8 animate-fadeInUp" style="animation-delay: 0.8s;">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-search text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800">Buscar Servicios</h3>
+                </div>
+                
+                <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="md:col-span-3">
+                        <input type="text" name="nombre_servicio" placeholder="Buscar servicio..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-gray-50 focus:bg-white" value="{{ request.GET.nombre_servicio }}">
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                            <i class="fas fa-search mr-2"></i>Buscar
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <!-- Tabla de servicios -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-200 animate-fadeInUp" style="animation-delay: 1s;">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl flex items-center justify-center mr-4">
+                            <i class="fas fa-list text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800">Lista de Servicios</h3>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gradient-to-r from-slate-800 to-slate-700 text-white">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">
+                                    <i class="fas fa-hashtag mr-2"></i>ID
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">
+                                    <i class="fas fa-concierge-bell mr-2"></i>Servicio
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">
+                                    <i class="fas fa-align-left mr-2"></i>Descripción
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">
+                                    <i class="fas fa-dollar-sign mr-2"></i>Precio
+                                </th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">
+                                    <i class="fas fa-cogs mr-2"></i>Acciones
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for servicio in servicios %}
+                                <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50 transition-all duration-300">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3">
+                                                <span class="text-white text-xs font-bold">#</span>
+                                            </div>
+                                            <span class="font-semibold text-slate-800">{{ servicio.id_servicio }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3">
+                                                <i class="fas fa-concierge-bell text-white text-sm"></i>
+                                            </div>
+                                            <span class="font-semibold text-blue-600">{{ servicio.nombre_servicio }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="max-w-xs">
+                                            <p class="text-gray-700 text-sm leading-relaxed">{{ servicio.descripcion }}</p>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-3 py-1 text-lg font-bold text-green-700 bg-green-100 rounded-full">
+                                            ${{ servicio.precio }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center space-x-3">
+                                            <form method="POST" style="display:inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" name="eliminar" value="{{ servicio.id_servicio }}" 
+                                                        class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                                                        onclick="return confirm('¿Estás seguro de que quieres eliminar este servicio?');">
+                                                    <i class="fas fa-trash mr-1"></i>
+                                                    Eliminar
+                                                </button>
+                                            </form>
+                                            <button class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300" 
+                                                    onclick="openModal('edit-{{ servicio.id_servicio }}')">
+                                                <i class="fas fa-edit mr-1"></i>
+                                                Editar
+                                            </button>
+                                            <button class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300" 
+                                                    onclick="openModal('empresa-{{ servicio.id_servicio }}')">
+                                                <i class="fas fa-building mr-1"></i>
+                                                Asignar
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Modal de Asignar Empresa -->
+                                <div id="empresa-{{ servicio.id_servicio }}" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 hidden items-center justify-center p-4" onclick="closeModal('empresa-{{ servicio.id_servicio }}')">
+                                    <div class="bg-white rounded-2xl max-w-md w-full max-h-[80vh] overflow-y-auto shadow-2xl border border-gray-200" onclick="event.stopPropagation()">
+                                        <div class="p-6 border-b border-gray-200">
+                                            <div class="flex items-center">
+                                                <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mr-4">
+                                                    <i class="fas fa-building text-white"></i>
+                                                </div>
+                                                <h4 class="text-xl font-bold text-slate-800">Asignar Empresas</h4>
+                                            </div>
+                                            <p class="text-gray-600 mt-2">{{ servicio.nombre_servicio }}</p>
+                                        </div>
+                                        <div class="p-6">
+                                            <form method="POST">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="servicio_id" value="{{ servicio.id_servicio }}">
+                                                <div class="mb-6">
+                                                    <label class="block text-sm font-semibold text-gray-700 mb-4">Selecciona las empresas:</label>
+                                                    <div class="space-y-3">
+                                                        {% for empresa in empresas %}
+                                                            <div class="flex items-center p-3 bg-gray-50 rounded-xl border border-gray-200 hover:bg-blue-50 hover:border-blue-200 transition-all duration-300">
+                                                                <input type="checkbox" name="empresas" value="{{ empresa.id_empresa }}"
+                                                                    {% if empresa.id_empresa in servicio.empresas_asociadas %}checked{% endif %}
+                                                                    id="empresa-{{ servicio.id_servicio }}-{{ empresa.id_empresa }}"
+                                                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                                                                <label for="empresa-{{ servicio.id_servicio }}-{{ empresa.id_empresa }}" class="ml-3 text-sm font-medium text-gray-700 cursor-pointer">
+                                                                    {{ empresa.nombre_empresa }}
+                                                                </label>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center space-x-3">
+                                                    <button type="submit" name="asignar_empresa" class="flex-1 px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                                                        <i class="fas fa-check mr-2"></i>Asignar
+                                                    </button>
+                                                    <button type="button" class="flex-1 px-4 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-300" 
+                                                            onclick="closeModal('empresa-{{ servicio.id_servicio }}')">
+                                                        <i class="fas fa-times mr-2"></i>Cancelar
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Modal de Editar Servicio -->
+                                <div id="edit-{{ servicio.id_servicio }}" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 hidden items-center justify-center p-4" onclick="closeModal('edit-{{ servicio.id_servicio }}')">
+                                    <div class="bg-white rounded-2xl max-w-md w-full max-h-[80vh] overflow-y-auto shadow-2xl border border-gray-200" onclick="event.stopPropagation()">
+                                        <div class="p-6 border-b border-gray-200">
+                                            <div class="flex items-center">
+                                                <div class="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center mr-4">
+                                                    <i class="fas fa-edit text-white"></i>
+                                                </div>
+                                                <h4 class="text-xl font-bold text-slate-800">Editar Servicio</h4>
+                                            </div>
+                                            <p class="text-gray-600 mt-2">ID: {{ servicio.id_servicio }}</p>
+                                        </div>
+                                        <div class="p-6">
+                                            <form method="POST">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="id_servicio" value="{{ servicio.id_servicio }}">
+                                                
+                                                <div class="space-y-4">
+                                                    <div>
+                                                        <label for="edit_nombre_servicio_{{ servicio.id_servicio }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                                                            <i class="fas fa-concierge-bell mr-2 text-blue-600"></i>Nombre del Servicio
+                                                        </label>
+                                                        <input type="text" 
+                                                               name="nombre_servicio" 
+                                                               id="edit_nombre_servicio_{{ servicio.id_servicio }}"
+                                                               value="{{ servicio.nombre_servicio }}"
+                                                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-gray-50 focus:bg-white" 
+                                                               required>
+                                                    </div>
+
+                                                    <div>
+                                                        <label for="edit_descripcion_{{ servicio.id_servicio }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                                                            <i class="fas fa-align-left mr-2 text-blue-600"></i>Descripción
+                                                        </label>
+                                                        <textarea name="descripcion" 
+                                                                  id="edit_descripcion_{{ servicio.id_servicio }}"
+                                                                  rows="3"
+                                                                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-gray-50 focus:bg-white" 
+                                                                  required>{{ servicio.descripcion }}</textarea>
+                                                    </div>
+
+                                                    <div>
+                                                        <label for="edit_precio_{{ servicio.id_servicio }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                                                            <i class="fas fa-dollar-sign mr-2 text-blue-600"></i>Precio
+                                                        </label>
+                                                        <input type="text" 
+                                                               name="precio" 
+                                                               id="edit_precio_{{ servicio.id_servicio }}"
+                                                               value="{{ servicio.precio }}"
+                                                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-gray-50 focus:bg-white" 
+                                                               required>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="flex items-center space-x-3 mt-6">
+                                                    <button type="submit" class="flex-1 px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                                                        <i class="fas fa-save mr-2"></i>Actualizar
+                                                    </button>
+                                                    <button type="button" class="flex-1 px-4 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-300" 
+                                                            onclick="closeModal('edit-{{ servicio.id_servicio }}')">
+                                                        <i class="fas fa-times mr-2"></i>Cancelar
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5" class="px-6 py-12">
+                                        <div class="text-center">
+                                            <div class="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                <i class="fas fa-concierge-bell text-gray-400 text-3xl"></i>
+                                            </div>
+                                            <h3 class="text-lg font-semibold text-gray-600 mb-2">No hay servicios registrados</h3>
+                                            <p class="text-gray-500">Comienza creando tu primer servicio</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
+    </main>
+</body>
 
 <script>
 // Toggle del formulario
@@ -677,41 +416,42 @@ document.getElementById('toggleFormButton').onclick = function() {
     var formContainer = document.getElementById('formContainer');
     if (formContainer.style.display === 'none' || formContainer.style.display === '') {
         formContainer.style.display = 'block';
-        this.innerHTML = '❌ Cancelar';
+        this.innerHTML = '<i class="fas fa-times mr-2"></i>Cancelar';
         formContainer.scrollIntoView({ behavior: 'smooth' });
     } else {
         formContainer.style.display = 'none';
-        this.innerHTML = '✨ Crear Nuevo Servicio';
+        this.innerHTML = '<i class="fas fa-plus mr-2"></i>Crear Nuevo Servicio';
     }
 };
 
 // Funciones para modales
 function openModal(modalId) {
-    document.getElementById(modalId).style.display = 'flex';
+    const modal = document.getElementById(modalId);
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
     document.body.style.overflow = 'hidden';
 }
 
 function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
+    const modal = document.getElementById(modalId);
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
     document.body.style.overflow = 'auto';
 }
 
 // Cerrar modal con Escape
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
-        const modals = document.querySelectorAll('.modal-overlay');
+        const modals = document.querySelectorAll('[id^="empresa-"], [id^="edit-"]');
         modals.forEach(modal => {
-            if (modal.style.display === 'flex') {
-                modal.style.display = 'none';
+            if (modal.classList.contains('flex')) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
             }
         });
         document.body.style.overflow = 'auto';
     }
 });
 </script>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 {% endblock %}

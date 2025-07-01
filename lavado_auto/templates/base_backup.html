@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Autonew-lavado de autos</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    zIndex: {
+                        '60': '60',
+                        '70': '70',
+                        '80': '80',
+                        '90': '90',
+                        '100': '100',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
+    
+    <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}">
+    <!-- Google Font -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+    <!-- CSS Librerías -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="{% static 'lib/flaticon/font/flaticon.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'lib/animate/animate.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            padding-top: 80px !important; /* Espacio para la navbar fija */
+            overflow-x: hidden !important;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%) !important;
+            min-height: 100vh;
+            color: #f8fafc !important;
+        }
+        
+        /* Solo mantener estilos específicos que Tailwind no puede manejar fácilmente */
+        .backdrop-blur-navbar {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .gradient-footer {
+            background: linear-gradient(135deg, #0c2331 70%, #1e3557 100%);
+        }
+        
+        .profile-hover:hover {
+            transform: scale(1.12) rotate(-3deg);
+        }
+        
+        /* Asegurar que la navbar esté por encima de todo */
+        .navbar-custom {
+            z-index: 9999 !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+        }
+        
+        /* Ajustes responsive */
+        @media (min-width: 1024px) {
+            body {
+                padding-top: 85px !important;
+            }
+        }
+    </style>
+    <header>
+        <!-- Navbar con Tailwind CSS -->
+        <nav class="navbar-custom bg-slate-800/90 backdrop-blur-navbar shadow-xl transition-all duration-300">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16 lg:h-20">
+                    <!-- Logo y Foto de Perfil -->
+                    <div class="flex items-center space-x-3">
+                        <a href="/" class="text-white text-2xl lg:text-3xl font-bold hover:text-red-500 transition-colors duration-300">
+                            Autonew
+                        </a>
+                        {% if request.user.is_authenticated %}
+                            <div class="flex items-center space-x-3 ml-4">
+                                {% if request.user.profile_picture %}
+                                    <img src="{{ request.user.profile_picture.url }}" 
+                                         alt="Perfil" 
+                                         class="w-10 h-10 lg:w-12 lg:h-12 rounded-full border-2 border-red-500 object-cover profile-hover transition-all duration-300 shadow-lg">
+                                {% else %}
+                                    <div class="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center text-white font-bold profile-hover transition-all duration-300 shadow-lg">
+                                        {{ request.user.nombre_usuario|first|upper }}
+                                    </div>
+                                {% endif %}
+                                <span class="text-white text-sm lg:text-base font-medium">
+                                    {{ request.user.nombre_usuario }}
+                                </span>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Enlaces de navegación -->
+                    <div class="hidden md:flex items-center space-x-6 lg:space-x-8">
+                        <a href="/" class="text-white hover:text-red-500 transition-colors duration-300 font-medium">
+                            Inicio
+                        </a>
+                        <a href="/nosotros" class="text-white hover:text-red-500 transition-colors duration-300 font-medium">
+                            Nosotros
+                        </a>
+                        <a href="/servicios" class="text-white hover:text-red-500 transition-colors duration-300 font-medium">
+                            Servicios
+                        </a>
+                        <a href="/empresas" class="text-white hover:text-red-500 transition-colors duration-300 font-medium">
+                            Empresas
+                        </a>
+                        <a href="/planes" class="text-white hover:text-red-500 transition-colors duration-300 font-medium">
+                            Planes
+                        </a>
+                        <a href="/contacto" class="text-white hover:text-red-500 transition-colors duration-300 font-medium">
+                            Contacto
+                        </a>
+                        <a href="/comentarios" class="text-white hover:text-red-500 transition-colors duration-300 font-medium">
+                            Comentarios
+                        </a>
+
+                        {% if request.user.is_authenticated %}
+                            <div class="flex items-center space-x-4">
+                                <a href="/perfil_usuario" 
+                                   class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white px-4 py-2 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium">
+                                    Mi Perfil
+                                </a>
+                                <a href="/logout" 
+                                   class="border border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-4 py-2 rounded-full transition-all duration-300 hover:scale-105 font-medium">
+                                    Cerrar Sesión
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="flex items-center space-x-4">
+                                <a href="/login" 
+                                   class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white px-6 py-2 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium">
+                                    Iniciar Sesión
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Menú móvil (hamburguesa) -->
+                    <div class="md:hidden">
+                        <button type="button" class="text-white hover:text-red-500 transition-colors duration-300" onclick="toggleMobileMenu()">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menú móvil desplegable -->
+                <div id="mobile-menu" class="hidden md:hidden">
+                    <div class="px-2 pt-2 pb-3 space-y-1 bg-slate-800/95 backdrop-blur-lg rounded-lg mt-2">
+                        <a href="/" class="block px-3 py-2 text-white hover:text-red-500 transition-colors duration-300">Inicio</a>
+                        <a href="/nosotros" class="block px-3 py-2 text-white hover:text-red-500 transition-colors duration-300">Nosotros</a>
+                        <a href="/servicios" class="block px-3 py-2 text-white hover:text-red-500 transition-colors duration-300">Servicios</a>
+                        <a href="/empresas" class="block px-3 py-2 text-white hover:text-red-500 transition-colors duration-300">Empresas</a>
+                        <a href="/planes" class="block px-3 py-2 text-white hover:text-red-500 transition-colors duration-300">Planes</a>
+                        <a href="/contacto" class="block px-3 py-2 text-white hover:text-red-500 transition-colors duration-300">Contacto</a>
+                        <a href="/comentarios" class="block px-3 py-2 text-white hover:text-red-500 transition-colors duration-300">Comentarios</a>
+                        
+                        {% if request.user.is_authenticated %}
+                            <div class="border-t border-slate-600 pt-2">
+                                <a href="/perfil_usuario" class="block px-3 py-2 text-red-500 font-medium">Mi Perfil</a>
+                                <a href="/logout" class="block px-3 py-2 text-red-500 font-medium">Cerrar Sesión</a>
+                            </div>
+                        {% else %}
+                            <div class="border-t border-slate-600 pt-2">
+                                <a href="/login" class="block px-3 py-2 text-red-500 font-medium">Iniciar Sesión</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+<!-- Footer con Tailwind CSS -->
+<footer class="relative mt-20">
+    <div class="gradient-footer rounded-t-3xl shadow-2xl">
+        <div class="max-w-6xl mx-auto px-6 lg:px-8 py-16">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Columna 1: Información de la empresa -->
+                <div class="space-y-6">
+                    <h3 class="text-white text-2xl font-bold flex items-center">
+                        <i class="fas fa-car text-red-500 mr-3"></i>
+                        AUTONEW
+                    </h3>
+                    <p class="text-gray-300 leading-relaxed">
+                        Somos la plataforma líder en servicios de lavado de autos, conectando a los mejores profesionales con clientes que buscan calidad y confianza.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-red-500/20 hover:bg-red-500 rounded-full flex items-center justify-center text-red-500 hover:text-white transition-all duration-300 hover:scale-110">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-red-500/20 hover:bg-red-500 rounded-full flex items-center justify-center text-red-500 hover:text-white transition-all duration-300 hover:scale-110">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-red-500/20 hover:bg-red-500 rounded-full flex items-center justify-center text-red-500 hover:text-white transition-all duration-300 hover:scale-110">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-red-500/20 hover:bg-red-500 rounded-full flex items-center justify-center text-red-500 hover:text-white transition-all duration-300 hover:scale-110">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Columna 2: Enlaces rápidos -->
+                <div class="space-y-6">
+                    <h4 class="text-white text-xl font-bold border-b border-red-500/50 pb-2">
+                        Enlaces Rápidos
+                    </h4>
+                    <ul class="space-y-3">
+                        <li><a href="/" class="text-gray-300 hover:text-red-500 hover:translate-x-2 transition-all duration-300 flex items-center"><i class="fas fa-chevron-right mr-2 text-sm"></i>Inicio</a></li>
+                        <li><a href="/nosotros" class="text-gray-300 hover:text-red-500 hover:translate-x-2 transition-all duration-300 flex items-center"><i class="fas fa-chevron-right mr-2 text-sm"></i>Nosotros</a></li>
+                        <li><a href="/servicios" class="text-gray-300 hover:text-red-500 hover:translate-x-2 transition-all duration-300 flex items-center"><i class="fas fa-chevron-right mr-2 text-sm"></i>Servicios</a></li>
+                        <li><a href="/empresas" class="text-gray-300 hover:text-red-500 hover:translate-x-2 transition-all duration-300 flex items-center"><i class="fas fa-chevron-right mr-2 text-sm"></i>Empresas</a></li>
+                        <li><a href="/planes" class="text-gray-300 hover:text-red-500 hover:translate-x-2 transition-all duration-300 flex items-center"><i class="fas fa-chevron-right mr-2 text-sm"></i>Planes</a></li>
+                    </ul>
+                </div>
+
+                <!-- Columna 3: Servicios -->
+                <div class="space-y-6">
+                    <h4 class="text-white text-xl font-bold border-b border-red-500/50 pb-2">
+                        Nuestros Servicios
+                    </h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-300 hover:text-red-500 hover:translate-x-2 transition-all duration-300 flex items-center"><i class="fas fa-chevron-right mr-2 text-sm"></i>Lavado Exterior</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-red-500 hover:translate-x-2 transition-all duration-300 flex items-center"><i class="fas fa-chevron-right mr-2 text-sm"></i>Lavado Interior</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-red-500 hover:translate-x-2 transition-all duration-300 flex items-center"><i class="fas fa-chevron-right mr-2 text-sm"></i>Detallado Completo</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-red-500 hover:translate-x-2 transition-all duration-300 flex items-center"><i class="fas fa-chevron-right mr-2 text-sm"></i>Encerado</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-red-500 hover:translate-x-2 transition-all duration-300 flex items-center"><i class="fas fa-chevron-right mr-2 text-sm"></i>Limpieza de Motor</a></li>
+                    </ul>
+                </div>
+
+                <!-- Columna 4: Contacto -->
+                <div class="space-y-6">
+                    <h4 class="text-white text-xl font-bold border-b border-red-500/50 pb-2">
+                        Contacto
+                    </h4>
+                    <ul class="space-y-4">
+                        <li class="flex items-center space-x-3 text-gray-300">
+                            <i class="fas fa-envelope text-red-500 text-lg"></i>
+                            <span>autonewlavado@gmail.com</span>
+                        </li>
+                        <li class="flex items-center space-x-3 text-gray-300">
+                            <i class="fas fa-phone text-red-500 text-lg"></i>
+                            <span>3114906440</span>
+                        </li>
+                        <li class="flex items-center space-x-3 text-gray-300">
+                            <i class="fas fa-map-marker-alt text-red-500 text-lg"></i>
+                            <span>Torre Colpatria piso 14</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Footer -->
+        <div class="border-t border-slate-600/50 mt-8 pt-6 pb-6 bg-slate-800/95 rounded-b-3xl">
+            <div class="max-w-6xl mx-auto px-6 lg:px-8">
+                <p class="text-center text-gray-300">
+                    &copy; <span id="year"></span> 
+                    <a href="#" class="text-red-500 font-semibold hover:text-white hover:underline transition-colors duration-300">AUTONEW</a>. 
+                    Todos los derechos reservados. Diseñado por 
+                    <a href="#" class="text-red-500 font-semibold hover:text-white hover:underline transition-colors duration-300">Andres Forero</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        menu.classList.toggle('hidden');
+    }
+</script>
+
+<!-- Pre carga -->
+<div id="loader" class="show">
+    <div class="loader"></div>
+</div>
+
+<!--botón de regresar -->
+<a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+<!-- Librerías JavaScript -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'lib/easing/easing.min.js' %}"></script>
+<script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
+<script src="{% static 'lib/waypoints/waypoints.min.js' %}"></script>
+<script src="{% static 'lib/counterup/counterup.min.js' %}"></script>
+
+<!-- Template Javascript -->
+<script src="{% static 'js/main.js' %}"></script>
+
+</body>
+</html>

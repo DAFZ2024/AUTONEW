@@ -11,7 +11,37 @@ from django.contrib.auth.decorators import login_required
 from .forms import ComentarioForm, ReservaForm, UsuariosForm,ComentarioClienteForm,QuejaForm,ServicioForm,EmpresaForm,ProfileUserForm
 from datetime import datetime,timedelta
 from django.utils import timezone
+from functools import wraps
 
+# Decorador personalizado para verificar autenticación y rol de admin
+def admin_required(function):
+    @wraps(function)
+    def wrap(request, *args, **kwargs):
+        print(f"🔍 @admin_required verificando acceso a {function.__name__}")
+        
+        # Verificar si el usuario está autenticado
+        if not request.user.is_authenticated:
+            print(f"❌ Usuario no autenticado")
+            messages.error(request, 'Debes iniciar sesión como administrador para acceder a esta sección.')
+            return redirect('logincrud')
+        
+        print(f"👤 Usuario autenticado: {request.user.nombre_usuario}")
+        print(f"🎭 Rol del usuario: {getattr(request.user, 'rol', 'NO_ROL')}")
+        
+        # Verificar si el usuario es administrador
+        if not hasattr(request.user, 'rol'):
+            print(f"❌ Usuario no tiene atributo 'rol'")
+            messages.error(request, 'Error: El usuario no tiene un rol asignado.')
+            return redirect('logincrud')
+            
+        if request.user.rol != 'admin':
+            print(f"❌ Rol incorrecto: {request.user.rol}")
+            messages.error(request, f'Acceso denegado. Tu rol actual es "{request.user.rol}". Solo los administradores pueden acceder a esta sección.')
+            return redirect('logincrud')
+        
+        print(f"✅ Acceso permitido para {request.user.nombre_usuario} a {function.__name__}")
+        return function(request, *args, **kwargs)
+    return wrap
 
 # Create your views here.
 
@@ -25,12 +55,13 @@ def empresas(request):
     return render(request, 'empresas.html')
 
 def login(request):
+    # Si ya está logueado, redirigir al home
     if request.user.is_authenticated:
         return redirect('home')
     
     if request.method == 'POST':
-
-        if 'nombre_completo' in request.POST: 
+        # REGISTRO DE USUARIO
+        if 'nombre_completo' in request.POST:
             nombre_completo = request.POST['nombre_completo']
             nombre_usuario = request.POST['nombre_usuario']
             correo = request.POST['correo']
@@ -38,40 +69,46 @@ def login(request):
             direccion = request.POST.get('direccion')
             contrasena1 = request.POST['contrasena1']
             contrasena2 = request.POST['contrasena2']
-
             
+            # Validar que las contraseñas coincidan
             if contrasena1 != contrasena2:
                 messages.error(request, "Las contraseñas no coinciden, intentalo de nuevo")
                 return redirect('login')
-
             
+            # Validar que el nombre de usuario no exista
             if Usuario.objects.filter(nombre_usuario=nombre_usuario).exists():
-                messages.error(request, "El nombre de usuario  ya esta registrado, intenta con otro.")
+                messages.error(request, "El nombre de usuario ya esta registrado, intenta con otro.")
                 return redirect('login')
-
+            
+            # Validar que el correo no exista
             if Usuario.objects.filter(correo=correo).exists():
                 messages.error(request, "El correo ya esta registrado, intenta con otro.")
                 return redirect('login')
-            # Concatenar el prefijo "57" al teléfono ingresado
+            
+            # Concatenar el prefijo "57" al teléfono
             telefono_completo = "57" + telefono
-
+            
+            # Crear el nuevo usuario
             nuevo_usuario = Usuario.objects.create_user(
                 nombre_completo=nombre_completo,
                 nombre_usuario=nombre_usuario,
                 correo=correo,
-                telefono=telefono_completo,  # Guardar el número completo
+                telefono=telefono_completo,
                 direccion=direccion,
-                contrasena=contrasena1 
+                password=contrasena1  # ✅ Usar 'password' no 'contrasena'
             )
+            
             messages.success(request, "El usuario ha sido creado exitosamente. Ahora puedes iniciar sesión.")
             return redirect('login')
-
         
+        # INICIO DE SESIÓN
         else:
             nombre_usuario = request.POST['nombre_usuario']
-            contrasena = request.POST['contrasena']  
+            contrasena = request.POST['contrasena']
             
+            # Autenticar usuario
             usuario = authenticate(request, username=nombre_usuario, password=contrasena)
+            
             if usuario is not None:
                 auth_login(request, usuario)
                 messages.success(request, f'Bienvenido de nuevo, {usuario.nombre_usuario}!')
@@ -79,6 +116,8 @@ def login(request):
             else:
                 messages.error(request, 'Usuario o contraseña incorrectos.')
                 return redirect('login')
+    
+    # GET: Mostrar la página de login/registro
     else:
         return render(request, 'login.html')
     
@@ -92,24 +131,40 @@ def perfil_usuario(request):
         form = ProfileUserForm(request.POST, request.FILES, instance=usuario)  # Incluye el usuario existente
 
         if form.is_valid():
-            # Guardar los datos del usuario
-            form.save()  
+            # Manejar la actualización de la contraseña antes de guardar
+            contrasena11 = request.POST.get('contrasena11', '').strip()
+            contrasena22 = request.POST.get('contrasena22', '').strip()
 
-            # Manejar la actualización de la contraseña
-            contrasena11 = request.POST.get('contrasena11')
-            contrasena22 = request.POST.get('contrasena22')
-
-            # Solo cambiar la contraseña si ambos campos no están vacíos
+            # Validar contraseñas si se proporcionan
             if contrasena11 or contrasena22:
-                if contrasena11 == contrasena22:
-                    usuario.set_password(contrasena11)  # Cambia la contraseña del usuario
-                    usuario.save()  # Guarda el usuario después de cambiar la contraseña
-                else:
+                if not contrasena11 or not contrasena22:
+                    messages.error(request, 'Debes completar ambos campos de contraseña.')
+                    return render(request, 'perfil_usuario.html', {'usuario': usuario, 'form': form})
+                
+                if contrasena11 != contrasena22:
                     messages.error(request, 'Las contraseñas no coinciden.')
-                    return redirect('perfil')
+                    return render(request, 'perfil_usuario.html', {'usuario': usuario, 'form': form})
+                
+                if len(contrasena11) < 6:
+                    messages.error(request, 'La contraseña debe tener al menos 6 caracteres.')
+                    return render(request, 'perfil_usuario.html', {'usuario': usuario, 'form': form})
 
-            messages.success(request, 'El perfil ha sido actualizado.')
-            return redirect('home')  # Redirige a la página de perfil o donde desees
+            # Guardar los datos del usuario
+            usuario_actualizado = form.save()
+
+            # Cambiar la contraseña si se proporcionó
+            if contrasena11:
+                usuario_actualizado.set_password(contrasena11)
+                usuario_actualizado.save()
+                messages.success(request, 'Perfil y contraseña actualizados correctamente.')
+            else:
+                messages.success(request, 'Perfil actualizado correctamente.')
+            
+            # Redirigir al perfil para mostrar la notificación
+            return redirect('perfil')
+        else:
+            # Si el formulario no es válido, mostrar errores
+            messages.error(request, 'Por favor corrige los errores en el formulario.')
 
     return render(request, 'perfil_usuario.html', {'usuario': usuario, 'form': form})
 
@@ -364,7 +419,7 @@ def citas(request):
     ahora = datetime.now()
     hoy = ahora.date()
     
-    # Obtener reservas del usuario actual con prefetch_related para optimizar
+    # Obtener reservas del usuario actual with prefetch_related para optimizar
     reservas_no_completadas = Reserva.objects.filter(
         estado='no_completado', 
         usuario=request.user
@@ -486,7 +541,7 @@ def comentarios(request):
             comentario = form.save(commit=False)  
             comentario.usuario = request.user  
             comentario.save() 
-            messages.success(request, "Tu comentario ha sido enviado")
+            messages.success(request, "Tu comentario ha sido publicado exitosamente.")
             return redirect('comentarios')  
 
     else:
@@ -541,8 +596,8 @@ def get_horas(request):
 
 
 def login_crud(request):
-    if request.user.is_authenticated:
-        return redirect('home')
+    if request.user.is_authenticated and hasattr(request.user, 'rol') and request.user.rol == 'admin':
+        return redirect('homecrud')
     
     if request.method == 'POST':
         nombre_usuario = request.POST['nombre_usuario']
@@ -553,10 +608,10 @@ def login_crud(request):
         
         if usuario is not None:
             # Verificar si el usuario tiene rol de admin
-            if usuario.rol == 'admin':
+            if hasattr(usuario, 'rol') and usuario.rol == 'admin':
                 auth_login(request, usuario)  # Iniciar sesión con el usuario autenticado
                 messages.success(request, f'Bienvenido administrador, {usuario.nombre_usuario}!')
-                return render(request, 'home_crud.html')
+                return redirect('homecrud')
             else:
                 messages.error(request, 'Acceso denegado. Solo los administradores pueden acceder.')
                 return redirect('logincrud')
@@ -568,13 +623,18 @@ def login_crud(request):
     
 
 def logout_view(request):
-    logout(request)  # Cerrar sesión
+    auth_logout(request)  # Cerrar sesión
     messages.success(request, 'Has cerrado sesión correctamente.')
-    return redirect('home')  # Redirigir a la página de login
+    return redirect('home')  # Redirigir a la página de home normal
 
 
+@admin_required
 def comentarios_crud(request):
-    comentarios =Comentario.objects.all()
+    comentarios = Comentario.objects.all()
+    
+    # Calcular estadísticas
+    total_comentarios = comentarios.count()
+    total_usuarios = comentarios.values('usuario').distinct().count()
 
     if request.method == "POST":
         # Manejar la eliminación de comenatrios
@@ -586,11 +646,20 @@ def comentarios_crud(request):
             return redirect('comentarioscrud')
     else:
         form = ComentarioForm()
-    return render(request, 'comentarios_crud.html', {'comentarios': comentarios, 'form': form})
+    
+    context = {
+        'comentarios': comentarios, 
+        'form': form,
+        'total_comentarios': total_comentarios,
+        'total_usuarios': total_usuarios,
+    }
+    
+    return render(request, 'comentarios_crud.html', context)
 
 
 
 
+@admin_required
 def quejas_crud(request):
     quejas =MensajeQueja.objects.all()
 
@@ -660,6 +729,7 @@ def quejas_crud(request):
 
 
 
+@admin_required
 def usuarios_crud(request):
     usuarios = Usuario.objects.all()
     form = UsuariosForm() 
@@ -768,12 +838,13 @@ def usuarios_crud(request):
 
     return render(request, 'usuarios_crud.html', context)
 
+@admin_required
 def citas_crud(request):
     ahora = datetime.now()
     hoy = ahora.date()
     
     # Obtener reservas en estado 'no_completado' ordenadas por fecha y hora
-    reservas = Reserva.objects.filter(estado='no_completado').order_by('fecha', 'hora')
+    reservas = Reserva.objects.filter(estado='no_completado').select_related('empresa', 'usuario').prefetch_related('reservaservicio_set__servicio').order_by('fecha', 'hora')
     servicios = Servicio.objects.all() 
     empresas = Empresa.objects.all()
 
@@ -819,12 +890,32 @@ def citas_crud(request):
             reserva_id = request.POST.get('id_reserva')
             reserva = get_object_or_404(Reserva, id_reserva=reserva_id)
 
-            # Actualiza la reserva
-            reserva.punto_id = request.POST.get('punto')  # Actualiza el lugar
-            reserva.fecha = request.POST.get('fecha')  # Actualiza la fecha
-            reserva.hora = request.POST.get('hora')  # Actualiza la hora
-            reserva.servicio_id = request.POST.get('servicio')  # Actualiza el servicio
+            # Actualizar los datos de la reserva
+            empresa_id = request.POST.get('empresa')
+            fecha = request.POST.get('fecha')
+            hora = request.POST.get('hora')
+            servicio_id = request.POST.get('servicio')
+
+            if empresa_id:
+                empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+                reserva.empresa = empresa
+            
+            if fecha:
+                reserva.fecha = fecha
+            
+            if hora:
+                reserva.hora = hora
+            
             reserva.save()
+
+            # Actualizar el servicio asociado
+            if servicio_id:
+                servicio = get_object_or_404(Servicio, id_servicio=servicio_id)
+                # Eliminar la relación anterior
+                ReservaServicio.objects.filter(reserva=reserva).delete()
+                # Crear la nueva relación
+                ReservaServicio.objects.create(reserva=reserva, servicio=servicio)
+
             messages.success(request, 'Reserva actualizada con éxito.')
             return redirect('citascrud')
         else:  # Para crear
@@ -854,6 +945,7 @@ def citas_crud(request):
 
 
 
+@admin_required
 def citascom_crud(request):
     reservas = Reserva.objects.filter(estado='completado')
     servicios = Servicio.objects.all() 
@@ -875,6 +967,7 @@ def citascom_crud(request):
 
 
 
+@admin_required
 def cambiar_estado_reserva(request, reserva_id):
     reserva = get_object_or_404(Reserva, id_reserva=reserva_id)
     
@@ -888,9 +981,13 @@ def cambiar_estado_reserva(request, reserva_id):
     return redirect('citascrud') 
 
 
+@admin_required
 def servicios_crud(request):
     servicios = Servicio.objects.all()
     form = ServicioForm()
+
+    # Calcular estadísticas
+    total_asignaciones = EmpresaServicio.objects.count()
 
     # Filtrar según los parámetros de búsqueda
     nombre_servicio = request.GET.get('nombre_servicio', '')
@@ -979,11 +1076,19 @@ def servicios_crud(request):
     for servicio in servicios:
         servicio.empresas_asociadas = EmpresaServicio.objects.filter(servicio=servicio).values_list('empresa', flat=True)
 
-    return render(request, 'servicios_crud.html', {'servicios': servicios, 'form': form, 'empresas': empresas})
+    context = {
+        'servicios': servicios, 
+        'form': form, 
+        'empresas': empresas,
+        'total_asignaciones': total_asignaciones
+    }
+
+    return render(request, 'servicios_crud.html', context)
 
 
 
 
+@admin_required
 def empresas_crud(request):
     empresas = Empresa.objects.all()
     form = EmpresaForm()  # Si estás usando un formulario de Django para crear y actualizar empresas
@@ -1050,5 +1155,7 @@ def empresas_crud(request):
 
 
 
+@admin_required
 def home_crud(request):
     return render(request, 'home_crud.html')
+

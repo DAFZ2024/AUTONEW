@@ -1,627 +1,239 @@
 {% extends "base.html" %}
 {% load static %}
-{% block content %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
 {% load custom_tags %}
-<div class="notifications-container">
+
+{% block content %}
+<!-- Notificaciones -->
+<div class="fixed top-24 right-4 z-50 max-w-sm w-full">
     {% if messages %}
         {% for message in messages %}
-            <div class="notification-modern 
-                {% if message.tags == 'success' %}notification-success
-                {% elif message.tags == 'error' %}notification-error
-                {% elif message.tags == 'warning' %}notification-warning
-                {% else %}notification-info
+            <div class="mb-3 p-4 rounded-lg shadow-lg border backdrop-blur-sm animate-fade-in-right 
+                {% if message.tags == 'success' %}bg-green-50 border-green-200 text-green-800
+                {% elif message.tags == 'error' %}bg-red-50 border-red-200 text-red-800
+                {% elif message.tags == 'warning' %}bg-yellow-50 border-yellow-200 text-yellow-800
+                {% else %}bg-blue-50 border-blue-200 text-blue-800
                 {% endif %}">
-                <div class="notification-content">
-                    <div class="notification-icon">
-                        {% if message.tags == 'success' %}✓
-                        {% elif message.tags == 'error' %}✗
-                        {% elif message.tags == 'warning' %}⚠
-                        {% else %}ℹ
-                        {% endif %}
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 mr-3">
+                            {% if message.tags == 'success' %}
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            {% elif message.tags == 'error' %}
+                                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            {% elif message.tags == 'warning' %}
+                                <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                </svg>
+                            {% else %}
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            {% endif %}
+                        </div>
+                        <span class="text-sm font-medium">{{ message }}</span>
                     </div>
-                    <span class="notification-text">{{ message }}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-3 text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
                 </div>
-                <button class="notification-dismiss" onclick="this.parentElement.remove()">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                        <path d="M13 1L1 13M1 1L13 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                </button>
             </div>
         {% endfor %}
     {% endif %}
 </div>
 
-<style>
-    :root {
-        --primary-gradient: linear-gradient(135deg, #7F53AC 0%, #647DEE 100%);
-        --surface-dark: #23272F;
-        --surface-lighter: #2D3142;
-        --border-subtle: rgba(201, 182, 228, 0.15);
-        --text-primary: #F4F4F5;
-        --text-secondary: #A1A1AA;
-        --text-muted: #7C7C8A;
-        --accent-glow: rgba(127, 83, 172, 0.18);
-        --shadow-soft: 0 1px 3px 0 rgba(127, 83, 172, 0.08), 0 1px 2px 0 rgba(100, 125, 222, 0.06);
-        --shadow-medium: 0 4px 6px -1px rgba(127, 83, 172, 0.10), 0 2px 4px -1px rgba(100, 125, 222, 0.08);
-        --shadow-large: 0 10px 15px -3px rgba(127, 83, 172, 0.12), 0 4px 6px -2px rgba(100, 125, 222, 0.10);
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        background: linear-gradient(135deg, #0c2331 0%, #1a3a4a 100%);
-        min-height: 100vh;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        color: var(--text-primary);
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        padding-top: 30px;
-    }
-
-    /* Notifications */
-    .notifications-container {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1100;
-        max-width: 400px;
-        width: 100%;
-    }
-
-    .notification-modern {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 16px 20px;
-        margin-bottom: 12px;
-        border-radius: 12px;
-        backdrop-filter: blur(20px);
-        border: 1px solid var(--border-subtle);
-        box-shadow: var(--shadow-medium);
-        animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        transition: all 0.3s ease;
-    }
-
-    .notification-modern:hover {
-        transform: translateX(-4px);
-        box-shadow: var(--shadow-large);
-    }
-
-    .notification-content {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex: 1;
-    }
-
-    .notification-icon {
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
-        font-size: 12px;
-        flex-shrink: 0;
-    }
-
-    .notification-success {
-        background: rgba(61, 213, 152, 0.12);
-        border-color: rgba(61, 213, 152, 0.22);
-        color: #3DD598;
-    }
-
-    .notification-success .notification-icon {
-        background: rgba(61, 213, 152, 0.18);
-        color: #3DD598;
-    }
-
-    .notification-error {
-        background: rgba(255, 107, 107, 0.12);
-        border-color: rgba(255, 107, 107, 0.22);
-        color: #FF6B6B;
-    }
-
-    .notification-error .notification-icon {
-        background: rgba(255, 107, 107, 0.18);
-        color: #FF6B6B;
-    }
-
-    .notification-warning {
-        background: rgba(255, 209, 102, 0.12);
-        border-color: rgba(255, 209, 102, 0.22);
-        color: #FFD166;
-    }
-
-    .notification-warning .notification-icon {
-        background: rgba(255, 209, 102, 0.18);
-        color: #FFD166;
-    }
-
-    .notification-info {
-        background: rgba(91, 192, 235, 0.12);
-        border-color: rgba(91, 192, 235, 0.22);
-        color: #5BC0EB;
-    }
-
-    .notification-info .notification-icon {
-        background: rgba(91, 192, 235, 0.18);
-        color: #5BC0EB;
-    }
-
-    .notification-dismiss {
-        background: none;
-        border: none;
-        color: var(--text-muted);
-        cursor: pointer;
-        padding: 4px;
-        border-radius: 4px;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .notification-dismiss:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--text-primary);
-    }
-
-    /* Main Layout */
-    .main-wrapper {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 40px 20px;
-        position: relative;
-    }
-
-    .form-container {
-        width: 100%;
-        max-width: 480px;
-        position: relative;
-    }
-
-    /* Card Design */
-    .comment-card {
-        background: var(--surface-dark);
-        backdrop-filter: blur(40px);
-        border: 1px solid var(--border-subtle);
-        border-radius: 24px;
-        padding: 48px 40px;
-        box-shadow: var(--shadow-large);
-        position: relative;
-        overflow: hidden;
-        animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .comment-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: var(--primary-gradient);
-        opacity: 0.8;
-    }
-
-    .comment-card::after {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-        opacity: 0.3;
-        pointer-events: none;
-        z-index: -1;
-    }
-
-    /* Header */
-    .form-header {
-        text-align: center;
-        margin-bottom: 40px;
-    }
-
-    .form-title {
-        font-size: 28px;
-        font-weight: 700;
-        letter-spacing: -0.025em;
-        margin-bottom: 8px;
-        background: var(--primary-gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        line-height: 1.2;
-    }
-
-    .form-subtitle {
-        color: var(--text-secondary);
-        font-size: 16px;
-        font-weight: 400;
-    }
-
-    /* Form Elements */
-    .form-group {
-        margin-bottom: 24px;
-        position: relative;
-    }
-
-    .form-label {
-        display: block;
-        color: var(--text-primary);
-        font-size: 14px;
-        font-weight: 500;
-        margin-bottom: 8px;
-        letter-spacing: 0.025em;
-    }
-
-    .form-input {
-        width: 100%;
-        background: var(--surface-lighter);
-        border: 1px solid var(--border-subtle);
-        border-radius: 12px;
-        padding: 16px 20px;
-        font-size: 16px;
-        font-weight: 400;
-        color: var(--text-primary);
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        backdrop-filter: blur(10px);
-        resize: vertical;
-        min-height: 120px;
-        font-family: inherit;
-        line-height: 1.5;
-    }
-
-    .form-input::placeholder {
-        color: var(--text-muted);
-        font-weight: 400;
-    }
-
-    .form-input:focus {
-        outline: none;
-        border-color: #3ecf8e;
-        background: rgba(30, 41, 59, 0.95);
-        box-shadow: 
-            0 0 0 3px rgba(62, 207, 142, 0.1),
-            var(--shadow-medium);
-        transform: translateY(-1px);
-    }
-
-    .form-input:focus::placeholder {
-        opacity: 0.7;
-        transform: translateY(-2px);
-    }
-
-    /* Submit Button */
-    .submit-button {
-        width: 100%;
-        background: var(--primary-gradient);
-        border: none;
-        border-radius: 12px;
-        padding: 16px 24px;
-        font-size: 16px;
-        font-weight: 600;
-        color: white;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 
-            var(--shadow-medium),
-            0 0 0 1px rgba(255, 255, 255, 0.05);
-        position: relative;
-        overflow: hidden;
-        letter-spacing: 0.025em;
-    }
-
-    .submit-button::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: left 0.6s ease;
-    }
-
-    .submit-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 
-            0 8px 25px -5px rgba(62, 207, 142, 0.4),
-            0 0 0 1px rgba(255, 255, 255, 0.1);
-    }
-
-    .submit-button:hover::before {
-        left: 100%;
-    }
-
-    .submit-button:active {
-        transform: translateY(-1px);
-    }
-
-    /* Login Message */
-    .login-prompt {
-        text-align: center;
-        padding: 40px 32px;
-        border: 2px dashed var(--border-subtle);
-        border-radius: 16px;
-        background: rgba(15, 23, 42, 0.5);
-    }
-
-    .login-icon {
-        width: 48px;
-        height: 48px;
-        margin: 0 auto 20px;
-        border-radius: 50%;
-        background: var(--primary-gradient);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        opacity: 0.9;
-    }
-
-    .login-title {
-        font-size: 20px;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 8px;
-    }
-
-    .login-text {
-        color: var(--text-secondary);
-        margin-bottom: 24px;
-        line-height: 1.6;
-    }
-
-    .login-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 12px 24px;
-        background: var(--surface-lighter);
-        color: var(--text-primary);
-        text-decoration: none;
-        border-radius: 8px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        border: 1px solid var(--border-subtle);
-    }
-
-    .login-link:hover {
-        background: var(--primary-gradient);
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-medium);
-        color: white !important;
-    }
-
-    /* New styles for modern form */
-    .modern-form .input-wrapper {
-        background: var(--surface-lighter);
-        border-radius: 14px;
-        padding: 18px 22px 10px 22px;
-        box-shadow: 0 2px 12px 0 rgba(127, 83, 172, 0.07);
-        border: 1.5px solid var(--border-subtle);
-        margin-bottom: 24px;
-        transition: border 0.3s;
-    }
-    .modern-form .input-wrapper:focus-within {
-        border: 1.5px solid #7F53AC;
-        box-shadow: 0 0 0 2px #7F53AC33;
-    }
-    .modern-form label.form-label {
-        font-size: 15px;
-        font-weight: 600;
-        color: #7F53AC;
-        margin-bottom: 6px;
-        display: flex;
-        align-items: center;
-        letter-spacing: 0.01em;
-    }
-    .modern-form textarea.form-input {
-        background: transparent;
-        border: none;
-        box-shadow: none;
-        padding-left: 0;
-        padding-right: 0;
-        min-height: 100px;
-        color: var(--text-primary);
-        font-size: 16px;
-        resize: vertical;
-    }
-    .modern-form textarea.form-input:focus {
-        outline: none;
-        background: transparent;
-        box-shadow: none;
-    }
-
-    /* Animations */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(40px) scale(0.95);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-    }
-
-    @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(100px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    /* Responsive Design */
-    @media (max-width: 640px) {
-        .notifications-container {
-            top: 10px;
-            right: 10px;
-            left: 10px;
-            max-width: none;
-        }
-
-        .main-wrapper {
-            padding: 20px 16px;
-        }
-
-        .comment-card {
-            padding: 32px 24px;
-            border-radius: 20px;
-        }
-
-        .form-title {
-            font-size: 24px;
-        }
-
-        .form-input {
-            padding: 14px 16px;
-            font-size: 15px;
-        }
-
-        .submit-button {
-            padding: 14px 20px;
-            font-size: 15px;
-        }
-
-        .login-prompt {
-            padding: 32px 24px;
-        }
-    }
-
-    /* Accessibility */
-    @media (prefers-reduced-motion: reduce) {
-        * {
-            animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: 0.01ms !important;
-        }
-    }
-
-    /* Focus visible for keyboard navigation */
-    .submit-button:focus-visible,
-    .form-input:focus-visible,
-    .login-link:focus-visible,
-    .notification-dismiss:focus-visible {
-        outline: 2px solid #3ecf8e;
-        outline-offset: 2px;
-    }
-
-    /* Dark mode enhancements */
-    @media (prefers-color-scheme: dark) {
-        .comment-card {
-            background: rgba(15, 23, 42, 0.98);
-        }
-    }
-</style>
-
-<div class="main-wrapper">
-    <div class="form-container">
-        <div class="comment-card">
-            <div class="form-header">
-                <h1 class="form-title">Comparte tu opinión</h1>
-                <p class="form-subtitle">Tu comentario es importante para nosotros</p>
-            </div>
-
-            {% if user.is_authenticated %}
-                <form method="POST" action="" class="modern-form">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <div class="input-wrapper">
-                            <label class="form-label" for="comment">
-                                <svg width="20" height="20" fill="none" style="vertical-align: middle; margin-right: 8px;">
-                                    <circle cx="10" cy="10" r="9" stroke="#7F53AC" stroke-width="2"/>
-                                    <path d="M6 10h8M10 6v8" stroke="#7F53AC" stroke-width="2" stroke-linecap="round"/>
-                                </svg>
-                                Tu comentario
-                            </label>
-                            {{ form.as_p|safe }}
-                        </div>
-                    </div>
-                    <button type="submit" class="submit-button">
-                        <span style="vertical-align: middle; margin-right: 8px;">
-                            <svg width="18" height="18" fill="none" style="vertical-align: middle;">
-                                <path d="M2 9l7 7 7-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M9 2v13" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                        </span>
-                        Publicar comentario
-                    </button>
-                </form>
-            {% else %}
-                <div class="login-prompt">
-                    <div class="login-icon">👤</div>
-                    <h2 class="login-title">Inicia sesión</h2>
-                    <p class="login-text">Para compartir tu opinión, necesitas estar autenticado en el sistema.</p>
-                    <a href="{% url 'login' %}" class="login-link">
-                        <span>Acceder</span>
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </a>
-                </div>
-            {% endif %}
+<!-- Fondo con gradiente decorativo -->
+<div class="fixed inset-0 bg-white -z-10">
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-slate-50"></div>
+    <div class="absolute inset-0">
+        <div class="absolute top-0 left-0 w-full h-full opacity-40">
+            <div class="absolute top-10 left-10 w-20 h-20 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+            <div class="absolute top-0 right-4 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+            <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
         </div>
     </div>
 </div>
 
+<!-- Contenido principal -->
+<div class="relative min-h-screen top-24 pt-20 pb-32">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header de la página -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl shadow-lg mb-6">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+            </div>
+            <h1 class="text-4xl font-bold text-slate-800 mb-4">
+                Comentarios
+            </h1>
+            <p class="text-xl text-slate-600 max-w-2xl mx-auto">
+                Comparte tu experiencia y opiniones sobre nuestros servicios
+            </p>
+        </div>
+
+        <!-- Card principal de comentarios -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+            {% if user.is_authenticated %}
+                <!-- Formulario de comentarios -->
+                <div class="p-8">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h2 class="text-2xl font-bold text-slate-800">Escribe tu comentario</h2>
+                            <p class="text-slate-600">Tu opinión es muy importante para nosotros</p>
+                        </div>
+                    </div>
+
+                    <form method="POST" action="" class="space-y-6">
+                        {% csrf_token %}
+                        <div class="space-y-2">
+                            <label for="{{ form.comentario.id_for_label }}" class="block text-sm font-semibold text-slate-700">
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+                                    </svg>
+                                    Tu comentario
+                                </div>
+                            </label>
+                            <div class="relative">
+                                {{ form.comentario }}
+                            </div>
+                            {% if form.comentario.help_text %}
+                                <p class="text-sm text-slate-500">{{ form.comentario.help_text }}</p>
+                            {% endif %}
+                            {% if form.comentario.errors %}
+                                <div class="text-sm text-red-600">
+                                    {{ form.comentario.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="flex items-center justify-between pt-4">
+                            <div class="flex items-center text-sm text-slate-600">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Logueado como <span class="font-semibold text-slate-800">{{ user.username }}</span>
+                            </div>
+                            <button type="submit" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                </svg>
+                                Publicar comentario
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            {% else %}
+                <!-- Prompt de login -->
+                <div class="p-8 text-center">
+                    <div class="max-w-md mx-auto">
+                        <div class="w-20 h-20 bg-gradient-to-r from-slate-400 to-slate-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Inicia sesión para comentar</h2>
+                        <p class="text-slate-600 mb-8">
+                            Para compartir tu opinión y dejar comentarios sobre nuestros servicios, necesitas estar autenticado en el sistema.
+                        </p>
+                        <div class="space-y-3">
+                            <a href="{% url 'login' %}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                                </svg>
+                                Iniciar sesión
+                            </a>
+                            <div class="text-sm text-slate-500">
+                                ¿No tienes cuenta? 
+                                <a href="{% url 'login' %}" class="text-blue-600 hover:text-blue-700 font-semibold">Regístrate aquí</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Espaciado adicional para el footer -->
+        <div class="h-20"></div>
+    </div>
+</div>
+
+<style>
+@keyframes blob {
+    0% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0px, 0px) scale(1); }
+}
+.animate-blob {
+    animation: blob 7s infinite;
+}
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+.animation-delay-4000 {
+    animation-delay: 4s;
+}
+.animate-fade-in-right {
+    animation: fadeInRight 0.5s ease-out;
+}
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Estilos adicionales para el formulario */
+textarea {
+    font-family: inherit;
+    line-height: 1.5;
+}
+textarea:focus {
+    outline: none;
+}
+</style>
+
 <script>
-// Auto-hide notifications after 5 seconds
 document.addEventListener('DOMContentLoaded', function() {
-    const notifications = document.querySelectorAll('.notification-modern');
+    // Auto-ocultar notificaciones después de 5 segundos
+    const notifications = document.querySelectorAll('.fixed.top-24 > div');
     notifications.forEach(notification => {
         setTimeout(() => {
-            if (notification.parentElement) {
-                notification.style.opacity = '0';
-                notification.style.transform = 'translateX(100px)';
-                setTimeout(() => notification.remove(), 300);
-            }
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100px)';
+            setTimeout(() => notification.remove(), 300);
         }, 5000);
     });
-});
 
-// Form enhancement
-document.addEventListener('DOMContentLoaded', function() {
+    // Mejoras del textarea
     const textarea = document.querySelector('textarea');
     if (textarea) {
-        // Add classes to Django form elements
-        textarea.classList.add('form-input');
+        // Agregar clases CSS al textarea
+        textarea.className = 'w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 resize-vertical min-h-32 placeholder-slate-400';
+        textarea.placeholder = 'Escribe aquí tu comentario sobre nuestros servicios...';
         
-        // Auto-resize textarea
+        // Auto-resize del textarea
         textarea.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = Math.max(this.scrollHeight, 120) + 'px';
         });
-        
-        // Add placeholder if not present
-        if (!textarea.placeholder) {
-            textarea.placeholder = 'Escribe tu comentario aquí...';
-        }
     }
-    
-    // Add label class to Django labels
-    const labels = document.querySelectorAll('label');
-    labels.forEach(label => {
-        label.classList.add('form-label');
-    });
 });
 </script>
 

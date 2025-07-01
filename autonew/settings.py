@@ -41,10 +41,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'lavado_auto',
     'tailwind',
+    'theme',
+    'django_browser_reload',
 ]
 
 TAILWIND_APP_NAME = 'theme'
 
+INTERNAL_IPS = ['127.0.0.1']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -53,7 +56,9 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'lavado_auto.middleware.AdminCRUDMiddleware',  # Middleware reactivado
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_browser_reload.middleware.BrowserReloadMiddleware',
 ]
 
 ROOT_URLCONF = 'autonew.urls'
@@ -108,6 +113,11 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 AUTH_USER_MODEL = 'lavado_auto.Usuario'
 
+# Configuración para redirecciones de login
+LOGIN_URL = 'logincrud'  # URL a la que se redirige cuando se requiere login
+LOGIN_REDIRECT_URL = 'homecrud'  # URL a la que se redirige después de login exitoso
+LOGOUT_REDIRECT_URL = 'home'  # URL a la que se redirige después de logout
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -124,6 +134,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "theme" / "static",
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')

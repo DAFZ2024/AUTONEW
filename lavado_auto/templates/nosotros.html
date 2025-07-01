@@ -1,458 +1,265 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block  content %}
+{% block content %}
 
-<style> 
-    /*******************************/
-    /********** Nosotros  CSS **********/
-    /*******************************/
+<style>
+    :root {
+        --navy: #1e3a8a;
+        --silver: #9ca3af;
+        --electric-blue: #3b82f6;
+        --snow-white: #ffffff;
+        --platinum: #e5e7eb;
+        --midnight: #111827;
+    }
 
-    /* Fondo principal con degradado */
     body {
-        background: linear-gradient(135deg, #0c2331 0%, #1a3a4a 100%);
+        background: var(--snow-white);
         min-height: 100vh;
     }
 
-    .container-fluid {
-        background: transparent;
-    }
-
-    /*** About Start ***/
-    .about .about-item .about-item-inner {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        border-radius: 15px;
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        transition: all 0.5s ease;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    }
-
-    .about .about-item .about-item-inner:hover {
-        background: rgba(255, 255, 255, 0.08);
-        transform: translateY(-5px);
-    }
-
-    .about .about-item .about-item-inner .about-icon {
-        width: 90px; 
-        height: 90px; 
-        border-radius: 67% 33% 29% 71% / 39% 46% 54% 61%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #ffffff;
-        background: linear-gradient(45deg, #64b5f6, #42a5f5);
-        animation-name: icon-animat;
-        animation-duration: 5s;
-        animation-delay: 1s;
-        animation-direction: alternate;
-        animation-iteration-count: infinite;
-        transition: 0.5s;
-        box-shadow: 0 4px 20px rgba(100, 181, 246, 0.3);
-    }
-
-    .about .about-img {
-        position: relative;
-        overflow: hidden;
-        width: 100%;
-        height: 100%;
-    }
-
-    .about .about-img .img-1 {
-        height: 85%;
-        margin-right: 50px;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    }
-
-    .about .about-img .img-2 {
-        position: absolute;
-        width: 100%; 
-        bottom: 0; 
-        right: 0;
-        padding-left: 50px;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    }
-
-    .about .about-img::after {
-        content: "";
-        position: absolute;
-        width: 10px;
-        height: 98%;
-        top: 0;
-        right: 0;
-        border-radius: 10px;
-        background: linear-gradient(180deg, #64b5f6, #42a5f5);
-        z-index: -1;
-    }
-
-    .about .about-item .text-item {
-        position: relative;
-        padding-left: 25px;
-        color: rgba(255, 255, 255, 0.9);
-    }
-
-    .about .about-item .text-item::after {
-        content: "";
-        position: absolute;
-        width: 5px;
-        height: 100%;
-        top: 0;
-        left: 0;
-        border-radius: 10px;
-        background: linear-gradient(180deg, #64b5f6, #42a5f5);
-    }
-
-    /*** About End ***/
-    
-    .feature-box {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        color: #ffffff; 
-        border-radius: 15px; 
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); 
-        transition: all 0.3s ease; 
-        cursor: pointer;
-    }
-
-    .text-uppercase {
-        text-transform: uppercase; 
-        color: #ffffff;
-        font-weight: bold; 
-        letter-spacing: 0.05em; 
-        font-family: 'Montserrat', sans-serif; 
-        transition: color 0.3s ease; 
-    }
-
-    .text-uppercase:hover {
-        color: #64b5f6; 
-    }
-
-    .feature-box:hover {
-        transform: translateY(-8px); 
-        background: rgba(100, 181, 246, 0.1);
-        box-shadow: 0 15px 40px rgba(100, 181, 246, 0.2);
-    }
-
-    .icon-container {
-        background: linear-gradient(45deg, #64b5f6, #42a5f5); 
-        border-radius: 50%;
-        width: 70px; 
-        height: 70px;
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(100, 181, 246, 0.3);
-    }
-
-    .feature-box:hover .icon-container {
-        background: linear-gradient(45deg, #42a5f5, #1e88e5);
-        color: #ffffff; 
-        transform: scale(1.1);
-    }
-
-    .about {
-        position: relative;
-        width: 100%;
-        padding: 45px 0 15px 0;
-    }
-
-    .about .section-header {
-        margin-bottom: 30px;
-        margin-left: 0;
-    }
-
-    .about .about-img img {
-        width: 100%;
-    }
-
-    .about .about-content {
-        margin-bottom: 30px;
-    }
-
-    .about .about-content ul {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        margin-bottom: 25px;
-    }
-
-    .about .about-content ul li {
-        margin-bottom: 5px;
-        color: rgba(255, 255, 255, 0.9);
-    }
-
-    .about .about-content ul li i {
-        margin-right: 8px;
-        color: #64b5f6;
-    }
-
-    /* Page Header */
-    .page-header {
-        background: rgba(0, 0, 0, 0.3);
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .page-header h2 {
-        color: #ffffff;
-    }
-
-    .page-header a {
-        color: rgba(255, 255, 255, 0.8);
-        transition: color 0.3s ease;
-    }
-
-    .page-header a:hover {
-        color: #64b5f6;
-    }
-
-    /* Títulos y textos */
-    h1, h2, h3, h4, h5, h6 {
-        color: #ffffff;
-    }
-
-    .display-4 {
-        color: #ffffff;
-    }
-
-    .text-primary {
-        color: #64b5f6 !important;
-    }
-
-    p {
-        color: rgba(255, 255, 255, 0.9);
-    }
-
-    /* Botones */
-    .btn-primary {
-        background: linear-gradient(45deg, #64b5f6, #42a5f5);
-        border: none;
-        border-radius: 25px;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(100, 181, 246, 0.3);
-    }
-
-    .btn-primary:hover {
-        background: linear-gradient(45deg, #42a5f5, #1e88e5);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(100, 181, 246, 0.4);
-    }
-
-    /* Estadísticas */
-    .bg-secondary {
-        background: linear-gradient(45deg, #546e7a, #37474f) !important;
-        border-radius: 15px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    }
-
-    .text-light {
-        color: rgba(255, 255, 255, 0.9) !important;
-    }
-
-    .text-white {
-        color: #ffffff !important;
-    }
-
-    /* Imagen flotante */
     .floating-image {
         position: fixed;
         top: 100px;
         right: 50px;
-        width: 150px;
-        filter: blur(0);
+        width: 120px;
         transition: all 0.3s ease;
-        opacity: 0.7;
+        opacity: 0.6;
+        z-index: 10;
     }
 
     .floating-image:hover {
-        filter: blur(1px);
         opacity: 1;
         transform: scale(1.05);
     }
 
-    /* Efectos adicionales */
-    .fa-check-circle {
-        color: #64b5f6 !important;
-    }
-
-    /* Animación para los iconos */
-    @keyframes icon-animat {
-        0% {
-            border-radius: 67% 33% 29% 71% / 39% 46% 54% 61%;
-        }
-        50% {
-            border-radius: 33% 67% 71% 29% / 54% 61% 39% 46%;
-        }
-        100% {
-            border-radius: 67% 33% 29% 71% / 39% 46% 54% 61%;
-        }
-    }
-
-    /* Mejoras visuales para tarjetas */
-    .rounded {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(5px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        padding: 20px;
-        border-radius: 15px;
-    }
-
-    /* CEO section */
-    .border-secondary {
-        border-color: #64b5f6 !important;
-    }
-
-    /* Responsive adjustments */
     @media (max-width: 768px) {
         .floating-image {
             display: none;
         }
     }
 
+    .animate-float {
+        animation: float 3s ease-in-out infinite;
+    }
 
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
 
-    
+    .gradient-text {
+        background: linear-gradient(45deg, var(--navy), var(--electric-blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .glass-effect {
+        background: rgba(30, 58, 138, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(30, 58, 138, 0.1);
+        box-shadow: 0 4px 20px rgba(30, 58, 138, 0.1);
+    }
+
+    .hover-lift {
+        transition: all 0.3s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(30, 58, 138, 0.15);
+    }
 </style>
 
 
-<!-- About Start -->
-<div class="container-fluid py-5">
-    <div class="container pt-5 pb-3">
-        <h1 class="display-1 text-primary text-center"></h1>
-        <h1 class="display-4 text-uppercase text-center mb-5">Bienvenido a <span class="text-primary">Autonew</span></h1>
-        <div class="row justify-content-center">
-            <div class="col-lg-10 text-center">
-                <img class="w-75 mb-4" src="{% static 'img/about.png' %}" alt="">
-                <p>
-                    En Autonew, nos enorgullece ser la plataforma líder en autolavados, comprometidos con ofrecerte los mejores servicios para el cuidado y mantenimiento de tu vehículo. Con más de 15 años de experiencia en el sector, hemos creado una red de autolavados de alta calidad que cumplen con los más altos estándares de limpieza, protección y cuidado para tu auto.
-
-Cada uno de los autolavados que forman parte de nuestra plataforma está respaldado por un equipo de profesionales altamente capacitados, que utilizan productos ecológicos y técnicas de vanguardia. Esto no solo asegura un resultado impecable, sino que también protege la pintura y los materiales de tu vehículo, alargando su vida útil y conservando su apariencia como nueva.
-
-En Autonew, nos esforzamos por ofrecerte un servicio personalizado y de calidad, porque sabemos que tu vehículo es una extensión de ti. Cada visita a nuestros autolavados es una experiencia única, donde tu confianza es nuestra principal prioridad. Nos aseguramos de que cada detalle se cuide con esmero, brindándote siempre la atención y el servicio que mereces.
-
-Confía en nosotros para mantener tu vehículo en las mejores condiciones y disfrutar de una experiencia de autolavado excepcional. ¡Tu auto, como nuevo, con el compromiso de calidad de Autonew!</p>
-            </div>
+<!-- Hero Section -->
+<div class="min-h-screen flex items-center justify-center px-4 py-20">
+    <div class="max-w-6xl mx-auto text-center">
+        <div class="mb-1">
+            <img class="w-96 h-96 md:w-[500px] md:h-[500px] lg:w-[600px] lg:h-[600px] mx-auto object-contain" src="{% static 'img/about.png' %}" alt="Autonew">
         </div>
-        <div class="row mt-3">
-            <div class="col-lg-4 mb-2">
-                <div class="feature-box p-4 mb-4">
-                    <div class="icon-container d-flex align-items-center justify-content-center me-4">
-                        <i class="fa fa-2x fa-headset"></i>
-                    </div>
-                    <h4 class="text-uppercase m-0">Su opinion es lo mas importante</h4>
+        <h1 class="text-5xl md:text-7xl font-bold mb-6 text-gray-800">
+            Bienvenido a <span class="gradient-text">Autonew</span>
+        </h1>
+        <p class="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+            En Autonew, nos enorgullece ser la plataforma líder en autolavados, comprometidos con ofrecerte los mejores servicios para el cuidado y mantenimiento de tu vehículo.
+        </p>
+        <div class="mt-12 flex flex-col sm:flex-row gap-6 justify-center">
+            <button class="px-8 py-4 bg-gradient-to-r from-[var(--navy)] to-[var(--electric-blue)] text-white font-bold rounded-full hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+                Conoce Más
+            </button>
+            <button class="px-8 py-4 border-2 border-[var(--electric-blue)] text-[var(--electric-blue)] font-bold rounded-full hover:bg-[var(--electric-blue)] hover:text-white transition-all duration-300">
+                Nuestros Servicios
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Features Grid -->
+<div class="py-20 px-4">
+    <div class="max-w-6xl mx-auto">
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="glass-effect rounded-3xl p-8 hover-lift text-center">
+                <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[var(--navy)] to-[var(--electric-blue)] rounded-2xl flex items-center justify-center">
+                    <i class="fa fa-2x fa-headset text-white"></i>
                 </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Su Opinión es lo Más Importante</h3>
+                <p class="text-gray-600">Valoramos cada comentario para mejorar continuamente nuestros servicios.</p>
             </div>
-            <div class="col-lg-4 mb-2">
-                <div class="feature-box p-4 mb-4">
-                    <div class="icon-container d-flex align-items-center justify-content-center me-4">
-                        <i class="fa fa-2x fa-car"></i>
-                    </div>
-                    <h4 class="text-uppercase m-0">Tu auto en buenas manos</h4>
+            
+            <div class="glass-effect rounded-3xl p-8 hover-lift text-center">
+                <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[var(--electric-blue)] to-[var(--silver)] rounded-2xl flex items-center justify-center">
+                    <i class="fa fa-2x fa-car text-white"></i>
                 </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Tu Auto en Buenas Manos</h3>
+                <p class="text-gray-600">Profesionales capacitados cuidan cada detalle de tu vehículo.</p>
             </div>
-            <div class="col-lg-4 mb-2">
-                <div class="feature-box p-4 mb-4">
-                    <div class="icon-container d-flex align-items-center justify-content-center me-4">
-                        <i class="fa fa-2x fa-map-marker-alt"></i>
-                    </div>
-                    <h4 class="text-uppercase m-0">Diferentes ubicaciones</h4>
+            
+            <div class="glass-effect rounded-3xl p-8 hover-lift text-center">
+                <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[var(--silver)] to-[var(--navy)] rounded-2xl flex items-center justify-center">
+                    <i class="fa fa-2x fa-map-marker-alt text-white"></i>
                 </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Diferentes Ubicaciones</h3>
+                <p class="text-gray-600">Encuentra nuestros servicios en múltiples ubicaciones estratégicas.</p>
             </div>
         </div>
     </div>
 </div>
-<!-- About End -->
 
-<img src="{% static 'img/carropng.png' %}" class="floating-image" alt="Descripción de la imagen">
+<!-- Floating Image -->
+<img src="{% static 'img/carropng.png' %}" class="floating-image animate-float" alt="Carro flotante">
 
-<!-- About Start -->
-<div class="container-fluid overflow-hidden about py-5">
-    <div class="container py-5">
-        <div class="row g-5">
-            <div class="col-xl-6 wow fadeInLeft" data-wow-delay="0.2s">
-                <div class="about-item">
-                    <div class="pb-5">
-                        <h1 class="display-5 text-capitalize">Nuestra  <span class="text-primary">Empresa</span></h1>
-                        <p class="mb-0">Autonew es una empresa con 15 años en el mercado de lavado y detallado de automotores, con un compromiso muy grando para con nuestros clientes y medio ambiente adoptando nuevas tegnologias.
-                        </p>
-                    </div>
-                    <div class="row g-4">
-                        <div class="col-lg-6">
-                            <div class="about-item-inner border p-4">
-                                <div class="about-icon mb-4">
-                                    <img src="{% static 'img/about-icon-1.png' %}" class="img-fluid w-50 h-50" alt="Icon">
-                                </div>
-                                <h5 class="mb-3">Nuestra Vision </h5>
-                                <p class="mb-0">Tener presencias a nivel nacional en cada uno de los municipios.</p>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="about-item-inner border p-4">
-                                <div class="about-icon mb-4">
-                                    <img src="{% static 'img/about-icon-2.png' %}" class="img-fluid h-50 w-50" alt="Icon">
-                                </div>
-                                <h5 class="mb-3">Nuestra Mision</h5>
-                                <p class="mb-0">Prestar un servicico de calidad cuidando al medio ambiente,y el bolsillo de nuestros clientes </p>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-item my-4">En Autonew, entendemos que tu vehículo es una extensión de ti mismo. Por eso, nos dedicamos a ofrecerte un servicio de autolavado excepcional que no solo limpia tu auto, sino que también lo cuida.
+<!-- Company Section -->
+<div class="py-20 px-4 bg-gradient-to-b from-gray-50 to-white">
+    <div class="max-w-7xl mx-auto">
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <!-- Content Side -->
+            <div class="space-y-8">
+                <div>
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+                        Nuestra <span class="gradient-text">Empresa</span>
+                    </h2>
+                    <p class="text-xl text-gray-600 leading-relaxed">
+                        Autonew es una empresa con 15 años en el mercado de lavado y detallado de automotores, con un compromiso muy grande para con nuestros clientes y medio ambiente adoptando nuevas tecnologías.
                     </p>
-                    <div class="row g-4">
-                        <div class="col-lg-6">
-                            <div class="text-center rounded bg-secondary p-4">
-                                <h1 class="display-6 text-white">15</h1>
-                                <h5 class="text-light mb-0">Años de experiencia</h5>
-                            </div>
+                </div>
+
+                <!-- Vision & Mission Cards -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="glass-effect rounded-2xl p-6 hover-lift">
+                        <div class="w-16 h-16 mb-4 bg-gradient-to-br from-[var(--navy)] to-[var(--electric-blue)] rounded-xl flex items-center justify-center">
+                            <img src="{% static 'img/about-icon-1.png' %}" class="w-8 h-8" alt="Vision">
                         </div>
-                        <div class="col-lg-6">
-                            <div class="rounded">
-                                <p class="mb-2"><i class="fa fa-check-circle text-primary me-1"></i> Cientos de Vehículos Lavados Mensualmente</p>
-                                <p class="mb-2"><i class="fa fa-check-circle text-primary me-1"></i> Premios de Calidad</p>
-                                <p class="mb-2"><i class="fa fa-check-circle text-primary me-1"></i> Clientes Satisfechos</p>
-                                <p class="mb-0"><i class="fa fa-check-circle text-primary me-1"></i> Iniciativas Ecológicas</p>
-                            </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">Nuestra Visión</h3>
+                        <p class="text-gray-600">Tener presencia a nivel nacional en cada uno de los municipios.</p>
+                    </div>
+                    
+                    <div class="glass-effect rounded-2xl p-6 hover-lift">
+                        <div class="w-16 h-16 mb-4 bg-gradient-to-br from-[var(--electric-blue)] to-[var(--silver)] rounded-xl flex items-center justify-center">
+                            <img src="{% static 'img/about-icon-2.png' %}" class="w-8 h-8" alt="Mission">
                         </div>
-                        <div class="col-lg-5 d-flex align-items-center">
-                            <a href="#" class="btn btn-primary rounded py-3 px-5">Mas sobre nosotros</a>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">Nuestra Misión</h3>
+                        <p class="text-gray-600">Prestar un servicio de calidad cuidando al medio ambiente y el bolsillo de nuestros clientes.</p>
+                    </div>
+                </div>
+
+                <!-- Quote -->
+                <div class="border-l-4 border-[var(--electric-blue)] pl-6 py-4 bg-gray-50 rounded-r-2xl">
+                    <p class="text-lg text-gray-700 italic">
+                        "En Autonew, entendemos que tu vehículo es una extensión de ti mismo. Por eso, nos dedicamos a ofrecerte un servicio de autolavado excepcional que no solo limpia tu auto, sino que también lo cuida."
+                    </p>
+                </div>
+
+                <!-- Stats & Features -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="text-center bg-gradient-to-br from-[var(--navy)] to-[var(--electric-blue)] rounded-2xl p-6">
+                        <div class="text-5xl font-bold text-[var(--snow-white)] mb-2">15</div>
+                        <div class="text-[var(--platinum)]">Años de experiencia</div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa fa-check-circle text-[var(--electric-blue)]"></i>
+                            <span class="text-gray-700">Cientos de Vehículos Lavados Mensualmente</span>
                         </div>
-                        <div class="col-lg-7">
-                            <div class="d-flex align-items-center">
-                                <img src="{% static 'img/team-1.png' %}" class="img-fluid rounded-circle border border-4 border-secondary" style="width: 100px; height: 100px;" alt="Image">
-                                <div class="ms-4">
-                                    <h4>Andres forero</h4>
-                                    <p class="mb-0">CEO</p>
-                                </div>
-                            </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="fa fa-check-circle text-[var(--electric-blue)]"></i>
+                            <span class="text-gray-700">Premios de Calidad</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="fa fa-check-circle text-[var(--electric-blue)]"></i>
+                            <span class="text-gray-700">Clientes Satisfechos</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <i class="fa fa-check-circle text-[var(--electric-blue)]"></i>
+                            <span class="text-gray-700">Iniciativas Ecológicas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA & CEO -->
+                <div class="flex flex-col sm:flex-row items-center gap-6">
+                    <button class="px-8 py-4 bg-gradient-to-r from-[var(--navy)] to-[var(--electric-blue)] text-white font-bold rounded-full hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+                        Más sobre nosotros
+                    </button>
+                    
+                    <div class="flex items-center space-x-4">
+                        <img src="{% static 'img/team-1.png' %}" 
+                             class="w-16 h-16 rounded-full border-4 border-[var(--electric-blue)]" 
+                             alt="CEO">
+                        <div>
+                            <h4 class="text-gray-800 font-bold">Andrés Forero</h4>
+                            <p class="text-[var(--electric-blue)]">CEO</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-6 wow fadeInRight" data-wow-delay="0.2s">
-                <div class="about-img">
-                    <div class="img-1">
-                        <img src="{% static 'img/about-img.jpg' %}" class="img-fluid rounded h-100 w-100" alt="">
-                    </div>
-                    <div class="img-2">
-                        <img src="{% static 'img/about-img-1.jpg' %}" class="img-fluid rounded w-100" alt="">
-                    </div>
+
+            <!-- Images Side -->
+            <div class="relative">
+                <div class="relative z-10">
+                    <img src="{% static 'img/about-img.jpg' %}" 
+                         class="w-full h-96 object-cover rounded-3xl shadow-2xl hover-lift" 
+                         alt="About us">
                 </div>
+                <div class="absolute top-12 -right-8 z-20">
+                    <img src="{% static 'img/about-img-1.jpg' %}" 
+                         class="w-48 h-32 object-cover rounded-2xl shadow-xl border-4 border-white/20" 
+                         alt="About us 2">
+                </div>
+                <!-- Decorative gradient -->
+                <div class="absolute -bottom-4 -right-4 w-full h-full bg-gradient-to-br from-[var(--navy)]/20 to-[var(--electric-blue)]/20 rounded-3xl -z-10"></div>
             </div>
         </div>
     </div>
 </div>
-<!-- About End -->
+
+<!-- Extended Description Section -->
+<div class="py-20 px-4 bg-gray-50">
+    <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-8">
+            Nuestro Compromiso con la <span class="gradient-text">Excelencia</span>
+        </h2>
+        <div class="glass-effect rounded-3xl p-8 md:p-12">
+            <p class="text-lg text-gray-600 leading-relaxed mb-6">
+                Con más de 15 años de experiencia en el sector, hemos creado una red de autolavados de alta calidad que cumplen con los más altos estándares de limpieza, protección y cuidado para tu auto.
+            </p>
+            <p class="text-lg text-gray-600 leading-relaxed mb-6">
+                Cada uno de los autolavados que forman parte de nuestra plataforma está respaldado por un equipo de profesionales altamente capacitados, que utilizan productos ecológicos y técnicas de vanguardia. Esto no solo asegura un resultado impecable, sino que también protege la pintura y los materiales de tu vehículo.
+            </p>
+            <p class="text-lg text-gray-600 leading-relaxed">
+                Confía en nosotros para mantener tu vehículo en las mejores condiciones y disfrutar de una experiencia de autolavado excepcional. ¡Tu auto, como nuevo, con el compromiso de calidad de Autonew!
+            </p>
+        </div>
+    </div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-{% endblock  %}
+{% endblock %}

@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import path
+from django.urls import path, include
 from lavado_auto import views
 from lavado_auto.views import get_horas,cambiar_estado_reserva
 
@@ -46,7 +46,7 @@ urlpatterns = [
 
     # crud
     path('logincrud/',views.login_crud, name='logincrud'),
-    path('logout/', views.logout_view, name='logout_view'),
+    path('logoutcrud/', views.logout_view, name='logout_view'),
     path('homecrud/',views.home_crud, name='homecrud'),
     path("comentarioscrud/",views.comentarios_crud, name="comentarioscrud"),
     path("quejascrud/",views.quejas_crud, name="quejascrud"),
@@ -56,5 +56,10 @@ urlpatterns = [
     path('citascrud/cambiar_estado/<int:reserva_id>/', cambiar_estado_reserva, name='cambiar_estado_reserva'),
     path("servicioscrud/",views.servicios_crud, name="servicioscrud"),
     path("empresascrud/",views.empresas_crud, name="empresascrud"),
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+if settings.DEBUG:
+    urlpatterns += [path("__reload__/", include("django_browser_reload.urls"))]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
