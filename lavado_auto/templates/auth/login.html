@@ -1,0 +1,1149 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
+    <title>Iniciar Sesión - AUTONEW</title>
+    
+    <!-- Preconnect para mejorar rendimiento -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
+</head>
+<body>
+
+<style>
+/* Estilos personalizados que complementan Tailwind */
+.font-poppins {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Gradientes personalizados */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-gradient-decoration-1 {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+}
+
+.bg-gradient-decoration-2 {
+    background: linear-gradient(45deg, #f093fb, #f5576c);
+}
+
+.bg-gradient-radial {
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+}
+
+/* Sombras personalizadas */
+.shadow-custom {
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-button {
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.shadow-button-hover {
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+/* Animaciones personalizadas */
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(30px, -30px) rotate(120deg); }
+    66% { transform: translate(-20px, 20px) rotate(240deg); }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes mobileSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes mobileFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes mobilePress {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(0.95);
+    }
+}
+
+.animate-rotate {
+    animation: rotate 20s linear infinite;
+}
+
+.animate-rotate-reverse {
+    animation: rotate 25s linear infinite reverse;
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animate-slideIn {
+    animation: slideIn 0.3s ease-out;
+}
+
+.animate-spin-slow {
+    animation: spin 1s linear infinite;
+}
+
+/* Colores personalizados */
+.text-primary {
+    color: #667eea;
+}
+
+.text-primary-600 {
+    color: #5a6fd8;
+}
+
+.border-primary {
+    border-color: #667eea;
+}
+
+.focus\:border-primary:focus {
+    border-color: #667eea;
+}
+
+.hover\:bg-primary:hover {
+    background-color: #667eea;
+}
+
+.hover\:text-primary:hover {
+    color: #667eea;
+}
+
+/* Estados de carga */
+.loading {
+    position: relative;
+    color: transparent;
+}
+
+/* Estilos para transiciones entre formularios */
+.login-section, .register-section {
+    opacity: 1;
+    transition: all 0.5s ease-in-out;
+}
+
+.login-section.hidden, .register-section.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.register-section {
+    display: none;
+}
+
+.register-section.flex {
+    display: flex !important;
+    opacity: 1;
+}
+
+/* Asegurar visibilidad de botones */
+#showRegister, #showLogin {
+    z-index: 10;
+    position: relative;
+}
+
+/* Clases utilitarias móviles */
+.mobile-container {
+    width: 100vw;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.mobile-safe-area {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Mejorar performance en móviles */
+.gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+/* Optimización de animaciones para móvil */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Mejoras de contraste para móviles */
+@media (max-width: 767px) {
+    .text-gray-600 {
+        color: #4b5563 !important;
+    }
+    
+    .placeholder-white\/70::placeholder {
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+    
+    .border-white\/30 {
+        border-color: rgba(255, 255, 255, 0.4) !important;
+    }
+    
+    /* Mejorar visibilidad de inputs en móvil */
+    .bg-white\/15 {
+        background-color: rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    .focus\:bg-white\/20:focus {
+        background-color: rgba(255, 255, 255, 0.25) !important;
+    }
+}
+
+/* Responsive adjustments */
+/* Móviles pequeños (320px - 479px) */
+@media (max-width: 479px) {
+    .side-panel {
+        display: none !important;
+    }
+    
+    main {
+        padding: 0.75rem !important;
+        min-height: 100vh;
+        align-items: flex-start;
+        padding-top: 2rem !important;
+    }
+    
+    .auth-container-mobile {
+        margin: 0.5rem !important;
+        border-radius: 1rem !important;
+        max-width: none !important;
+        width: calc(100vw - 1rem) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    .form-section-mobile {
+        padding: 1.25rem 1rem !important;
+    }
+    
+    .input-row-mobile {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+    
+    .title-mobile {
+        margin: 0.5rem 0 1.5rem 0 !important;
+        padding: 0 0.5rem !important;
+    }
+    
+    .title-mobile h1 {
+        font-size: 1.5rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .title-mobile p {
+        font-size: 0.8rem !important;
+        line-height: 1.4 !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .title-mobile .w-16 {
+        width: 2.5rem !important;
+        height: 3px !important;
+    }
+    
+    /* Formularios móviles pequeños */
+    .login-section h1,
+    .register-section h1 {
+        font-size: 1.375rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .login-section p,
+    .register-section p {
+        font-size: 0.8rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Inputs más compactos */
+    .input-group input {
+        padding: 0.75rem !important;
+        font-size: 0.875rem !important;
+        border-radius: 0.5rem !important;
+        border-width: 1px !important;
+    }
+    
+    /* Botones más compactos */
+    button {
+        padding: 0.75rem 1rem !important;
+        font-size: 0.875rem !important;
+        border-radius: 0.5rem !important;
+    }
+    
+    /* Espaciado reducido */
+    .space-y-4 > * + * {
+        margin-top: 0.75rem !important;
+    }
+    
+    .space-y-5 > * + * {
+        margin-top: 0.875rem !important;
+    }
+    
+    /* Botón volver más pequeño */
+    .fixed.top-5.left-5 {
+        top: 0.75rem !important;
+        left: 0.75rem !important;
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.8rem !important;
+        border-radius: 1rem !important;
+    }
+    
+    /* Mensajes de alerta más compactos */
+    .animate-slideIn {
+        margin-bottom: 1rem !important;
+        padding: 0.75rem 1rem !important;
+        font-size: 0.8rem !important;
+        border-radius: 0.5rem !important;
+        margin-left: 0.5rem !important;
+        margin-right: 0.5rem !important;
+    }
+}
+
+/* Móviles medianos (480px - 767px) */
+@media (min-width: 480px) and (max-width: 767px) {
+    .side-panel {
+        display: none !important;
+    }
+    
+    main {
+        padding: 1rem !important;
+        padding-top: 1.5rem !important;
+    }
+    
+    .auth-container-mobile {
+        margin: 0.75rem !important;
+        border-radius: 1.25rem !important;
+        max-width: none !important;
+        width: calc(100vw - 1.5rem) !important;
+    }
+    
+    .form-section-mobile {
+        padding: 2rem 1.5rem !important;
+    }
+    
+    .input-row-mobile {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+    
+    .title-mobile {
+        margin: 1rem 0 1.75rem 0 !important;
+        padding: 0 0.75rem !important;
+    }
+    
+    .title-mobile h1 {
+        font-size: 1.75rem !important;
+        line-height: 1.25 !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .title-mobile p {
+        font-size: 0.875rem !important;
+        line-height: 1.4 !important;
+    }
+    
+    /* Inputs tamaño medio */
+    .input-group input {
+        padding: 0.875rem !important;
+        font-size: 0.9rem !important;
+        border-radius: 0.75rem !important;
+    }
+    
+    /* Botones tamaño medio */
+    button {
+        padding: 0.875rem 1.25rem !important;
+        font-size: 0.9rem !important;
+        border-radius: 0.75rem !important;
+    }
+}
+
+/* Tablets (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .side-panel {
+        display: flex !important;
+        flex: 0.6 !important;
+        padding: 1.5rem !important;
+    }
+    
+    .login-section,
+    .register-section {
+        flex: 1 !important;
+        padding: 2rem 1.5rem !important;
+    }
+    
+    .auth-container-mobile {
+        max-width: 48rem !important;
+    }
+    
+    .title-mobile h1 {
+        font-size: 2rem !important;
+    }
+    
+    .title-mobile p {
+        font-size: 1rem !important;
+    }
+}
+
+/* Nuevos estilos para mejorar la experiencia móvil */
+
+/* Animaciones optimizadas para móvil */
+@keyframes mobileSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes mobileFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes mobilePress {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(0.95);
+    }
+}
+
+/* Clases para animaciones móviles */
+.mobile-slide-up {
+    animation: mobileSlideUp 0.4s ease-out;
+}
+
+.mobile-fade-in {
+    animation: mobileFadeIn 0.3s ease-in;
+}
+
+.mobile-press {
+    animation: mobilePress 0.1s ease-in-out;
+}
+
+/* Mejores transiciones para elementos interactivos */
+.smooth-transition {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Estilos para modo oscuro en móvil */
+@media (prefers-color-scheme: dark) and (max-width: 767px) {
+    .bg-white {
+        background-color: rgba(17, 24, 39, 0.95) !important;
+        color: #f9fafb !important;
+    }
+    
+    .text-gray-800 {
+        color: #f9fafb !important;
+    }
+    
+    .text-gray-600 {
+        color: #d1d5db !important;
+    }
+    
+    .border-gray-200 {
+        border-color: rgba(75, 85, 99, 0.3) !important;
+    }
+    
+    .shadow-custom {
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
+    }
+}
+
+/* Estilos para dispositivos con alta densidad de píxeles */
+@media (-webkit-min-device-pixel-ratio: 2) and (max-width: 767px),
+       (min-resolution: 192dpi) and (max-width: 767px) {
+    .shadow-custom {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+    }
+    
+    .border {
+        border-width: 0.5px !important;
+    }
+}
+
+/* Optimización para dispositivos con pantalla OLED */
+@media (color-gamut: p3) and (max-width: 767px) {
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, color(display-p3 0.4 0.49 0.92) 0%, color(display-p3 0.46 0.29 0.64) 100%);
+    }
+}
+
+/* Estilos para mejorar accesibilidad en móvil */
+@media (max-width: 767px) {
+    /* Mejorar contraste para usuarios con baja visión */
+    .text-primary {
+        color: #4f46e5 !important; /* Color más contrastante */
+    }
+    
+    /* Indicadores visuales más claros */
+    input:focus {
+        outline: 2px solid #4f46e5 !important;
+        outline-offset: 2px !important;
+    }
+    
+    button:focus {
+        outline: 2px solid #ffffff !important;
+        outline-offset: 2px !important;
+    }
+    
+    /* Mejorar legibilidad de enlaces */
+    a {
+        text-decoration: underline !important;
+        text-underline-offset: 2px !important;
+    }
+}
+
+/* Soporte para notch en iPhone X y posteriores */
+@supports (padding: max(0px)) {
+    .mobile-safe-area {
+        padding-left: max(1rem, env(safe-area-inset-left)) !important;
+        padding-right: max(1rem, env(safe-area-inset-right)) !important;
+        padding-top: max(1rem, env(safe-area-inset-top)) !important;
+        padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+    }
+}
+
+/* Optimización de rendimiento para dispositivos de gama baja */
+@media (max-width: 767px) and (hover: none) {
+    /* Simplificar efectos para dispositivos táctiles de gama baja */
+    .animate-rotate,
+    .animate-rotate-reverse,
+    .animate-float {
+        animation-duration: 20s !important;
+        animation-timing-function: linear !important;
+    }
+    
+    /* Reducir complejidad de sombras */
+    .shadow-button,
+    .shadow-button-hover {
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2) !important;
+    }
+}
+
+/* Fix para teclados virtuales en móvil */
+@media (max-width: 767px) {
+    .keyboard-open {
+        height: calc(100vh - env(keyboard-inset-height, 0px)) !important;
+        transition: height 0.3s ease !important;
+    }
+}
+
+/* Estilos para mejorar la experiencia en Samsung Internet y otros navegadores móviles */
+@media (max-width: 767px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"] {
+        -webkit-appearance: none !important;
+        appearance: none !important;
+        background-clip: padding-box !important;
+    }
+    
+    /* Fix para Samsung Internet */
+    input::-webkit-input-placeholder {
+        color: rgba(156, 163, 175, 0.8) !important;
+    }
+    
+    input::-moz-placeholder {
+        color: rgba(156, 163, 175, 0.8) !important;
+        opacity: 1 !important;
+    }
+}
+
+/* Estilos generales */
+@media (max-width: 767px) {
+    * {
+        max-width: 100% !important;
+    }
+    
+    .w-full {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Prevenir scroll horizontal */
+    body, html {
+        overflow-x: hidden !important;
+        position: relative !important;
+    }
+    
+    /* Mejorar legibilidad */
+    .text-white {
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    /* Optimizar fondos para móvil */
+    .bg-gradient-primary {
+        background-attachment: scroll !important;
+    }
+    
+    /* Mejorar contraste en inputs móviles */
+    input {
+        -webkit-appearance: none !important;
+        -webkit-border-radius: 0 !important;
+        border-radius: 0.5rem !important;
+    }
+    
+    /* Mejorar zoom en iOS */
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"] {
+        font-size: 16px !important; /* Prevenir zoom en iOS */
+        -webkit-text-size-adjust: 100% !important;
+    }
+    
+    /* Mejorar botones touch */
+    button, .btn {
+        -webkit-tap-highlight-color: transparent !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
+    }
+    
+    /* Scroll suave en móvil */
+    * {
+        -webkit-overflow-scrolling: touch !important;
+        scroll-behavior: smooth !important;
+    }
+    
+    /* Safe area para dispositivos con notch */
+    main {
+        padding-top: max(1rem, env(safe-area-inset-top)) !important;
+        padding-left: max(1rem, env(safe-area-inset-left)) !important;
+        padding-right: max(1rem, env(safe-area-inset-right)) !important;
+        padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+    }
+    
+    /* Mejorar visibilidad de elementos decorativos en móvil */
+    .fixed.top-0.right-0,
+    .fixed.bottom-0.left-0 {
+        opacity: 0.05 !important;
+        pointer-events: none !important;
+    }
+}
+</style>
+
+<main class="relative min-h-screen flex items-center justify-center p-4 sm:p-5 font-poppins bg-white overflow-x-hidden">
+    <!-- Elementos decorativos de fondo inspirados en la invitación -->
+    <div class="pointer-events-none select-none">
+        <div class="absolute top-0 left-1/4 w-64 h-64 bg-blue-600/10 rounded-full mix-blend-overlay filter blur-3xl animate-pulse z-0"></div>
+        <div class="absolute bottom-0 right-1/4 w-80 h-80 bg-indigo-700/10 rounded-full mix-blend-overlay filter blur-3xl animate-pulse animation-delay-2000 z-0"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-400/10 rounded-full mix-blend-overlay filter blur-3xl animate-pulse animation-delay-4000 z-0"></div>
+    </div>
+    
+    <!-- Botón volver -->
+    <a href="/" class="fixed top-5 left-5 sm:top-10 sm:left-10 z-50 flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 bg-white text-gray-800 font-medium text-sm rounded-full shadow-lg border border-gray-200 transition-all duration-300 hover:bg-gray-50 hover:shadow-xl hover:-translate-y-0.5 hover:text-primary">
+        <span class="text-lg">←</span> Volver
+    </a>
+    
+    <!-- Contenedor principal -->
+    <div class="w-full max-w-6xl mx-auto flex flex-col items-center">
+        <!-- Título principal mejorado con gradiente -->
+        <div class="text-center mb-6 sm:mb-10 max-w-3xl title-mobile">
+            <h1 class="font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-3 sm:mb-4 leading-tight">
+                <span class="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 bg-clip-text text-transparent">Bienvenido a AUTONEW</span>
+            </h1>
+            <p class="text-blue-700 font-medium text-sm sm:text-base md:text-lg leading-relaxed opacity-90">
+                Tu plataforma de confianza para el cuidado automotriz profesional
+            </p>
+            <div class="flex justify-center mt-4">
+                <div class="w-16 sm:w-20 h-1 bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 rounded-full"></div>
+            </div>
+        </div>
+        
+        <!-- Mensajes de alerta -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="animate-slideIn mb-5 px-4 sm:px-5 py-3 sm:py-4 rounded-xl font-medium text-sm border-l-4 w-full max-w-4xl
+                    {% if message.tags == 'success' %}
+                        bg-green-50 text-green-800 border-green-500
+                    {% elif message.tags == 'error' or message.tags == 'danger' %}
+                        bg-red-50 text-red-800 border-red-500
+                    {% else %}
+                        bg-blue-50 text-blue-800 border-blue-500
+                    {% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Contenedor de autenticación -->
+        <div class="bg-white rounded-2xl sm:rounded-3xl shadow-custom overflow-hidden w-full max-w-4xl flex relative border border-gray-100 auth-container-mobile" id="authContainer">
+            
+            <!-- Sección de Login -->
+            <div class="flex-1 px-6 py-8 sm:px-12 sm:py-16 flex flex-col justify-center bg-white transition-all duration-700 login-section form-section-mobile">
+                <div class="text-center mb-8 sm:mb-10">
+                    <h1 class="text-2xl sm:text-4xl font-bold mb-3 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 bg-clip-text text-transparent">Iniciar Sesión</h1>
+                    <p class="text-blue-700 text-sm sm:text-base">Ingresa a tu cuenta para continuar</p>
+                </div>
+                
+                <form action="/login/" method="POST" id="loginForm" class="space-y-4 sm:space-y-5">
+                    {% csrf_token %}
+                    
+                    <div class="input-group">
+                        <input type="text" 
+                               name="nombre_usuario" 
+                               placeholder="Nombre de usuario" 
+                               required 
+                               autocomplete="username"
+                               inputmode="text"
+                               spellcheck="false"
+                               autocapitalize="none"
+                               aria-label="Nombre de usuario"
+                               class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-blue-200 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white text-blue-900 transition-all duration-300 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-200 focus:bg-white placeholder-blue-400 smooth-transition">
+                    </div>
+                    
+                    <div class="input-group">
+                        <input type="password" 
+                               name="contrasena" 
+                               placeholder="Contraseña" 
+                               required 
+                               autocomplete="current-password"
+                               inputmode="text"
+                               aria-label="Contraseña"
+                               class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-blue-200 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white text-blue-900 transition-all duration-300 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200 focus:bg-white placeholder-blue-400 smooth-transition">
+                    </div>
+                    
+                    <a href="/resetcorreo" class="inline-block text-blue-700 font-medium text-sm transition-all duration-300 hover:text-indigo-600 hover:underline my-3 sm:my-4">¿Olvidaste tu contraseña?</a>
+                    
+                    <button type="submit" class="w-full px-4 py-3 sm:py-4 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white font-semibold text-sm sm:text-base rounded-lg sm:rounded-xl cursor-pointer transition-all duration-300 mt-3 shadow-button hover:-translate-y-0.5 hover:shadow-button-hover hover:bg-gradient-to-l hover:from-indigo-700 hover:to-blue-600 disabled:opacity-70 disabled:cursor-not-allowed smooth-transition" aria-label="Iniciar sesión en AUTONEW">
+                        Iniciar Sesión
+                    </button>
+                </form>
+                
+                <!-- Divisor -->
+                <div class="flex items-center my-6 sm:my-8">
+                    <div class="flex-1 border-t border-blue-200"></div>
+                    <span class="px-4 text-blue-500 text-sm font-medium">o continúa con</span>
+                    <div class="flex-1 border-t border-blue-200"></div>
+                </div>
+                
+                <!-- Botón Google -->
+                <button type="button" class="w-full flex items-center justify-center px-4 py-3 sm:py-4 bg-white border-2 border-blue-200 text-blue-700 font-semibold text-sm sm:text-base rounded-lg sm:rounded-xl cursor-pointer transition-all duration-300 hover:bg-blue-50 hover:border-indigo-300 hover:-translate-y-0.5 hover:shadow-lg smooth-transition group" aria-label="Iniciar sesión con Google">
+                    <svg class="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    <span>Continuar con Google</span>
+                </button>
+                
+                <div class="text-center mt-6 sm:mt-8">
+                    <p class="text-blue-700 text-sm mb-3 sm:mb-4">¿No tienes cuenta?</p>
+                    <button type="button" 
+                            class="bg-transparent border-2 border-blue-600 text-blue-700 px-6 py-2 sm:px-8 sm:py-3 rounded-full font-medium cursor-pointer transition-all duration-300 hover:bg-blue-600 hover:text-white hover:-translate-y-0.5 text-sm sm:text-base" 
+                            id="showRegister"
+                            onclick="showRegisterForm()">
+                        Crear Cuenta
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sección de Registro -->
+            <div class="hidden flex-1 px-6 py-6 sm:px-12 sm:py-10 bg-gradient-primary text-white justify-center flex-col transition-all duration-700 register-section form-section-mobile">
+                <div class="text-center mb-6 sm:mb-8">
+                    <h1 class="text-2xl sm:text-4xl font-bold text-white mb-3">Crear Cuenta</h1>
+                    <p class="text-white/90 text-sm sm:text-base">Completa el formulario para registrarte</p>
+                </div>
+                
+                <form action="/login/" method="POST" id="registerForm" class="space-y-4 sm:space-y-5">
+                    {% csrf_token %}
+                    
+                    <div class="flex gap-3 sm:gap-4 flex-col sm:flex-row input-row-mobile">
+                        <div class="flex-1 input-group">
+                            <input type="text" 
+                                   name="nombre_completo" 
+                                   placeholder="Nombre completo" 
+                                   required 
+                                   autocomplete="name"
+                                   inputmode="text"
+                                   spellcheck="true"
+                                   autocapitalize="words"
+                                   aria-label="Nombre completo"
+                                   value="{% if form_data.nombre_completo %}{{ form_data.nombre_completo }}{% endif %}"
+                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white/15 text-white placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-white/60 focus:bg-white/20 focus:ring-4 focus:ring-white/10 smooth-transition">
+                        </div>
+                        <div class="flex-1 input-group">
+                            <input type="text" 
+                                   name="nombre_usuario" 
+                                   placeholder="Usuario" 
+                                   required 
+                                   autocomplete="username"
+                                   inputmode="text"
+                                   spellcheck="false"
+                                   autocapitalize="none"
+                                   aria-label="Nombre de usuario"
+                                   value="{% if form_data.nombre_usuario %}{{ form_data.nombre_usuario }}{% endif %}"
+                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white/15 text-white placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-white/60 focus:bg-white/20 focus:ring-4 focus:ring-white/10 smooth-transition">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <input type="email" 
+                               name="correo" 
+                               placeholder="Correo electrónico" 
+                               required 
+                               autocomplete="email"
+                               inputmode="email"
+                               spellcheck="false"
+                               autocapitalize="none"
+                               aria-label="Correo electrónico"
+                               value="{% if form_data.correo %}{{ form_data.correo }}{% endif %}"
+                               class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white/15 text-white placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-white/60 focus:bg-white/20 focus:ring-4 focus:ring-white/10 smooth-transition">
+                    </div>
+                    
+                    <div class="flex gap-3 sm:gap-4 flex-col sm:flex-row input-row-mobile">
+                        <div class="flex-1 input-group">
+                            <input type="tel" 
+                                   name="telefono" 
+                                   placeholder="Teléfono" 
+                                   required 
+                                   pattern="[0-9]{10}" 
+                                   autocomplete="tel"
+                                   inputmode="numeric"
+                                   maxlength="10"
+                                   aria-label="Número de teléfono"
+                                   value="{% if form_data.telefono %}{{ form_data.telefono }}{% endif %}"
+                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white/15 text-white placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-white/60 focus:bg-white/20 focus:ring-4 focus:ring-white/10 smooth-transition">
+                        </div>
+                        <div class="flex-1 input-group">
+                            <input type="text" 
+                                   name="direccion" 
+                                   placeholder="Dirección" 
+                                   required 
+                                   autocomplete="address-line1"
+                                   inputmode="text"
+                                   spellcheck="true"
+                                   autocapitalize="words"
+                                   aria-label="Dirección"
+                                   value="{% if form_data.direccion %}{{ form_data.direccion }}{% endif %}"
+                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white/15 text-white placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-white/60 focus:bg-white/20 focus:ring-4 focus:ring-white/10 smooth-transition">
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3 sm:gap-4 flex-col sm:flex-row input-row-mobile">
+                        <div class="flex-1 input-group">
+                            <input type="password" 
+                                   name="contrasena1" 
+                                   placeholder="Contraseña" 
+                                   required 
+                                   autocomplete="new-password"
+                                   inputmode="text"
+                                   minlength="8"
+                                   aria-label="Nueva contraseña"
+                                   id="password1"
+                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white/15 text-white placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-white/60 focus:bg-white/20 focus:ring-4 focus:ring-white/10 smooth-transition">
+                        </div>
+                        <div class="flex-1 input-group">
+                            <input type="password" 
+                                   name="contrasena2" 
+                                   placeholder="Confirmar contraseña" 
+                                   required 
+                                   autocomplete="new-password"
+                                   inputmode="text"
+                                   minlength="8"
+                                   aria-label="Confirmar contraseña"
+                                   id="password2"
+                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white/15 text-white placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-white/60 focus:bg-white/20 focus:ring-4 focus:ring-white/10 smooth-transition">
+                            <div class="validation-message text-xs mt-1 pl-1" id="passwordMatch" role="status" aria-live="polite"></div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full px-4 py-3 sm:py-4 bg-transparent border-2 border-white/30 text-white font-semibold text-sm sm:text-base rounded-lg sm:rounded-xl cursor-pointer transition-all duration-300 mt-3 hover:bg-white/10 hover:border-white/50 hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed smooth-transition" aria-label="Crear nueva cuenta en AUTONEW">
+                        Crear Cuenta
+                    </button>
+                </form>
+                
+                <!-- Divisor para registro -->
+                <div class="flex items-center my-4 sm:my-6">
+                    <div class="flex-1 border-t border-white/30"></div>
+                    <span class="px-4 text-white/80 text-sm font-medium">o regístrate con</span>
+                    <div class="flex-1 border-t border-white/30"></div>
+                </div>
+                
+                <!-- Botón Google para registro -->
+                <button type="button" class="w-full flex items-center justify-center px-4 py-3 sm:py-4 bg-white/10 border-2 border-white/30 text-white font-semibold text-sm sm:text-base rounded-lg sm:rounded-xl cursor-pointer transition-all duration-300 hover:bg-white/20 hover:border-white/50 hover:-translate-y-0.5 smooth-transition group backdrop-blur-sm" aria-label="Registrarse con Google">
+                    <svg class="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    <span>Continuar con Google</span>
+                </button>
+                
+                <div class="text-center mt-4 sm:mt-6">
+                    <p class="text-white/80 text-sm mb-2 sm:mb-3">¿Ya tienes cuenta?</p>
+                    <button type="button" 
+                            class="bg-transparent border-2 border-white/50 text-white/90 px-6 py-2 sm:px-8 sm:py-3 rounded-full font-medium cursor-pointer transition-all duration-300 hover:bg-white/10 hover:border-white hover:text-white hover:-translate-y-0.5 text-sm sm:text-base" 
+                            id="showLogin"
+                            onclick="showLoginForm()">
+                        Iniciar Sesión
+                    </button>
+                </div>
+            </div>
+
+            <!-- Panel lateral para pantallas grandes -->
+            <div class="hidden md:flex flex-1 bg-gradient-primary flex-col justify-center items-center p-8 lg:p-12 text-white text-center relative overflow-hidden side-panel">
+                <!-- Elemento decorativo flotante -->
+                <div class="absolute top-0 right-0 w-full h-full bg-gradient-radial from-white/10 to-transparent animate-float pointer-events-none"></div>
+                
+                <h2 class="text-2xl lg:text-3xl font-bold mb-4 lg:mb-5 text-white" id="sidePanelTitle">¡Bienvenido!</h2>
+                <p class="text-sm lg:text-base leading-relaxed mb-6 lg:mb-8 opacity-90" id="sidePanelText">Accede a todas las funcionalidades de nuestra plataforma</p>
+                <div class="features-list mt-6 lg:mt-8 space-y-2 lg:space-y-3">
+                    <div class="feature-item text-xs lg:text-sm opacity-90 text-left">✓ Acceso completo a servicios</div>
+                    <div class="feature-item text-xs lg:text-sm opacity-90 text-left">✓ Soporte 24/7</div>
+                    <div class="feature-item text-xs lg:text-sm opacity-90 text-left">✓ Interfaz intuitiva</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+// Funciones globales simples para cambiar formularios
+function showRegisterForm() {
+    console.log('Mostrando formulario de registro...');
+    const loginSection = document.querySelector('.login-section');
+    const registerSection = document.querySelector('.register-section');
+    
+    if (loginSection && registerSection) {
+        // Ocultar login
+        loginSection.style.display = 'none';
+        loginSection.classList.add('hidden');
+        
+        // Mostrar registro
+        registerSection.style.display = 'flex';
+        registerSection.classList.remove('hidden');
+        registerSection.classList.add('flex');
+        
+        console.log('Formulario de registro mostrado');
+    } else {
+        console.error('No se encontraron las secciones');
+    }
+}
+
+function showLoginForm() {
+    console.log('Mostrando formulario de login...');
+    const loginSection = document.querySelector('.login-section');
+    const registerSection = document.querySelector('.register-section');
+    
+    if (loginSection && registerSection) {
+        // Ocultar registro
+        registerSection.style.display = 'none';
+        registerSection.classList.add('hidden');
+        registerSection.classList.remove('flex');
+        
+        // Mostrar login
+        loginSection.style.display = 'flex';
+        loginSection.classList.remove('hidden');
+        
+        console.log('Formulario de login mostrado');
+    } else {
+        console.error('No se encontraron las secciones');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM cargado - Inicializando...');
+    
+    // Verificar que las funciones globales estén disponibles
+    window.showRegisterForm = showRegisterForm;
+    window.showLoginForm = showLoginForm;
+    
+    // Verificar si se debe mostrar el formulario de registro automáticamente
+    {% if show_register %}
+    console.log('Mostrando formulario de registro automáticamente');
+    setTimeout(function() {
+        showRegisterForm();
+    }, 100);
+    {% endif %}
+    
+    // También agregar event listeners como respaldo
+    const showRegisterBtn = document.getElementById('showRegister');
+    const showLoginBtn = document.getElementById('showLogin');
+    
+    if (showRegisterBtn) {
+        showRegisterBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showRegisterForm();
+        });
+        console.log('Event listener agregado al botón de registro');
+    }
+    
+    if (showLoginBtn) {
+        showLoginBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showLoginForm();
+        });
+        console.log('Event listener agregado al botón de login');
+    }
+    
+    // Validación de contraseñas
+    const password1 = document.getElementById('password1');
+    const password2 = document.getElementById('password2');
+    const passwordMatch = document.getElementById('passwordMatch');
+    
+    if (password1 && password2) {
+        function validatePasswords() {
+            const pass1 = password1.value;
+            const pass2 = password2.value;
+            
+            if (pass2.length > 0) {
+                if (pass1 === pass2) {
+                    passwordMatch.textContent = '✓ Las contraseñas coinciden';
+                    passwordMatch.className = 'validation-message text-xs mt-1 pl-1 text-green-300';
+                } else {
+                    passwordMatch.textContent = '✗ Las contraseñas no coinciden';
+                    passwordMatch.className = 'validation-message text-xs mt-1 pl-1 text-red-300';
+                }
+            } else {
+                passwordMatch.textContent = '';
+                passwordMatch.className = 'validation-message text-xs mt-1 pl-1';
+            }
+        }
+
+        password1.addEventListener('input', validatePasswords);
+        password2.addEventListener('input', validatePasswords);
+    }
+
+    // Validación de teléfono
+    const phoneInput = document.querySelector('input[name="telefono"]');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function() {
+            let value = this.value.replace(/\D/g, '');
+            if (value.length > 10) {
+                value = value.slice(0, 10);
+            }
+            this.value = value;
+        });
+    }
+
+    // Animación de carga en botones
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const submitButton = this.querySelector('button[type="submit"]');
+            if (submitButton && !submitButton.disabled) {
+                submitButton.classList.add('loading');
+                submitButton.disabled = true;
+                
+                const originalText = submitButton.innerHTML;
+                
+                submitButton.innerHTML = `
+                    <div class="flex items-center justify-center">
+                        <div class="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                        Procesando...
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    if (submitButton) {
+                        submitButton.classList.remove('loading');
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = originalText;
+                    }
+                }, 3000);
+            }
+        });
+    });
+
+    // Auto-hide alerts
+    const alerts = document.querySelectorAll('.animate-slideIn');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            alert.style.opacity = '0';
+            alert.style.transform = 'translateY(-10px)';
+            alert.style.transition = 'all 0.3s ease';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 300);
+        }, 5000);
+    });
+
+    // Optimización para dispositivos touch
+    if ('ontouchstart' in window) {
+        document.body.style.touchAction = 'manipulation';
+        
+        // Prevenir zoom en iOS
+        const viewport = document.querySelector('meta[name=viewport]');
+        const originalViewport = viewport ? viewport.getAttribute('content') : '';
+        
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                if (/iPad|iPhone|iPod/.test(navigator.userAgent) && viewport) {
+                    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+                }
+            });
+            
+            input.addEventListener('blur', function() {
+                if (/iPad|iPhone|iPod/.test(navigator.userAgent) && viewport) {
+                    viewport.setAttribute('content', originalViewport);
+                }
+            });
+        });
+    }
+    
+    console.log('Inicialización completada');
+});
+</script>
+</body>
+</html>

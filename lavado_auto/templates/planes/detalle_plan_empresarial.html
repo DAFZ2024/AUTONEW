@@ -1,0 +1,417 @@
+{% extends 'base/base_crud.html' %}
+{% load static %}
+{% load math_filters %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <a href="{% url 'planes_empresariales_crud' %}" 
+                       class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </a>
+                    <div class="p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl shadow-lg">
+                        <i class="fas fa-eye text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                            {{ plan.nombre }}
+                        </h1>
+                        <p class="text-gray-600 mt-1">Detalles del plan empresarial</p>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <a href="{% url 'editar_plan_empresarial' plan.id_plan %}" 
+                       class="px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-semibold rounded-xl shadow-lg hover:from-amber-700 hover:to-orange-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-edit mr-2"></i>
+                        Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estado y estadísticas -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Estado</p>
+                        {% if plan.activo %}
+                            <p class="text-2xl font-bold text-emerald-600">Activo</p>
+                        {% else %}
+                            <p class="text-2xl font-bold text-red-600">Inactivo</p>
+                        {% endif %}
+                    </div>
+                    <div class="p-3 {% if plan.activo %}bg-emerald-100{% else %}bg-red-100{% endif %} rounded-xl">
+                        <i class="fas {% if plan.activo %}fa-check-circle text-emerald-600{% else %}fa-times-circle text-red-600{% endif %} text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Suscripciones</p>
+                        <p class="text-2xl font-bold text-blue-600">{{ total_suscripciones }}</p>
+                    </div>
+                    <div class="p-3 bg-blue-100 rounded-xl">
+                        <i class="fas fa-users text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Activas</p>
+                        <p class="text-2xl font-bold text-emerald-600">{{ suscripciones_activas }}</p>
+                    </div>
+                    <div class="p-3 bg-emerald-100 rounded-xl">
+                        <i class="fas fa-check-circle text-emerald-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Servicios</p>
+                        <p class="text-2xl font-bold text-purple-600">{{ plan.servicios_incluidos.count }}</p>
+                    </div>
+                    <div class="p-3 bg-purple-100 rounded-xl">
+                        <i class="fas fa-cogs text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Información básica -->
+            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-info-circle text-blue-600 mr-3"></i>
+                    Información Básica
+                </h2>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center p-4 bg-gray-50 rounded-xl">
+                        <div class="h-12 w-12 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center mr-4">
+                            <i class="fas fa-building text-white"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Nombre del Plan</p>
+                            <p class="font-semibold text-gray-900">{{ plan.nombre }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center p-4 bg-gray-50 rounded-xl">
+                        <div class="h-12 w-12 rounded-lg bg-gradient-to-br from-emerald-500 to-cyan-600 flex items-center justify-center mr-4">
+                            <i class="fas fa-tag text-white"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Tipo de Plan</p>
+                            <p class="font-semibold text-gray-900">{{ plan.get_tipo_display }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 bg-gray-50 rounded-xl">
+                        <p class="text-sm text-gray-600 mb-2">Descripción</p>
+                        <p class="text-gray-900">{{ plan.descripcion }}</p>
+                    </div>
+                    
+                    <div class="flex items-center p-4 bg-gray-50 rounded-xl">
+                        <div class="h-12 w-12 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center mr-4">
+                            <i class="fas fa-calendar text-white"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Fecha de Creación</p>
+                            <p class="font-semibold text-gray-900">{{ plan.fecha_creacion|date:"d/m/Y H:i" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración de precios -->
+            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-dollar-sign text-emerald-600 mr-3"></i>
+                    Precios y Costos
+                </h2>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 bg-emerald-50 rounded-xl">
+                        <div>
+                            <p class="text-sm text-emerald-700">Precio por Vehículo</p>
+                            <p class="text-2xl font-bold text-emerald-800">${{ plan.precio_mensual_por_vehiculo|floatformat:0 }}</p>
+                        </div>
+                        <div class="text-emerald-600">
+                            <i class="fas fa-car text-2xl"></i>
+                        </div>
+                    </div>
+                    
+                    {% if plan.precio_base_mensual > 0 %}
+                        <div class="flex items-center justify-between p-4 bg-blue-50 rounded-xl">
+                            <div>
+                                <p class="text-sm text-blue-700">Precio Base Mensual</p>
+                                <p class="text-2xl font-bold text-blue-800">${{ plan.precio_base_mensual|floatformat:0 }}</p>
+                            </div>
+                            <div class="text-blue-600">
+                                <i class="fas fa-money-bill text-2xl"></i>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    {% if plan.descuento_volumen > 0 %}
+                        <div class="flex items-center justify-between p-4 bg-purple-50 rounded-xl">
+                            <div>
+                                <p class="text-sm text-purple-700">Descuento por Volumen</p>
+                                <p class="text-2xl font-bold text-purple-800">{{ plan.descuento_volumen }}%</p>
+                            </div>
+                            <div class="text-purple-600">
+                                <i class="fas fa-percentage text-2xl"></i>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Ejemplo de precio -->
+                    <div class="p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border-l-4 border-gray-400">
+                        <p class="text-sm text-gray-600 mb-2">Ejemplo con 10 vehículos:</p>
+                        {% with ejemplo_total=plan.precio_mensual_por_vehiculo|floatformat:0|add:0 %}
+                            {% with precio_vehiculos=10 %}
+                                {% with precio_total=precio_vehiculos|mul:plan.precio_mensual_por_vehiculo %}
+                                    <p class="font-bold text-gray-900">
+                                        ${{ precio_total|add:plan.precio_base_mensual|floatformat:0 }}/mes
+                                    </p>
+                                {% endwith %}
+                            {% endwith %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Límites y configuración -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+            <!-- Límites de vehículos -->
+            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-car text-blue-600 mr-3"></i>
+                    Límites de Vehículos
+                </h2>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 bg-blue-50 rounded-xl">
+                        <div>
+                            <p class="text-sm text-blue-700">Vehículos Mínimos</p>
+                            <p class="text-2xl font-bold text-blue-800">{{ plan.vehiculos_minimos }}</p>
+                        </div>
+                        <div class="text-blue-600">
+                            <i class="fas fa-arrow-up text-xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-4 bg-indigo-50 rounded-xl">
+                        <div>
+                            <p class="text-sm text-indigo-700">Vehículos Máximos</p>
+                            <p class="text-2xl font-bold text-indigo-800">
+                                {% if plan.vehiculos_maximos %}{{ plan.vehiculos_maximos }}{% else %}Ilimitado{% endif %}
+                            </p>
+                        </div>
+                        <div class="text-indigo-600">
+                            <i class="fas {% if plan.vehiculos_maximos %}fa-arrow-down{% else %}fa-infinity{% endif %} text-xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-4 bg-cyan-50 rounded-xl">
+                        <div>
+                            <p class="text-sm text-cyan-700">Servicios por Vehículo/Mes</p>
+                            <p class="text-2xl font-bold text-cyan-800">
+                                {% if plan.servicios_por_vehiculo_mes == 0 %}Ilimitado{% else %}{{ plan.servicios_por_vehiculo_mes }}{% endif %}
+                            </p>
+                        </div>
+                        <div class="text-cyan-600">
+                            <i class="fas {% if plan.servicios_por_vehiculo_mes == 0 %}fa-infinity{% else %}fa-cogs{% endif %} text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Características del plan -->
+            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-star text-amber-600 mr-3"></i>
+                    Características Incluidas
+                </h2>
+                
+                <div class="grid grid-cols-1 gap-3">
+                    <!-- Servicios básicos -->
+                    {% if plan.incluye_lavado_asientos %}
+                        <div class="flex items-center p-3 bg-green-50 rounded-lg">
+                            <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                            <span class="text-gray-900">Lavado de asientos</span>
+                        </div>
+                    {% endif %}
+                    
+                    {% if plan.incluye_aspirado %}
+                        <div class="flex items-center p-3 bg-green-50 rounded-lg">
+                            <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                            <span class="text-gray-900">Aspirado</span>
+                        </div>
+                    {% endif %}
+                    
+                    {% if plan.incluye_lavado_exterior %}
+                        <div class="flex items-center p-3 bg-green-50 rounded-lg">
+                            <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                            <span class="text-gray-900">Lavado exterior</span>
+                        </div>
+                    {% endif %}
+                    
+                    {% if plan.incluye_lavado_interior_humedo %}
+                        <div class="flex items-center p-3 bg-green-50 rounded-lg">
+                            <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                            <span class="text-gray-900">Lavado interior húmedo</span>
+                        </div>
+                    {% endif %}
+                    
+                    {% if plan.incluye_encerado %}
+                        <div class="flex items-center p-3 bg-green-50 rounded-lg">
+                            <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                            <span class="text-gray-900">Encerado</span>
+                        </div>
+                    {% endif %}
+                    
+                    {% if plan.incluye_detallado_completo %}
+                        <div class="flex items-center p-3 bg-green-50 rounded-lg">
+                            <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                            <span class="text-gray-900">Detallado completo</span>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Servicios empresariales especiales -->
+                    {% if plan.incluye_servicio_domicilio %}
+                        <div class="flex items-center p-3 bg-blue-50 rounded-lg">
+                            <i class="fas fa-truck text-blue-600 mr-3"></i>
+                            <span class="text-gray-900">Servicio a domicilio</span>
+                        </div>
+                    {% endif %}
+                    
+                    {% if plan.incluye_mantenimiento_programado %}
+                        <div class="flex items-center p-3 bg-purple-50 rounded-lg">
+                            <i class="fas fa-calendar-check text-purple-600 mr-3"></i>
+                            <span class="text-gray-900">Mantenimiento programado</span>
+                        </div>
+                    {% endif %}
+                    
+                    {% if plan.incluye_reporte_mensual %}
+                        <div class="flex items-center p-3 bg-indigo-50 rounded-lg">
+                            <i class="fas fa-chart-bar text-indigo-600 mr-3"></i>
+                            <span class="text-gray-900">Reporte mensual</span>
+                        </div>
+                    {% endif %}
+                    
+                    {% if plan.incluye_soporte_24_7 %}
+                        <div class="flex items-center p-3 bg-emerald-50 rounded-lg">
+                            <i class="fas fa-headset text-emerald-600 mr-3"></i>
+                            <span class="text-gray-900">Soporte 24/7</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Servicios incluidos -->
+        {% if plan.servicios_incluidos.all %}
+            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mt-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-cogs text-cyan-600 mr-3"></i>
+                    Servicios Incluidos en el Plan
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for servicio in plan.servicios_incluidos.all %}
+                        <div class="p-4 bg-gray-50 rounded-xl border border-gray-200 hover:border-cyan-300 hover:bg-cyan-50 transition-all duration-200">
+                            <div class="flex items-center">
+                                <div class="h-10 w-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center mr-3">
+                                    <i class="fas fa-cog text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900">{{ servicio.nombre_servicio }}</p>
+                                    <p class="text-sm text-gray-500">${{ servicio.precio|floatformat:0 }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Suscripciones recientes -->
+        {% if suscripciones %}
+            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mt-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-users text-blue-600 mr-3"></i>
+                    Suscripciones Recientes
+                </h2>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50/80">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Empresa</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehículos</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Inicio</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio Mensual</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for suscripcion in suscripciones %}
+                                <tr class="hover:bg-gray-50/50 transition-colors duration-200">
+                                    <td class="px-4 py-3">
+                                        <div>
+                                            <div class="font-medium text-gray-900">{{ suscripcion.empresa.nombre_empresa }}</div>
+                                            <div class="text-sm text-gray-500">{{ suscripcion.contacto_responsable }}</div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <span class="text-gray-900 font-medium">{{ suscripcion.cantidad_vehiculos }}</span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                            {% if suscripcion.estado == 'activa' %}bg-emerald-100 text-emerald-800
+                                            {% elif suscripcion.estado == 'pausada' %}bg-yellow-100 text-yellow-800
+                                            {% elif suscripcion.estado == 'cancelada' %}bg-red-100 text-red-800
+                                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                            {{ suscripcion.get_estado_display }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-sm text-gray-900">
+                                        {{ suscripcion.fecha_inicio|date:"d/m/Y" }}
+                                    </td>
+                                    <td class="px-4 py-3 text-sm font-semibold text-gray-900">
+                                        ${{ suscripcion.precio_mensual_actual|floatformat:0 }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% if total_suscripciones > 10 %}
+                    <div class="mt-4 text-center">
+                        <a href="{% url 'suscripciones_empresariales_crud' %}" 
+                           class="text-blue-600 hover:text-blue-800 font-medium">
+                            Ver todas las suscripciones ({{ total_suscripciones }})
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

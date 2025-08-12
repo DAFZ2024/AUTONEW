@@ -1,0 +1,178 @@
+{% extends 'base/base_crud.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-pink-50 py-8">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
+            <div class="flex items-center space-x-4 mb-6">
+                <a href="{% url 'servicioscrud' %}" 
+                   class="p-3 bg-gray-100 hover:bg-gray-200 rounded-2xl transition-colors duration-300">
+                    <i class="fas fa-arrow-left text-gray-600"></i>
+                </a>
+                <div class="p-3 bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl shadow-lg">
+                    <i class="fas fa-trash-alt text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
+                        Eliminar Servicio
+                    </h1>
+                    <p class="text-gray-600 mt-1">Esta acción no se puede deshacer</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alerta de peligro -->
+        <div class="bg-red-50 border-l-4 border-red-400 p-6 mb-8 rounded-r-2xl">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-exclamation-triangle text-red-400 text-2xl"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-lg font-medium text-red-800">
+                        ¡Atención! Acción irreversible
+                    </h3>
+                    <div class="mt-2 text-sm text-red-700">
+                        <p>Estás a punto de eliminar permanentemente este servicio. Esta acción:</p>
+                        <ul class="list-disc list-inside mt-2 space-y-1">
+                            <li>Eliminará el servicio del sistema completamente</li>
+                            <li>Removerá todas las asignaciones a empresas</li>
+                            <li>Puede afectar reservas existentes que usen este servicio</li>
+                            <li>No se puede deshacer una vez confirmada</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información del servicio a eliminar -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-info-circle mr-3 text-blue-500"></i>
+                Información del Servicio a Eliminar
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">ID del Servicio</label>
+                        <p class="text-2xl font-bold text-gray-800">#{{ servicio.id_servicio }}</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Nombre del Servicio</label>
+                        <p class="text-xl font-bold text-gray-800">{{ servicio.nombre_servicio }}</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Precio</label>
+                        <p class="text-2xl font-bold text-green-600">${{ servicio.precio|floatformat:0 }}</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Estado</label>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                            <i class="fas fa-check-circle mr-1"></i>
+                            Activo
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 bg-gray-50 rounded-xl p-4">
+                <label class="block text-sm font-semibold text-gray-600 mb-2">Descripción</label>
+                <p class="text-gray-800 leading-relaxed">{{ servicio.descripcion }}</p>
+            </div>
+        </div>
+
+        <!-- Confirmación de eliminación -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-8">
+            <h3 class="text-xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-clipboard-check mr-2 text-red-500"></i>
+                Confirmación de Eliminación
+            </h3>
+            
+            <div class="bg-red-50 rounded-2xl p-6 mb-6">
+                <p class="text-red-800 font-medium text-center text-lg">
+                    ¿Estás completamente seguro de que deseas eliminar el servicio 
+                    <span class="font-bold">"{{ servicio.nombre_servicio }}"</span>?
+                </p>
+            </div>
+
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Checkbox de confirmación -->
+                <div class="flex items-start space-x-3">
+                    <input type="checkbox" id="confirmDelete" required
+                           class="mt-1 h-5 w-5 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                    <label for="confirmDelete" class="text-sm text-gray-700">
+                        <span class="font-semibold">Confirmo que he leído y entendido las consecuencias</span><br>
+                        Entiendo que esta acción eliminará permanentemente el servicio "{{ servicio.nombre_servicio }}" 
+                        y todas sus asignaciones, y que esta acción no se puede deshacer.
+                    </label>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                    <button type="submit" 
+                            class="flex-1 bg-gradient-to-r from-red-600 to-pink-600 text-white font-semibold py-4 px-6 rounded-2xl shadow-lg hover:from-red-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                            id="deleteButton" disabled>
+                        <i class="fas fa-trash-alt mr-2"></i>
+                        SÍ, ELIMINAR SERVICIO
+                    </button>
+                    
+                    <a href="{% url 'servicioscrud' %}" 
+                       class="flex-1 bg-gray-100 text-gray-700 font-semibold py-4 px-6 rounded-2xl shadow-lg hover:bg-gray-200 transform hover:scale-105 transition-all duration-300 text-center">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancelar y Volver
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Alternativas -->
+        <div class="mt-8 bg-blue-50 rounded-2xl border border-blue-200 p-6">
+            <h3 class="text-lg font-bold text-blue-900 mb-4">
+                <i class="fas fa-lightbulb mr-2"></i>
+                ¿Consideraste estas alternativas?
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
+                <div class="flex items-start space-x-2">
+                    <i class="fas fa-edit text-blue-600 mt-1"></i>
+                    <div>
+                        <p class="font-semibold">Editar el servicio</p>
+                        <p>Modifica la información sin eliminarlo</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-2">
+                    <i class="fas fa-eye-slash text-blue-600 mt-1"></i>
+                    <div>
+                        <p class="font-semibold">Desactivar temporalmente</p>
+                        <p>Mantén el servicio pero sin asignaciones</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-3 mt-4">
+                <a href="{% url 'editar_servicio' servicio.id_servicio %}" 
+                   class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-700 rounded-xl hover:bg-blue-200 transition-colors">
+                    <i class="fas fa-edit mr-2"></i>
+                    Editar en su lugar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Habilitar/deshabilitar botón de eliminar basado en checkbox
+document.getElementById('confirmDelete').addEventListener('change', function() {
+    const deleteButton = document.getElementById('deleteButton');
+    deleteButton.disabled = !this.checked;
+});
+</script>
+{% endblock %}

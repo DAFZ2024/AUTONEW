@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <title>Restablecer Contraseña - AUTONEW</title>
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
+</head>
+<body>
+<main class="relative min-h-screen flex items-center justify-center p-4 font-poppins bg-white overflow-x-hidden">
+    <div class="w-full max-w-md mx-auto flex flex-col items-center">
+        <div class="text-center mb-8">
+            <h1 class="text-gray-800 font-bold text-2xl sm:text-3xl mb-3">Restablecer Contraseña</h1>
+            <p class="text-gray-600 text-sm sm:text-base">Ingresa tu nueva contraseña.</p>
+        </div>
+        <form method="post" class="space-y-5 w-full bg-white rounded-2xl shadow-custom p-6 border border-gray-100">
+            {% csrf_token %}
+            {% if form.new_password1.errors %}
+                <ul class="text-red-600 text-sm mb-2">
+                {% for error in form.new_password1.errors %}
+                    <li>{{ error|escape|linebreaksbr|safe|default:"Error en la nueva contraseña." }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            {% if form.new_password2.errors %}
+                <ul class="text-red-600 text-sm mb-2">
+                {% for error in form.new_password2.errors %}
+                    <li>{{ error|escape|linebreaksbr|safe|default:"Error al confirmar la contraseña." }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            <div class="input-group">
+                <input type="password" name="new_password1" placeholder="Nueva contraseña" required autocomplete="new-password" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm bg-white text-gray-800 focus:outline-none focus:border-primary focus:ring-4 focus:ring-blue-100 placeholder-gray-400 smooth-transition">
+            </div>
+            <div class="input-group">
+                <input type="password" name="new_password2" placeholder="Confirmar contraseña" required autocomplete="new-password" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm bg-white text-gray-800 focus:outline-none focus:border-primary focus:ring-4 focus:ring-blue-100 placeholder-gray-400 smooth-transition">
+            </div>
+            <button type="submit" class="w-full px-4 py-3 bg-gradient-primary text-white font-semibold text-sm rounded-lg cursor-pointer transition-all duration-300 mt-3 shadow-button hover:-translate-y-0.5 hover:shadow-button-hover">Restablecer contraseña</button>
+        </form>
+        <div class="text-center mt-6">
+            <a href="/login/" class="text-primary font-medium text-sm hover:text-primary-600 hover:underline">Volver al login</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

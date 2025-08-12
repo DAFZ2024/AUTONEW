@@ -1,0 +1,227 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        padding: 80px 0;
+    }
+
+    .payment-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .payment-header {
+        background: linear-gradient(135deg, #3b82f6, #06b6d4);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .payment-content {
+        padding: 40px;
+    }
+
+    .plan-summary {
+        background: #f8fafc;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .summary-total {
+        border-top: 1px solid #e2e8f0;
+        padding-top: 15px;
+        margin-top: 15px;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+
+    .payment-methods {
+        margin: 30px 0;
+    }
+
+    .method-option {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .method-option:hover {
+        border-color: #3b82f6;
+        background: #f8fafc;
+    }
+
+    .method-option.selected {
+        border-color: #3b82f6;
+        background: #eff6ff;
+    }
+
+    .method-icon {
+        width: 40px;
+        height: 40px;
+        background: #3b82f6;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin-right: 15px;
+    }
+
+    .security-info {
+        background: #ecfdf5;
+        border: 1px solid #10b981;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .security-info h4 {
+        color: #065f46;
+        margin-bottom: 10px;
+    }
+
+    .security-info p {
+        color: #047857;
+        margin: 0;
+    }
+
+    .btn {
+        padding: 16px 24px;
+        border-radius: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        width: 100%;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6, #06b6d4);
+        color: white;
+        margin-top: 20px;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        color: white;
+    }
+
+    .back-btn {
+        display: inline-block;
+        color: #6b7280;
+        text-decoration: none;
+        margin-bottom: 20px;
+        font-weight: 500;
+    }
+
+    .back-btn:hover {
+        color: #3b82f6;
+    }
+</style>
+
+<div class="payment-container">
+    <div class="payment-header">
+        <h1><i class="fas fa-credit-card"></i> Procesar Pago</h1>
+        <p>Completa tu suscripción</p>
+    </div>
+
+    <div class="payment-content">
+        <a href="{% url 'planes' %}" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Volver a planes
+        </a>
+
+        <div class="plan-summary">
+            <h3>Resumen del Plan</h3>
+            <div class="summary-row">
+                <span>Plan:</span>
+                <span>{{ plan.nombre }}</span>
+            </div>
+            <div class="summary-row">
+                <span>Duración:</span>
+                <span>1 mes</span>
+            </div>
+            <div class="summary-row">
+                <span>Servicios incluidos:</span>
+                <span>
+                    {% if plan.cantidad_servicios_mes == 0 %}
+                        Ilimitados
+                    {% else %}
+                        {{ plan.cantidad_servicios_mes }} por mes
+                    {% endif %}
+                </span>
+            </div>
+            <div class="summary-row summary-total">
+                <span>Total a pagar:</span>
+                <span>${{ pago.monto }}</span>
+            </div>
+        </div>
+
+        <div class="payment-methods">
+            <h3>Método de Pago</h3>
+            <div class="method-option selected">
+                <div class="method-icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <div>
+                    <div style="font-weight: 600;">PayU</div>
+                    <div style="color: #64748b; font-size: 0.9rem;">Tarjeta de crédito o débito</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="security-info">
+            <h4><i class="fas fa-shield-alt"></i> Pago Seguro</h4>
+            <p>Tu información está protegida con encriptación SSL de 256 bits. Procesamos los pagos a través de PayU, una plataforma segura y confiable.</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-lock"></i> Procesar Pago - ${{ pago.monto }}
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <p style="color: #64748b; font-size: 0.9rem;">
+                Al procesar el pago, aceptas nuestros 
+                <a href="#" style="color: #3b82f6;">términos y condiciones</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Simular el procesamiento de pago
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const button = this.querySelector('button');
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+        button.disabled = true;
+    });
+</script>
+{% endblock %}

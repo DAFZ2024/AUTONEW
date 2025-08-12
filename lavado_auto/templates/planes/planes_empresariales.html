@@ -1,0 +1,1190 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+    <!-- Header empresarial con paleta suave -->
+    <div class="relative overflow-hidden bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 pt-24 pb-32 text-slate-800">
+        <!-- Background pattern suave -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-200/40 to-slate-200/40 rounded-full blur-3xl opacity-60 animate-pulse"></div>
+            <div class="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-slate-200/40 to-gray-200/40 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 2s;"></div>
+            <div class="absolute top-1/2 left-1/4 w-64 h-64 bg-gradient-to-br from-blue-200/40 to-slate-200/40 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 4s;"></div>
+            <!-- Nuevos elementos decorativos -->
+            <div class="absolute top-1/3 right-1/3 w-32 h-32 bg-gradient-to-br from-purple-200/30 to-blue-200/30 rounded-full blur-2xl opacity-50 animate-pulse" style="animation-delay: 6s;"></div>
+            <div class="absolute bottom-1/3 left-1/2 w-48 h-48 bg-gradient-to-br from-green-200/30 to-blue-200/30 rounded-full blur-2xl opacity-50 animate-pulse" style="animation-delay: 8s;"></div>
+        </div>
+        
+        <div class="container relative z-10 mx-auto max-w-7xl px-4 text-center">
+            <!-- Badge superior suave -->
+            <div class="mb-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-2 text-sm font-semibold text-white shadow-lg">
+                <i class="fas fa-truck text-sm"></i>
+                Soluciones Empresariales Premium
+                <i class="fas fa-star text-yellow-300"></i>
+            </div>
+            
+            <h1 class="mb-6 text-6xl font-black tracking-tight lg:text-7xl animate-fade-in-up">
+                <span class="bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent block">
+                    Planes
+                </span>
+                <span class="bg-gradient-to-r from-blue-600 to-slate-800 bg-clip-text text-transparent block">
+                    Empresariales
+                </span>
+            </h1>
+            <p class="mx-auto max-w-4xl text-xl leading-relaxed text-gray-600 lg:text-2xl animate-fade-in-up" style="animation-delay: 0.2s;">
+                🚛 <strong>Soluciones especializadas</strong> para flotas de vehículos, empresas de transporte y corporaciones con múltiples unidades. 
+                <span class="block mt-2 text-lg text-slate-500">Optimiza tu flota con nuestros servicios profesionales</span>
+            </p>
+            
+            <!-- CTA buttons en header con colores suaves -->
+            <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style="animation-delay: 0.4s;">
+                <a href="#calculadora" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-500 px-8 py-4 font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-500/30 shadow-lg">
+                    <i class="fas fa-calculator"></i>
+                    Calcular Precio Ahora
+                </a>
+                <a href="{% url 'contacto' %}" class="inline-flex items-center gap-2 rounded-full bg-white/80 backdrop-blur-sm px-8 py-4 font-bold text-slate-700 transition-all duration-300 hover:bg-white hover:scale-105 focus:outline-none focus:ring-4 focus:ring-slate-500/30 shadow-lg">
+                    <i class="fas fa-phone"></i>
+                    Hablar con un Experto
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección principal con paleta suave -->
+    <div class="bg-gradient-to-b from-slate-50 via-gray-50 to-blue-50 py-20 relative">
+        <!-- Elementos decorativos de fondo suaves -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+            <div class="absolute top-20 left-10 w-64 h-64 bg-blue-200/20 rounded-full blur-3xl opacity-60"></div>
+            <div class="absolute bottom-20 right-10 w-96 h-96 bg-slate-200/20 rounded-full blur-3xl opacity-60"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-purple-200/15 rounded-full blur-3xl opacity-50"></div>
+        </div>
+        
+        <div class="container mx-auto max-w-7xl px-4 relative z-10">
+            <!-- Calculadora de precios con diseño suave -->
+            <div class="mb-20 rounded-3xl bg-white/90 backdrop-blur-sm p-8 shadow-xl lg:p-12 border border-slate-200/50 relative overflow-hidden" id="calculadora">
+                <!-- Background pattern para la calculadora -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-blue-200/10 to-transparent rounded-full"></div>
+                
+                <div class="mb-12 text-center relative z-10">
+                    <div class="inline-flex items-center gap-2 rounded-full bg-blue-100 px-6 py-2 text-sm font-bold text-blue-600 mb-4 shadow-sm">
+                        <i class="fas fa-calculator"></i>
+                        Herramienta de Cotización
+                    </div>
+                    <h3 class="mb-4 text-4xl font-black bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
+                        Calculadora de Precios para tu Flota
+                    </h3>
+                    <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                        💰 Descubre el costo mensual aproximado para tu cantidad de vehículos y obtén una cotización instantánea
+                    </p>
+                </div>
+                
+                <form class="grid grid-cols-1 gap-8 items-end lg:grid-cols-3" id="priceCalculator">
+                    <div class="space-y-3">
+                        <label for="vehicleCount" class="block text-sm font-bold text-slate-700 flex items-center gap-2">
+                            <i class="fas fa-truck text-blue-500"></i>
+                            Cantidad de Vehículos
+                        </label>
+                        <div class="relative">
+                            <input 
+                                type="number" 
+                                id="vehicleCount" 
+                                min="1" 
+                                max="1000" 
+                                value="10" 
+                                required
+                                class="w-full rounded-2xl border-2 border-slate-200 pl-12 pr-4 py-4 text-lg font-semibold transition-all duration-300 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 bg-white hover:bg-slate-50"
+                                placeholder="Ej: 25"
+                            >
+                            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                <i class="fas fa-hashtag"></i>
+                            </div>
+                        </div>
+                        <div class="text-xs text-slate-500 flex items-center gap-1">
+                            <i class="fas fa-info-circle"></i>
+                            Entre 1 y 1,000 vehículos
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <label for="planType" class="block text-sm font-bold text-slate-700 flex items-center gap-2">
+                            <i class="fas fa-star text-blue-500"></i>
+                            Tipo de Plan
+                        </label>
+                        <div class="relative">
+                            <select 
+                                id="planType" 
+                                required
+                                class="w-full rounded-2xl border-2 border-slate-200 pl-12 pr-4 py-4 text-lg font-semibold transition-all duration-300 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 bg-white hover:bg-slate-50 appearance-none"
+                            >
+                                <option value="">Selecciona tu plan ideal</option>
+                                {% for plan in planes_empresariales %}
+                                    <option value="{{ plan.id_plan }}" 
+                                            data-base="{{ plan.precio_base_mensual }}"
+                                            data-per-vehicle="{{ plan.precio_mensual_por_vehiculo }}"
+                                            data-discount="{{ plan.descuento_volumen }}"
+                                            data-min="{{ plan.vehiculos_minimos }}"
+                                            data-max="{{ plan.vehiculos_maximos|default:'999999' }}">
+                                        {{ plan.nombre }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <button 
+                            type="button" 
+                            onclick="calculatePrice()"
+                            class="w-full transform rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 px-8 py-4 font-black text-white text-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-500/30 relative overflow-hidden group shadow-lg"
+                        >
+                            <div class="absolute inset-0 bg-gradient-to-r from-slate-600 to-slate-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                            <span class="relative z-10 flex items-center justify-center gap-2">
+                                <i class="fas fa-calculator"></i> 
+                                Calcular Precio
+                                <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                            </span>
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-10 hidden rounded-3xl border-l-8 border-blue-500 bg-gradient-to-br from-blue-50 via-slate-50 to-white p-8 animate-fade-in shadow-lg" id="calculatorResults">
+                    <div id="resultContent"></div>
+                </div>
+            </div>
+
+            <!-- Grid de planes empresariales horizontal -->
+            <div class="space-y-8">
+                {% for plan in planes_empresariales %}
+                <div class="group relative transform rounded-3xl bg-white/95 backdrop-blur-md shadow-2xl transition-all duration-700 hover:-translate-y-4 hover:shadow-3xl border {% if plan.tipo == 'premium_flota' %}border-blue-400/60 ring-4 ring-blue-500/30 bg-gradient-to-r from-blue-50/80 to-white{% elif plan.tipo == 'corporativo' %}border-purple-300/60 ring-2 ring-purple-400/20 bg-gradient-to-r from-purple-50/80 to-white{% else %}border-slate-300/60 bg-gradient-to-r from-slate-50/80 to-white{% endif %} overflow-hidden hover:border-opacity-100 relative z-10 min-h-[400px]">
+                    
+                    <!-- Layout horizontal dividido en columnas -->
+                    <div class="flex flex-col lg:flex-row gap-6 p-6 h-full">
+                        <!-- Columna izquierda: Información principal -->
+                        <div class="flex-1 flex flex-col">
+                            <!-- Efectos de fondo mejorados -->
+                            <div class="absolute inset-0 bg-gradient-to-r {% if plan.tipo == 'premium_flota' %}from-blue-600/5 via-blue-400/3 to-transparent{% elif plan.tipo == 'corporativo' %}from-purple-600/5 via-purple-400/3 to-transparent{% else %}from-slate-600/5 via-slate-400/3 to-transparent{% endif %} opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                            <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl {% if plan.tipo == 'premium_flota' %}from-blue-200/20 to-transparent{% elif plan.tipo == 'corporativo' %}from-purple-200/20 to-transparent{% else %}from-slate-200/20 to-transparent{% endif %} rounded-full opacity-0 group-hover:opacity-100 transition-all duration-700 group-hover:scale-110"></div>
+                            
+                            {% if plan.tipo == 'premium_flota' %}
+                            <!-- Badge premium mejorado -->
+                            <div class="absolute -top-6 -right-6 w-28 h-28 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 rounded-full flex items-center justify-center shadow-2xl rotate-12 group-hover:rotate-0 transition-transform duration-700 z-20">
+                                <div class="text-center">
+                                    <i class="fas fa-crown text-yellow-300 text-lg block mb-1 animate-pulse"></i>
+                                    <span class="text-white text-xs font-black">PREMIUM</span>
+                                </div>
+                            </div>
+                            <div class="absolute -top-4 left-4 right-4 text-center z-10">
+                                <div class="inline-block rounded-full bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 px-8 py-3 text-sm font-black text-white tracking-wider shadow-xl animate-pulse">
+                                    ⭐ MÁS POPULAR ⭐
+                                </div>
+                            </div>
+                            {% elif plan.tipo == 'corporativo' %}
+                            <!-- Badge corporativo -->
+                            <div class="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center shadow-xl">
+                                <div class="text-center">
+                                    <i class="fas fa-building text-white text-sm block"></i>
+                                    <span class="text-white text-xs font-bold">CORP</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Encabezado con icono y título -->
+                            <div class="flex items-center gap-6 mb-6 {% if plan.tipo == 'premium_flota' %}mt-8{% endif %} relative z-10">
+                                <!-- Icono más compacto -->
+                                <div class="flex-shrink-0 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br {% if plan.tipo == 'premium_flota' %}from-blue-600 via-blue-500 to-blue-700 shadow-blue-500/30{% elif plan.tipo == 'corporativo' %}from-purple-600 via-purple-500 to-purple-700 shadow-purple-500/30{% else %}from-slate-600 via-slate-500 to-slate-700 shadow-slate-500/30{% endif %} text-3xl text-white shadow-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 relative overflow-hidden">
+                                    <!-- Efecto de brillo interno -->
+                                    <div class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                    <div class="relative z-10">
+                                        {% if plan.tipo == 'basico_flota' %}
+                                            <i class="fas fa-truck drop-shadow-lg"></i>
+                                        {% elif plan.tipo == 'premium_flota' %}
+                                            <i class="fas fa-star drop-shadow-lg"></i>
+                                        {% elif plan.tipo == 'corporativo' %}
+                                            <i class="fas fa-building drop-shadow-lg"></i>
+                                        {% else %}
+                                            <i class="fas fa-bus drop-shadow-lg"></i>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Información del plan -->
+                                <div class="flex-1">
+                                    <h3 class="mb-2 text-3xl font-black text-slate-800 group-hover:text-{% if plan.tipo == 'premium_flota' %}blue-700{% elif plan.tipo == 'corporativo' %}purple-700{% else %}slate-700{% endif %} transition-colors duration-500">{{ plan.nombre }}</h3>
+                                    <p class="text-gray-600 leading-relaxed text-lg mb-3">{{ plan.descripcion }}</p>
+                                    
+                                    <!-- Badge de rango de vehículos en línea -->
+                                    <div class="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r {% if plan.tipo == 'premium_flota' %}from-blue-100/80 via-blue-50 to-blue-100/80 border-blue-300/50{% elif plan.tipo == 'corporativo' %}from-purple-100/80 via-purple-50 to-purple-100/80 border-purple-300/50{% else %}from-slate-100/80 via-slate-50 to-slate-100/80 border-slate-300/50{% endif %} px-4 py-2 border-2">
+                                        <i class="fas fa-car-side {% if plan.tipo == 'premium_flota' %}text-blue-600{% elif plan.tipo == 'corporativo' %}text-purple-600{% else %}text-slate-600{% endif %}"></i>
+                                        <span class="font-black {% if plan.tipo == 'premium_flota' %}text-blue-800{% elif plan.tipo == 'corporativo' %}text-purple-800{% else %}text-slate-800{% endif %} text-sm">
+                                            {% if plan.vehiculos_maximos %}
+                                                {{ plan.vehiculos_minimos }}-{{ plan.vehiculos_maximos }} vehículos
+                                            {% else %}
+                                                {{ plan.vehiculos_minimos }}+ vehículos
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    
+                                    <!-- Indicador de popularidad -->
+                                    {% if plan.tipo == 'premium_flota' %}
+                                    <div class="mt-3">
+                                        <div class="inline-flex items-center gap-2 bg-blue-100 px-4 py-2 rounded-full text-sm text-blue-700 font-bold">
+                                            <i class="fas fa-fire text-orange-500"></i>
+                                            El más elegido
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Columna central: Características -->
+                        <div class="flex-1 min-w-0">
+                            <!-- Lista de características horizontal compacta -->
+                            <div class="mb-6">
+                                <h4 class="text-lg font-black {% if plan.tipo == 'premium_flota' %}text-blue-800{% elif plan.tipo == 'corporativo' %}text-purple-800{% else %}text-slate-800{% endif %} mb-4 flex items-center gap-2">
+                                    <i class="fas fa-list-check"></i>
+                                    Servicios Incluidos
+                                </h4>
+                                <div class="grid grid-cols-1 gap-2">
+                                    <div class="flex items-center gap-3 p-2 rounded-lg {% if plan.tipo == 'premium_flota' %}hover:bg-blue-50{% elif plan.tipo == 'corporativo' %}hover:bg-purple-50{% else %}hover:bg-slate-50{% endif %} transition-all duration-300">
+                                        <span class="flex h-8 w-8 items-center justify-center rounded-full {% if plan.tipo == 'premium_flota' %}bg-blue-500{% elif plan.tipo == 'corporativo' %}bg-purple-500{% else %}bg-slate-500{% endif %} text-xs text-white">
+                                            <i class="fas fa-check font-bold"></i>
+                                        </span>
+                                        <span class="text-gray-800 font-semibold text-sm flex-1">
+                                            {% if plan.servicios_por_vehiculo_mes == 0 %}
+                                                Servicios ilimitados por vehículo
+                                                <span class="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-bold {% if plan.tipo == 'premium_flota' %}bg-blue-100 text-blue-700{% elif plan.tipo == 'corporativo' %}bg-purple-100 text-purple-700{% else %}bg-slate-100 text-slate-700{% endif %}">SIN LÍMITES</span>
+                                            {% else %}
+                                                {{ plan.servicios_por_vehiculo_mes }} servicios por vehículo/mes
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-3 p-2 rounded-lg {% if plan.tipo == 'premium_flota' %}hover:bg-blue-50{% elif plan.tipo == 'corporativo' %}hover:bg-purple-50{% else %}hover:bg-slate-50{% endif %} transition-all duration-300">
+                                        <span class="flex h-8 w-8 items-center justify-center rounded-full {% if plan.incluye_lavado_asientos %}{% if plan.tipo == 'premium_flota' %}bg-blue-500{% elif plan.tipo == 'corporativo' %}bg-purple-500{% else %}bg-slate-500{% endif %}{% else %}bg-gray-400{% endif %} text-xs text-white">
+                                            <i class="fas {% if plan.incluye_lavado_asientos %}fa-check{% else %}fa-times{% endif %} font-bold"></i>
+                                        </span>
+                                        <span class="{% if plan.incluye_lavado_asientos %}text-gray-800{% else %}text-gray-500{% endif %} font-semibold text-sm flex-1">
+                                            Lavado completo de asientos
+                                            {% if plan.incluye_lavado_asientos %}
+                                            <span class="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">INCLUIDO</span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-3 p-2 rounded-lg {% if plan.tipo == 'premium_flota' %}hover:bg-blue-50{% elif plan.tipo == 'corporativo' %}hover:bg-purple-50{% else %}hover:bg-slate-50{% endif %} transition-all duration-300">
+                                        <span class="flex h-8 w-8 items-center justify-center rounded-full {% if plan.incluye_aspirado %}{% if plan.tipo == 'premium_flota' %}bg-blue-500{% elif plan.tipo == 'corporativo' %}bg-purple-500{% else %}bg-slate-500{% endif %}{% else %}bg-gray-400{% endif %} text-xs text-white">
+                                            <i class="fas {% if plan.incluye_aspirado %}fa-check{% else %}fa-times{% endif %} font-bold"></i>
+                                        </span>
+                                        <span class="{% if plan.incluye_aspirado %}text-gray-800{% else %}text-gray-500{% endif %} font-semibold text-sm flex-1">
+                                            Limpieza con aspiradora industrial
+                                            {% if plan.incluye_aspirado %}
+                                            <span class="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">INCLUIDO</span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-3 p-2 rounded-lg {% if plan.tipo == 'premium_flota' %}hover:bg-blue-50{% elif plan.tipo == 'corporativo' %}hover:bg-purple-50{% else %}hover:bg-slate-50{% endif %} transition-all duration-300">
+                                        <span class="flex h-8 w-8 items-center justify-center rounded-full {% if plan.incluye_lavado_exterior %}{% if plan.tipo == 'premium_flota' %}bg-blue-500{% elif plan.tipo == 'corporativo' %}bg-purple-500{% else %}bg-slate-500{% endif %}{% else %}bg-gray-400{% endif %} text-xs text-white">
+                                            <i class="fas {% if plan.incluye_lavado_exterior %}fa-check{% else %}fa-times{% endif %} font-bold"></i>
+                                        </span>
+                                        <span class="{% if plan.incluye_lavado_exterior %}text-gray-800{% else %}text-gray-500{% endif %} font-semibold text-sm flex-1">
+                                            Lavado exterior profesional
+                                            {% if plan.incluye_lavado_exterior %}
+                                            <span class="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">INCLUIDO</span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-3 p-2 rounded-lg {% if plan.tipo == 'premium_flota' %}hover:bg-blue-50{% elif plan.tipo == 'corporativo' %}hover:bg-purple-50{% else %}hover:bg-slate-50{% endif %} transition-all duration-300">
+                                        <span class="flex h-8 w-8 items-center justify-center rounded-full {% if plan.incluye_servicio_domicilio %}{% if plan.tipo == 'premium_flota' %}bg-blue-500{% elif plan.tipo == 'corporativo' %}bg-purple-500{% else %}bg-slate-500{% endif %}{% else %}bg-gray-400{% endif %} text-xs text-white">
+                                            <i class="fas {% if plan.incluye_servicio_domicilio %}fa-check{% else %}fa-times{% endif %} font-bold"></i>
+                                        </span>
+                                        <span class="{% if plan.incluye_servicio_domicilio %}text-gray-800{% else %}text-gray-500{% endif %} font-semibold text-sm flex-1">
+                                            Servicio a domicilio
+                                            {% if plan.incluye_servicio_domicilio %}
+                                            <span class="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">INCLUIDO</span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-3 p-2 rounded-lg {% if plan.tipo == 'premium_flota' %}hover:bg-blue-50{% elif plan.tipo == 'corporativo' %}hover:bg-purple-50{% else %}hover:bg-slate-50{% endif %} transition-all duration-300">
+                                        <span class="flex h-8 w-8 items-center justify-center rounded-full {% if plan.incluye_mantenimiento_programado %}{% if plan.tipo == 'premium_flota' %}bg-blue-500{% elif plan.tipo == 'corporativo' %}bg-purple-500{% else %}bg-slate-500{% endif %}{% else %}bg-gray-400{% endif %} text-xs text-white">
+                                            <i class="fas {% if plan.incluye_mantenimiento_programado %}fa-check{% else %}fa-times{% endif %} font-bold"></i>
+                                        </span>
+                                        <span class="{% if plan.incluye_mantenimiento_programado %}text-gray-800{% else %}text-gray-500{% endif %} font-semibold text-sm flex-1">
+                                            Mantenimiento programado
+                                            {% if plan.incluye_mantenimiento_programado %}
+                                            <span class="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">INCLUIDO</span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-3 p-2 rounded-lg {% if plan.tipo == 'premium_flota' %}hover:bg-blue-50{% elif plan.tipo == 'corporativo' %}hover:bg-purple-50{% else %}hover:bg-slate-50{% endif %} transition-all duration-300">
+                                        <span class="flex h-8 w-8 items-center justify-center rounded-full {% if plan.incluye_reporte_mensual %}{% if plan.tipo == 'premium_flota' %}bg-blue-500{% elif plan.tipo == 'corporativo' %}bg-purple-500{% else %}bg-slate-500{% endif %}{% else %}bg-gray-400{% endif %} text-xs text-white">
+                                            <i class="fas {% if plan.incluye_reporte_mensual %}fa-check{% else %}fa-times{% endif %} font-bold"></i>
+                                        </span>
+                                        <span class="{% if plan.incluye_reporte_mensual %}text-gray-800{% else %}text-gray-500{% endif %} font-semibold text-sm flex-1">
+                                            Reportes mensuales detallados
+                                            {% if plan.incluye_reporte_mensual %}
+                                            <span class="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">INCLUIDO</span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {% if plan.incluye_soporte_24_7 %}
+                            <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 transition-all duration-300 border-2 border-transparent hover:border-green-200">
+                                <span class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-green-500 to-blue-500 text-xs text-white">
+                                    <i class="fas fa-headset"></i>
+                                </span>
+                                <span class="text-gray-800 font-semibold text-sm flex-1">
+                                    Soporte 24/7 dedicado
+                                    <span class="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">PREMIUM</span>
+                                </span>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Columna derecha: Precios y CTA -->
+                        <div class="flex-shrink-0 w-full lg:w-80 flex flex-col justify-between">
+                            <!-- Sección de precios compacta -->
+                            <div class="mb-6 rounded-2xl bg-gradient-to-br {% if plan.tipo == 'premium_flota' %}from-blue-50/90 via-white to-blue-50/90 border-blue-200/60{% elif plan.tipo == 'corporativo' %}from-purple-50/90 via-white to-purple-50/90 border-purple-200/60{% else %}from-slate-50/90 via-white to-slate-50/90 border-slate-200/60{% endif %} p-6 border-2 shadow-inner relative overflow-hidden group-hover:shadow-lg transition-shadow duration-500">
+                                <!-- Efecto de brillo en hover -->
+                                <div class="absolute inset-0 bg-gradient-to-r {% if plan.tipo == 'premium_flota' %}from-blue-300/20 to-transparent{% elif plan.tipo == 'corporativo' %}from-purple-300/20 to-transparent{% else %}from-slate-300/20 to-transparent{% endif %} opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                
+                                <div class="relative z-10 space-y-4">
+                                    {% if plan.precio_base_mensual > 0 %}
+                                    <div class="text-center pb-3 border-b-2 {% if plan.tipo == 'premium_flota' %}border-blue-200{% elif plan.tipo == 'corporativo' %}border-purple-200{% else %}border-slate-200{% endif %}">
+                                        <div class="text-sm text-gray-600 mb-1">Base mensual</div>
+                                        <div class="text-xl font-black {% if plan.tipo == 'premium_flota' %}text-blue-700{% elif plan.tipo == 'corporativo' %}text-purple-700{% else %}text-slate-700{% endif %}">${{ plan.precio_base_mensual }}</div>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <!-- Precio por vehículo destacado -->
+                                    <div class="text-center">
+                                        <div class="text-sm text-gray-600 mb-2 flex items-center justify-center gap-2">
+                                            <i class="fas fa-car {% if plan.tipo == 'premium_flota' %}text-blue-600{% elif plan.tipo == 'corporativo' %}text-purple-600{% else %}text-slate-600{% endif %}"></i>
+                                            Por vehículo/mes
+                                        </div>
+                                        <div class="text-4xl font-black {% if plan.tipo == 'premium_flota' %}text-blue-600{% elif plan.tipo == 'corporativo' %}text-purple-600{% else %}text-slate-600{% endif %} mb-2">${{ plan.precio_mensual_por_vehiculo }}</div>
+                                        <div class="text-sm {% if plan.tipo == 'premium_flota' %}text-blue-500{% elif plan.tipo == 'corporativo' %}text-purple-500{% else %}text-slate-500{% endif %} font-bold">¡Mejor precio garantizado!</div>
+                                    </div>
+                                    
+                                    {% if plan.descuento_volumen > 0 %}
+                                    <div class="text-center bg-gradient-to-r {% if plan.tipo == 'premium_flota' %}from-blue-50 to-blue-100{% elif plan.tipo == 'corporativo' %}from-purple-50 to-purple-100{% else %}from-slate-50 to-slate-100{% endif %} p-4 rounded-xl border-t-2 {% if plan.tipo == 'premium_flota' %}border-blue-200{% elif plan.tipo == 'corporativo' %}border-purple-200{% else %}border-slate-200{% endif %}">
+                                        <div class="text-lg font-black {% if plan.tipo == 'premium_flota' %}text-blue-700{% elif plan.tipo == 'corporativo' %}text-purple-700{% else %}text-slate-700{% endif %}">
+                                            <i class="fas fa-percentage mr-2"></i>{{ plan.descuento_volumen }}% OFF
+                                        </div>
+                                        <div class="text-sm font-semibold {% if plan.tipo == 'premium_flota' %}text-blue-600{% elif plan.tipo == 'corporativo' %}text-purple-600{% else %}text-slate-600{% endif %}">Descuento por volumen</div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Botón CTA -->
+                            <div class="relative group/button">
+                                <a 
+                                    href="{% url 'contacto' %}" 
+                                    class="block w-full transform rounded-2xl bg-gradient-to-r {% if plan.tipo == 'premium_flota' %}from-blue-600 via-blue-500 to-blue-700 hover:from-blue-700 hover:via-blue-600 hover:to-blue-800 focus:ring-blue-500/40 shadow-blue-500/30{% elif plan.tipo == 'corporativo' %}from-purple-600 via-purple-500 to-purple-700 hover:from-purple-700 hover:via-purple-600 hover:to-purple-800 focus:ring-purple-500/40 shadow-purple-500/30{% else %}from-slate-600 via-slate-500 to-slate-700 hover:from-slate-700 hover:via-slate-600 hover:to-slate-800 focus:ring-slate-500/40 shadow-slate-500/30{% endif %} py-4 px-6 text-center font-black text-white text-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl focus:outline-none focus:ring-4 relative overflow-hidden group shadow-xl"
+                                >
+                                    <!-- Efecto de brillo animado -->
+                                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                                    
+                                    <!-- Efecto de resplandor en hover -->
+                                    <div class="absolute inset-0 bg-gradient-to-r {% if plan.tipo == 'premium_flota' %}from-blue-400/20 to-blue-600/20{% elif plan.tipo == 'corporativo' %}from-purple-400/20 to-purple-600/20{% else %}from-slate-400/20 to-slate-600/20{% endif %} opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                    
+                                    <span class="relative z-10 flex items-center justify-center gap-3 group-hover:scale-105 transition-transform duration-300">
+                                        <i class="fas fa-phone-alt text-xl group-hover:animate-pulse"></i> 
+                                        <span class="font-black text-lg">Contactar Ahora</span>
+                                        <i class="fas fa-arrow-right text-xl transform group-hover:translate-x-2 transition-transform duration-300"></i>
+                                    </span>
+                                    
+                                    <!-- Indicador de acción rápida -->
+                                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-ping"></div>
+                                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full"></div>
+                                </a>
+                                
+                                <!-- Texto adicional debajo del botón -->
+                                <div class="mt-3 text-center">
+                                    <p class="text-xs {% if plan.tipo == 'premium_flota' %}text-blue-600{% elif plan.tipo == 'corporativo' %}text-purple-600{% else %}text-slate-600{% endif %} font-semibold flex items-center justify-center gap-1">
+                                        <i class="fas fa-shield-check"></i>
+                                        {% if plan.tipo == 'premium_flota' %}
+                                            Respuesta en 30 minutos
+                                        {% elif plan.tipo == 'corporativo' %}
+                                            Consultoría gratuita incluida
+                                        {% else %}
+                                            Sin compromiso • Respuesta inmediata
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Beneficios empresariales con paleta suave -->
+            <div class="mt-24 rounded-3xl bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 py-24 border-t border-slate-200/50 relative overflow-hidden">
+                <!-- Elementos decorativos suaves -->
+                <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                    <div class="absolute top-10 right-10 w-40 h-40 bg-blue-200/20 rounded-full blur-2xl opacity-60"></div>
+                    <div class="absolute bottom-10 left-10 w-56 h-56 bg-slate-200/20 rounded-full blur-3xl opacity-60"></div>
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-blue-200/10 to-purple-200/10 rounded-full blur-3xl opacity-50"></div>
+                </div>
+                
+                <div class="container mx-auto max-w-7xl px-8 relative z-10">
+                    <div class="mb-20 text-center">
+                        <div class="inline-flex items-center gap-2 rounded-full bg-blue-100 px-8 py-3 text-sm font-bold text-blue-600 mb-6 shadow-sm">
+                            <i class="fas fa-award"></i>
+                            Ventajas Competitivas
+                            <i class="fas fa-star text-blue-500"></i>
+                        </div>
+                        <h2 class="mb-8 text-5xl font-black lg:text-6xl">
+                            <span class="bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
+                                ¿Por qué elegir nuestros 
+                            </span>
+                            <span class="bg-gradient-to-r from-blue-600 to-slate-800 bg-clip-text text-transparent block">
+                                planes empresariales?
+                            </span>
+                        </h2>
+                        <p class="mx-auto max-w-3xl text-xl text-gray-600 leading-relaxed">
+                            🚀 Servicios especializados diseñados específicamente para las necesidades de empresas con flotas vehiculares. 
+                            <strong>Más de 500 empresas confían en nosotros.</strong>
+                        </p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
+                        <div class="group transform text-center transition-all duration-700 hover:-translate-y-4 relative">
+                            <!-- Card background suave -->
+                            <div class="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl group-hover:shadow-2xl transition-shadow duration-300 border border-slate-200/50"></div>
+                            <div class="relative z-10 p-8">
+                                <div class="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-3xl text-white group-hover:scale-110 transition-transform duration-500 shadow-xl">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <h4 class="mb-6 text-2xl font-black text-slate-800">Servicio Programado</h4>
+                                <p class="leading-relaxed text-gray-600 text-lg">
+                                    ⏰ Horarios flexibles adaptados a las operaciones de tu empresa. 
+                                    <strong>Disponible 24/7 según tu necesidad.</strong>
+                                </p>
+                                <div class="mt-6 flex justify-center">
+                                    <div class="flex items-center gap-2 bg-blue-100 px-4 py-2 rounded-full text-sm text-blue-600 font-semibold">
+                                        <i class="fas fa-check-circle"></i>
+                                        Programación inteligente
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="group transform text-center transition-all duration-700 hover:-translate-y-4 relative">
+                            <div class="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl group-hover:shadow-2xl transition-shadow duration-300 border border-slate-200/50"></div>
+                            <div class="relative z-10 p-8">
+                                <div class="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-slate-600 to-slate-700 text-3xl text-white group-hover:scale-110 transition-transform duration-500 shadow-xl">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <h4 class="mb-6 text-2xl font-black text-slate-800">Servicio a Domicilio</h4>
+                                <p class="leading-relaxed text-gray-600 text-lg">
+                                    🚚 Atendemos tu flota directamente en tu base de operaciones. 
+                                    <strong>Sin interrupciones en tu trabajo.</strong>
+                                </p>
+                                <div class="mt-6 flex justify-center">
+                                    <div class="flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full text-sm text-slate-600 font-semibold">
+                                        <i class="fas fa-check-circle"></i>
+                                        Cobertura nacional
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="group transform text-center transition-all duration-700 hover:-translate-y-4 relative">
+                            <div class="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl group-hover:shadow-2xl transition-shadow duration-300 border border-slate-200/50"></div>
+                            <div class="relative z-10 p-8">
+                                <div class="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-purple-600 text-3xl text-white group-hover:scale-110 transition-transform duration-500 shadow-xl">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <h4 class="mb-6 text-2xl font-black text-slate-800">Reportes Detallados</h4>
+                                <p class="leading-relaxed text-gray-600 text-lg">
+                                    📊 Informes mensuales de servicios realizados y costos. 
+                                    <strong>Análisis de ROI y optimización.</strong>
+                                </p>
+                                <div class="mt-6 flex justify-center">
+                                    <div class="flex items-center gap-2 bg-purple-100 px-4 py-2 rounded-full text-sm text-purple-600 font-semibold">
+                                        <i class="fas fa-check-circle"></i>
+                                        Dashboard en tiempo real
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="group transform text-center transition-all duration-700 hover:-translate-y-4 relative">
+                            <div class="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl group-hover:shadow-2xl transition-shadow duration-300 border border-slate-200/50"></div>
+                            <div class="relative z-10 p-8">
+                                <div class="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-slate-600 to-gray-700 text-3xl text-white group-hover:scale-110 transition-transform duration-500 shadow-xl">
+                                    <i class="fas fa-headset"></i>
+                                </div>
+                                <h4 class="mb-6 text-2xl font-black text-slate-800">Soporte Dedicado</h4>
+                                <p class="leading-relaxed text-gray-600 text-lg">
+                                    👨‍💼 Gerente de cuenta dedicado para atender tus necesidades. 
+                                    <strong>Respuesta en menos de 2 horas.</strong>
+                                </p>
+                                <div class="mt-6 flex justify-center">
+                                    <div class="flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full text-sm text-slate-600 font-semibold">
+                                        <i class="fas fa-check-circle"></i>
+                                        Atención personalizada
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="group transform text-center transition-all duration-700 hover:-translate-y-4 relative">
+                            <div class="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl group-hover:shadow-2xl transition-shadow duration-300 border border-slate-200/50"></div>
+                            <div class="relative z-10 p-8">
+                                <div class="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-blue-500 text-3xl text-white group-hover:scale-110 transition-transform duration-500 shadow-xl">
+                                    <i class="fas fa-percentage"></i>
+                                </div>
+                                <h4 class="mb-6 text-2xl font-black text-slate-800">Descuentos por Volumen</h4>
+                                <p class="leading-relaxed text-gray-600 text-lg">
+                                    💰 Mejores precios según la cantidad de vehículos en tu flota. 
+                                    <strong>Hasta 25% de descuento.</strong>
+                                </p>
+                                <div class="mt-6 flex justify-center">
+                                    <div class="flex items-center gap-2 bg-blue-100 px-4 py-2 rounded-full text-sm text-blue-600 font-semibold">
+                                        <i class="fas fa-check-circle"></i>
+                                        Ahorro garantizado
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="group transform text-center transition-all duration-700 hover:-translate-y-4 relative">
+                            <div class="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl group-hover:shadow-2xl transition-shadow duration-300 border border-slate-200/50"></div>
+                            <div class="relative z-10 p-8">
+                                <div class="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-slate-600 to-slate-700 text-3xl text-white group-hover:scale-110 transition-transform duration-500 shadow-xl">
+                                    <i class="fas fa-tools"></i>
+                                </div>
+                                <h4 class="mb-6 text-2xl font-black text-slate-800">Equipos Especializados</h4>
+                                <p class="leading-relaxed text-gray-600 text-lg">
+                                    🔧 Herramientas y productos específicos para vehículos comerciales. 
+                                    <strong>Tecnología de última generación.</strong>
+                                </p>
+                                <div class="mt-6 flex justify-center">
+                                    <div class="flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full text-sm text-slate-600 font-semibold">
+                                        <i class="fas fa-check-circle"></i>
+                                        Equipamiento profesional
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- CTA final con paleta suave -->
+                    <div class="mt-20 text-center">
+                        <div class="bg-gradient-to-r from-slate-800 to-slate-700 rounded-3xl p-12 text-white relative overflow-hidden shadow-2xl">
+                            <div class="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-slate-600/20"></div>
+                            <div class="relative z-10">
+                                <h3 class="text-3xl font-black mb-4">¿Listo para optimizar tu flota?</h3>
+                                <p class="text-xl mb-8 text-slate-200 max-w-2xl mx-auto">
+                                    Únete a más de 500 empresas que ya confían en nuestros servicios profesionales
+                                </p>
+                                <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                                    <a href="{% url 'contacto' %}" class="inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-blue-600 to-blue-500 px-10 py-4 font-black text-white text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-500/30 shadow-lg">
+                                        <i class="fas fa-rocket"></i>
+                                        Comenzar Ahora
+                                        <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                    <a href="tel:+1234567890" class="inline-flex items-center gap-3 rounded-full bg-white/10 backdrop-blur-md px-10 py-4 font-black text-white text-lg transition-all duration-300 hover:bg-white/20 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-white/30">
+                                        <i class="fas fa-phone"></i>
+                                        Llamar Ahora
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculatePrice() {
+            const vehicleCount = parseInt(document.getElementById('vehicleCount').value);
+            const planSelect = document.getElementById('planType');
+            const selectedOption = planSelect.options[planSelect.selectedIndex];
+            
+            if (!selectedOption.value || !vehicleCount) {
+                alert('Por favor, completa todos los campos');
+                return;
+            }
+            
+            const basePrice = parseFloat(selectedOption.dataset.base) || 0;
+            const perVehiclePrice = parseFloat(selectedOption.dataset.perVehicle);
+            const discount = parseFloat(selectedOption.dataset.discount) || 0;
+            const minVehicles = parseInt(selectedOption.dataset.min);
+            const maxVehicles = parseInt(selectedOption.dataset.max);
+            
+            if (vehicleCount < minVehicles) {
+                alert(`Este plan requiere un mínimo de ${minVehicles} vehículos`);
+                return;
+            }
+            
+            if (vehicleCount > maxVehicles && maxVehicles < 999999) {
+                alert(`Este plan acepta máximo ${maxVehicles} vehículos`);
+                return;
+            }
+            
+            let totalPrice = basePrice + (perVehiclePrice * vehicleCount);
+            let originalPrice = totalPrice;
+            
+            if (discount > 0) {
+                const discountAmount = totalPrice * (discount / 100);
+                totalPrice -= discountAmount;
+            }
+            
+            const resultsDiv = document.getElementById('calculatorResults');
+            const resultContent = document.getElementById('resultContent');
+            
+            resultContent.innerHTML = `
+                <h4 class="mb-8 text-3xl font-black text-slate-800 flex items-center gap-3">
+                    <i class="fas fa-calculator text-blue-600"></i> 
+                    Resultado de tu Cotización
+                    <div class="flex items-center gap-1 ml-auto">
+                        <i class="fas fa-star text-blue-400 text-lg"></i>
+                        <i class="fas fa-star text-blue-400 text-lg"></i>
+                        <i class="fas fa-star text-blue-400 text-lg"></i>
+                        <i class="fas fa-star text-blue-400 text-lg"></i>
+                        <i class="fas fa-star text-blue-400 text-lg"></i>
+                    </div>
+                </h4>
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
+                    <div class="text-center rounded-2xl bg-white/90 backdrop-blur-sm p-6 shadow-lg border border-slate-200/50 hover:border-blue-300 transition-colors duration-300">
+                        <div class="text-sm text-gray-500 mb-2 font-semibold uppercase tracking-wide">Plan Seleccionado</div>
+                        <div class="font-black text-slate-800 text-lg">${selectedOption.text}</div>
+                        <i class="fas fa-award text-blue-500 mt-2 text-xl"></i>
+                    </div>
+                    <div class="text-center rounded-2xl bg-white/90 backdrop-blur-sm p-6 shadow-lg border border-slate-200/50 hover:border-blue-300 transition-colors duration-300">
+                        <div class="text-sm text-gray-500 mb-2 font-semibold uppercase tracking-wide">Cantidad de Vehículos</div>
+                        <div class="font-black text-slate-800 text-lg">${vehicleCount}</div>
+                        <i class="fas fa-truck text-blue-500 mt-2 text-xl"></i>
+                    </div>
+                    ${basePrice > 0 ? `
+                    <div class="text-center rounded-2xl bg-white/90 backdrop-blur-sm p-6 shadow-lg border border-slate-200/50 hover:border-purple-300 transition-colors duration-300">
+                        <div class="text-sm text-gray-500 mb-2 font-semibold uppercase tracking-wide">Precio Base</div>
+                        <div class="font-black text-slate-800 text-lg">$${basePrice.toFixed(2)}</div>
+                        <i class="fas fa-tag text-purple-500 mt-2 text-xl"></i>
+                    </div>
+                    ` : ''}
+                    <div class="text-center rounded-2xl bg-white/90 backdrop-blur-sm p-6 shadow-lg border border-slate-200/50 hover:border-slate-300 transition-colors duration-300">
+                        <div class="text-sm text-gray-500 mb-2 font-semibold uppercase tracking-wide">Costo por Vehículo</div>
+                        <div class="font-black text-slate-800 text-lg">$${perVehiclePrice.toFixed(2)}</div>
+                        <i class="fas fa-car text-slate-500 mt-2 text-xl"></i>
+                    </div>
+                    ${discount > 0 ? `
+                    <div class="text-center rounded-2xl bg-blue-50 p-6 shadow-lg border-2 border-blue-200">
+                        <div class="text-sm text-blue-600 mb-2 font-semibold uppercase tracking-wide">🎯 Descuento Aplicado</div>
+                        <div class="font-black text-blue-700 text-lg">${discount}%</div>
+                        <i class="fas fa-percentage text-blue-600 mt-2 text-xl"></i>
+                    </div>
+                    ` : ''}
+                </div>
+                
+                <!-- Total destacado con colores suaves -->
+                <div class="text-center rounded-3xl bg-gradient-to-r from-blue-600 to-blue-500 p-10 text-white shadow-xl ${basePrice > 0 && discount > 0 ? 'md:col-span-3' : basePrice > 0 || discount > 0 ? 'md:col-span-2' : 'md:col-span-3'} relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-slate-500/20"></div>
+                    <div class="relative z-10">
+                        <div class="text-sm opacity-90 mb-2 uppercase tracking-wide font-bold">💰 Total Mensual Estimado</div>
+                        <div class="font-black text-5xl mb-2">$${totalPrice.toFixed(2)}</div>
+                        ${discount > 0 ? `<div class="text-lg opacity-75 line-through">Precio original: $${originalPrice.toFixed(2)}</div>` : ''}
+                        <div class="text-sm opacity-80 mt-4 flex items-center justify-center gap-2">
+                            <i class="fas fa-shield-alt"></i>
+                            Precio garantizado por 12 meses
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Información adicional y CTAs con colores suaves -->
+                <div class="mt-10 space-y-6">
+                    <div class="bg-gradient-to-r from-slate-50 to-blue-50 rounded-2xl p-6 border border-blue-200/50">
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-info-circle text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h5 class="font-bold text-slate-800 mb-2">Información importante:</h5>
+                                <ul class="text-gray-600 space-y-1 text-sm">
+                                    <li class="flex items-center gap-2"><i class="fas fa-check text-blue-500"></i> Este es un cálculo aproximado basado en tarifas estándar</li>
+                                    <li class="flex items-center gap-2"><i class="fas fa-check text-blue-500"></i> El precio final puede variar según servicios adicionales</li>
+                                    <li class="flex items-center gap-2"><i class="fas fa-check text-blue-500"></i> Incluye descuentos por volumen aplicables</li>
+                                    <li class="flex items-center gap-2"><i class="fas fa-check text-blue-500"></i> Sin compromisos de permanencia mínima</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a 
+                            href="{% url 'contacto' %}" 
+                            class="inline-flex items-center justify-center gap-3 transform rounded-2xl bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 px-10 py-4 font-black text-white text-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-500/30 relative overflow-hidden group shadow-lg"
+                        >
+                            <div class="absolute inset-0 bg-gradient-to-r from-slate-600 to-slate-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                            <span class="relative z-10 flex items-center gap-3">
+                                <i class="fas fa-rocket"></i> 
+                                Solicitar Cotización Oficial
+                                <i class="fas fa-arrow-right transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                            </span>
+                        </a>
+                        <button 
+                            onclick="window.print()" 
+                            class="inline-flex items-center justify-center gap-3 transform rounded-2xl bg-slate-100 hover:bg-slate-200 px-10 py-4 font-black text-slate-700 text-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-slate-500/30"
+                        >
+                            <i class="fas fa-print"></i> 
+                            Imprimir Cotización
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            resultsDiv.classList.remove('hidden');
+            resultsDiv.classList.add('block');
+        }
+        
+        // Auto-calcular cuando cambian los valores
+        document.getElementById('vehicleCount').addEventListener('input', function() {
+            if (document.getElementById('planType').value) {
+                calculatePrice();
+            }
+        });
+        
+        document.getElementById('planType').addEventListener('change', function() {
+            if (document.getElementById('vehicleCount').value) {
+                calculatePrice();
+            }
+        });
+    </script>
+
+    <style>
+        /* Animaciones personalizadas mejoradas */
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes bounce-in {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateY(-50px);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05) translateY(-10px);
+            }
+            70% {
+                opacity: 0.9;
+                transform: scale(0.95) translateY(5px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        @keyframes slide-in-left {
+            from {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slide-in-right {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fade-in 0.6s ease-out;
+        }
+        
+        .animate-fade-in-up {
+            animation: fade-in-up 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .animate-bounce-in {
+            animation: bounce-in 0.9s ease-out;
+        }
+        
+        .animate-slide-in-left {
+            animation: slide-in-left 0.7s ease-out;
+        }
+        
+        .animate-slide-in-right {
+            animation: slide-in-right 0.7s ease-out;
+        }
+        
+        .animate-pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        
+        /* Efectos de hover mejorados */
+        .hover-lift {
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Gradientes personalizados */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-border {
+            border: 2px solid transparent;
+            background: linear-gradient(white, white) padding-box,
+                        linear-gradient(135deg, #667eea, #764ba2) border-box;
+        }
+        
+        /* Efectos de resplandor mejorados */
+        .glow-blue {
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+        }
+        
+        .glow-emerald {
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+        }
+        
+        .glow-purple {
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+        }
+        
+        /* Nuevas animaciones para el grid mejorado */
+        @keyframes card-float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+        
+        @keyframes icon-bounce {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+        
+        @keyframes gradient-shift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.8);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.2);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%) skewX(-15deg);
+            }
+            100% {
+                transform: translateX(100%) skewX(-15deg);
+            }
+        }
+        
+        /* Efectos hover avanzados para las cards */
+        .plan-card {
+            position: relative;
+            background-size: 200% 200%;
+            animation: gradient-shift 6s ease infinite;
+        }
+        
+        .plan-card:hover {
+            animation: card-float 2s ease-in-out infinite;
+        }
+        
+        .plan-card:hover .plan-icon {
+            animation: icon-bounce 1s ease-in-out infinite;
+        }
+        
+        /* Efectos de texto mejorados */
+        .gradient-text-blue {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8, #1e40af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% 200%;
+            animation: gradient-shift 3s ease infinite;
+        }
+        
+        .gradient-text-purple {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed, #6d28d9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% 200%;
+            animation: gradient-shift 3s ease infinite;
+        }
+        
+        /* Efectos de brillo para botones */
+        .btn-shine {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-shine::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s;
+        }
+        
+        .btn-shine:hover::before {
+            left: 100%;
+        }
+        
+        /* Efectos de sombra dinámicos */
+        .dynamic-shadow {
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .dynamic-shadow:hover {
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Animaciones de entrada escalonada para las cards */
+        .plan-card {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        .plan-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+        
+        .plan-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .plan-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Efectos de partículas para el plan premium */
+        .premium-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .premium-particles::before,
+        .premium-particles::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(59, 130, 246, 0.6);
+            border-radius: 50%;
+            animation: float-particles 4s ease-in-out infinite;
+        }
+        
+        .premium-particles::before {
+            top: 20%;
+            left: 20%;
+            animation-delay: 0s;
+        }
+        
+        .premium-particles::after {
+            top: 70%;
+            right: 20%;
+            animation-delay: 2s;
+        }
+        
+        @keyframes float-particles {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+                opacity: 0.8;
+            }
+        }
+        
+        /* Mejoras responsivas */
+        @media (max-width: 768px) {
+            .plan-card:hover {
+                transform: translateY(-4px);
+                animation: none;
+            }
+            
+            .animate-fade-in-up {
+                animation-duration: 0.5s;
+            }
+            
+            .hover-lift:hover {
+                transform: translateY(-6px) scale(1.01);
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .plan-card {
+                padding: 1.5rem;
+            }
+            
+            .plan-card:hover {
+                transform: translateY(-2px);
+            }
+        }
+        
+        /* Efectos de loading para contenido dinámico */
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading-skeleton 1.5s infinite;
+        }
+        
+        @keyframes loading-skeleton {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+        
+        /* Mejoras responsivas */
+        @media (max-width: 768px) {
+            .animate-fade-in-up {
+                animation-duration: 0.6s;
+            }
+            
+            .hover-lift:hover {
+                transform: translateY(-6px) scale(1.01);
+            }
+        }
+        
+        /* Efectos de partículas de fondo */
+        .particle-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(2px 2px at 20px 30px, rgba(59, 130, 246, 0.3), transparent),
+                              radial-gradient(2px 2px at 40px 70px, rgba(16, 185, 129, 0.3), transparent),
+                              radial-gradient(1px 1px at 90px 40px, rgba(139, 92, 246, 0.3), transparent);
+            background-repeat: repeat;
+            background-size: 100px 100px;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+        
+        /* Transiciones suaves para todos los elementos interactivos */
+        button, a, input, select {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        /* Indicadores de loading mejorados */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+{% endblock %}

@@ -34,6 +34,14 @@ class AdminCRUDMiddleware(MiddlewareMixin):
                 messages.error(request, 'Debes iniciar sesión como administrador.')
                 return redirect('logincrud')
             
+            # Verificar si el usuario está activo
+            if hasattr(request.user, 'is_active') and not request.user.is_active:
+                print(f"   ❌ Usuario INACTIVO - Cerrando sesión")
+                from django.contrib.auth import logout
+                logout(request)
+                messages.error(request, 'Tu cuenta ha sido desactivada. Contacta al administrador.')
+                return redirect('logincrud')
+            
             # Si está autenticado, verificar rol
             if hasattr(request.user, 'nombre_usuario'):
                 print(f"   👤 Nombre usuario: {request.user.nombre_usuario}")

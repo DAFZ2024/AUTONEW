@@ -1,0 +1,3003 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Reservar Cita{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative bg-gradient-to-br from-slate-50 via-white to-blue-50 pt-20 md:pt-24 pb-16 overflow-hidden">
+    <!-- Partículas de fondo animadas -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="hero-particles"></div>
+    </div>
+
+    <!-- Elementos decorativos de fondo -->
+    <div class="absolute inset-0 overflow-hidden">
+        <!-- Círculos principales -->
+        <div class="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-400/30 to-cyan-300/30 rounded-full blur-3xl opacity-70 animate-float"></div>
+        <div class="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-purple-300/30 to-blue-400/30 rounded-full blur-3xl opacity-70 animate-float-delayed"></div>
+        <div class="absolute top-1/2 left-1/4 w-64 h-64 bg-gradient-to-br from-cyan-300/30 to-teal-300/30 rounded-full blur-3xl opacity-70 animate-float-slow"></div>
+        
+        <!-- Elementos adicionales -->
+        <div class="absolute top-10 right-1/3 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-indigo-400/20 rounded-full blur-2xl opacity-60 animate-bounce-slow"></div>
+        <div class="absolute bottom-32 left-1/3 w-48 h-48 bg-gradient-to-br from-teal-400/20 to-cyan-400/20 rounded-full blur-2xl opacity-60 animate-pulse-slow"></div>
+    </div>
+
+    <!-- Formas geométricas flotantes -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-1/4 right-1/4 w-6 h-6 bg-blue-500/30 rounded-full animate-float-up"></div>
+        <div class="absolute top-3/4 left-1/3 w-4 h-4 bg-cyan-500/40 rounded-full animate-float-up" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/3 left-1/4 w-3 h-3 bg-indigo-500/30 rounded-full animate-float-up" style="animation-delay: 4s;"></div>
+        <div class="absolute bottom-1/4 right-1/3 w-5 h-5 bg-teal-500/35 rounded-full animate-float-up" style="animation-delay: 6s;"></div>
+    </div>
+
+    <!-- Contenido principal del hero -->
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="text-center max-w-4xl mx-auto">
+            <div class="animate-fadeInUp">
+                <span class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 text-white text-sm font-semibold rounded-full uppercase tracking-wider mb-6 shadow-lg">
+                    <i class="fas fa-calendar-check mr-2"></i>
+                    Reserva Fácil
+                </span>
+            </div>
+            
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 animate-fadeInUp" style="animation-delay: 0.2s;">
+                <span class="bg-gradient-to-r from-slate-800 via-blue-700 to-cyan-600 bg-clip-text text-transparent block">
+                    Reserva tu Cita de
+                </span>
+                <span class="bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent block">
+                    Lavado Premium
+                </span>
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed animate-fadeInUp max-w-3xl mx-auto" style="animation-delay: 0.4s;">
+                Programa tu cita en minutos con nuestro sistema de reservas inteligente. 
+                <span class="font-semibold text-blue-600">Elige tu punto de lavado</span>, 
+                <span class="font-semibold text-cyan-600">selecciona servicios</span> y 
+                <span class="font-semibold text-teal-600">confirma tu horario</span>
+            </p>
+            
+            <!-- Características del proceso -->
+            <div class="flex flex-wrap gap-8 justify-center mb-8 animate-fadeInUp" style="animation-delay: 0.5s;">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                        <i class="fas fa-map-marker-alt text-2xl text-white"></i>
+                    </div>
+                    <div class="text-lg font-bold text-blue-600">Ubicación</div>
+                    <div class="text-sm text-gray-500">Encuentra el punto más cercano</div>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                        <i class="fas fa-cut text-2xl text-white"></i>
+                    </div>
+                    <div class="text-lg font-bold text-cyan-600">Servicios</div>
+                    <div class="text-sm text-gray-500">Elige lo que necesitas</div>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                        <i class="fas fa-calendar-alt text-2xl text-white"></i>
+                    </div>
+                    <div class="text-lg font-bold text-teal-600">Fecha & Hora</div>
+                    <div class="text-sm text-gray-500">Selecciona tu horario ideal</div>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                        <i class="fas fa-check-circle text-2xl text-white"></i>
+                    </div>
+                    <div class="text-lg font-bold text-green-600">Confirmar</div>
+                    <div class="text-sm text-gray-500">Finaliza tu reserva</div>
+                </div>
+            </div>
+
+            <!-- Scroll indicator -->
+            <div class="animate-bounce mt-8">
+                <div class="flex flex-col items-center text-gray-400">
+                    <span class="text-sm mb-2">Comienza tu reserva</span>
+                    <i class="fas fa-chevron-down text-2xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Sección del Formulario de Reserva -->
+<div class="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 min-h-screen py-16 relative">
+    <!-- Elementos decorativos de fondo -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-blue-400/20 to-purple-300/20 rounded-full blur-3xl opacity-60 animate-pulse"></div>
+        <div class="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-br from-cyan-300/15 to-teal-400/15 rounded-full blur-3xl opacity-70 animate-float"></div>
+    </div>
+
+    <!-- Título de la sección -->
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 max-w-7xl mb-12">
+        <div class="text-center">
+            <h2 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-slate-800 via-blue-700 to-cyan-600 bg-clip-text text-transparent mb-4">
+                Completa tu Reserva
+            </h2>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                Sigue estos pasos para programar tu cita de lavado automotriz
+            </p>
+        </div>
+    </div>
+    
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 max-w-8xl">
+        <div class="grid grid-cols-1 xl:grid-cols-7 gap-6 lg:gap-8 xl:gap-10">
+            
+            <!-- Columna del Formulario (Izquierda) -->
+            <div class="xl:col-span-5 bg-white/95 backdrop-blur-sm p-6 sm:p-8 lg:p-10 rounded-3xl shadow-2xl border border-white/60 animate-fadeInUp relative">
+                <!-- Borde decorativo -->
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-cyan-500/5 rounded-3xl"></div>
+                <div class="relative z-10">
+                
+                <!-- Indicador de Pasos -->
+                <div id="progress-bar" class="flex items-center justify-between mb-8 lg:mb-10 p-4 lg:p-6 bg-gradient-to-r from-gray-50 to-blue-50/50 rounded-2xl shadow-inner border">
+                    <div class="step active" data-step="1">
+                        <div class="step-icon bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg transform hover:scale-110 transition-all duration-300 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center">
+                            <i class="fas fa-store text-white text-sm sm:text-base"></i>
+                        </div>
+                        <p class="step-label font-semibold text-gray-700 text-xs sm:text-sm lg:text-base mt-2 text-center">Ubicación</p>
+                    </div>
+                    <div class="step-connector bg-gradient-to-r from-gray-300 to-gray-400 h-0.5 sm:h-1 rounded-full flex-1 mx-2 sm:mx-3"></div>
+                    <div class="step" data-step="2">
+                        <div class="step-icon bg-gradient-to-br from-cyan-500 to-cyan-600 shadow-lg transform hover:scale-110 transition-all duration-300 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center">
+                            <i class="fas fa-cut text-white text-sm sm:text-base"></i>
+                        </div>
+                        <p class="step-label font-semibold text-gray-700 text-xs sm:text-sm lg:text-base mt-2 text-center">Servicios</p>
+                    </div>
+                    <div class="step-connector bg-gradient-to-r from-gray-300 to-gray-400 h-0.5 sm:h-1 rounded-full flex-1 mx-2 sm:mx-3"></div>
+                    <div class="step" data-step="3">
+                        <div class="step-icon bg-gradient-to-br from-teal-500 to-teal-600 shadow-lg transform hover:scale-110 transition-all duration-300 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center">
+                            <i class="fas fa-calendar-alt text-white text-sm sm:text-base"></i>
+                        </div>
+                        <p class="step-label font-semibold text-gray-700 text-xs sm:text-sm lg:text-base mt-2 text-center">Fecha y Hora</p>
+                    </div>
+                    <div class="step-connector bg-gradient-to-r from-gray-300 to-gray-400 h-0.5 sm:h-1 rounded-full flex-1 mx-2 sm:mx-3"></div>
+                    <div class="step" data-step="4">
+                        <div class="step-icon bg-gradient-to-br from-green-500 to-green-600 shadow-lg transform hover:scale-110 transition-all duration-300 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center">
+                            <i class="fas fa-check text-white text-sm sm:text-base"></i>
+                        </div>
+                        <p class="step-label font-semibold text-gray-700 text-xs sm:text-sm lg:text-base mt-2 text-center">Confirmar</p>
+                    </div>
+                </div>
+
+                <form id="reservationForm" method="post" action="{% url 'reservas' %}" class="space-y-6 lg:space-y-8 modern-form">
+                    {% csrf_token %}
+                    
+                    <!-- PASO 1: SELECCIÓN DE EMPRESA -->
+                    <div id="step-1" class="form-step bg-gradient-to-br from-blue-50/50 to-cyan-50/30 p-6 lg:p-8 rounded-2xl border border-blue-100/50 shadow-sm" data-step="1">
+                        <div class="flex items-center mb-4 lg:mb-6">
+                            <div class="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3 lg:mr-4 shadow-lg">
+                                <i class="fas fa-store text-white text-sm lg:text-lg"></i>
+                            </div>
+                            <h2 class="text-xl lg:text-2xl font-bold text-gray-800">Elige un Punto de Lavado</h2>
+                        </div>
+                        
+                        <div class="enhanced-select mt-4">
+                            <label for="id_empresa" class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                                <i class="fas fa-map-marker-alt text-blue-500 mr-2"></i>
+                                Punto de Lavado Preferido
+                            </label>
+                            
+                            <!-- Botón de búsqueda por ubicación -->
+                            <div class="mb-4 flex flex-col sm:flex-row gap-3">
+                                <button type="button" id="btn-buscar-cercanos" class="flex-1 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 text-white py-3 px-4 lg:px-6 rounded-xl hover:from-purple-700 hover:via-blue-700 hover:to-indigo-700 transition-all duration-300 flex items-center justify-center shadow-lg transform hover:scale-105 text-sm lg:text-base">
+                                    <i class="fas fa-map-marker-alt mr-2"></i>
+                                    <span>Buscar Puntos Cercanos</span>
+                                    <div id="gps-loading" class="hidden ml-2">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                    </div>
+                                </button>
+                                <button type="button" id="btn-mostrar-todos" class="hidden bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 px-4 lg:px-6 rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all duration-300 flex items-center justify-center shadow-lg text-sm lg:text-base">
+                                    <i class="fas fa-list mr-2"></i>
+                                    Mostrar Todos
+                                </button>
+                            </div>
+
+                            <!-- Mensaje de ubicación -->
+                            <div id="ubicacion-mensaje" class="hidden mb-4 p-3 lg:p-4 rounded-xl border shadow-sm">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-info-circle text-lg"></i>
+                                    <span class="text-sm font-medium"></span>
+                                </div>
+                            </div>
+
+                            <div class="relative">
+                                <!-- Select moderno con estilo personalizado -->
+                                <div class="modern-select-container relative">
+                                    <!-- Input visual personalizado -->
+                                    <div id="select-display" class="modern-select-display w-full p-4 lg:p-5 pr-12 text-sm lg:text-base border-2 border-gray-200 rounded-xl focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-300 bg-white shadow-sm hover:shadow-md cursor-pointer group">
+                                        <div class="flex items-center gap-3">
+                                            <div class="select-icon w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center shadow-md group-hover:from-blue-600 group-hover:to-cyan-600 transition-all duration-300">
+                                                <i class="fas fa-store text-white text-sm lg:text-base"></i>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="select-label text-xs lg:text-sm text-gray-500 font-medium uppercase tracking-wide">Punto de Lavado</div>
+                                                <div id="select-text" class="select-value text-gray-700 font-semibold truncate">Selecciona una ubicación</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Icono de flecha mejorado -->
+                                        <div class="absolute top-1/2 right-4 -translate-y-1/2 pointer-events-none">
+                                            <div class="w-6 h-6 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center group-hover:from-blue-500 group-hover:to-cyan-500 transition-all duration-300">
+                                                <i id="select-arrow" class="fas fa-chevron-down text-white text-xs transform transition-transform duration-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Dropdown personalizado -->
+                                    <div id="select-dropdown" class="modern-select-dropdown absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-2xl z-[99999] max-h-80 overflow-hidden hidden">
+                                        <!-- Header del dropdown -->
+                                        <div class="bg-gradient-to-r from-blue-50 to-cyan-50 p-3 lg:p-4 border-b border-gray-200">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center gap-2">
+                                                    <i class="fas fa-map-marker-alt text-blue-600"></i>
+                                                    <span class="text-sm lg:text-base font-semibold text-gray-800">Puntos de Lavado Disponibles</span>
+                                                </div>
+                                                <span id="empresas-count" class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium">{{ empresas|length }} ubicaciones</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Lista de opciones -->
+                                        <div class="select-options max-h-64 overflow-y-auto">
+                                            <!-- Opción por defecto -->
+                                            <div class="select-option p-3 lg:p-4 hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 cursor-pointer transition-all duration-200 border-b border-gray-100 last:border-b-0" data-value="">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center shadow-sm">
+                                                        <i class="fas fa-search text-white text-sm"></i>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <div class="font-medium text-gray-700">Seleccionar punto de lavado</div>
+                                                        <div class="text-xs text-gray-500 mt-1">Elige una ubicación para continuar</div>
+                                                    </div>
+                                                    <!-- Indicador de selección (oculto para opción por defecto) -->
+                                                    <div class="select-check hidden w-5 h-5 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+                                                        <i class="fas fa-check text-white text-xs"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Opciones de empresas -->
+                                            {% for empresa in empresas %}
+                                            <div class="select-option p-3 lg:p-4 hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 cursor-pointer transition-all duration-200 border-b border-gray-100 last:border-b-0" 
+                                                 data-value="{{ empresa.id_empresa }}" 
+                                                 data-nombre="{{ empresa.nombre_empresa }}" 
+                                                 data-direccion="{{ empresa.direccion }}" 
+                                                 data-telefono="{{ empresa.telefono }}">
+                                                <div class="flex items-start gap-3">
+                                                    <div class="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
+                                                        <i class="fas fa-store text-white text-sm"></i>
+                                                    </div>
+                                                    <div class="flex-1 min-w-0">
+                                                        <div class="font-semibold text-gray-800 text-sm lg:text-base truncate">{{ empresa.nombre_empresa }}</div>
+                                                        <div class="flex items-center text-xs lg:text-sm text-gray-600 mt-1">
+                                                            <i class="fas fa-map-marker-alt text-red-500 mr-1 flex-shrink-0"></i>
+                                                            <span class="truncate">{{ empresa.direccion }}</span>
+                                                        </div>
+                                                        {% if empresa.telefono %}
+                                                        <div class="flex items-center text-xs text-gray-500 mt-1">
+                                                            <i class="fas fa-phone text-green-500 mr-1 flex-shrink-0"></i>
+                                                            <span>{{ empresa.telefono }}</span>
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <!-- Indicador de selección -->
+                                                    <div class="select-check hidden w-5 h-5 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+                                                        <i class="fas fa-check text-white text-xs"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Select nativo oculto para compatibilidad -->
+                                    <select name="empresa" id="id_empresa" class="hidden" required>
+                                        <option value="">Selecciona un punto de lavado</option>
+                                        {% for empresa in empresas %}
+                                            <option value="{{ empresa.id_empresa }}" data-nombre="{{ empresa.nombre_empresa }}" data-direccion="{{ empresa.direccion }}" data-telefono="{{ empresa.telefono }}">
+                                                {{ empresa.nombre_empresa }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información Detallada del Punto de Lavado -->
+                        <div id="empresa-detalles" class="hidden mt-6 lg:mt-8 p-4 lg:p-6 bg-gradient-to-br from-blue-50/80 to-cyan-50/60 rounded-2xl border border-blue-200/50 shadow-lg backdrop-blur-sm">
+                            <h3 class="text-lg lg:text-xl font-bold text-blue-800 mb-4 lg:mb-5 flex items-center">
+                                <div class="w-6 h-6 lg:w-7 lg:h-7 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-2 lg:mr-3 shadow-md">
+                                    <i class="fas fa-store-alt text-white text-xs lg:text-sm"></i>
+                                </div>
+                                Información del Punto de Lavado
+                            </h3>
+                            
+                            <!-- Header con información básica -->
+                            <div class="bg-white/90 backdrop-blur-sm p-4 lg:p-5 rounded-xl border border-white/60 shadow-md mb-4 lg:mb-5">
+                                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4">
+                                    <div class="flex-1">
+                                        <h4 class="text-lg lg:text-xl font-bold text-gray-800 mb-1" id="detalle-nombre">-</h4>
+                                        <div class="flex items-center text-sm lg:text-base text-gray-600 mb-2">
+                                            <i class="fas fa-map-marker-alt text-red-500 mr-2 flex-shrink-0"></i>
+                                            <span class="break-words" id="detalle-direccion">-</span>
+                                        </div>
+                                        <div class="flex items-center text-sm lg:text-base text-gray-600" id="detalle-telefono-container">
+                                            <i class="fas fa-phone text-green-500 mr-2 flex-shrink-0"></i>
+                                            <span id="detalle-telefono">-</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Botones de Acción Compactos -->
+                                    <div class="flex gap-2 lg:gap-3 lg:flex-col lg:min-w-[120px]">
+                                        <button type="button" id="btn-ver-mapa" class="flex-1 lg:flex-none bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2 px-3 lg:px-4 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center justify-center shadow-md transform hover:scale-105 text-xs lg:text-sm">
+                                            <i class="fas fa-map-marked-alt mr-1 lg:mr-2"></i>
+                                            <span class="hidden sm:inline">Ver Mapa</span>
+                                            <span class="sm:hidden">Mapa</span>
+                                        </button>
+                                        <button type="button" id="btn-llamar" class="flex-1 lg:flex-none bg-gradient-to-r from-green-600 to-green-700 text-white py-2 px-3 lg:px-4 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-300 flex items-center justify-center shadow-md transform hover:scale-105 hidden text-xs lg:text-sm">
+                                            <i class="fas fa-phone mr-1 lg:mr-2"></i>
+                                            <span class="hidden sm:inline">Llamar</span>
+                                            <span class="sm:hidden">Tel</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Grid con servicios y mapa lado a lado -->
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5">
+                                <!-- Servicios Disponibles -->
+                                <div class="lg:col-span-1 bg-white/90 backdrop-blur-sm rounded-xl border border-white/60 shadow-md overflow-hidden">
+                                    <div class="bg-gradient-to-r from-cyan-100/80 to-teal-100/80 p-3 lg:p-4 border-b border-gray-200/50">
+                                        <h4 class="font-semibold text-gray-800 flex items-center text-sm lg:text-base">
+                                            <i class="fas fa-cut text-cyan-600 mr-2 text-sm lg:text-base"></i>
+                                            Servicios Disponibles
+                                        </h4>
+                                    </div>
+                                    <div id="servicios-disponibles-container" class="p-3 lg:p-4 max-h-48 lg:max-h-56 overflow-y-auto">
+                                        <div id="servicios-placeholder" class="text-center text-gray-500 py-4 lg:py-6">
+                                            <div class="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-cyan-400 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-2 lg:mb-3 shadow-md">
+                                                <i class="fas fa-spinner fa-spin text-white text-sm lg:text-base"></i>
+                                            </div>
+                                            <p class="font-medium text-xs lg:text-sm">Cargando servicios...</p>
+                                        </div>
+                                        <div id="servicios-lista" class="hidden space-y-2">
+                                            <!-- Los servicios se cargarán aquí -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Mapa -->
+                                <div class="lg:col-span-2 bg-white/90 backdrop-blur-sm rounded-xl border border-white/60 shadow-md overflow-hidden">
+                                    <div class="bg-gradient-to-r from-red-100/80 to-pink-100/80 p-3 lg:p-4 border-b border-gray-200/50">
+                                        <h4 class="font-semibold text-gray-800 flex items-center text-sm lg:text-base">
+                                            <i class="fas fa-map text-red-600 mr-2 text-sm lg:text-base"></i>
+                                            Ubicación
+                                        </h4>
+                                    </div>
+                                    <div id="mapa-container" class="relative h-48 lg:h-56">
+                                        <div id="mapa-placeholder" class="h-full flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50/30 text-gray-500">
+                                            <div class="text-center px-4">
+                                                <div class="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-red-400 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-2 lg:mb-3 shadow-md">
+                                                    <i class="fas fa-map-marked-alt text-white text-sm lg:text-lg"></i>
+                                                </div>
+                                                <p class="font-medium text-xs lg:text-sm">Mapa de ubicación</p>
+                                            </div>
+                                        </div>
+                                        <iframe id="mapa-iframe" class="w-full h-full hidden" frameborder="0" style="border:0" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PASO 2: SELECCIÓN DE SERVICIOS -->
+                    <div id="step-2" class="form-step hidden bg-gradient-to-br from-cyan-50/50 to-teal-50/30 p-6 lg:p-8 rounded-2xl border border-cyan-100/50 shadow-sm" data-step="2">
+                        <div class="flex items-center mb-4 lg:mb-6">
+                            <div class="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-full flex items-center justify-center mr-3 lg:mr-4 shadow-lg">
+                                <i class="fas fa-cut text-white text-sm lg:text-lg"></i>
+                            </div>
+                            <h2 class="text-xl lg:text-2xl font-bold text-gray-800">Selecciona los Servicios</h2>
+                        </div>
+                        <div id="servicios-container" class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 max-h-96 lg:max-h-[450px] overflow-y-auto p-3 lg:p-4 rounded-xl bg-gradient-to-br from-white/80 to-gray-50/60 border border-gray-200/50 shadow-inner backdrop-blur-sm">
+                            <!-- Los servicios se cargarán aquí dinámicamente -->
+                        </div>
+                    </div>
+
+                    <!-- PASO 3: FECHA Y HORA -->
+                    <div id="step-3" class="form-step hidden bg-gradient-to-br from-teal-50/50 to-green-50/30 p-6 lg:p-8 rounded-2xl border border-teal-100/50 shadow-sm" data-step="3">
+                        <div class="flex items-center mb-4 lg:mb-6">
+                            <div class="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center mr-3 lg:mr-4 shadow-lg">
+                                <i class="fas fa-calendar-alt text-white text-sm lg:text-lg"></i>
+                            </div>
+                            <h2 class="text-xl lg:text-2xl font-bold text-gray-800">Elige Fecha y Hora</h2>
+                        </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+                            <div class="enhanced-select">
+                                <label for="fecha" class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                                    <i class="fas fa-calendar text-teal-500 mr-2"></i>
+                                    Fecha de la Cita
+                                </label>
+                                
+                                <!-- Contenedor del calendario mejorado -->
+                                <div class="relative">
+                                    <input type="date" name="fecha" id="fecha" class="w-full p-4 lg:p-5 text-sm lg:text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-300 bg-white shadow-sm hover:shadow-md date-input-enhanced">
+                                    
+                                    <!-- Indicador visual de fecha seleccionada -->
+                                    <div id="fecha-preview" class="hidden mt-3 p-3 bg-gradient-to-r from-teal-50 to-green-50 rounded-lg border border-teal-200">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center">
+                                                <div class="w-8 h-8 bg-gradient-to-br from-teal-500 to-green-500 rounded-full flex items-center justify-center mr-3">
+                                                    <i class="fas fa-check text-white text-sm"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-semibold text-gray-700">Fecha seleccionada:</p>
+                                                    <p id="fecha-preview-text" class="text-lg font-bold text-teal-700"></p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <p id="fecha-dia-semana" class="text-sm text-gray-600 font-medium"></p>
+                                                <p id="fecha-dias-restantes" class="text-xs text-gray-500"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Sugerencias de fechas rápidas -->
+                                    <div class="mt-4">
+                                        <p class="text-xs font-semibold text-gray-600 mb-2 flex items-center">
+                                            <i class="fas fa-bolt text-yellow-500 mr-1"></i>
+                                            Fechas sugeridas:
+                                        </p>
+                                        <div class="flex flex-wrap gap-2">
+                                            <button type="button" class="fecha-sugerida bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 shadow-sm" data-dias="0">
+                                                Hoy
+                                            </button>
+                                            <button type="button" class="fecha-sugerida bg-gradient-to-r from-purple-500 to-purple-600 text-white px-3 py-1.5 rounded-full text-xs font-medium hover:from-purple-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-sm" data-dias="1">
+                                                Mañana
+                                            </button>
+                                            <button type="button" class="fecha-sugerida bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1.5 rounded-full text-xs font-medium hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-105 shadow-sm" data-dias="2">
+                                                Pasado mañana
+                                            </button>
+                                            <button type="button" class="fecha-sugerida bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 py-1.5 rounded-full text-xs font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-300 transform hover:scale-105 shadow-sm" data-dias="7">
+                                                Próxima semana
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="enhanced-select">
+                                <label for="hora" class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                                    <i class="fas fa-clock text-teal-500 mr-2"></i>
+                                    Hora Preferida
+                                </label>
+                                <div class="relative">
+                                    <select name="hora" id="hora" disabled class="w-full p-4 lg:p-5 pr-12 text-sm lg:text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-300 appearance-none disabled:bg-gray-100 bg-white shadow-sm hover:shadow-md">
+                                        <option value="">⏰ Primero selecciona una fecha</option>
+                                    </select>
+                                    <i class="fas fa-chevron-down absolute top-1/2 right-4 -translate-y-1/2 text-gray-400 transition-transform pointer-events-none"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PASO 4: CONFIRMACIÓN -->
+                    <div id="step-4" class="form-step hidden bg-gradient-to-br from-green-50/50 to-emerald-50/30 p-6 lg:p-8 rounded-2xl border border-green-100/50 shadow-sm" data-step="4">
+                        <div class="flex items-center mb-4 lg:mb-6">
+                            <div class="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mr-3 lg:mr-4 shadow-lg">
+                                <i class="fas fa-check text-white text-sm lg:text-lg"></i>
+                            </div>
+                            <h2 class="text-xl lg:text-2xl font-bold text-gray-800">Confirma tu Reserva</h2>
+                        </div>
+                        <div id="resumen-reserva" class="space-y-4 lg:space-y-6 bg-gradient-to-br from-white/80 to-gray-50/60 p-6 lg:p-8 rounded-xl border border-gray-200/50 shadow-inner backdrop-blur-sm">
+                            <!-- El resumen se generará aquí -->
+                        </div>
+                    </div>
+
+                    <!-- Botones de Navegación -->
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 lg:pt-8 mt-8 lg:mt-10 border-t-2 border-gray-200">
+                        <button type="button" id="btn-prev" class="w-full sm:w-auto group bg-gradient-to-r from-gray-300 to-gray-400 text-gray-700 font-bold py-3 lg:py-4 px-6 lg:px-8 rounded-xl hover:from-gray-400 hover:to-gray-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transform hover:scale-105 flex items-center justify-center text-sm lg:text-base">
+                            <i class="fas fa-arrow-left mr-2 lg:mr-3 group-hover:-translate-x-1 transition-transform"></i> 
+                            <span>Anterior</span>
+                        </button>
+                        <button type="button" id="btn-next" class="w-full sm:w-auto group bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-700 text-white font-bold py-3 lg:py-4 px-6 lg:px-8 rounded-xl hover:from-blue-700 hover:via-cyan-700 hover:to-blue-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transform hover:scale-105 flex items-center justify-center text-sm lg:text-base">
+                            <span>Siguiente</span>
+                            <i class="fas fa-arrow-right ml-2 lg:ml-3 group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                        <button type="submit" id="btn-submit" class="hidden w-full sm:w-auto group bg-gradient-to-r from-green-600 via-emerald-600 to-green-700 text-white font-bold py-3 lg:py-4 px-8 lg:px-10 rounded-xl hover:from-green-700 hover:via-emerald-700 hover:to-green-800 transition-all duration-300 shadow-xl transform hover:scale-105 flex items-center justify-center text-sm lg:text-base">
+                            <i class="fas fa-calendar-check mr-2 lg:mr-3 group-hover:rotate-12 transition-transform"></i> 
+                            <span>Confirmar Reserva</span>
+                        </button>
+                    </div>
+                </form>
+                </div>
+            </div>
+
+            <!-- Columna de Información (Derecha) -->
+            <div class="xl:col-span-2 bg-white/95 backdrop-blur-sm p-3 sm:p-4 lg:p-5 rounded-2xl shadow-xl border border-white/60 animate-fadeInUp relative overflow-hidden" style="animation-delay: 0.2s;">
+                <!-- Borde decorativo -->
+                <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-blue-500/5 to-purple-500/5 rounded-2xl"></div>
+                <div class="relative z-10">
+                
+                <div class="flex items-center mb-3 lg:mb-4 pb-2 lg:pb-3 border-b border-gray-200">
+                    <div class="w-6 h-6 lg:w-8 lg:h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-2 lg:mr-3 shadow-md">
+                        <i class="fas fa-clipboard-list text-white text-xs lg:text-sm"></i>
+                    </div>
+                    <h3 class="text-sm lg:text-lg font-bold text-gray-800">Resumen</h3>
+                </div>
+                
+                <div class="space-y-3 lg:space-y-4">
+                    <!-- Información de la Empresa -->
+                    <div class="info-card bg-gradient-to-r from-blue-50/80 to-cyan-50/60 p-2 lg:p-3 rounded-lg border border-blue-200/50 shadow-sm">
+                        <div class="flex items-start">
+                            <div class="info-icon bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-md w-6 h-6 lg:w-8 lg:h-8 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-store text-xs lg:text-sm"></i>
+                            </div>
+                            <div class="flex-1 ml-2 lg:ml-3 min-w-0">
+                                <p class="font-semibold text-gray-700 mb-1 lg:mb-2 text-xs uppercase tracking-wide">Punto de Lavado</p>
+                                <p id="empresa_nombre" class="text-gray-800 font-bold text-sm lg:text-base mb-1 break-words">No seleccionado</p>
+                                <div class="space-y-1">
+                                    <p id="empresa_direccion" class="text-xs text-gray-600 flex items-start">
+                                        <i class="fas fa-map-marker-alt text-red-500 mr-1 lg:mr-2 text-xs mt-0.5 flex-shrink-0"></i>
+                                        <span class="break-words"></span>
+                                    </p>
+                                    <p id="empresa_telefono" class="text-xs text-gray-600 flex items-center">
+                                        <i class="fas fa-phone text-green-500 mr-1 lg:mr-2 text-xs flex-shrink-0"></i>
+                                        <span></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Servicios Seleccionados -->
+                    <div class="info-card bg-gradient-to-r from-cyan-50/80 to-teal-50/60 p-2 lg:p-3 rounded-lg border border-cyan-200/50 shadow-sm">
+                        <div class="flex items-start">
+                            <div class="info-icon bg-gradient-to-br from-cyan-500 to-cyan-600 text-white shadow-md w-6 h-6 lg:w-8 lg:h-8 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-cut text-xs lg:text-sm"></i>
+                            </div>
+                            <div class="flex-1 ml-2 lg:ml-3 min-w-0">
+                                <p class="font-semibold text-gray-700 mb-1 lg:mb-2 text-xs uppercase tracking-wide">Servicios</p>
+                                <div id="resumen-servicios-lista" class="mb-1 lg:mb-2">
+                                    <p class="text-gray-500 text-xs lg:text-sm font-medium">No seleccionados</p>
+                                </div>
+                                <div id="resumen-servicios-contador" class="text-xs text-gray-500 hidden bg-white/70 p-1 lg:p-2 rounded">
+                                    <i class="fas fa-list-ul mr-1 text-cyan-500"></i>
+                                    <span class="font-medium"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fecha y Hora -->
+                    <div class="info-card bg-gradient-to-r from-green-50/80 to-emerald-50/60 p-2 lg:p-3 rounded-lg border border-green-200/50 shadow-sm">
+                        <div class="flex items-start">
+                            <div class="info-icon bg-gradient-to-br from-green-500 to-green-600 text-white shadow-md w-6 h-6 lg:w-8 lg:h-8 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-calendar-check text-xs lg:text-sm"></i>
+                            </div>
+                            <div class="flex-1 ml-2 lg:ml-3 min-w-0">
+                                <p class="font-semibold text-gray-700 mb-1 lg:mb-2 text-xs uppercase tracking-wide">Fecha y Hora</p>
+                                <p id="resumen-fecha-hora" class="text-gray-800 font-bold text-sm lg:text-base mb-1 lg:mb-2 break-words">No seleccionado</p>
+                                <div id="resumen-fecha-detalles" class="text-xs text-gray-600 hidden">
+                                    <div class="flex flex-col gap-1 lg:gap-2">
+                                        <span id="resumen-fecha-solo" class="flex items-center bg-white/70 px-2 lg:px-3 py-1 rounded text-xs">
+                                            <i class="fas fa-calendar text-green-500 mr-1 lg:mr-2 text-xs"></i>
+                                            <span class="font-medium"></span>
+                                        </span>
+                                        <span id="resumen-hora-solo" class="flex items-center bg-white/70 px-2 lg:px-3 py-1 rounded text-xs">
+                                            <i class="fas fa-clock text-green-500 mr-1 lg:mr-2 text-xs"></i>
+                                            <span class="font-medium"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Precio Total -->
+                    <div class="mt-4 lg:mt-6 pt-3 lg:pt-4 border-t border-gray-200 bg-gradient-to-br from-green-50/80 via-emerald-50/60 to-blue-50/40 rounded-xl p-3 lg:p-4 shadow-md">
+                        <div class="text-center">
+                            <div class="flex items-center justify-center mb-2 lg:mb-3">
+                                <div class="w-6 h-6 lg:w-8 lg:h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mr-2 lg:mr-3 shadow-md">
+                                    <i class="fas fa-dollar-sign text-white text-xs lg:text-sm"></i>
+                                </div>
+                                <span class="text-gray-700 font-bold text-sm lg:text-lg">Total</span>
+                            </div>
+                            
+                            <div class="mb-2 lg:mb-3">
+                                <span id="resumen-precio-total" class="text-2xl lg:text-3xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">$0</span>
+                                <div class="text-xs lg:text-sm text-gray-600 font-medium mt-1 bg-white/70 px-2 lg:px-3 py-1 rounded inline-block">IVA incl.</div>
+                            </div>
+                            
+                            <div id="resumen-precio-desglose" class="text-xs text-gray-600 hidden bg-white/70 p-2 lg:p-3 rounded">
+                                <div class="flex items-center justify-center mb-1">
+                                    <i class="fas fa-receipt text-gray-500 mr-1"></i>
+                                    <span class="font-semibold">Desglose:</span>
+                                </div>
+                                <span class="font-medium break-words"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ==================== CONFIGURACIÓN INICIAL ====================
+    console.log('🚀 Inicializando sistema de reservas por pasos...');
+    
+    // Estado del formulario
+    let currentStep = 1;
+    const totalSteps = 4;
+    let serviciosSeleccionados = [];
+    let empresaSeleccionada = null;
+    let fechaSeleccionada = null;
+    let horaSeleccionada = null;
+
+    // Elementos del DOM
+    const form = document.getElementById('reservationForm');
+    const progressBar = document.getElementById('progress-bar');
+    const steps = document.querySelectorAll('.form-step');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const btnSubmit = document.getElementById('btn-submit');
+
+    const empresaSelect = document.getElementById('id_empresa');
+    const serviciosContainer = document.getElementById('servicios-container');
+    const fechaInput = document.getElementById('fecha');
+    const horaSelect = document.getElementById('hora');
+
+    // Elementos del resumen
+    const resumenEmpresaNombre = document.getElementById('empresa_nombre');
+    const resumenEmpresaDireccion = document.getElementById('empresa_direccion');
+    const resumenServiciosLista = document.getElementById('resumen-servicios-lista');
+    const resumenFechaHora = document.getElementById('resumen-fecha-hora');
+    const resumenPrecioTotal = document.getElementById('resumen-precio-total');
+    const resumenFinalContainer = document.getElementById('resumen-reserva');
+
+    const csrftoken = getCookie('csrftoken');
+
+    // ==================== FUNCIONES DE LÓGICA ====================
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function goToStep(stepNumber) {
+        currentStep = stepNumber;
+        
+        // Ocultar todos los pasos y mostrar el actual
+        steps.forEach(step => {
+            step.classList.add('hidden');
+        });
+        document.getElementById(`step-${currentStep}`).classList.remove('hidden');
+
+        // Actualizar barra de progreso
+        const progressSteps = progressBar.querySelectorAll('.step');
+        progressSteps.forEach((step, index) => {
+            const stepIndex = index + 1;
+            if (stepIndex < currentStep) {
+                step.classList.add('completed');
+                step.classList.remove('active');
+            } else if (stepIndex === currentStep) {
+                step.classList.add('active');
+                step.classList.remove('completed');
+            } else {
+                step.classList.remove('active', 'completed');
+            }
+        });
+
+        // Actualizar visibilidad de botones
+        btnPrev.disabled = currentStep === 1;
+        btnNext.classList.toggle('hidden', currentStep === totalSteps);
+        btnSubmit.classList.toggle('hidden', currentStep !== totalSteps);
+
+        validateStep();
+    }
+
+    function validateStep() {
+        let isValid = false;
+        switch (currentStep) {
+            case 1:
+                isValid = !!empresaSelect.value && empresaSelect.value !== "";
+                console.log('Validando paso 1:', { value: empresaSelect.value, isValid });
+                break;
+            case 2:
+                isValid = serviciosSeleccionados.length > 0;
+                console.log('Validando paso 2:', { servicios: serviciosSeleccionados.length, isValid });
+                break;
+            case 3:
+                isValid = !!fechaInput.value && !!horaSelect.value && fechaInput.value !== "" && horaSelect.value !== "";
+                console.log('Validando paso 3:', { fecha: fechaInput.value, hora: horaSelect.value, isValid });
+                break;
+            case 4:
+                isValid = true; // El último paso es solo de confirmación
+                break;
+        }
+        btnNext.disabled = !isValid;
+        return isValid;
+    }
+
+    function updateSummary() {
+        // Empresa
+        const empresaTelefono = document.getElementById('empresa_telefono').querySelector('span');
+        
+        if (empresaSeleccionada) {
+            resumenEmpresaNombre.textContent = empresaSeleccionada.nombre;
+            resumenEmpresaDireccion.textContent = empresaSeleccionada.direccion;
+            if (empresaSeleccionada.telefono) {
+                empresaTelefono.textContent = empresaSeleccionada.telefono;
+                document.getElementById('empresa_telefono').classList.remove('hidden');
+            } else {
+                document.getElementById('empresa_telefono').classList.add('hidden');
+            }
+        } else {
+            resumenEmpresaNombre.textContent = 'No seleccionado';
+            resumenEmpresaDireccion.textContent = '';
+            document.getElementById('empresa_telefono').classList.add('hidden');
+        }
+
+        // Servicios
+        const contadorElement = document.getElementById('resumen-servicios-contador');
+        const desgloseElement = document.getElementById('resumen-precio-desglose');
+        
+        console.log('🔍 Debug servicios seleccionados:', serviciosSeleccionados); // Debug
+        
+        if (serviciosSeleccionados.length > 0) {
+            resumenServiciosLista.innerHTML = '';
+            const serviciosDiv = document.createElement('div');
+            serviciosDiv.className = 'space-y-2';
+            
+            serviciosSeleccionados.forEach((s, index) => {
+                console.log(`📋 Servicio ${index + 1}:`, s); // Debug
+                const servicioDiv = document.createElement('div');
+                servicioDiv.className = 'flex justify-between items-center bg-white p-2 rounded border';
+                servicioDiv.innerHTML = `
+                    <div>
+                        <p class="font-medium text-gray-800 text-sm">${s.nombre_servicio || 'Nombre no disponible'}</p>
+                        <p class="text-xs text-gray-500">${s.descripcion || 'Sin descripción'}</p>
+                    </div>
+                    <span class="font-bold text-cyan-600">$${parseFloat(s.precio || 0).toFixed(0)}</span>
+                `;
+                serviciosDiv.appendChild(servicioDiv);
+            });
+            
+            resumenServiciosLista.appendChild(serviciosDiv);
+            
+            // Mostrar contador
+            contadorElement.querySelector('span').textContent = `${serviciosSeleccionados.length} servicio${serviciosSeleccionados.length > 1 ? 's' : ''} seleccionado${serviciosSeleccionados.length > 1 ? 's' : ''}`;
+            contadorElement.classList.remove('hidden');
+            
+            // Mostrar desglose de precios
+            const serviciosTexto = serviciosSeleccionados.map(s => `${s.nombre_servicio || 'Sin nombre'}: $${parseFloat(s.precio || 0).toFixed(0)}`).join(' + ');
+            desgloseElement.querySelector('span').textContent = serviciosTexto;
+            desgloseElement.classList.remove('hidden');
+        } else {
+            resumenServiciosLista.innerHTML = '<p class="text-gray-500 text-sm">No seleccionados</p>';
+            contadorElement.classList.add('hidden');
+            desgloseElement.classList.add('hidden');
+        }
+
+        // Fecha y Hora
+        const fechaDetalles = document.getElementById('resumen-fecha-detalles');
+        const fechaSolo = document.getElementById('resumen-fecha-solo').querySelector('span');
+        const horaSolo = document.getElementById('resumen-hora-solo').querySelector('span');
+        
+        if (fechaSeleccionada && horaSeleccionada) {
+            const fechaFormateada = formatearFechaEspanol(fechaSeleccionada);
+            resumenFechaHora.textContent = `${fechaFormateada} a las ${horaSeleccionada}`;
+            
+            // Mostrar detalles separados
+            fechaSolo.textContent = fechaFormateada;
+            horaSolo.textContent = horaSeleccionada;
+            fechaDetalles.classList.remove('hidden');
+        } else if (fechaSeleccionada) {
+            resumenFechaHora.textContent = `${formatearFechaEspanol(fechaSeleccionada)} - Selecciona una hora`;
+            fechaSolo.textContent = formatearFechaEspanol(fechaSeleccionada);
+            horaSolo.textContent = 'Pendiente';
+            fechaDetalles.classList.remove('hidden');
+        } else {
+            resumenFechaHora.textContent = 'No seleccionado';
+            fechaDetalles.classList.add('hidden');
+        }
+
+        // Precio Total
+        const total = serviciosSeleccionados.reduce((sum, s) => sum + parseFloat(s.precio), 0);
+        resumenPrecioTotal.textContent = `$${total.toFixed(0)}`;
+        
+        // Resumen final en el paso 4
+        if (currentStep === 4) {
+            // Verificar que tenemos todos los datos necesarios
+            if (empresaSeleccionada && serviciosSeleccionados.length > 0 && fechaSeleccionada && horaSeleccionada) {
+                resumenFinalContainer.innerHTML = `
+                    <div class="space-y-4 lg:space-y-6">
+                        <!-- Empresa -->
+                        <div class="bg-gradient-to-r from-blue-50/80 to-cyan-50/60 p-4 lg:p-6 rounded-xl border border-blue-200/50 shadow-sm">
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3 lg:mr-4 shadow-lg flex-shrink-0">
+                                    <i class="fas fa-store text-white text-sm lg:text-base"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-semibold text-blue-800 text-xs uppercase tracking-wide mb-1 lg:mb-2">Punto de Lavado</p>
+                                    <p class="text-gray-800 font-bold text-base lg:text-lg mb-1 lg:mb-2 break-words">${empresaSeleccionada.nombre}</p>
+                                    <div class="space-y-1">
+                                        <p class="text-xs lg:text-sm text-gray-600 flex items-start">
+                                            <i class="fas fa-map-marker-alt text-red-500 mr-1 lg:mr-2 text-xs mt-0.5 flex-shrink-0"></i>
+                                            <span class="break-words">${empresaSeleccionada.direccion}</span>
+                                        </p>
+                                        ${empresaSeleccionada.telefono ? `
+                                            <p class="text-xs lg:text-sm text-gray-600 flex items-center">
+                                                <i class="fas fa-phone text-green-500 mr-1 lg:mr-2 text-xs flex-shrink-0"></i>
+                                                <span>${empresaSeleccionada.telefono}</span>
+                                            </p>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Servicios -->
+                        <div class="bg-gradient-to-r from-cyan-50/80 to-teal-50/60 p-4 lg:p-6 rounded-xl border border-cyan-200/50 shadow-sm">
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-full flex items-center justify-center mr-3 lg:mr-4 shadow-lg flex-shrink-0">
+                                    <i class="fas fa-cut text-white text-sm lg:text-base"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-semibold text-cyan-800 text-xs uppercase tracking-wide mb-2 lg:mb-3">
+                                        Servicios Seleccionados (${serviciosSeleccionados.length})
+                                    </p>
+                                    <div class="space-y-2 lg:space-y-3">
+                                        ${serviciosSeleccionados.map(s => `
+                                            <div class="flex justify-between items-start bg-white/90 p-3 lg:p-4 rounded-lg border border-gray-200/50 shadow-sm">
+                                                <div class="flex-1 min-w-0 mr-3">
+                                                    <span class="font-semibold text-gray-800 text-sm lg:text-base block break-words">${s.nombre_servicio || 'Nombre no disponible'}</span>
+                                                    ${s.descripcion ? `<p class="text-xs lg:text-sm text-gray-500 mt-1 break-words">${s.descripcion}</p>` : ''}
+                                                </div>
+                                                <span class="font-bold text-cyan-600 text-lg lg:text-xl flex-shrink-0">$${parseFloat(s.precio || 0).toFixed(0)}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Fecha y Hora -->
+                        <div class="bg-gradient-to-r from-green-50/80 to-emerald-50/60 p-4 lg:p-6 rounded-xl border border-green-200/50 shadow-sm">
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mr-3 lg:mr-4 shadow-lg flex-shrink-0">
+                                    <i class="fas fa-calendar-check text-white text-sm lg:text-base"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-semibold text-green-800 text-xs uppercase tracking-wide mb-1 lg:mb-2">Fecha y Hora de la Cita</p>
+                                    <p class="text-gray-800 font-bold text-base lg:text-lg mb-1 lg:mb-2 break-words">${formatearFechaEspanol(fechaSeleccionada)}</p>
+                                    <p class="text-xs lg:text-sm text-gray-600 flex items-center">
+                                        <i class="fas fa-clock text-green-500 mr-1 lg:mr-2 text-xs flex-shrink-0"></i>
+                                        <span>Hora confirmada: <span class="font-semibold">${horaSeleccionada}</span></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Total -->
+                    <div class="mt-6 lg:mt-8 pt-4 lg:pt-6 border-t-2 border-gray-200 bg-gradient-to-br from-green-50/80 via-emerald-50/60 to-blue-50/40 rounded-xl p-4 lg:p-6 shadow-lg">
+                        <div class="text-center">
+                            <div class="flex items-center justify-center mb-3 lg:mb-4">
+                                <div class="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mr-2 lg:mr-3 shadow-lg">
+                                    <i class="fas fa-dollar-sign text-white text-sm lg:text-base"></i>
+                                </div>
+                                <p class="text-lg lg:text-xl font-bold text-gray-700">Total a Pagar</p>
+                            </div>
+                            <p class="text-3xl lg:text-4xl font-black text-green-600 mb-2 lg:mb-3">$${total.toFixed(0)}</p>
+                            <p class="text-sm lg:text-base text-gray-500 mb-3 lg:mb-4">IVA incluido</p>
+                            <div class="bg-white/80 p-3 lg:p-4 rounded-lg border border-gray-200/50 shadow-sm">
+                                <p class="text-xs lg:text-sm font-semibold text-gray-700 mb-2">Desglose de servicios:</p>
+                                <p class="text-xs lg:text-sm text-gray-600 break-words">${serviciosSeleccionados.map(s => `${s.nombre_servicio || 'Sin nombre'} ($${parseFloat(s.precio || 0).toFixed(0)})`).join(' + ')}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mensaje de confirmación -->
+                    <div class="mt-6 lg:mt-8 bg-blue-50/80 border border-blue-200/50 rounded-xl p-4 lg:p-6 shadow-sm">
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3 lg:mr-4 shadow-md flex-shrink-0">
+                                <i class="fas fa-info-circle text-white text-sm lg:text-base"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm lg:text-base text-blue-700 font-semibold mb-2">¿Todo está correcto?</p>
+                                <p class="text-xs lg:text-sm text-blue-600 mb-3 leading-relaxed">
+                                    Revisa todos los detalles de tu reserva antes de confirmar. Una vez confirmada, 
+                                    recibirás un correo electrónico con los detalles de tu cita.
+                                </p>
+                                <div class="bg-blue-100/50 p-2 lg:p-3 rounded-lg">
+                                    <p class="text-xs text-blue-600 font-medium mb-1">📋 Importante:</p>
+                                    <ul class="text-xs text-blue-600 space-y-1">
+                                        <li>• Llega 10 minutos antes de tu cita</li>
+                                        <li>• Para cancelar, hazlo con al menos 2 horas de anticipación</li>
+                                        <li>• El pago se realiza en el punto de lavado</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Mostrar mensaje de datos incompletos
+                resumenFinalContainer.innerHTML = `
+                    <div class="text-center py-8 lg:py-12">
+                        <div class="w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 lg:mb-6 shadow-lg">
+                            <i class="fas fa-exclamation-triangle text-white text-xl lg:text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg lg:text-xl font-bold text-gray-800 mb-3 lg:mb-4">Información Incompleta</h3>
+                        <p class="text-sm lg:text-base text-gray-600 mb-4 lg:mb-6 max-w-md mx-auto leading-relaxed">
+                            Por favor, completa todos los pasos anteriores antes de confirmar tu reserva.
+                        </p>
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 lg:p-4 max-w-sm mx-auto">
+                            <p class="text-xs lg:text-sm text-yellow-700 font-medium mb-2">Verifica que hayas seleccionado:</p>
+                            <ul class="text-xs lg:text-sm text-yellow-600 space-y-1 text-left">
+                                <li class="flex items-center">
+                                    <i class="fas fa-${empresaSeleccionada ? 'check text-green-500' : 'times text-red-500'} mr-2 w-3"></i>
+                                    Punto de lavado
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-${serviciosSeleccionados.length > 0 ? 'check text-green-500' : 'times text-red-500'} mr-2 w-3"></i>
+                                    Servicios (${serviciosSeleccionados.length} seleccionados)
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-${fechaSeleccionada ? 'check text-green-500' : 'times text-red-500'} mr-2 w-3"></i>
+                                    Fecha
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-${horaSeleccionada ? 'check text-green-500' : 'times text-red-500'} mr-2 w-3"></i>
+                                    Hora
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    }
+    
+    function formatearFechaEspanol(fecha) {
+        const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        const fechaObj = new Date(fecha + 'T00:00:00'); // Asegurar que se interprete como fecha local
+        return `${diasSemana[fechaObj.getUTCDay()]}, ${fechaObj.getUTCDate()} de ${meses[fechaObj.getUTCMonth()]} de ${fechaObj.getUTCFullYear()}`;
+    }
+
+    function mostrarDetallesEmpresa(empresa) {
+        const empresaDetalles = document.getElementById('empresa-detalles');
+        const detalleNombre = document.getElementById('detalle-nombre');
+        const detalleDireccion = document.getElementById('detalle-direccion');
+        const detalleTelefono = document.getElementById('detalle-telefono');
+        const detalleTelefonoContainer = document.getElementById('detalle-telefono-container');
+        const btnLlamar = document.getElementById('btn-llamar');
+        
+        // Actualizar información
+        detalleNombre.textContent = empresa.nombre;
+        detalleDireccion.textContent = empresa.direccion;
+        
+        if (empresa.telefono && empresa.telefono.trim() !== '') {
+            detalleTelefono.textContent = empresa.telefono;
+            detalleTelefonoContainer.classList.remove('hidden');
+            btnLlamar.classList.remove('hidden');
+        } else {
+            detalleTelefonoContainer.classList.add('hidden');
+            btnLlamar.classList.add('hidden');
+        }
+        
+        // Mostrar el contenedor
+        empresaDetalles.classList.remove('hidden');
+        
+        // Cargar servicios de la empresa
+        cargarServiciosEmpresa(empresa.id_empresa);
+        
+        // Cargar mapa
+        cargarMapa(empresa.direccion);
+        
+        // Configurar eventos de botones
+        configurarBotonesEmpresa(empresa);
+    }
+
+    function cargarServiciosEmpresa(empresaId) {
+        const serviciosPlaceholder = document.getElementById('servicios-placeholder');
+        const serviciosLista = document.getElementById('servicios-lista');
+        
+        // Mostrar placeholder de carga
+        serviciosPlaceholder.classList.remove('hidden');
+        serviciosLista.classList.add('hidden');
+        
+        // Realizar petición para obtener servicios
+        fetch(`/obtener-servicios/?empresa_id=${empresaId}`)
+            .then(response => response.json())
+            .then(data => {
+                serviciosPlaceholder.classList.add('hidden');
+                
+                if (data.servicios && data.servicios.length > 0) {
+                    serviciosLista.innerHTML = '';
+                    
+                    data.servicios.forEach(servicio => {
+                        const servicioDiv = document.createElement('div');
+                        servicioDiv.className = 'p-2 lg:p-3 bg-gradient-to-r from-gray-50 to-cyan-50/30 rounded-lg border border-cyan-100/50 hover:from-cyan-50 hover:to-teal-50/50 transition-all duration-300 shadow-sm hover:shadow-md';
+                        servicioDiv.innerHTML = `
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="flex-1 min-w-0">
+                                    <h5 class="font-semibold text-gray-800 text-xs lg:text-sm leading-tight">${servicio.nombre_servicio}</h5>
+                                    ${servicio.descripcion && servicio.descripcion !== 'Sin descripción disponible' ? 
+                                        `<p class="text-xs text-gray-600 mt-1 line-clamp-2">${servicio.descripcion}</p>` : 
+                                        ''
+                                    }
+                                    ${servicio.duracion ? 
+                                        `<div class="flex items-center mt-1">
+                                            <i class="fas fa-clock text-cyan-500 mr-1 text-xs"></i>
+                                            <span class="text-xs text-gray-500">${servicio.duracion}min</span>
+                                        </div>` : 
+                                        ''
+                                    }
+                                </div>
+                                <div class="text-right flex-shrink-0">
+                                    <span class="font-bold text-cyan-600 text-sm lg:text-base">$${parseFloat(servicio.precio).toFixed(0)}</span>
+                                </div>
+                            </div>
+                        `;
+                        serviciosLista.appendChild(servicioDiv);
+                    });
+                    
+                    serviciosLista.classList.remove('hidden');
+                } else {
+                    serviciosLista.innerHTML = `
+                        <div class="text-center text-gray-500 py-3 lg:py-4">
+                            <i class="fas fa-exclamation-circle text-lg lg:text-xl mb-2 text-amber-500"></i>
+                            <p class="text-xs lg:text-sm font-medium">Sin servicios disponibles</p>
+                        </div>
+                    `;
+                    serviciosLista.classList.remove('hidden');
+                }
+            })
+            .catch(error => {
+                console.error('Error al cargar servicios para vista detallada:', error);
+                serviciosPlaceholder.classList.add('hidden');
+                serviciosLista.innerHTML = `
+                    <div class="text-center text-red-500 py-3 lg:py-4">
+                        <i class="fas fa-exclamation-triangle text-lg lg:text-xl mb-2"></i>
+                        <p class="text-xs lg:text-sm font-medium">Error al cargar servicios</p>
+                        <button onclick="cargarServiciosEmpresa(${empresaId})" class="mt-2 text-xs text-blue-600 hover:text-blue-800 underline">
+                            Reintentar
+                        </button>
+                    </div>
+                `;
+                serviciosLista.classList.remove('hidden');
+            });
+    }
+
+    function cargarMapa(direccion) {
+        const mapaIframe = document.getElementById('mapa-iframe');
+        const mapaPlaceholder = document.getElementById('mapa-placeholder');
+        
+        if (!direccion || direccion.trim() === '') {
+            mapaIframe.classList.add('hidden');
+            mapaPlaceholder.classList.remove('hidden');
+            mapaPlaceholder.innerHTML = `
+                <div class="text-center">
+                    <i class="fas fa-exclamation-triangle text-4xl mb-2 text-yellow-500"></i>
+                    <p>No se pudo cargar el mapa</p>
+                    <p class="text-sm">Dirección no disponible</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Crear URL para Google Maps Embed
+        const direccionCodificada = encodeURIComponent(direccion);
+        const mapaSrc = `https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=${direccionCodificada}&zoom=16&maptype=roadmap`;
+        
+        // Como no tenemos API key, usamos una alternativa con OpenStreetMap
+        const mapaAlternativo = `https://www.google.com/maps?q=${direccionCodificada}&output=embed`;
+        
+        mapaIframe.src = mapaAlternativo;
+        mapaIframe.classList.remove('hidden');
+        mapaPlaceholder.classList.add('hidden');
+        
+        // Manejar errores de carga del mapa
+        mapaIframe.onerror = function() {
+            mapaIframe.classList.add('hidden');
+            mapaPlaceholder.classList.remove('hidden');
+            mapaPlaceholder.innerHTML = `
+                <div class="text-center">
+                    <i class="fas fa-map-marked-alt text-4xl mb-2 text-blue-500"></i>
+                    <p>Mapa no disponible</p>
+                    <p class="text-sm text-gray-600">${direccion}</p>
+                    <button type="button" onclick="abrirMapaExterno('${direccionCodificada}')" class="mt-2 text-blue-600 hover:text-blue-800 underline">
+                        Ver en Google Maps
+                    </button>
+                </div>
+            `;
+        };
+    }
+
+    function configurarBotonesEmpresa(empresa) {
+        const btnVerMapa = document.getElementById('btn-ver-mapa');
+        const btnLlamar = document.getElementById('btn-llamar');
+        
+        // Botón ver mapa
+        btnVerMapa.onclick = function() {
+            const direccionCodificada = encodeURIComponent(empresa.direccion);
+            abrirMapaExterno(direccionCodificada);
+        };
+        
+        // Botón llamar
+        if (empresa.telefono && empresa.telefono.trim() !== '') {
+            btnLlamar.onclick = function() {
+                const telefono = empresa.telefono.replace(/\D/g, ''); // Remover caracteres no numéricos
+                window.open(`tel:${telefono}`, '_self');
+            };
+        }
+    }
+
+    function abrirMapaExterno(direccionCodificada) {
+        const mapUrl = `https://www.google.com/maps/search/?api=1&query=${direccionCodificada}`;
+        window.open(mapUrl, '_blank');
+    }
+
+    // ==================== FUNCIONES DE GEOLOCALIZACIÓN ====================
+
+    let ubicacionUsuario = null;
+    let empresasOriginales = [];
+
+    function inicializarGelocalizacion() {
+        const btnBuscarCercanos = document.getElementById('btn-buscar-cercanos');
+        const btnMostrarTodos = document.getElementById('btn-mostrar-todos');
+        
+        // Guardar empresas originales
+        const selectEmpresas = document.getElementById('id_empresa');
+        empresasOriginales = Array.from(selectEmpresas.options).slice(1); // Excluir primera opción vacía
+        
+        btnBuscarCercanos.addEventListener('click', buscarPuntosCercanos);
+        btnMostrarTodos.addEventListener('click', mostrarTodasLasEmpresas);
+    }
+
+    function buscarPuntosCercanos() {
+        const btnBuscarCercanos = document.getElementById('btn-buscar-cercanos');
+        const gpsLoading = document.getElementById('gps-loading');
+        const ubicacionMensaje = document.getElementById('ubicacion-mensaje');
+        
+        // Mostrar loading
+        btnBuscarCercanos.disabled = true;
+        gpsLoading.classList.remove('hidden');
+        btnBuscarCercanos.querySelector('span').textContent = 'Obteniendo ubicación...';
+        
+        // Verificar soporte de geolocalización
+        if (!navigator.geolocation) {
+            mostrarMensajeUbicacion('Tu navegador no soporta geolocalización', 'error');
+            restaurarBotonBusqueda();
+            return;
+        }
+
+        // Obtener ubicación del usuario
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                ubicacionUsuario = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                
+                mostrarMensajeUbicacion('Ubicación obtenida. Calculando distancias...', 'info');
+                calcularYMostrarDistancias();
+            },
+            function(error) {
+                let mensaje = 'Error al obtener ubicación: ';
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        mensaje += 'Permiso denegado. Por favor, permite el acceso a tu ubicación.';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        mensaje += 'Ubicación no disponible.';
+                        break;
+                    case error.TIMEOUT:
+                        mensaje += 'Tiempo de espera agotado.';
+                        break;
+                    default:
+                        mensaje += 'Error desconocido.';
+                        break;
+                }
+                mostrarMensajeUbicacion(mensaje, 'error');
+                restaurarBotonBusqueda();
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 300000 // 5 minutos
+            }
+        );
+    }
+
+    async function calcularYMostrarDistancias() {
+        const empresasConDistancia = [];
+        
+        for (let empresa of empresasOriginales) {
+            const direccion = empresa.dataset.direccion;
+            if (direccion && direccion.trim() !== '') {
+                try {
+                    const coordenadas = await obtenerCoordenadas(direccion);
+                    if (coordenadas) {
+                        const distancia = calcularDistancia(
+                            ubicacionUsuario.lat, ubicacionUsuario.lng,
+                            coordenadas.lat, coordenadas.lng
+                        );
+                        
+                        empresasConDistancia.push({
+                            elemento: empresa,
+                            distancia: distancia,
+                            coordenadas: coordenadas
+                        });
+                    }
+                } catch (error) {
+                    console.warn(`No se pudo obtener coordenadas para: ${direccion}`);
+                }
+            }
+        }
+        
+        // Ordenar por distancia
+        empresasConDistancia.sort((a, b) => a.distancia - b.distancia);
+        
+        // Actualizar select con empresas ordenadas por distancia
+        actualizarSelectConDistancias(empresasConDistancia);
+        
+        mostrarMensajeUbicacion(
+            `Se encontraron ${empresasConDistancia.length} puntos de lavado. Ordenados por distancia.`, 
+            'success'
+        );
+        
+        restaurarBotonBusqueda();
+        document.getElementById('btn-mostrar-todos').classList.remove('hidden');
+    }
+
+    async function obtenerCoordenadas(direccion) {
+        // Usando la API de geocodificación de Nominatim (OpenStreetMap) - gratuita
+        try {
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(direccion)}&limit=1`
+            );
+            const data = await response.json();
+            
+            if (data && data.length > 0) {
+                return {
+                    lat: parseFloat(data[0].lat),
+                    lng: parseFloat(data[0].lon)
+                };
+            }
+        } catch (error) {
+            console.error('Error al obtener coordenadas:', error);
+        }
+        return null;
+    }
+
+    function calcularDistancia(lat1, lng1, lat2, lng2) {
+        const R = 6371; // Radio de la Tierra en kilómetros
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLng/2) * Math.sin(dLng/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c; // Distancia en kilómetros
+    }
+
+    function actualizarSelectConDistancias(empresasConDistancia) {
+        const selectEmpresas = document.getElementById('id_empresa');
+        
+        // Limpiar opciones (mantener la primera opción vacía)
+        selectEmpresas.innerHTML = '<option value="">Selecciona un punto de lavado</option>';
+        
+        // Agregar empresas ordenadas por distancia
+        empresasConDistancia.forEach(item => {
+            const option = item.elemento.cloneNode(true);
+            const distanciaTexto = item.distancia < 1 ? 
+                `${Math.round(item.distancia * 1000)}m` : 
+                `${item.distancia.toFixed(1)}km`;
+            
+            option.textContent = `${option.textContent} (${distanciaTexto})`;
+            selectEmpresas.appendChild(option);
+        });
+    }
+
+    function mostrarTodasLasEmpresas() {
+        const selectEmpresas = document.getElementById('id_empresa');
+        
+        // Restaurar todas las empresas sin orden por distancia
+        selectEmpresas.innerHTML = '<option value="">Selecciona un punto de lavado</option>';
+        empresasOriginales.forEach(empresa => {
+            selectEmpresas.appendChild(empresa.cloneNode(true));
+        });
+        
+        mostrarMensajeUbicacion('Mostrando todos los puntos de lavado', 'info');
+        document.getElementById('btn-mostrar-todos').classList.add('hidden');
+        
+        setTimeout(() => {
+            document.getElementById('ubicacion-mensaje').classList.add('hidden');
+        }, 3000);
+    }
+
+    function mostrarMensajeUbicacion(mensaje, tipo) {
+        const ubicacionMensaje = document.getElementById('ubicacion-mensaje');
+        const icono = ubicacionMensaje.querySelector('i');
+        const texto = ubicacionMensaje.querySelector('span');
+        
+        // Configurar mensaje según tipo
+        ubicacionMensaje.className = 'mb-3 p-3 rounded-lg border';
+        switch(tipo) {
+            case 'success':
+                ubicacionMensaje.classList.add('bg-green-50', 'border-green-200', 'text-green-800');
+                icono.className = 'fas fa-check-circle text-green-600';
+                break;
+            case 'error':
+                ubicacionMensaje.classList.add('bg-red-50', 'border-red-200', 'text-red-800');
+                icono.className = 'fas fa-exclamation-triangle text-red-600';
+                break;
+            case 'info':
+                ubicacionMensaje.classList.add('bg-blue-50', 'border-blue-200', 'text-blue-800');
+                icono.className = 'fas fa-info-circle text-blue-600';
+                break;
+        }
+        
+        texto.textContent = mensaje;
+        ubicacionMensaje.classList.remove('hidden');
+        
+        // Auto-ocultar después de cierto tiempo (excepto errores)
+        if (tipo !== 'error') {
+            setTimeout(() => {
+                ubicacionMensaje.classList.add('hidden');
+            }, 5000);
+        }
+    }
+
+    function restaurarBotonBusqueda() {
+        const btnBuscarCercanos = document.getElementById('btn-buscar-cercanos');
+        const gpsLoading = document.getElementById('gps-loading');
+        
+        btnBuscarCercanos.disabled = false;
+        gpsLoading.classList.add('hidden');
+        btnBuscarCercanos.querySelector('span').textContent = 'Buscar Puntos Cercanos';
+    }
+
+    // ==================== MANEJADORES DE EVENTOS ====================
+
+    btnNext.addEventListener('click', () => {
+        if (currentStep < totalSteps) {
+            goToStep(currentStep + 1);
+            if (currentStep === 4) { // Después de pasar al paso 4, generar resumen final
+                updateSummary();
+            }
+        }
+    });
+
+    // ==================== SELECT PERSONALIZADO DE EMPRESAS ====================
+    function initializeCustomSelect() {
+        console.log('🔧 Inicializando select personalizado de empresas...');
+        
+        const selectDisplay = document.getElementById('select-display');
+        const selectDropdown = document.getElementById('select-dropdown');
+        const selectText = document.getElementById('select-text');
+        const selectArrow = document.getElementById('select-arrow');
+        const selectOptions = document.querySelectorAll('.select-option');
+        const hiddenSelect = document.getElementById('id_empresa');
+        
+        console.log('📋 Elementos encontrados:', {
+            selectDisplay: !!selectDisplay,
+            selectDropdown: !!selectDropdown,
+            selectText: !!selectText,
+            selectArrow: !!selectArrow,
+            selectOptions: selectOptions.length,
+            hiddenSelect: !!hiddenSelect
+        });
+        
+        if (!selectDisplay || !selectDropdown || !selectText || !selectArrow || !hiddenSelect) {
+            console.error('❌ Error: No se pudieron encontrar todos los elementos del select personalizado');
+            return;
+        }
+        
+        let isOpen = false;
+
+        // Función para abrir/cerrar dropdown
+        function toggleDropdown() {
+            isOpen = !isOpen;
+            const container = selectDisplay.closest('.modern-select-container');
+            
+            selectDropdown.classList.toggle('hidden', !isOpen);
+            selectArrow.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+            
+            if (isOpen) {
+                selectDisplay.classList.add('ring-2', 'ring-blue-500', 'border-blue-500');
+                container.classList.add('active');
+            } else {
+                selectDisplay.classList.remove('ring-2', 'ring-blue-500', 'border-blue-500');
+                container.classList.remove('active');
+            }
+        }
+
+        // Función para cerrar dropdown
+        function closeDropdown() {
+            if (isOpen) {
+                isOpen = false;
+                const container = selectDisplay.closest('.modern-select-container');
+                selectDropdown.classList.add('hidden');
+                selectArrow.style.transform = 'rotate(0deg)';
+                selectDisplay.classList.remove('ring-2', 'ring-blue-500', 'border-blue-500');
+                container.classList.remove('active');
+            }
+        }
+
+        // Función para seleccionar opción
+        function selectOption(option) {
+            const value = option.dataset.value;
+            const nombre = option.dataset.nombre;
+            const direccion = option.dataset.direccion;
+            const telefono = option.dataset.telefono;
+            
+            console.log('Seleccionando opción:', { value, nombre, direccion, telefono }); // Debug
+            
+            // Actualizar select nativo
+            hiddenSelect.value = value;
+            
+            // Actualizar display visual
+            if (value === "" || !value) {
+                selectText.textContent = "Selecciona una ubicación";
+                selectDisplay.querySelector('.select-icon i').className = "fas fa-store text-white text-sm lg:text-base";
+            } else {
+                selectText.textContent = nombre;
+                selectDisplay.querySelector('.select-icon i').className = "fas fa-check-circle text-white text-sm lg:text-base";
+            }
+            
+            // Actualizar indicadores de selección
+            selectOptions.forEach(opt => {
+                const check = opt.querySelector('.select-check');
+                if (check) { // Verificar que el elemento existe
+                    if (opt === option && value !== "" && value) {
+                        check.classList.remove('hidden');
+                        opt.classList.add('bg-gradient-to-r', 'from-blue-50', 'to-cyan-50');
+                    } else {
+                        check.classList.add('hidden');
+                        opt.classList.remove('bg-gradient-to-r', 'from-blue-50', 'to-cyan-50');
+                    }
+                } else {
+                    console.warn('⚠️ Elemento .select-check no encontrado en opción:', opt);
+                }
+            });
+            
+            closeDropdown();
+            
+            console.log('Select nativo actualizado, value:', hiddenSelect.value); // Debug
+            console.log('Disparando evento change en select nativo...'); // Debug
+            
+            // Disparar evento change en select nativo de múltiples maneras para asegurar compatibilidad
+            const changeEvent = new Event('change', { bubbles: true });
+            hiddenSelect.dispatchEvent(changeEvent);
+            
+            // También disparar usando el método jQuery si está disponible
+            if (typeof $ !== 'undefined') {
+                $(hiddenSelect).trigger('change');
+            }
+            
+            // Y llamar directamente la función del event handler como respaldo
+            setTimeout(() => {
+                if (hiddenSelect.value && hiddenSelect.value !== "") {
+                    console.log('Ejecutando lógica de cambio de empresa manualmente...'); // Debug
+                    const selectedOption = hiddenSelect.options[hiddenSelect.selectedIndex];
+                    
+                    if (selectedOption) {
+                        empresaSeleccionada = {
+                            id_empresa: hiddenSelect.value,
+                            nombre: selectedOption.dataset.nombre || nombre,
+                            direccion: selectedOption.dataset.direccion || direccion,
+                            telefono: selectedOption.dataset.telefono || telefono
+                        };
+
+                        console.log('Empresa seleccionada (manual):', empresaSeleccionada); // Debug
+
+                        // Mostrar información detallada de la empresa
+                        mostrarDetallesEmpresa(empresaSeleccionada);
+
+                        // Resetear selecciones posteriores
+                        serviciosSeleccionados = [];
+                        
+                        serviciosContainer.innerHTML = '<p class="text-center text-gray-500 p-4">Cargando servicios...</p>';
+                        
+                        fetch(`/obtener-servicios/?empresa_id=${hiddenSelect.value}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('📋 Datos de servicios recibidos:', data);
+                                serviciosContainer.innerHTML = '';
+                                if (data.servicios && data.servicios.length > 0) {
+                                    console.log('✅ Procesando', data.servicios.length, 'servicios');
+                                    data.servicios.forEach((servicio, index) => {
+                                        console.log(`🔧 Creando card para servicio ${index + 1}:`, servicio);
+                                        const div = document.createElement('div');
+                                        div.className = 'group relative bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-cyan-300 hover:shadow-md transition-all duration-300 cursor-pointer';
+                                        div.innerHTML = `
+                                            <label class="flex items-center gap-4 cursor-pointer">
+                                                <input type="checkbox" class="w-5 h-5 text-cyan-600 bg-gray-100 border-gray-300 rounded focus:ring-cyan-500 focus:ring-2">
+                                                <div class="flex-1">
+                                                    <div class="font-bold text-gray-800">${servicio.nombre_servicio}</div>
+                                                    <div class="text-gray-600 text-sm mt-1">${servicio.descripcion}</div>
+                                                    <div class="text-lg font-bold text-cyan-600 mt-2">$${servicio.precio}</div>
+                                                </div>
+                                            </label>
+                                        `;
+                                        
+                                        console.log('📦 HTML generado para servicio:', div.innerHTML);
+                                        
+                                        const checkbox = div.querySelector('input[type="checkbox"]');
+                                        checkbox.addEventListener('change', function() {
+                                            if (this.checked) {
+                                                serviciosSeleccionados.push({
+                                                    id_servicio: servicio.id_servicio,
+                                                    nombre_servicio: servicio.nombre_servicio,
+                                                    descripcion: servicio.descripcion,
+                                                    precio: parseFloat(servicio.precio)
+                                                });
+                                                div.classList.add('border-cyan-500', 'bg-cyan-50');
+                                            } else {
+                                                serviciosSeleccionados = serviciosSeleccionados.filter(s => s.id_servicio !== servicio.id_servicio);
+                                                div.classList.remove('border-cyan-500', 'bg-cyan-50');
+                                            }
+                                            updateSummary();
+                                            validateStep();
+                                        });
+                                        
+                                        serviciosContainer.appendChild(div);
+                                    });
+                                } else {
+                                    serviciosContainer.innerHTML = '<p class="text-center text-gray-500 p-4">No hay servicios disponibles para esta empresa.</p>';
+                                }
+                                validateStep();
+                                updateSummary();
+                            })
+                            .catch(error => {
+                                console.error('Error al cargar servicios:', error);
+                                serviciosContainer.innerHTML = '<p class="text-center text-red-500 p-4">Error al cargar servicios.</p>';
+                            });
+                    }
+                }
+            }, 100);
+        }
+
+        // Event listeners
+        console.log('🔗 Configurando event listeners...');
+        selectDisplay.addEventListener('click', toggleDropdown);
+        
+        selectOptions.forEach((option, index) => {
+            console.log(`📌 Configurando evento click para opción ${index}:`, option.dataset);
+            option.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🖱️ Click detectado en opción:', option.dataset);
+                selectOption(option);
+            });
+        });
+        
+        // Cerrar dropdown al hacer click fuera
+        document.addEventListener('click', (e) => {
+            if (!selectDisplay.contains(e.target) && !selectDropdown.contains(e.target)) {
+                closeDropdown();
+            }
+        });
+        
+        // Cerrar dropdown con Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isOpen) {
+                closeDropdown();
+            }
+        });
+
+        // Navegación con teclado
+        selectDisplay.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleDropdown();
+            }
+        });
+
+        // Hacer el select enfocable
+        selectDisplay.setAttribute('tabindex', '0');
+    }
+
+    // Inicializar select personalizado
+    initializeCustomSelect();
+
+    btnPrev.addEventListener('click', () => {
+        if (currentStep > 1) {
+            goToStep(currentStep - 1);
+        }
+    });
+
+    empresaSelect.addEventListener('change', function() {
+        console.log('Cambio en selector de empresa:', this.value);
+        const selectedOption = this.options[this.selectedIndex];
+        const empresaDetalles = document.getElementById('empresa-detalles');
+        
+        if (!this.value || this.value === "") {
+            empresaSeleccionada = null;
+            serviciosContainer.innerHTML = '<p class="text-center text-gray-500 p-4">Selecciona una empresa para ver sus servicios.</p>';
+            empresaDetalles.classList.add('hidden');
+            validateStep();
+            updateSummary();
+            return;
+        }
+
+        empresaSeleccionada = {
+            id_empresa: this.value,
+            nombre: selectedOption.dataset.nombre,
+            direccion: selectedOption.dataset.direccion,
+            telefono: selectedOption.dataset.telefono
+        };
+
+        console.log('Empresa seleccionada:', empresaSeleccionada); // Debug
+
+        // Mostrar información detallada de la empresa
+        mostrarDetallesEmpresa(empresaSeleccionada);
+
+        // Resetear selecciones posteriores
+        serviciosSeleccionados = [];
+        
+        serviciosContainer.innerHTML = '<p class="text-center text-gray-500 p-4">Cargando servicios...</p>';
+        
+        fetch(`/obtener-servicios/?empresa_id=${this.value}`)
+            .then(response => response.json())
+            .then(data => {
+                serviciosContainer.innerHTML = '';
+                if (data.servicios && data.servicios.length > 0) {
+                    data.servicios.forEach(servicio => {
+                        const div = document.createElement('div');
+                        div.className = 'group relative bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-cyan-300 hover:shadow-md transition-all duration-300 cursor-pointer';
+                        div.innerHTML = `
+                            <label class="flex items-center gap-4 cursor-pointer">
+                                <input type="checkbox" class="w-5 h-5 text-cyan-600 bg-gray-100 border-gray-300 rounded focus:ring-cyan-500 focus:ring-2">
+                                <div class="flex-1">
+                                    <div class="font-bold text-gray-800">${servicio.nombre_servicio}</div>
+                                    <div class="text-gray-600 text-sm mt-1">${servicio.descripcion}</div>
+                                    <div class="font-bold text-cyan-600 text-lg mt-2">$${servicio.precio}</div>
+                                </div>
+                            </label>
+                        `;
+                        const checkbox = div.querySelector('input[type="checkbox"]');
+                        checkbox.addEventListener('change', function() {
+                            if (this.checked) {
+                                serviciosSeleccionados.push({
+                                    id_servicio: servicio.id_servicio,
+                                    nombre_servicio: servicio.nombre_servicio,
+                                    descripcion: servicio.descripcion,
+                                    precio: parseFloat(servicio.precio)
+                                });
+                                div.classList.add('border-cyan-500', 'bg-cyan-50');
+                            } else {
+                                serviciosSeleccionados = serviciosSeleccionados.filter(s => s.id_servicio !== servicio.id_servicio);
+                                div.classList.remove('border-cyan-500', 'bg-cyan-50');
+                            }
+                            validateStep();
+                            updateSummary();
+                        });
+                        serviciosContainer.appendChild(div);
+                    });
+                } else {
+                    serviciosContainer.innerHTML = '<p class="text-center text-gray-500 p-4">Esta empresa no tiene servicios disponibles.</p>';
+                }
+                validateStep();
+                updateSummary();
+            })
+            .catch(error => {
+                console.error('Error fetching services:', error);
+                serviciosContainer.innerHTML = '<p class="text-center text-red-500 p-4">Error al cargar los servicios.</p>';
+            });
+        
+        validateStep();
+        updateSummary();
+    });
+
+    fechaInput.addEventListener('change', function() {
+        fechaSeleccionada = this.value;
+        horaSelect.innerHTML = '<option value="">Cargando horas...</option>';
+        horaSelect.disabled = true;
+
+        if (!this.value || !empresaSeleccionada || serviciosSeleccionados.length === 0) {
+            horaSelect.innerHTML = '<option value="">Faltan datos</option>';
+            validateStep();
+            updateSummary();
+            return;
+        }
+
+        const primerServicioId = serviciosSeleccionados[0].id_servicio;
+        const url = `/get-horas/?empresa_id=${empresaSeleccionada.id_empresa}&servicio_id=${primerServicioId}&fecha=${this.value}`;
+        console.log('🕐 Solicitando horas para fecha change:', url);
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log('📋 Horas recibidas para fecha change:', data);
+                horaSelect.innerHTML = '<option value="">Selecciona una hora</option>';
+                if (data.horas && data.horas.length > 0) {
+                    console.log(`✅ ${data.horas.length} horas disponibles`);
+                    data.horas.forEach(hora => {
+                        const option = document.createElement('option');
+                        option.value = hora;
+                        option.textContent = hora;
+                        horaSelect.appendChild(option);
+                    });
+                    horaSelect.disabled = false;
+                } else {
+                    console.log('❌ No hay horas disponibles');
+                    horaSelect.innerHTML = '<option value="">No hay horas disponibles</option>';
+                }
+                validateStep();
+                updateSummary();
+            })
+            .catch(error => {
+                console.error('❌ Error fetching hours:', error);
+                horaSelect.innerHTML = '<option value="">Error al cargar horas</option>';
+            });
+    });
+
+    horaSelect.addEventListener('change', function() {
+        horaSeleccionada = this.value;
+        console.log('🕰️ Hora seleccionada:', horaSeleccionada);
+        validateStep();
+        updateSummary();
+    });
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validación previa antes del envío
+        if (!empresaSeleccionada || !empresaSeleccionada.id_empresa) {
+            alert('Por favor, selecciona un punto de lavado.');
+            return;
+        }
+        
+        if (!serviciosSeleccionados || serviciosSeleccionados.length === 0) {
+            alert('Por favor, selecciona al menos un servicio.');
+            return;
+        }
+        
+        if (!fechaSeleccionada) {
+            alert('Por favor, selecciona una fecha.');
+            return;
+        }
+        
+        if (!horaSeleccionada) {
+            alert('Por favor, selecciona una hora.');
+            return;
+        }
+        
+        // Mostrar estado de carga
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Procesando reserva...';
+        
+        console.log('Enviando datos:', {
+            empresa: empresaSeleccionada.id_empresa,
+            servicios: serviciosSeleccionados.map(s => s.id_servicio),
+            fecha: fechaSeleccionada,
+            hora: horaSeleccionada
+        });
+
+        // Preparar datos del formulario
+        const formData = new FormData();
+        formData.append('csrfmiddlewaretoken', csrftoken);
+        formData.append('empresa', empresaSeleccionada.id_empresa);
+        serviciosSeleccionados.forEach(s => formData.append('servicios', s.id_servicio));
+        formData.append('fecha', fechaSeleccionada);
+        formData.append('hora', horaSeleccionada);
+
+        // Debug: Mostrar FormData
+        console.log('FormData contents:');
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
+
+        // Enviar formulario
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': csrftoken
+            }
+        })
+        .then(response => {
+            console.log('Respuesta recibida:', response.status, response.statusText);
+            
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+            
+            // Verificar si la respuesta es JSON
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json();
+            } else {
+                throw new Error('La respuesta del servidor no es JSON válido');
+            }
+        })
+        .then(data => {
+            console.log('Datos recibidos:', data);
+            
+            if (data.success) {
+                // Primero restaurar el estado del botón antes de mostrar éxito
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = '<i class="fas fa-calendar-check mr-2 lg:mr-3 group-hover:rotate-12 transition-transform"></i> <span>Confirmar Reserva</span>';
+                
+                // Luego mostrar la pantalla de éxito
+                mostrarExitoReserva(data);
+            } else {
+                throw new Error(data.message || 'No se pudo completar la reserva');
+            }
+        })
+        .catch(error => {
+            console.error('Error en el envío:', error);
+            mostrarErrorReserva(error.message);
+            
+            // Restaurar botón de envío
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = '<i class="fas fa-calendar-check mr-2 lg:mr-3 group-hover:rotate-12 transition-transform"></i> <span>Confirmar Reserva</span>';
+        });
+    });
+
+    // Función para mostrar el éxito de la reserva
+    function mostrarExitoReserva(data) {
+        const total = serviciosSeleccionados.reduce((sum, s) => sum + parseFloat(s.precio), 0);
+        
+        // Primero mostrar un mensaje de éxito temporal en el botón
+        btnSubmit.innerHTML = '<i class="fas fa-check mr-2"></i> ¡Reserva Confirmada!';
+        btnSubmit.style.background = 'linear-gradient(to right, #10b981, #059669)';
+        
+        // Mostrar notificación de éxito temporal
+        mostrarNotificacionExito(data.message || 'Tu reserva ha sido confirmada exitosamente');
+        
+        // Después de mostrar el mensaje, redirigir a la página de reservas
+        setTimeout(() => {
+            // Mostrar mensaje de redirección
+            btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Redirigiendo...';
+            btnSubmit.style.background = 'linear-gradient(to right, #3b82f6, #1d4ed8)';
+            
+            // Redirigir después de 1.5 segundos más
+            setTimeout(() => {
+                window.location.href = "{% url 'reservas' %}";
+            }, 1500);
+        }, 3000); // Esperar 3 segundos antes de redirigir
+    }
+    
+    // Función para mostrar notificación de éxito
+    function mostrarNotificacionExito(mensaje) {
+        // Crear el elemento de notificación
+        const notificacion = document.createElement('div');
+        notificacion.className = 'notificacion-exito fixed top-5 right-5 z-[99999] transform translate-x-full transition-transform duration-500 ease-out';
+        
+        notificacion.innerHTML = `
+            <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-4 lg:p-6 rounded-2xl shadow-2xl border border-green-400 max-w-md">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 animate-pulse">
+                        <i class="fas fa-check text-white text-lg"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-bold text-lg mb-1">¡Reserva Exitosa!</h3>
+                        <p class="text-green-100 text-sm leading-relaxed">${mensaje}</p>
+                        <div class="mt-3 text-xs text-green-200 flex items-center">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Se ha enviado una confirmación a tu correo
+                        </div>
+                    </div>
+                    <button onclick="cerrarNotificacion(this)" class="text-white/80 hover:text-white transition-colors duration-200 ml-2">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+                
+                <!-- Barra de progreso -->
+                <div class="mt-4 bg-white/20 rounded-full h-1 overflow-hidden">
+                    <div class="barra-progreso bg-white h-full rounded-full transition-all duration-3000 ease-linear" style="width: 0%"></div>
+                </div>
+            </div>
+        `;
+        
+        // Agregar al DOM
+        document.body.appendChild(notificacion);
+        
+        // Animación de entrada
+        setTimeout(() => {
+            notificacion.classList.remove('translate-x-full');
+            notificacion.classList.add('translate-x-0');
+        }, 100);
+        
+        // Iniciar barra de progreso
+        setTimeout(() => {
+            const barraProgreso = notificacion.querySelector('.barra-progreso');
+            if (barraProgreso) {
+                barraProgreso.style.width = '100%';
+            }
+        }, 200);
+        
+        // Función global para cerrar notificación
+        window.cerrarNotificacion = function(button) {
+            const notif = button.closest('.notificacion-exito');
+            notif.classList.add('translate-x-full');
+            setTimeout(() => {
+                if (notif.parentNode) {
+                    document.body.removeChild(notif);
+                }
+            }, 500);
+        };
+        
+        // Auto-cerrar después de 3 segundos
+        setTimeout(() => {
+            if (notificacion.parentNode) {
+                notificacion.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (notificacion.parentNode) {
+                        document.body.removeChild(notificacion);
+                    }
+                }, 500);
+            }
+        }, 3000);
+    }
+    
+    // Función temporal para mantener compatibilidad con la pantalla completa (ya no se usa)
+    function mostrarPantallaCompletaExito(data) {
+        const total = serviciosSeleccionados.reduce((sum, s) => sum + parseFloat(s.precio), 0);
+        const contenedorFormulario = document.querySelector('.xl\\:col-span-4');
+        
+        if (contenedorFormulario) {
+            contenedorFormulario.innerHTML = `
+                <div class="text-center p-8 sm:p-12 bg-white rounded-3xl shadow-2xl">
+                    <div class="text-6xl text-green-500 mb-6 animate-bounce">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h2 class="text-3xl lg:text-4xl font-bold text-gray-800 mb-4">¡Reserva Confirmada!</h2>
+                    <p class="text-gray-600 text-lg mb-8">${data.message || 'Tu cita ha sido programada exitosamente.'}</p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="{% url 'reservas' %}" class="bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-3 px-6 lg:px-8 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center">
+                            <i class="fas fa-plus mr-2"></i>Nueva Reserva
+                        </a>
+                        <a href="{% url 'home' %}" class="bg-gradient-to-r from-gray-600 to-gray-700 text-white font-bold py-3 px-6 lg:px-8 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center">
+                            <i class="fas fa-home mr-2"></i>Inicio
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    // Función para mostrar errores de reserva
+    function mostrarErrorReserva(mensaje) {
+        // Crear modal de error
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+        modal.innerHTML = `
+            <div class="modal-content bg-white rounded-2xl p-6 lg:p-8 max-w-md w-full shadow-2xl border border-red-100">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl lg:text-2xl font-bold text-gray-800 mb-4">Error en la Reserva</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">${mensaje}</p>
+                    <div class="text-xs text-gray-500 mb-6 bg-gray-50 p-3 rounded-lg">
+                        <p><strong>Consejos:</strong></p>
+                        <ul class="list-disc list-inside text-left mt-2 space-y-1">
+                            <li>Verifica que todos los campos estén completos</li>
+                            <li>Asegúrate de tener conexión a internet</li>
+                            <li>Intenta con una fecha diferente si está ocupada</li>
+                        </ul>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button onclick="cerrarModal(this)" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 px-4 rounded-xl transition-all duration-300 font-medium">
+                            <i class="fas fa-times mr-2"></i>Cerrar
+                        </button>
+                        <button onclick="reintentarReserva(this)" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-xl transition-all duration-300 font-medium">
+                            <i class="fas fa-redo mr-2"></i>Reintentar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Mostrar modal con animación
+        setTimeout(() => {
+            modal.classList.add('show');
+        }, 50);
+        
+        // Agregar funciones globales para los botones
+        window.cerrarModal = function(button) {
+            const modal = button.closest('.modal-overlay');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                document.body.removeChild(modal);
+                delete window.cerrarModal;
+                delete window.reintentarReserva;
+            }, 300);
+        };
+        
+        window.reintentarReserva = function(button) {
+            window.cerrarModal(button);
+            // Restaurar botón antes de recargar
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = '<i class="fas fa-calendar-check mr-2 lg:mr-3 group-hover:rotate-12 transition-transform"></i> <span>Confirmar Reserva</span>';
+        };
+        
+        // Restaurar botón de envío
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = '<i class="fas fa-calendar-check mr-2 lg:mr-3 group-hover:rotate-12 transition-transform"></i> <span>Confirmar Reserva</span>';
+    }
+
+    // ==================== FUNCIONALIDAD DEL CALENDARIO MEJORADO ====================
+
+    // Función para formatear fecha en español para preview
+    function formatearFechaPreview(fechaString) {
+        const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        const fechaObj = new Date(fechaString + 'T00:00:00');
+        const diaSemana = diasSemana[fechaObj.getUTCDay()];
+        const dia = fechaObj.getUTCDate();
+        const mes = meses[fechaObj.getUTCMonth()];
+        const año = fechaObj.getUTCFullYear();
+        
+        return {
+            completa: `${diaSemana}, ${dia} de ${mes} de ${año}`,
+            diaSemana: diaSemana,
+            diaNumero: dia,
+            mes: mes,
+            año: año
+        };
+    }
+
+    // Función para calcular días restantes
+    function calcularDiasRestantes(fechaString) {
+        const hoy = new Date();
+        const fechaSeleccionada = new Date(fechaString + 'T00:00:00');
+        const diferenciaMilisegundos = fechaSeleccionada.getTime() - hoy.getTime();
+        const diasRestantes = Math.ceil(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
+        
+        if (diasRestantes === 0) return 'Es hoy';
+        if (diasRestantes === 1) return 'Es mañana';
+        if (diasRestantes === -1) return 'Fue ayer';
+        if (diasRestantes < 0) return `Hace ${Math.abs(diasRestantes)} días`;
+        return `En ${diasRestantes} días`;
+    }
+
+    // Función para obtener fecha formateada para input
+    function obtenerFechaFormateada(diasAgregar = 0) {
+        const fecha = new Date();
+        fecha.setDate(fecha.getDate() + diasAgregar);
+        return fecha.toISOString().split('T')[0];
+    }
+
+    // Función para actualizar el preview de fecha
+    function actualizarPreviewFecha(fechaString) {
+        const preview = document.getElementById('fecha-preview');
+        const previewText = document.getElementById('fecha-preview-text');
+        const diaSemana = document.getElementById('fecha-dia-semana');
+        const diasRestantes = document.getElementById('fecha-dias-restantes');
+
+        if (!fechaString) {
+            preview.classList.add('hidden');
+            return;
+        }
+
+        const fechaInfo = formatearFechaPreview(fechaString);
+        const diasInfo = calcularDiasRestantes(fechaString);
+
+        previewText.textContent = fechaInfo.completa;
+        diaSemana.textContent = fechaInfo.diaSemana;
+        diasRestantes.textContent = diasInfo;
+
+        preview.classList.remove('hidden');
+        
+        // Animación de entrada
+        preview.style.transform = 'translateY(-10px)';
+        preview.style.opacity = '0';
+        setTimeout(() => {
+            preview.style.transform = 'translateY(0)';
+            preview.style.opacity = '1';
+            preview.style.transition = 'all 0.3s ease';
+        }, 50);
+    }
+
+    // Función para configurar los botones de fechas sugeridas
+    function configurarBotonesFechasSugeridas() {
+        const botonesFecha = document.querySelectorAll('.fecha-sugerida');
+        
+        botonesFecha.forEach(boton => {
+            boton.addEventListener('click', function() {
+                const diasAgregar = parseInt(this.dataset.dias);
+                const fechaFormateada = obtenerFechaFormateada(diasAgregar);
+                
+                // Actualizar el input de fecha
+                fechaInput.value = fechaFormateada;
+                
+                // Disparar evento change para activar la lógica existente
+                fechaInput.dispatchEvent(new Event('change'));
+                
+                // Actualizar el preview
+                actualizarPreviewFecha(fechaFormateada);
+                
+                // Efecto visual mejorado en el botón clickeado
+                this.style.transform = 'scale(0.95)';
+                this.classList.add('seleccionado');
+                
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+                
+                // Remover clase después de la animación
+                setTimeout(() => {
+                    this.classList.remove('seleccionado');
+                }, 600);
+                
+                // Efecto de feedback visual temporal
+                const textoOriginal = this.textContent;
+                this.innerHTML = '<i class="fas fa-check mr-1"></i>' + textoOriginal;
+                
+                setTimeout(() => {
+                    this.textContent = textoOriginal;
+                }, 1500);
+                
+                // Mostrar notificación sutil
+                mostrarNotificacionFecha(fechaFormateada);
+            });
+        });
+    }
+
+    // Función para mostrar notificación sutil cuando se selecciona una fecha
+    function mostrarNotificacionFecha(fecha) {
+        const fechaInfo = formatearFechaPreview(fecha);
+        const diasInfo = calcularDiasRestantes(fecha);
+        
+        // Crear elemento de notificación temporal
+        const notificacion = document.createElement('div');
+        notificacion.className = 'fixed top-4 right-4 z-50 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300';
+        notificacion.innerHTML = `
+            <div class="flex items-center">
+                <i class="fas fa-calendar-check mr-2"></i>
+                <div>
+                    <p class="font-semibold text-sm">Fecha seleccionada</p>
+                    <p class="text-xs opacity-90">${fechaInfo.diaSemana} - ${diasInfo}</p>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(notificacion);
+        
+        // Mostrar notificación
+        setTimeout(() => {
+            notificacion.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Ocultar y remover notificación
+        setTimeout(() => {
+            notificacion.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                document.body.removeChild(notificacion);
+            }, 300);
+        }, 2500);
+    }
+
+    // Mejorar el evento change del input de fecha para incluir preview
+    const originalFechaChangeHandler = fechaInput.cloneNode(true);
+    fechaInput.addEventListener('change', function() {
+        // Actualizar preview de fecha
+        actualizarPreviewFecha(this.value);
+        
+        // Actualizar variable global
+        fechaSeleccionada = this.value;
+        
+        // Lógica existente para horas
+        horaSelect.innerHTML = '<option value="">Cargando horas...</option>';
+        horaSelect.disabled = true;
+
+        if (!this.value || !empresaSeleccionada || serviciosSeleccionados.length === 0) {
+            horaSelect.innerHTML = '<option value="">Faltan datos</option>';
+            validateStep();
+            updateSummary();
+            return;
+        }
+
+        const primerServicioId = serviciosSeleccionados[0].id_servicio;
+        const url = `/get-horas/?empresa_id=${empresaSeleccionada.id_empresa}&servicio_id=${primerServicioId}&fecha=${this.value}`;
+        console.log('🕐 Solicitando horas para fecha sugerida:', url);
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log('📋 Horas recibidas para fecha sugerida:', data);
+                horaSelect.innerHTML = '<option value="">Selecciona una hora</option>';
+                if (data.horas && data.horas.length > 0) {
+                    data.horas.forEach(hora => {
+                        const option = document.createElement('option');
+                        option.value = hora;
+                        option.textContent = hora;
+                        horaSelect.appendChild(option);
+                    });
+                    horaSelect.disabled = false;
+                } else {
+                    horaSelect.innerHTML = '<option value="">No hay horas disponibles</option>';
+                }
+                validateStep();
+                updateSummary();
+            })
+            .catch(error => {
+                console.error('Error fetching hours:', error);
+                horaSelect.innerHTML = '<option value="">Error al cargar horas</option>';
+            });
+    });
+
+    // Función para configurar restricciones de fecha (no permitir fechas pasadas)
+    function configurarRestriccionesFecha() {
+        const hoy = new Date();
+        const fechaMinima = hoy.toISOString().split('T')[0];
+        fechaInput.setAttribute('min', fechaMinima);
+        
+        // Opcional: configurar fecha máxima (por ejemplo, 3 meses adelante)
+        const fechaMaxima = new Date();
+        fechaMaxima.setMonth(fechaMaxima.getMonth() + 3);
+        fechaInput.setAttribute('max', fechaMaxima.toISOString().split('T')[0]);
+    }
+
+    // Función para mejorar la experiencia visual del input de fecha
+    function mejorarInputFecha() {
+        // Agregar clase de estilo mejorado si no existe
+        if (!fechaInput.classList.contains('date-input-enhanced')) {
+            fechaInput.classList.add('date-input-enhanced');
+        }
+        
+        // Mejorar placeholder según el navegador
+        const esWebKit = /webkit/i.test(navigator.userAgent);
+        if (esWebKit) {
+            fechaInput.addEventListener('focus', function() {
+                this.style.color = 'transparent';
+                this.style.textShadow = '0 0 0 #374151';
+            });
+            
+            fechaInput.addEventListener('blur', function() {
+                if (this.value) {
+                    this.style.color = '';
+                    this.style.textShadow = '';
+                }
+            });
+        }
+    }
+
+    // ==================== INICIALIZACIÓN MEJORADA ====================
+    
+    function inicializarCalendarioMejorado() {
+        // Configurar restricciones de fecha
+        configurarRestriccionesFecha();
+        
+        // Configurar botones de fechas sugeridas
+        configurarBotonesFechasSugeridas();
+        
+        // Mejorar input de fecha
+        mejorarInputFecha();
+        
+        console.log('✅ Calendario mejorado inicializado correctamente');
+    }
+
+    // ==================== INICIALIZACIÓN ====================
+    goToStep(1);
+    inicializarGelocalizacion();
+    inicializarCalendarioMejorado();
+});
+</script>
+
+<style>
+/* Estilos personalizados para el formulario de reservas */
+.step-icon {
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.step.active .step-icon {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    transform: scale(1.1);
+}
+
+.step.completed .step-icon {
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.step-connector {
+    background: linear-gradient(90deg, #e5e7eb, #d1d5db);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.step.completed + .step-connector::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    transform: translateX(-100%);
+    animation: fillConnector 0.5s ease-out forwards;
+}
+
+@keyframes fillConnector {
+    to { transform: translateX(0); }
+}
+
+.info-card {
+    transition: all 0.3s ease;
+    border-radius: 0.75rem;
+}
+
+.info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.enhanced-select select:focus + i,
+.enhanced-select input:focus + i {
+    transform: translateY(-50%) rotate(180deg);
+    color: #3b82f6;
+}
+
+.form-step {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+}
+
+.form-step:not(.hidden) {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Animaciones personalizadas */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes float-delayed {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+}
+
+@keyframes float-slow {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes bounce-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-slow {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 0.4; }
+}
+
+@keyframes float-up {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+}
+
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-float-delayed { animation: float-delayed 8s ease-in-out infinite; }
+.animate-float-slow { animation: float-slow 10s ease-in-out infinite; }
+.animate-bounce-slow { animation: bounce-slow 3s ease-in-out infinite; }
+.animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+.animate-float-up { animation: float-up 15s linear infinite; }
+
+/* Efectos de hover para botones */
+button:hover {
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Efectos de partículas */
+.hero-particles::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+        radial-gradient(circle at 80% 40%, rgba(16, 185, 129, 0.1) 1px, transparent 1px),
+        radial-gradient(circle at 40% 80%, rgba(139, 92, 246, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px, 80px 80px, 60px 60px;
+    animation: float 20s linear infinite;
+}
+
+/* Mejoras en responsividad */
+@media (max-width: 1280px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .step-connector {
+        display: none;
+    }
+    
+    .step {
+        flex: 1;
+        text-align: center;
+    }
+    
+    #progress-bar {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .step {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .step-icon {
+        margin-bottom: 0;
+    }
+    
+    .step-label {
+        margin-top: 0;
+    }
+    
+    /* Ajustes para botones en móvil */
+    #btn-prev, #btn-next, #btn-submit {
+        min-height: 48px;
+    }
+    
+    /* Mejor espaciado en móvil */
+    .info-card {
+        padding: 1rem;
+    }
+    
+    /* Ajustes del grid principal */
+    .grid.grid-cols-1.xl\\:grid-cols-7 {
+        gap: 1.5rem;
+    }
+    
+    /* Mejorar lectura de texto en móvil */
+    .break-words {
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+}
+
+@media (max-width: 640px) {
+    /* Botones apilados en pantallas muy pequeñas */
+    .flex.flex-col.sm\\:flex-row {
+        flex-direction: column;
+    }
+    
+    /* Reducir padding en pantallas pequeñas */
+    .p-6.sm\\:p-8.lg\\:p-10 {
+        padding: 1rem;
+    }
+    
+    /* Ajustar tamaño de texto en móvil */
+    .text-xl.lg\\:text-2xl {
+        font-size: 1.125rem;
+    }
+    
+    .text-4xl.lg\\:text-5xl {
+        font-size: 2rem;
+    }
+    
+    /* Mejorar la visualización del mapa en móvil */
+    #mapa-container {
+        height: 250px;
+    }
+    
+    /* Ajustar altura de servicios disponibles */
+    .max-h-56.lg\\:max-h-64 {
+        max-height: 200px;
+    }
+}
+
+/* Estilos para mejor contraste y accesibilidad */
+.focus\\:ring-2:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+/* Mejoras para elementos de formulario */
+select, input {
+    transition: all 0.2s ease;
+}
+
+select:hover, input:hover {
+    border-color: #9ca3af;
+}
+
+/* Animaciones de entrada más suaves */
+.animate-fadeInUp {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilos para mejor legibilidad */
+.text-gray-500, .text-gray-600 {
+    color: #6b7280;
+}
+
+.text-gray-700, .text-gray-800 {
+    color: #374151;
+}
+
+/* Estilos mejorados para el calendario */
+.date-input-enhanced {
+    background-image: linear-gradient(45deg, transparent 49%, rgba(59, 130, 246, 0.1) 50%, transparent 51%);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+    position: relative;
+}
+
+.date-input-enhanced:focus {
+    background-image: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 15px rgba(59, 130, 246, 0.2);
+}
+
+/* Animaciones para el preview de fecha */
+#fecha-preview {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: top;
+}
+
+#fecha-preview.hidden {
+    transform: scaleY(0) translateY(-10px);
+    opacity: 0;
+}
+
+#fecha-preview:not(.hidden) {
+    transform: scaleY(1) translateY(0);
+    opacity: 1;
+    animation: slideInPreview 0.4s ease-out;
+}
+
+@keyframes slideInPreview {
+    0% {
+        transform: scaleY(0.8) translateY(-5px);
+        opacity: 0;
+    }
+    50% {
+        transform: scaleY(1.02) translateY(0);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scaleY(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Efectos hover para botones de fechas sugeridas */
+.fecha-sugerida {
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.fecha-sugerida::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.fecha-sugerida:hover::before {
+    left: 100%;
+}
+
+.fecha-sugerida:active {
+    transform: scale(0.95);
+}
+
+/* Indicador visual para fecha actual */
+.fecha-sugerida[data-dias="0"] {
+    background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+}
+
+.fecha-sugerida[data-dias="0"]:hover {
+    background: linear-gradient(135deg, #d97706, #b45309) !important;
+}
+
+/* Mejorar contraste en dispositivos móviles */
+@media (max-width: 768px) {
+    .fecha-sugerida {
+        min-height: 44px; /* Tamaño mínimo táctil recomendado */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    #fecha-preview {
+        margin-top: 0.75rem;
+        padding: 0.75rem;
+    }
+    
+    #fecha-preview-text {
+        font-size: 1rem;
+    }
+}
+
+/* Animación para cuando se selecciona un botón de fecha sugerida */
+.fecha-sugerida.seleccionado {
+    animation: pulseSelect 0.6s ease-out;
+}
+
+@keyframes pulseSelect {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    }
+}
+
+/* Mejor feedback visual para el input de fecha */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>');
+    background-size: 1.2rem;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* ==================== ESTILOS PARA SELECT PERSONALIZADO ==================== */
+.modern-select-container {
+    position: relative;
+    z-index: 1000;
+}
+
+.modern-select-container.active {
+    z-index: 99999;
+}
+
+.modern-select-display {
+    position: relative;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modern-select-display:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.modern-select-display.active,
+.modern-select-display:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.modern-select-dropdown {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(229, 231, 235, 0.8);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    animation: dropdownSlide 0.2s ease-out;
+    transform-origin: top;
+    z-index: 99999;
+    position: absolute;
+    opacity: 0.95;
+}
+
+@keyframes dropdownSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.select-option {
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.select-option:hover {
+    background: linear-gradient(90deg, #eff6ff 0%, #ecfdf5 100%);
+    transform: translateX(2px);
+}
+
+.select-option:active {
+    transform: translateX(1px) scale(0.98);
+}
+
+.select-option .select-check {
+    transition: all 0.3s ease;
+}
+
+.select-option.selected {
+    background: linear-gradient(90deg, #dbeafe 0%, #d1fae5 100%);
+    border-left: 3px solid #3b82f6;
+}
+
+/* Efectos de hover para iconos */
+.select-option:hover .w-8,
+.select-option:hover .w-10 {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* Scrollbar personalizada para el dropdown */
+.select-options::-webkit-scrollbar {
+    width: 6px;
+}
+
+.select-options::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.select-options::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #3b82f6, #06b6d4);
+    border-radius: 3px;
+}
+
+.select-options::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #2563eb, #0891b2);
+}
+
+/* Animación para el icono de flecha */
+.select-arrow-container {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Estados de focus y accesibilidad */
+.modern-select-display:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.select-option:focus {
+    outline: none;
+    background: linear-gradient(90deg, #dbeafe 0%, #d1fae5 100%);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .modern-select-dropdown {
+        max-height: 60vh;
+        z-index: 99999;
+    }
+    
+    .select-option {
+        padding: 12px 16px;
+    }
+}
+
+/* Asegurar que el dropdown esté siempre por encima */
+.modern-select-dropdown {
+    z-index: 99999 !important;
+    position: absolute !important;
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    opacity: 0.95 !important;
+}
+
+.modern-select-container.active {
+    z-index: 99999 !important;
+    position: relative !important;
+}
+
+/* Hacer las opciones del dropdown semi-transparentes */
+.select-option {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(5px) !important;
+}
+
+.select-option:hover {
+    background: linear-gradient(to right, rgba(239, 246, 255, 0.9), rgba(240, 249, 255, 0.9)) !important;
+    backdrop-filter: blur(8px) !important;
+}
+
+/* Asegurar que el header del dropdown sea completamente opaco */
+.modern-select-dropdown .bg-gradient-to-r {
+    background: linear-gradient(to right, #eff6ff, #f0f9ff) !important;
+    backdrop-filter: none !important;
+    opacity: 1 !important;
+}
+
+/* Eliminar cualquier transparencia de los elementos internos */
+.modern-select-dropdown * {
+    backdrop-filter: none !important;
+}
+
+.select-options {
+    background-color: #ffffff !important;
+}
+
+/* Asegurar que los contenedores padres no corten el dropdown */
+.modern-select-container {
+    overflow: visible !important;
+}
+
+.enhanced-select {
+    overflow: visible !important;
+}
+
+/* Asegurar que el formulario y sus pasos permitan el overflow */
+.form-step {
+    overflow: visible !important;
+}
+
+/* Efectos adicionales para mejor UX */
+.modern-select-container:focus-within .modern-select-display {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Animación suave para el contador */
+#empresas-count {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+/* Estilos para accesibilidad */
+.fecha-sugerida:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+#fecha-preview:focus-within {
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+/* Spinner de carga personalizado */
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Mejoras para el modal de error */
+.modal-overlay {
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+}
+
+.modal-content {
+    transform: scale(0.9);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.show .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Estilos para las notificaciones de éxito */
+.notificacion-exito {
+    z-index: 99999;
+}
+
+.notificacion-exito .barra-progreso {
+    transition: width 3s linear;
+}
+
+/* Animación para la barra de progreso */
+@keyframes progreso {
+    from { width: 0%; }
+    to { width: 100%; }
+}
+
+/* Animación de bounce para el icono de check */
+@keyframes bounce-check {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-5px);
+    }
+    60% {
+        transform: translateY(-3px);
+    }
+}
+
+.notificacion-exito .fa-check {
+    animation: bounce-check 1s infinite;
+}
+
+/* Transición suave para el botón de confirmación */
+#btn-submit {
+    transition: all 0.3s ease;
+}
+
+/* Estilos adicionales para las animaciones de estado del botón */
+.btn-success {
+    background: linear-gradient(to right, #10b981, #059669) !important;
+    transform: scale(1.05);
+}
+
+.btn-processing {
+    background: linear-gradient(to right, #3b82f6, #1d4ed8) !important;
+}
+    opacity: 1;
+}
+</style>
+{% endblock %}

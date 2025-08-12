@@ -1,0 +1,955 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    :root {
+        --navy: #1e3a8a;
+        --silver: #9ca3af;
+        --electric-blue: #3b82f6;
+        --snow-white: #ffffff;
+        --platinum: #e5e7eb;
+        --midnight: #111827;
+    }
+
+    body {
+        background: var(--snow-white);
+        min-height: 100vh;
+    }
+
+    .floating-image {
+        position: fixed;
+        top: 100px;
+        right: 50px;
+        width: 120px;
+        transition: all 0.3s ease;
+        opacity: 0.6;
+        z-index: 10;
+    }
+
+    .floating-image:hover {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+        .floating-image {
+            display: none;
+        }
+    }
+
+    .animate-float {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-15px);
+        }
+    }
+
+    @keyframes slideInFromBottom {
+        0% {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInScale {
+        0% {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .animate-slideIn {
+        animation: slideInFromBottom 0.8s ease-out forwards;
+    }
+
+    .animate-fadeScale {
+        animation: fadeInScale 1s ease-out forwards;
+    }
+
+    .animate-delay-1 { animation-delay: 0.2s; }
+    .animate-delay-2 { animation-delay: 0.4s; }
+    .animate-delay-3 { animation-delay: 0.6s; }
+    .animate-delay-4 { animation-delay: 0.8s; }
+
+    /* Custom pulse animation for gradient underline */
+    @keyframes gradientPulse {
+        0% { transform: scaleX(0); }
+        50% { transform: scaleX(1); }
+        100% { transform: scaleX(1); }
+    }
+
+    .gradient-underline {
+        animation: gradientPulse 2s ease-in-out infinite;
+    }
+
+    .gradient-text {
+        background: linear-gradient(45deg, var(--navy), var(--electric-blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .glass-effect {
+        background: rgba(30, 58, 138, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(30, 58, 138, 0.1);
+        box-shadow: 0 4px 20px rgba(30, 58, 138, 0.1);
+    }
+
+    .hover-lift {
+        transition: all 0.3s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(30, 58, 138, 0.15);
+    }
+</style>
+
+
+<!-- Hero Section -->
+<div class="relative min-h-screen flex items-center justify-center px-4 pt-32 pb-24 overflow-hidden">
+    <!-- Decorative Background Elements -->
+    <div class="absolute inset-0 opacity-20">
+        <div class="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-[var(--navy)]/30 to-[var(--electric-blue)]/30 rounded-full blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-[var(--electric-blue)]/20 to-[var(--silver)]/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-[var(--navy)]/10 to-[var(--electric-blue)]/10 rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- Floating Particles -->
+    <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute top-1/4 left-1/4 w-2 h-2 bg-[var(--electric-blue)] rounded-full opacity-60 animate-bounce" style="animation-delay: 0s;"></div>
+        <div class="absolute top-1/3 right-1/4 w-3 h-3 bg-[var(--navy)] rounded-full opacity-40 animate-bounce" style="animation-delay: 1s;"></div>
+        <div class="absolute bottom-1/3 left-1/3 w-1 h-1 bg-[var(--electric-blue)] rounded-full opacity-80 animate-bounce" style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-1/4 right-1/3 w-2 h-2 bg-[var(--silver)] rounded-full opacity-50 animate-bounce" style="animation-delay: 1.5s;"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto text-center">
+        <!-- Hero Image with Enhanced Animation -->
+        <div class="mb-4 relative">
+            <div class="absolute inset-0 bg-gradient-to-r from-[var(--navy)]/20 to-[var(--electric-blue)]/20 rounded-full blur-2xl transform scale-110"></div>
+            <img class="relative z-10 w-96 h-96 md:w-[550px] md:h-[550px] lg:w-[650px] lg:h-[650px] xl:w-[750px] xl:h-[750px] mx-auto object-contain animate-float drop-shadow-2xl" 
+                 src="{% static 'img/about.png' %}" 
+                 alt="Autonew">
+            
+            <!-- Decorative Rings -->
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] border-2 border-[var(--electric-blue)]/20 rounded-full animate-spin" style="animation-duration: 20s;"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[130%] h-[130%] border border-[var(--navy)]/10 rounded-full animate-spin" style="animation-duration: 30s; animation-direction: reverse;"></div>
+            
+            <!-- Floating Text Elements -->
+            <div class="absolute -top-2 left-1/2 transform -translate-x-1/2 animate-float hidden md:block" style="animation-delay: 0.5s;">
+                <div class="px-8 py-4 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-[var(--electric-blue)]/20">
+                    <span class="text-[var(--electric-blue)] font-semibold text-base">✨ Calidad Premium</span>
+                </div>
+            </div>
+            
+            <div class="absolute top-1/4 -left-8 lg:-left-16 animate-float hidden lg:block" style="animation-delay: 1s; animation-duration: 4s;">
+                <div class="px-6 py-4 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-[var(--navy)]/20 rotate-12">
+                    <span class="text-[var(--navy)] font-semibold text-sm">🚗 Cuidado Total</span>
+                </div>
+            </div>
+            
+            <div class="absolute top-1/3 -right-8 lg:-right-16 animate-float hidden lg:block" style="animation-delay: 2s; animation-duration: 3.5s;">
+                <div class="px-6 py-4 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-[var(--electric-blue)]/20 -rotate-12">
+                    <span class="text-[var(--electric-blue)] font-semibold text-sm">💧 Eco-Friendly</span>
+                </div>
+            </div>
+            
+            <div class="absolute bottom-1/4 -left-12 lg:-left-20 animate-float hidden lg:block" style="animation-delay: 1.5s; animation-duration: 4.5s;">
+                <div class="px-6 py-4 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-[var(--silver)]/20 rotate-6">
+                    <span class="text-[var(--navy)] font-semibold text-sm">⭐ 15 Años</span>
+                </div>
+            </div>
+            
+            <div class="absolute bottom-1/3 -right-12 lg:-right-20 animate-float hidden lg:block" style="animation-delay: 2.5s; animation-duration: 3s;">
+                <div class="px-6 py-4 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-[var(--electric-blue)]/20 -rotate-6">
+                    <span class="text-[var(--electric-blue)] font-semibold text-sm">🏆 Confianza</span>
+                </div>
+            </div>
+            
+            <!-- Mobile floating texts (simplified) -->
+            <div class="absolute top-0 left-4 animate-float md:hidden" style="animation-delay: 1s;">
+                <div class="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-[var(--electric-blue)]/20">
+                    <span class="text-[var(--electric-blue)] font-semibold text-sm">✨ Premium</span>
+                </div>
+            </div>
+            
+            <div class="absolute top-0 right-4 animate-float md:hidden" style="animation-delay: 2s;">
+                <div class="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-[var(--navy)]/20">
+                    <span class="text-[var(--navy)] font-semibold text-sm">🚗 Cuidado</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Typography -->
+        <div class="space-y-6">
+            <div class="inline-block px-6 py-2 bg-gradient-to-r from-[var(--navy)]/10 to-[var(--electric-blue)]/10 rounded-full border border-[var(--electric-blue)]/20 backdrop-blur-sm mb-4">
+                <span class="text-[var(--electric-blue)] font-semibold text-sm uppercase tracking-wider">Líder en Autolavados</span>
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 text-gray-800 leading-tight">
+                Bienvenido a 
+                <span class="gradient-text relative inline-block">
+                    Autonew
+                    <div class="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-[var(--navy)] to-[var(--electric-blue)] rounded-full transform scale-x-0 animate-pulse" style="animation-delay: 1s; animation-duration: 2s; animation-fill-mode: forwards;"></div>
+                </span>
+            </h1>
+            
+            <p class="text-xl md:text-2xl lg:text-3xl text-gray-600 max-w-5xl mx-auto leading-relaxed font-light">
+                En Autonew, nos enorgullece ser la plataforma líder en autolavados, comprometidos con ofrecerte los 
+                <span class="text-[var(--electric-blue)] font-semibold">mejores servicios</span> 
+                para el cuidado y mantenimiento de tu vehículo.
+            </p>
+        </div>
+
+        <!-- Enhanced Action Buttons -->
+        <div class="mt-16 flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <button class="group relative px-10 py-5 bg-gradient-to-r from-[var(--navy)] to-[var(--electric-blue)] text-white font-bold rounded-full hover:shadow-2xl transition-all duration-500 transform hover:scale-105 overflow-hidden">
+                <span class="relative z-10 flex items-center gap-3">
+                    <i class="fas fa-info-circle"></i>
+                    Conoce Más
+                </span>
+                <div class="absolute inset-0 bg-gradient-to-r from-[var(--electric-blue)] to-[var(--navy)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </button>
+            
+            <a href="{% url 'servicios' %}" class="group relative px-10 py-5 border-2 border-[var(--electric-blue)] text-[var(--electric-blue)] font-bold rounded-full hover:bg-[var(--electric-blue)] hover:text-white transition-all duration-500 overflow-hidden backdrop-blur-sm inline-block">
+                <span class="relative z-10 flex items-center gap-3">
+                    <i class="fas fa-car-wash"></i>
+                    Nuestros Servicios
+                </span>
+                <div class="absolute inset-0 bg-gradient-to-r from-[var(--electric-blue)] to-[var(--navy)] transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+            </a>
+        </div>
+
+        <!-- Trust Indicators -->
+        <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 opacity-70">
+            <div class="text-center">
+                <div class="text-3xl font-bold text-[var(--navy)]">15+</div>
+                <div class="text-sm text-gray-600 uppercase tracking-wide">Años de Experiencia</div>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold text-[var(--navy)]">1000+</div>
+                <div class="text-sm text-gray-600 uppercase tracking-wide">Clientes Satisfechos</div>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold text-[var(--navy)]">50+</div>
+                <div class="text-sm text-gray-600 uppercase tracking-wide">Ubicaciones</div>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold text-[var(--navy)]">24/7</div>
+                <div class="text-sm text-gray-600 uppercase tracking-wide">Atención al Cliente</div>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <div class="w-6 h-10 border-2 border-[var(--electric-blue)] rounded-full flex justify-center">
+                <div class="w-1 h-3 bg-[var(--electric-blue)] rounded-full mt-2 animate-pulse"></div>
+            </div>
+            <div class="text-xs text-gray-500 mt-2 uppercase tracking-wider">Desliza</div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Grid -->
+<div class="py-20 px-4 relative overflow-hidden">
+    <!-- Decorative Background -->
+    <div class="absolute inset-0 opacity-5">
+        <div class="absolute top-10 right-20 w-40 h-40 bg-gradient-to-r from-[var(--electric-blue)] to-[var(--navy)] rounded-full blur-2xl"></div>
+        <div class="absolute bottom-10 left-20 w-32 h-32 bg-gradient-to-r from-[var(--navy)] to-[var(--silver)] rounded-full blur-2xl"></div>
+    </div>
+
+    <div class="max-w-6xl mx-auto relative z-10">
+        <!-- Section Header -->
+        <div class="text-center mb-16">
+            <div class="inline-block px-4 py-2 bg-gradient-to-r from-[var(--navy)]/10 to-[var(--electric-blue)]/10 rounded-full border border-[var(--electric-blue)]/20 backdrop-blur-sm mb-4">
+                <span class="text-[var(--electric-blue)] font-semibold text-sm uppercase tracking-wider">Por Qué Elegirnos</span>
+            </div>
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                Nuestros <span class="gradient-text">Pilares</span> de Calidad
+            </h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                Descubre los valores que nos hacen únicos en el mercado de autolavados
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="glass-effect rounded-3xl p-8 hover-lift text-center group relative overflow-hidden">
+                <!-- Hover Background Effect -->
+                <div class="absolute inset-0 bg-gradient-to-br from-[var(--navy)]/5 to-[var(--electric-blue)]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
+                
+                <div class="relative z-10">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[var(--navy)] to-[var(--electric-blue)] rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
+                        <i class="fa fa-2x fa-headset text-white group-hover:scale-110 transition-transform duration-200"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4 group-hover:text-[var(--electric-blue)] transition-colors duration-200">Su Opinión es lo Más Importante</h3>
+                    <p class="text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-200">Valoramos cada comentario para mejorar continuamente nuestros servicios y superar tus expectativas.</p>
+                    
+                    <!-- Decorative Element -->
+                    <div class="absolute -bottom-2 -right-2 w-16 h-16 bg-gradient-to-br from-[var(--electric-blue)]/10 to-[var(--navy)]/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+            </div>
+            
+            <div class="glass-effect rounded-3xl p-8 hover-lift text-center group relative overflow-hidden">
+                <!-- Hover Background Effect -->
+                <div class="absolute inset-0 bg-gradient-to-br from-[var(--electric-blue)]/5 to-[var(--silver)]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
+                
+                <div class="relative z-10">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[var(--electric-blue)] to-[var(--silver)] rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
+                        <i class="fa fa-2x fa-car text-white group-hover:scale-110 transition-transform duration-200"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4 group-hover:text-[var(--electric-blue)] transition-colors duration-200">Tu Auto en Buenas Manos</h3>
+                    <p class="text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-200">Profesionales capacitados cuidan cada detalle de tu vehículo con técnicas especializadas y productos de calidad.</p>
+                    
+                    <!-- Featured Badge -->
+                    <div class="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-[var(--electric-blue)] to-[var(--navy)] rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <i class="fas fa-star text-white text-xs"></i>
+                    </div>
+                    
+                    <!-- Decorative Element -->
+                    <div class="absolute -bottom-2 -right-2 w-16 h-16 bg-gradient-to-br from-[var(--silver)]/10 to-[var(--electric-blue)]/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+            </div>
+            
+            <div class="glass-effect rounded-3xl p-8 hover-lift text-center group relative overflow-hidden">
+                <!-- Hover Background Effect -->
+                <div class="absolute inset-0 bg-gradient-to-br from-[var(--silver)]/5 to-[var(--navy)]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
+                
+                <div class="relative z-10">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[var(--silver)] to-[var(--navy)] rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
+                        <i class="fa fa-2x fa-map-marker-alt text-white group-hover:scale-110 transition-transform duration-200"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4 group-hover:text-[var(--electric-blue)] transition-colors duration-200">Diferentes Ubicaciones</h3>
+                    <p class="text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-200">Encuentra nuestros servicios en múltiples ubicaciones estratégicas para tu comodidad y accesibilidad.</p>
+                    
+                    <!-- Decorative Element -->
+                    <div class="absolute -bottom-2 -right-2 w-16 h-16 bg-gradient-to-br from-[var(--navy)]/10 to-[var(--silver)]/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom CTA -->
+        <div class="text-center mt-12">
+            <p class="text-gray-600 mb-6">¿Listo para experimentar la diferencia Autonew?</p>
+            <a href="{% url 'servicios' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--navy)] to-[var(--electric-blue)] text-white font-semibold rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                <span>Explora Nuestros Servicios</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Image -->
+<img src="{% static 'img/carropng.png' %}" class="floating-image animate-float" alt="Carro flotante">
+
+<!-- Company Section -->
+<div class="py-20 px-4 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+    <!-- Enhanced Decorative Background Elements -->
+    <div class="absolute inset-0 opacity-5">
+        <div class="absolute top-20 left-1/4 w-80 h-80 bg-gradient-to-r from-[var(--navy)] to-[var(--electric-blue)] rounded-full blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-20 right-1/4 w-96 h-96 bg-gradient-to-r from-[var(--electric-blue)] to-[var(--silver)] rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-gradient-to-r from-[var(--silver)]/30 to-[var(--navy)]/30 rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- Floating Particles -->
+    <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute top-1/4 left-1/5 w-3 h-3 bg-[var(--electric-blue)] rounded-full opacity-40 animate-bounce" style="animation-delay: 0.5s;"></div>
+        <div class="absolute top-1/3 right-1/5 w-2 h-2 bg-[var(--navy)] rounded-full opacity-60 animate-bounce" style="animation-delay: 1.5s;"></div>
+        <div class="absolute bottom-1/3 left-1/6 w-4 h-4 bg-[var(--silver)] rounded-full opacity-30 animate-bounce" style="animation-delay: 2.5s;"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto relative z-10">
+        <!-- Section Header -->
+        <div class="text-center mb-16">
+            <div class="inline-block px-6 py-3 bg-gradient-to-r from-[var(--navy)]/10 to-[var(--electric-blue)]/10 rounded-full border border-[var(--electric-blue)]/20 backdrop-blur-sm mb-6">
+                <span class="text-[var(--electric-blue)] font-semibold text-sm uppercase tracking-wider">Nuestra Historia</span>
+            </div>
+            <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 mb-6 leading-tight">
+                Conoce Nuestra <span class="gradient-text">Empresa</span>
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                15 años transformando la industria del autolavado con innovación, calidad y compromiso ambiental
+            </p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-16 items-center mb-16">
+            <!-- Content Side -->
+            <div class="space-y-8">
+                <!-- Main Description Card -->
+                <div class="glass-effect rounded-3xl p-8 hover-lift group relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-[var(--navy)]/5 to-[var(--electric-blue)]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="flex items-center mb-6">
+                            <div class="w-16 h-16 bg-gradient-to-br from-[var(--navy)] to-[var(--electric-blue)] rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-building text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-800 group-hover:text-[var(--electric-blue)] transition-colors duration-200">Autonew Corporation</h3>
+                                <p class="text-[var(--electric-blue)] font-semibold">Fundada en 2010</p>
+                            </div>
+                        </div>
+                        <p class="text-lg text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-200">
+                            Autonew es una empresa líder con <span class="text-[var(--electric-blue)] font-semibold">15 años</span> en el mercado de lavado y detallado de automotores. Nuestro compromiso con la excelencia nos ha llevado a establecer nuevos estándares en la industria, combinando tecnologías avanzadas con prácticas ecológicas responsables.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Enhanced Vision & Mission Cards -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="glass-effect rounded-2xl p-6 hover-lift group relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-[var(--navy)]/5 to-[var(--electric-blue)]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+                        
+                        <div class="relative z-10">
+                            <div class="w-16 h-16 mb-4 bg-gradient-to-br from-[var(--navy)] to-[var(--electric-blue)] rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
+                                <i class="fas fa-eye text-white text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-[var(--electric-blue)] transition-colors duration-200">Nuestra Visión</h3>
+                            <p class="text-gray-600 group-hover:text-gray-700 transition-colors duration-200">Ser la red de autolavados más reconocida y confiable a nivel nacional, presente en cada municipio del país.</p>
+                            
+                            <!-- Progress Indicator -->
+                            <div class="mt-4">
+                                <div class="text-xs text-[var(--electric-blue)] font-semibold mb-1">Progreso Nacional: 60%</div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-gradient-to-r from-[var(--navy)] to-[var(--electric-blue)] h-2 rounded-full group-hover:w-3/5 transition-all duration-1000" style="width: 60%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-effect rounded-2xl p-6 hover-lift group relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-[var(--electric-blue)]/5 to-[var(--silver)]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+                        
+                        <div class="relative z-10">
+                            <div class="w-16 h-16 mb-4 bg-gradient-to-br from-[var(--electric-blue)] to-[var(--silver)] rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
+                                <i class="fas fa-target text-white text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-[var(--electric-blue)] transition-colors duration-200">Nuestra Misión</h3>
+                            <p class="text-gray-600 group-hover:text-gray-700 transition-colors duration-200">Brindar servicios de autolavado de la más alta calidad, protegiendo el medio ambiente y ofreciendo precios justos a nuestros clientes.</p>
+                            
+                            <!-- Mission Icons -->
+                            <div class="flex space-x-2 mt-4">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                                    <i class="fas fa-leaf text-green-600 text-xs"></i>
+                                </div>
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200" style="animation-delay: 0.1s;">
+                                    <i class="fas fa-dollar-sign text-blue-600 text-xs"></i>
+                                </div>
+                                <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200" style="animation-delay: 0.2s;">
+                                    <i class="fas fa-star text-purple-600 text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Quote with Author -->
+                <div class="relative glass-effect rounded-2xl p-6 hover-lift group overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-[var(--electric-blue)]/5 to-[var(--navy)]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="absolute -top-2 -left-2 text-6xl text-[var(--electric-blue)]/20 font-serif">"</div>
+                        <div class="pl-8">
+                            <p class="text-lg text-gray-700 italic leading-relaxed mb-4 group-hover:text-gray-800 transition-colors duration-200">
+                                En Autonew, entendemos que tu vehículo es una extensión de ti mismo. Por eso, nos dedicamos a ofrecerte un servicio de autolavado excepcional que no solo limpia tu auto, sino que también lo cuida y lo protege para que siempre luzca impecable.
+                            </p>
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-[var(--navy)] to-[var(--electric-blue)] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    <span class="text-white font-bold text-sm">AN</span>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-[var(--electric-blue)] font-semibold">Equipo Directivo Autonew</div>
+                                    <div class="text-xs text-gray-500">Liderazgo & Innovación</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Stats & Features -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="text-center glass-effect rounded-2xl p-6 hover-lift group relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-[var(--navy)] to-[var(--electric-blue)] opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-2xl"></div>
+                        
+                        <div class="relative z-10">
+                            <div class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-[var(--navy)] to-[var(--electric-blue)] mb-2 group-hover:scale-110 transition-transform duration-300">15</div>
+                            <div class="text-[var(--electric-blue)] font-semibold">Años de Experiencia</div>
+                            <div class="text-sm text-gray-500 mt-1">Desde 2010</div>
+                        </div>
+                        
+                        <!-- Decorative Ring -->
+                        <div class="absolute inset-0 border-2 border-[var(--electric-blue)]/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3 group glass-effect hover:bg-white/50 p-3 rounded-lg transition-all duration-200">
+                            <div class="w-10 h-10 bg-gradient-to-br from-[var(--electric-blue)] to-[var(--navy)] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                                <i class="fas fa-car text-white text-sm"></i>
+                            </div>
+                            <span class="text-gray-700 group-hover:text-gray-800 transition-colors duration-200">1000+ Vehículos Lavados Mensualmente</span>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3 group glass-effect hover:bg-white/50 p-3 rounded-lg transition-all duration-200">
+                            <div class="w-10 h-10 bg-gradient-to-br from-[var(--navy)] to-[var(--silver)] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                                <i class="fas fa-trophy text-white text-sm"></i>
+                            </div>
+                            <span class="text-gray-700 group-hover:text-gray-800 transition-colors duration-200">Múltiples Premios de Calidad</span>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3 group glass-effect hover:bg-white/50 p-3 rounded-lg transition-all duration-200">
+                            <div class="w-10 h-10 bg-gradient-to-br from-[var(--electric-blue)] to-[var(--silver)] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                                <i class="fas fa-heart text-white text-sm"></i>
+                            </div>
+                            <span class="text-gray-700 group-hover:text-gray-800 transition-colors duration-200">95% Satisfacción del Cliente</span>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3 group glass-effect hover:bg-white/50 p-3 rounded-lg transition-all duration-200">
+                            <div class="w-10 h-10 bg-gradient-to-br from-[var(--silver)] to-[var(--navy)] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                                <i class="fas fa-recycle text-white text-sm"></i>
+                            </div>
+                            <span class="text-gray-700 group-hover:text-gray-800 transition-colors duration-200">100% Productos Ecológicos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced CTA & CEO Section -->
+                <div class="glass-effect rounded-2xl p-6 hover-lift group">
+                    <div class="flex flex-col lg:flex-row items-center gap-6">
+                        <!-- CEO Profile -->
+                        <div class="flex items-center space-x-4 group/ceo">
+                            <div class="relative">
+                                <img src="{% static 'img/ceo.png' %}" 
+                                     class="w-20 h-20 rounded-full border-4 border-[var(--electric-blue)] group-hover/ceo:border-[var(--navy)] transition-colors duration-300 shadow-lg" 
+                                     alt="CEO">
+                                <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-bold text-gray-800 group-hover/ceo:text-[var(--electric-blue)] transition-colors duration-200">Andrés Forero</h4>
+                                <p class="text-[var(--electric-blue)] font-semibold">CEO & Fundador</p>
+                                <div class="flex items-center mt-1">
+                                    <div class="flex text-yellow-400 text-xs">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <span class="text-xs text-gray-500 ml-2">Liderazgo Visionario</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- CTA Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-4 ml-auto">
+                            <a href="{% url 'contacto' %}" class="group/btn px-6 py-3 bg-gradient-to-r from-[var(--navy)] to-[var(--electric-blue)] text-white font-bold rounded-full hover:shadow-2xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden">
+                                <span class="relative z-10 flex items-center gap-2">
+                                    <i class="fas fa-arrow-right group-hover/btn:translate-x-1 transition-transform duration-200"></i>
+                                    Contáctanos
+                                </span>
+                                <div class="absolute inset-0 bg-gradient-to-r from-[var(--electric-blue)] to-[var(--navy)] opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                            </a>
+                            
+                            <a href="{% url 'servicios' %}" class="group/btn px-6 py-3 border-2 border-[var(--electric-blue)] text-[var(--electric-blue)] font-bold rounded-full hover:bg-[var(--electric-blue)] hover:text-white transition-all duration-300 relative overflow-hidden">
+                                <span class="relative z-10 flex items-center gap-2">
+                                    <i class="fas fa-concierge-bell group-hover/btn:scale-110 transition-transform duration-200"></i>
+                                    Ver Servicios
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Images Side -->
+            <div class="relative">
+                <!-- Main Image Carousel/Stack Layout -->
+                <div class="relative">
+                    <!-- Image Stack Container -->
+                    <div class="space-y-6">
+                        <!-- Primary Image Card -->
+                        <div class="group relative overflow-hidden">
+                            <div class="glass-effect rounded-2xl p-4 hover-lift">
+                                <div class="relative overflow-hidden rounded-xl">
+                                    <img src="{% static 'img/autonew1.webp' %}" 
+                                         class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-700" 
+                                         alt="Instalaciones Autonew">
+                                    
+                                    <!-- Image Gradient Overlay -->
+                                    <div class="absolute inset-0 bg-gradient-to-t from-[var(--navy)]/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    
+                                    <!-- Image Info Card -->
+                                    <div class="absolute bottom-4 left-4 right-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                        <div class="bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg">
+                                            <h4 class="font-bold text-gray-800 text-sm mb-1">Instalaciones de Vanguardia</h4>
+                                            <p class="text-xs text-gray-600">Equipos de última tecnología para resultados superiores</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Corner Badge -->
+                                    <div class="absolute top-3 right-3 bg-gradient-to-r from-[var(--electric-blue)] to-[var(--navy)] text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                                        Premium
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Secondary Images Grid -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Left Small Image -->
+                            <div class="group relative">
+                                <div class="glass-effect rounded-xl p-2 hover-lift">
+                                    <div class="relative overflow-hidden rounded-lg">
+                                        <img src="{% static 'img/about-img-1.jpg' %}" 
+                                             class="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-500" 
+                                             alt="Equipo Profesional">
+                                        
+                                        <!-- Mini Badge -->
+                                        <div class="absolute top-2 left-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-md">
+                                            <i class="fas fa-check text-white text-xs"></i>
+                                        </div>
+                                        
+                                        <!-- Hover Overlay -->
+                                        <div class="absolute inset-0 bg-[var(--electric-blue)]/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                            <span class="text-white text-xs font-semibold">Equipo Experto</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Stats Card -->
+                            <div class="glass-effect rounded-xl p-4 hover-lift group">
+                                <div class="text-center">
+                                    <div class="w-12 h-12 mx-auto mb-3 bg-gradient-to-br from-[var(--navy)] to-[var(--electric-blue)] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                        <i class="fas fa-chart-line text-white text-lg"></i>
+                                    </div>
+                                    <div class="text-2xl font-bold text-[var(--navy)] group-hover:text-[var(--electric-blue)] transition-colors duration-200">95%</div>
+                                    <div class="text-xs text-gray-600 font-medium">Satisfacción</div>
+                                    <div class="text-xs text-gray-500">Garantizada</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Achievement Cards -->
+                    <div class="absolute -top-6 -right-6 z-20">
+                        <div class="glass-effect rounded-xl p-3 animate-float shadow-lg border border-[var(--electric-blue)]/20">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-award text-white text-xs"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs font-bold text-gray-800">ISO 9001</div>
+                                    <div class="text-xs text-gray-500">Certificado</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="absolute -bottom-6 -left-6 z-20">
+                        <div class="glass-effect rounded-xl p-3 animate-float shadow-lg border border-[var(--electric-blue)]/20" style="animation-delay: 1s;">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-leaf text-white text-xs"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs font-bold text-gray-800">Eco-Friendly</div>
+                                    <div class="text-xs text-gray-500">100% Verde</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Experience Timeline -->
+                    <div class="absolute top-1/2 -right-12 transform -translate-y-1/2 z-20 hidden lg:block">
+                        <div class="glass-effect rounded-full p-4 animate-float border border-[var(--electric-blue)]/20" style="animation-delay: 0.5s;">
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-[var(--navy)]">2010</div>
+                                <div class="w-0.5 h-8 bg-gradient-to-b from-[var(--navy)] to-[var(--electric-blue)] mx-auto my-2"></div>
+                                <div class="text-lg font-bold text-[var(--electric-blue)]">2025</div>
+                                <div class="text-xs text-gray-600 mt-1 font-medium">15 Años</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Background Decoration Elements -->
+                <div class="absolute top-10 -left-10 w-20 h-20 bg-gradient-to-br from-[var(--electric-blue)]/20 to-[var(--navy)]/20 rounded-full blur-xl animate-pulse"></div>
+                <div class="absolute bottom-10 -right-10 w-24 h-24 bg-gradient-to-br from-[var(--silver)]/20 to-[var(--electric-blue)]/20 rounded-full blur-xl animate-pulse" style="animation-delay: 1.5s;"></div>
+                
+                <!-- Geometric Shapes -->
+                <div class="absolute top-20 right-0 w-1 h-16 bg-gradient-to-b from-[var(--electric-blue)]/40 to-transparent"></div>
+                <div class="absolute bottom-20 left-0 w-12 h-1 bg-gradient-to-r from-[var(--navy)]/40 to-transparent"></div>
+                
+                <!-- Connecting Lines -->
+                <div class="absolute top-1/3 left-1/4 w-8 h-8 border-2 border-[var(--electric-blue)]/30 rounded-full animate-ping"></div>
+                <div class="absolute bottom-1/3 right-1/4 w-6 h-6 border border-[var(--navy)]/40 rotate-45"></div>
+            </div>
+        </div>
+
+        <!-- Company Values Section -->
+        <div class="mt-16">
+            <div class="text-center mb-12">
+                <h3 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
+                    Nuestros <span class="gradient-text">Valores</span> Fundamentales
+                </h3>
+                <p class="text-gray-600 max-w-2xl mx-auto">
+                    Los principios que guían cada decisión y acción en Autonew
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-4 gap-6">
+                <div class="text-center glass-effect rounded-2xl p-6 hover-lift group">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[var(--navy)] to-[var(--electric-blue)] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-handshake text-white text-xl"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-gray-800 mb-2 group-hover:text-[var(--electric-blue)] transition-colors duration-200">Integridad</h4>
+                    <p class="text-sm text-gray-600">Honestidad y transparencia en cada servicio</p>
+                </div>
+
+                <div class="text-center glass-effect rounded-2xl p-6 hover-lift group">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[var(--electric-blue)] to-[var(--silver)] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-rocket text-white text-xl"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-gray-800 mb-2 group-hover:text-[var(--electric-blue)] transition-colors duration-200">Innovación</h4>
+                    <p class="text-sm text-gray-600">Tecnología de vanguardia para mejores resultados</p>
+                </div>
+
+                <div class="text-center glass-effect rounded-2xl p-6 hover-lift group">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[var(--silver)] to-[var(--navy)] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-leaf text-white text-xl"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-gray-800 mb-2 group-hover:text-[var(--electric-blue)] transition-colors duration-200">Sostenibilidad</h4>
+                    <p class="text-sm text-gray-600">Compromiso real con el medio ambiente</p>
+                </div>
+
+                <div class="text-center glass-effect rounded-2xl p-6 hover-lift group">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[var(--navy)] to-[var(--silver)] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-users text-white text-xl"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-gray-800 mb-2 group-hover:text-[var(--electric-blue)] transition-colors duration-200">Comunidad</h4>
+                    <p class="text-sm text-gray-600">Impacto positivo en nuestro entorno</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Extended Description Section -->
+<div class="py-20 px-4 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+    <!-- Decorative Background Elements -->
+    <div class="absolute inset-0 opacity-5">
+        <div class="absolute top-20 left-1/4 w-72 h-72 bg-gradient-to-r from-[var(--navy)] to-[var(--electric-blue)] rounded-full blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-20 right-1/4 w-80 h-80 bg-gradient-to-r from-[var(--electric-blue)] to-[var(--silver)] rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+    </div>
+
+    <div class="max-w-6xl mx-auto relative z-10">
+        <!-- Section Header -->
+        <div class="text-center mb-16">
+            <div class="inline-block px-6 py-3 bg-gradient-to-r from-[var(--navy)]/10 to-[var(--electric-blue)]/10 rounded-full border border-[var(--electric-blue)]/20 backdrop-blur-sm mb-6">
+                <span class="text-[var(--electric-blue)] font-semibold text-sm uppercase tracking-wider">Compromiso Total</span>
+            </div>
+            <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 mb-6 leading-tight">
+                Nuestro Compromiso con la <span class="gradient-text">Excelencia</span>
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Descubre por qué somos la elección preferida de miles de conductores en todo el país
+            </p>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid lg:grid-cols-2 gap-16 items-center mb-16">
+            <!-- Content Side -->
+            <div class="space-y-8">
+                <div class="glass-effect rounded-3xl p-8 hover-lift group relative overflow-hidden">
+                    <!-- Hover Background Effect -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-[var(--navy)]/5 to-[var(--electric-blue)]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="flex items-center mb-6">
+                            <div class="w-16 h-16 bg-gradient-to-br from-[var(--navy)] to-[var(--electric-blue)] rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-award text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-800 group-hover:text-[var(--electric-blue)] transition-colors duration-200">15 Años de Experiencia</h3>
+                                <p class="text-[var(--electric-blue)] font-semibold">Líderes en el Mercado</p>
+                            </div>
+                        </div>
+                        <p class="text-lg text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-200">
+                            Con más de <span class="text-[var(--electric-blue)] font-semibold">15 años de experiencia</span> en el sector, hemos creado una red de autolavados de alta calidad que cumplen con los más altos estándares de limpieza, protección y cuidado para tu auto.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="glass-effect rounded-3xl p-8 hover-lift group relative overflow-hidden">
+                    <!-- Hover Background Effect -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-[var(--electric-blue)]/5 to-[var(--silver)]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="flex items-center mb-6">
+                            <div class="w-16 h-16 bg-gradient-to-br from-[var(--electric-blue)] to-[var(--silver)] rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-leaf text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-800 group-hover:text-[var(--electric-blue)] transition-colors duration-200">Tecnología Ecológica</h3>
+                                <p class="text-[var(--electric-blue)] font-semibold">Cuidamos el Planeta</p>
+                            </div>
+                        </div>
+                        <p class="text-lg text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-200">
+                            Cada uno de los autolavados que forman parte de nuestra plataforma está respaldado por un equipo de <span class="text-[var(--electric-blue)] font-semibold">profesionales altamente capacitados</span>, que utilizan productos ecológicos y técnicas de vanguardia.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Side -->
+            <div class="relative">
+                <!-- Main Image Container -->
+                <div class="relative z-10 group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-[var(--navy)]/20 to-[var(--electric-blue)]/20 rounded-3xl transform rotate-3 group-hover:rotate-6 transition-transform duration-500"></div>
+                    <img src="{% static 'img/about-img.jpg' %}" 
+                         class="relative z-10 w-full h-80 object-cover rounded-3xl shadow-2xl hover-lift transform -rotate-3 group-hover:-rotate-6 transition-all duration-500" 
+                         alt="Excelencia en servicios">
+                </div>
+
+                <!-- Floating Stats -->
+                <div class="absolute -top-4 -left-4 z-20">
+                    <div class="glass-effect rounded-2xl p-4 animate-float border border-[var(--electric-blue)]/20">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-[var(--navy)]">1000+</div>
+                            <div class="text-xs text-gray-600 uppercase tracking-wide">Clientes Felices</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="absolute -bottom-4 -right-4 z-20">
+                    <div class="glass-effect rounded-2xl p-4 animate-float border border-[var(--electric-blue)]/20" style="animation-delay: 1s;">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-[var(--electric-blue)]">50+</div>
+                            <div class="text-xs text-gray-600 uppercase tracking-wide">Ubicaciones</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Decorative Elements -->
+                <div class="absolute top-1/2 -right-8 w-32 h-32 bg-gradient-to-br from-[var(--electric-blue)]/10 to-[var(--navy)]/10 rounded-full blur-xl animate-pulse"></div>
+                <div class="absolute -bottom-8 left-1/2 w-24 h-24 bg-gradient-to-br from-[var(--silver)]/10 to-[var(--electric-blue)]/10 rounded-full blur-xl animate-pulse" style="animation-delay: 2s;"></div>
+            </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid md:grid-cols-3 gap-8 mb-16">
+            <div class="text-center glass-effect rounded-2xl p-6 hover-lift group">
+                <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[var(--navy)] to-[var(--electric-blue)] rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-shield-alt text-white text-xl"></i>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-[var(--electric-blue)] transition-colors duration-200">Protección Garantizada</h4>
+                <p class="text-gray-600 group-hover:text-gray-700 transition-colors duration-200">Protegemos la pintura y materiales de tu vehículo con productos especializados</p>
+            </div>
+
+            <div class="text-center glass-effect rounded-2xl p-6 hover-lift group">
+                <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[var(--electric-blue)] to-[var(--silver)] rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-star text-white text-xl"></i>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-[var(--electric-blue)] transition-colors duration-200">Resultado Impecable</h4>
+                <p class="text-gray-600 group-hover:text-gray-700 transition-colors duration-200">Cada lavado garantiza un acabado perfecto que supera tus expectativas</p>
+            </div>
+
+            <div class="text-center glass-effect rounded-2xl p-6 hover-lift group">
+                <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[var(--silver)] to-[var(--navy)] rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-heart text-white text-xl"></i>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-[var(--electric-blue)] transition-colors duration-200">Experiencia Excepcional</h4>
+                <p class="text-gray-600 group-hover:text-gray-700 transition-colors duration-200">Tu satisfacción es nuestra prioridad en cada servicio que ofrecemos</p>
+            </div>
+        </div>
+
+        <!-- Final Message -->
+        <div class="text-center">
+            <div class="glass-effect rounded-3xl p-8 md:p-12 relative overflow-hidden group">
+                <!-- Animated Background -->
+                <div class="absolute inset-0 bg-gradient-to-br from-[var(--navy)]/5 to-[var(--electric-blue)]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"></div>
+                
+                <div class="relative z-10">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[var(--navy)] to-[var(--electric-blue)] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-gem text-white text-2xl"></i>
+                    </div>
+                    
+                    <h3 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 group-hover:text-[var(--electric-blue)] transition-colors duration-300">
+                        ¡Tu Auto, Como Nuevo!
+                    </h3>
+                    
+                    <p class="text-lg text-gray-600 leading-relaxed mb-8 max-w-3xl mx-auto group-hover:text-gray-700 transition-colors duration-300">
+                        Confía en nosotros para mantener tu vehículo en las mejores condiciones y disfrutar de una experiencia de autolavado excepcional. <span class="text-[var(--electric-blue)] font-semibold">¡Tu auto, como nuevo, con el compromiso de calidad de Autonew!</span>
+                    </p>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'servicios' %}" class="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[var(--navy)] to-[var(--electric-blue)] text-white font-bold rounded-full hover:shadow-2xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden">
+                                <span class="relative z-10">Reserva Ahora</span>
+                                <i class="fas fa-arrow-right relative z-10 group-hover:translate-x-1 transition-transform duration-200"></i>
+                                <div class="absolute inset-0 bg-gradient-to-r from-[var(--electric-blue)] to-[var(--navy)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[var(--navy)] to-[var(--electric-blue)] text-white font-bold rounded-full hover:shadow-2xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden">
+                                <span class="relative z-10">Inicia Sesión para Reservar</span>
+                                <i class="fas fa-sign-in-alt relative z-10 group-hover:translate-x-1 transition-transform duration-200"></i>
+                                <div class="absolute inset-0 bg-gradient-to-r from-[var(--electric-blue)] to-[var(--navy)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            </a>
+                        {% endif %}
+                        
+                        <a href="{% url 'contacto' %}" class="group inline-flex items-center gap-3 px-8 py-4 border-2 border-[var(--electric-blue)] text-[var(--electric-blue)] font-bold rounded-full hover:bg-[var(--electric-blue)] hover:text-white transition-all duration-300 relative overflow-hidden">
+                            <span class="relative z-10">Contáctanos</span>
+                            <i class="fas fa-phone relative z-10 group-hover:rotate-12 transition-transform duration-200"></i>
+                        </a>
+                    </div>
+
+                    <!-- Trust Badges -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 opacity-70">
+                        <div class="text-center group">
+                            <i class="fas fa-medal text-[var(--electric-blue)] text-2xl mb-2 group-hover:scale-110 transition-transform duration-200"></i>
+                            <div class="text-sm text-gray-600">Calidad Certificada</div>
+                        </div>
+                        <div class="text-center group">
+                            <i class="fas fa-clock text-[var(--electric-blue)] text-2xl mb-2 group-hover:scale-110 transition-transform duration-200"></i>
+                            <div class="text-sm text-gray-600">Servicio Rápido</div>
+                        </div>
+                        <div class="text-center group">
+                            <i class="fas fa-thumbs-up text-[var(--electric-blue)] text-2xl mb-2 group-hover:scale-110 transition-transform duration-200"></i>
+                            <div class="text-sm text-gray-600">100% Satisfacción</div>
+                        </div>
+                        <div class="text-center group">
+                            <i class="fas fa-recycle text-[var(--electric-blue)] text-2xl mb-2 group-hover:scale-110 transition-transform duration-200"></i>
+                            <div class="text-sm text-gray-600">Eco-Amigable</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Decorative Corner Elements -->
+                <div class="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-[var(--electric-blue)]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-[var(--electric-blue)]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+{% endblock %}

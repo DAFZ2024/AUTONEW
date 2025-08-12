@@ -1,0 +1,331 @@
+{% extends 'base/base_crud.html' %}
+{% load static %}
+{% load math_filters %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-teal-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header mejorado -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-lg">
+                        <i class="fas fa-users text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                            Suscripciones Individuales
+                        </h1>
+                        <p class="text-gray-600 mt-1">Gestiona las suscripciones de usuarios individuales</p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="{% url 'crear_suscripcion_individual' %}" 
+                       class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold rounded-2xl shadow-lg hover:from-emerald-700 hover:to-teal-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-plus mr-2"></i>
+                        Nueva Suscripción
+                    </a>
+                    <a href="{% url 'planes_crud' %}" 
+                       class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-2xl shadow-lg hover:from-blue-700 hover:to-cyan-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-layer-group mr-2"></i>
+                        Ver Planes
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas rápidas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Suscripciones</p>
+                        <p class="text-3xl font-bold text-emerald-600">{{ suscripciones|length }}</p>
+                    </div>
+                    <div class="p-3 bg-emerald-100 rounded-xl">
+                        <i class="fas fa-users text-emerald-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Activas</p>
+                        <p class="text-3xl font-bold text-green-600">{{ suscripciones_activas|default:0 }}</p>
+                    </div>
+                    <div class="p-3 bg-green-100 rounded-xl">
+                        <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Vencidas</p>
+                        <p class="text-3xl font-bold text-red-600">{{ suscripciones_vencidas|default:0 }}</p>
+                    </div>
+                    <div class="p-3 bg-red-100 rounded-xl">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Ingresos Mensuales</p>
+                        <p class="text-2xl font-bold text-indigo-600">${{ ingresos_mensuales|default:"0"|floatformat:0 }}</p>
+                    </div>
+                    <div class="p-3 bg-indigo-100 rounded-xl">
+                        <i class="fas fa-dollar-sign text-indigo-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros y búsqueda -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6 mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex-1 max-w-md">
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="Buscar por usuario o plan..." 
+                               class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300">
+                        <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <select id="estadoFilter" class="px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300">
+                        <option value="">Todos los estados</option>
+                        <option value="activa">Activas</option>
+                        <option value="pausada">Pausadas</option>
+                        <option value="cancelada">Canceladas</option>
+                        <option value="vencida">Vencidas</option>
+                    </select>
+                    
+                    <select id="planFilter" class="px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300">
+                        <option value="">Todos los planes</option>
+                        {% for plan in planes_disponibles %}
+                            <option value="{{ plan.id_plan }}">{{ plan.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de suscripciones -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden">
+            <div class="p-6 sm:p-8 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-900">Suscripciones de Usuarios</h2>
+                <p class="text-gray-600 mt-1">Total: {{ suscripciones|length }} suscripción{{ suscripciones|length|pluralize:"es" }}</p>
+            </div>
+
+            {% if suscripciones %}
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50/80">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Período</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Servicios Usados</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Auto Renovar</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for suscripcion in suscripciones %}
+                                <tr class="hover:bg-gray-50/50 transition-colors duration-200" data-estado="{{ suscripcion.estado }}" data-plan="{{ suscripcion.plan.id_plan }}">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="flex-shrink-0">
+                                                {% if suscripcion.usuario.profile_picture %}
+                                                    <img class="w-10 h-10 rounded-full object-cover" src="{{ suscripcion.usuario.profile_picture.url }}" alt="{{ suscripcion.usuario.nombre_completo }}">
+                                                {% else %}
+                                                    <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                                        {{ suscripcion.usuario.nombre_completo|first|upper }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <div class="text-lg font-semibold text-gray-900">{{ suscripcion.usuario.nombre_completo }}</div>
+                                                <div class="text-sm text-gray-500">{{ suscripcion.usuario.correo }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                                                {% if suscripcion.plan.tipo == 'basico' %}bg-blue-100 text-blue-800
+                                                {% elif suscripcion.plan.tipo == 'premium' %}bg-purple-100 text-purple-800
+                                                {% else %}bg-emerald-100 text-emerald-800{% endif %}">
+                                                <i class="fas fa-crown mr-1"></i>
+                                                {{ suscripcion.plan.nombre }}
+                                            </span>
+                                        </div>
+                                        <div class="text-sm text-gray-500 mt-1">${{ suscripcion.plan.precio_mensual }}/mes</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-gray-900">
+                                            <div><strong>Inicio:</strong> {{ suscripcion.fecha_inicio|date:"d/m/Y" }}</div>
+                                            <div><strong>Fin:</strong> {{ suscripcion.fecha_fin|date:"d/m/Y" }}</div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        {% if suscripcion.estado == 'activa' %}
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800">
+                                                <i class="fas fa-check-circle mr-1"></i>
+                                                Activa
+                                            </span>
+                                        {% elif suscripcion.estado == 'pausada' %}
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                                                <i class="fas fa-pause-circle mr-1"></i>
+                                                Pausada
+                                            </span>
+                                        {% elif suscripcion.estado == 'cancelada' %}
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                                                <i class="fas fa-times-circle mr-1"></i>
+                                                Cancelada
+                                            </span>
+                                        {% else %}
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                                <i class="fas fa-exclamation-circle mr-1"></i>
+                                                Vencida
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                                {% if suscripcion.plan.cantidad_servicios_mes > 0 %}
+                                                    <div class="bg-gradient-to-r from-emerald-500 to-teal-500 h-2 rounded-full" 
+                                                         style="width: {{ suscripcion.servicios_utilizados_mes|percentage:suscripcion.plan.cantidad_servicios_mes }}%"></div>
+                                                {% else %}
+                                                    <div class="bg-gradient-to-r from-emerald-500 to-teal-500 h-2 rounded-full w-full"></div>
+                                                {% endif %}
+                                            </div>
+                                            <span class="text-sm font-medium text-gray-900">
+                                                {{ suscripcion.servicios_utilizados_mes }}
+                                                {% if suscripcion.plan.cantidad_servicios_mes > 0 %}
+                                                    /{{ suscripcion.plan.cantidad_servicios_mes }}
+                                                {% else %}
+                                                    /∞
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        {% if suscripcion.auto_renovar %}
+                                            <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                                                <i class="fas fa-check mr-1"></i>Sí
+                                            </span>
+                                        {% else %}
+                                            <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">
+                                                <i class="fas fa-times mr-1"></i>No
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center space-x-2">
+                                            <a href="{% url 'editar_suscripcion_individual' suscripcion.id_suscripcion %}" 
+                                               class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105"
+                                               title="Editar suscripción">
+                                                <i class="fas fa-edit text-sm"></i>
+                                            </a>
+                                            <a href="{% url 'historial_pagos_suscripcion' suscripcion.id_suscripcion %}" 
+                                               class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 transform hover:scale-105"
+                                               title="Ver pagos">
+                                                <i class="fas fa-receipt text-sm"></i>
+                                            </a>
+                                            {% if suscripcion.estado == 'activa' %}
+                                                <a href="{% url 'pausar_suscripcion_individual' suscripcion.id_suscripcion %}" 
+                                                   class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-yellow-500 to-amber-500 text-white rounded-lg hover:from-yellow-600 hover:to-amber-600 transition-all duration-300 transform hover:scale-105"
+                                                   title="Pausar suscripción">
+                                                    <i class="fas fa-pause text-sm"></i>
+                                                </a>
+                                            {% endif %}
+                                            <a href="{% url 'eliminar_suscripcion_individual' suscripcion.id_suscripcion %}" 
+                                               class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg hover:from-red-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 delete-btn"
+                                               title="Eliminar suscripción">
+                                                <i class="fas fa-trash text-sm"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-16">
+                    <div class="mx-auto h-24 w-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-users text-gray-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No hay suscripciones registradas</h3>
+                    <p class="text-gray-600 mb-6">Comienza creando la primera suscripción para un usuario.</p>
+                    <a href="{% url 'crear_suscripcion_individual' %}" 
+                       class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold rounded-2xl shadow-lg hover:from-emerald-700 hover:to-teal-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-plus mr-2"></i>
+                        Crear Primera Suscripción
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript para filtros y búsqueda -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const estadoFilter = document.getElementById('estadoFilter');
+    const planFilter = document.getElementById('planFilter');
+    const tableRows = document.querySelectorAll('tbody tr[data-estado]');
+
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedEstado = estadoFilter.value;
+        const selectedPlan = planFilter.value;
+
+        tableRows.forEach(row => {
+            const userName = row.querySelector('td:first-child .text-lg').textContent.toLowerCase();
+            const userEmail = row.querySelector('td:first-child .text-sm').textContent.toLowerCase();
+            const planName = row.querySelector('td:nth-child(2) .inline-flex').textContent.toLowerCase();
+            const suscripcionEstado = row.getAttribute('data-estado');
+            const suscripcionPlan = row.getAttribute('data-plan');
+
+            const matchesSearch = userName.includes(searchTerm) || userEmail.includes(searchTerm) || planName.includes(searchTerm);
+            const matchesEstado = !selectedEstado || suscripcionEstado === selectedEstado;
+            const matchesPlan = !selectedPlan || suscripcionPlan === selectedPlan;
+
+            if (matchesSearch && matchesEstado && matchesPlan) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    searchInput.addEventListener('input', filterTable);
+    estadoFilter.addEventListener('change', filterTable);
+    planFilter.addEventListener('change', filterTable);
+
+    // Confirmar eliminación
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const result = confirm('¿Estás seguro de que deseas eliminar esta suscripción? Esta acción no se puede deshacer.');
+            if (result) {
+                window.location.href = this.href;
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

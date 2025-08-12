@@ -18,15 +18,19 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
+
+from django.contrib.auth import views as auth_views
+from lavado_auto.forms import CustomPasswordResetForm
 from lavado_auto import views
-from lavado_auto.views import get_horas,cambiar_estado_reserva
+from lavado_auto.views import get_horas, cambiar_estado_reserva
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.home, name = 'home'),
     path('nosotros/',views.nosotros, name = 'nosotros'),
     path('servicios/',views.servicios, name = 'servicios'),
-    path('planes/',views.planes, name = 'planes'),
+    path('planes/',views.planes_view, name = 'planes'),
+    path('planes-empresariales/',views.planes_empresariales, name = 'planes_empresariales'),
     path('reservas/',views.reservas, name = 'reservas'),
     path('obtener-servicios/', views.obtener_servicios, name='obtener_servicios'),
     path('obtener-info-empresa/', views.obtener_info_empresa, name='obtener_info_empresa'),
@@ -34,8 +38,16 @@ urlpatterns = [
     path('get-horas/', views.get_horas, name='get_horas'),
     path('obtener-horas/', views.get_horas, name='obtener_horas'),
     path('contacto/',views.contacto, name = 'contacto'),
-    path('resetcorreo/',views.resetCorreo, name = 'resetCorreo'),
-    path('resetcontrasena/',views.resetContrasena, name = 'resetContrasena'),
+    # Recuperación de contraseña (Django auth)
+    path('resetcorreo/', auth_views.PasswordResetView.as_view(
+        template_name='reset_correo.html',
+        form_class=CustomPasswordResetForm,
+        email_template_name='password_reset_email.html',
+        subject_template_name='password_reset_subject.txt'
+    ), name='password_reset'),
+    path('resetcorreo/enviado/', auth_views.PasswordResetDoneView.as_view(template_name='reset_correo_enviado.html'), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='reset_contrasena.html'), name='password_reset_confirm'),
+    path('reset/completo/', auth_views.PasswordResetCompleteView.as_view(template_name='reset_completo.html'), name='password_reset_complete'),
     path('login/',views.login, name = 'login'),
     path('logout/', views.logout, name='logout'),
     path('comentarios/', views.comentarios, name='comentarios'),
@@ -43,19 +55,76 @@ urlpatterns = [
     path('api/hours/', get_horas, name='get_horas'),
     path('perfil/', views.perfil_usuario, name='perfil'),
     path('empresas/', views.empresas, name='empresas'),
+    
+    # URLs para gestión avanzada de citas
+    path('obtener-detalles-reserva/<int:reserva_id>/', views.obtener_detalles_reserva, name='obtener_detalles_reserva'),
+    path('cancelar-reserva/<int:reserva_id>/', views.cancelar_reserva, name='cancelar_reserva'),
+    path('editar-reserva/<int:reserva_id>/', views.editar_reserva, name='editar_reserva'),
+    path('repetir-reserva/<int:reserva_id>/', views.repetir_reserva, name='repetir_reserva'),
+    path('calificar-servicio/<int:reserva_id>/', views.calificar_servicio, name='calificar_servicio'),
+    path('get-empresas-verificadas/', views.get_empresas_verificadas, name='get_empresas_verificadas'),
 
     # crud
     path('logincrud/',views.login_crud, name='logincrud'),
     path('logoutcrud/', views.logout_view, name='logout_view'),
     path('homecrud/',views.home_crud, name='homecrud'),
+    path('perfil-admin/', views.perfil_admin, name='perfil_admin'),
     path("comentarioscrud/",views.comentarios_crud, name="comentarioscrud"),
     path("quejascrud/",views.quejas_crud, name="quejascrud"),
     path("usuarioscrud/",views.usuarios_crud, name="usuarioscrud"),
+    path("editar-usuario/<int:usuario_id>/",views.editar_usuario, name="editar_usuario"),
     path("citascrud/",views.citas_crud, name="citascrud"),
-    path("citascomcrud/",views.citascom_crud, name="citascomcrud"),
+    path("crear-cita-admin/",views.crear_cita_admin, name="crear_cita_admin"),
+    # NUEVAS URLs AJAX para CRUD de citas
+    path('ajax/obtener-servicios-empresa/', views.obtener_servicios_empresa, name='obtener_servicios_empresa'),
+    path('ajax/obtener-horas-disponibles/', views.obtener_horas_disponibles, name='obtener_horas_disponibles'),
     path('citascrud/cambiar_estado/<int:reserva_id>/', cambiar_estado_reserva, name='cambiar_estado_reserva'),
     path("servicioscrud/",views.servicios_crud, name="servicioscrud"),
+    path("crear-servicio/",views.crear_servicio, name="crear_servicio"),
+    path("editar-servicio/<int:servicio_id>/",views.editar_servicio, name="editar_servicio"),
+    path("eliminar-servicio/<int:servicio_id>/",views.eliminar_servicio, name="eliminar_servicio"),
+    path("detalle-servicio/<int:servicio_id>/",views.detalle_servicio, name="detalle_servicio"),
+    path("gestionar-asignaciones-servicios/",views.gestionar_asignaciones_servicios, name="gestionar_asignaciones_servicios"),
+    path("asignar-servicio-empresa/<int:empresa_id>/",views.asignar_servicio_empresa, name="asignar_servicio_empresa"),
     path("empresascrud/",views.empresas_crud, name="empresascrud"),
+    path("editar-empresa/<int:empresa_id>/",views.editar_empresa, name="editar_empresa"),
+    
+    # URLs para planes y suscripciones
+    path('suscribirse/<int:plan_id>/', views.suscribirse_plan, name='suscribirse_plan'),
+    path('mi-suscripcion/', views.mi_suscripcion, name='mi_suscripcion'),
+    path('cancelar-suscripcion/', views.cancelar_suscripcion, name='cancelar_suscripcion'),
+    path('procesar-pago/<str:referencia>/', views.procesar_pago_suscripcion, name='procesar_pago_suscripcion'),
+    
+    
+    # CRUD para suscripciones individuales (solo admin)
+    path('planescrud/', views.planes_crud, name='planes_crud'),
+    path('crear-plan/', views.crear_plan, name='crear_plan'),
+    path('editar-plan/<int:plan_id>/', views.editar_plan, name='editar_plan'),
+    path('eliminar-plan/<int:plan_id>/', views.eliminar_plan, name='eliminar_plan'),
+    path('suscripciones-individuales-crud/', views.suscripciones_individuales_crud, name='suscripciones_individuales_crud'),
+    path('crear-suscripcion-individual/', views.crear_suscripcion_individual, name='crear_suscripcion_individual'),
+    path('editar-suscripcion-individual/<int:suscripcion_id>/', views.editar_suscripcion_individual, name='editar_suscripcion_individual'),
+    path('eliminar-suscripcion-individual/<int:suscripcion_id>/', views.eliminar_suscripcion_individual, name='eliminar_suscripcion_individual'),
+    path('pausar-suscripcion-individual/<int:suscripcion_id>/', views.pausar_suscripcion_individual, name='pausar_suscripcion_individual'),
+    path('historial-pagos-suscripcion/<int:suscripcion_id>/', views.historial_pagos_suscripcion, name='historial_pagos_suscripcion'),
+    
+    # CRUD para planes empresariales (solo admin)
+    path('planes-empresariales-crud/', views.planes_empresariales_crud, name='planes_empresariales_crud'),
+    path('crear-plan-empresarial/', views.crear_plan_empresarial, name='crear_plan_empresarial'),
+    path('editar-plan-empresarial/<int:plan_id>/', views.editar_plan_empresarial, name='editar_plan_empresarial'),
+    path('eliminar-plan-empresarial/<int:plan_id>/', views.eliminar_plan_empresarial, name='eliminar_plan_empresarial'),
+    path('detalle-plan-empresarial/<int:plan_id>/', views.detalle_plan_empresarial, name='detalle_plan_empresarial'),
+    path('suscripciones-empresariales-crud/', views.suscripciones_empresariales_crud, name='suscripciones_empresariales_crud'),
+    
+    # empresas
+    path('home-empresas/',views.home_empresas, name='home_empresas'),
+    path('citas-empresa/',views.citas_empresa, name='citas_empresa'),
+    path('reportes-empresa/',views.reportes_empresa, name='reportes_empresa'),
+    path('exportar-reporte-empresa/',views.exportar_reporte_empresa, name='exportar_reporte_empresa'),
+    path('perfil-empresa/',views.perfil_empresa, name='perfil_empresa'),
+    path('solicitar-servicio-empresa/',views.solicitar_servicio_empresa, name='solicitar_servicio_empresa'),
+    path('actualizar-estado-cita/', views.actualizar_estado_cita, name='actualizar_estado_cita'),
+    path('logout-empresa/', views.logout_empresa, name='logout_empresa'),
 ]
 
 if settings.DEBUG:

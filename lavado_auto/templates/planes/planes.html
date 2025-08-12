@@ -1,0 +1,653 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<style>
+/* Animaciones personalizadas que no están en Tailwind */
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+    50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
+}
+
+@keyframes particleFloat {
+    0% { transform: translateY(100vh) translateX(0px) rotate(0deg) scale(0); opacity: 0; }
+    10% { opacity: 1; transform: translateY(90vh) translateX(10px) rotate(45deg) scale(1); }
+    25% { transform: translateY(75vh) translateX(-20px) rotate(90deg) scale(1.1); opacity: 0.8; }
+    50% { transform: translateY(50vh) translateX(30px) rotate(180deg) scale(0.9); opacity: 1; }
+    75% { transform: translateY(25vh) translateX(-10px) rotate(270deg) scale(1.2); opacity: 0.6; }
+    90% { transform: translateY(10vh) translateX(15px) rotate(315deg) scale(0.8); opacity: 0.3; }
+    100% { transform: translateY(-10vh) translateX(0px) rotate(360deg) scale(0); opacity: 0; }
+}
+
+@keyframes particleHorizontal {
+    0% { transform: translateX(-50px) translateY(50vh) rotate(0deg) scale(0); opacity: 0; }
+    10% { opacity: 1; transform: translateX(0px) translateY(50vh) rotate(30deg) scale(1); }
+    50% { transform: translateX(50vw) translateY(45vh) rotate(180deg) scale(1.1); opacity: 0.8; }
+    90% { transform: translateX(calc(100vw - 50px)) translateY(55vh) rotate(330deg) scale(0.9); opacity: 0.3; }
+    100% { transform: translateX(calc(100vw + 50px)) translateY(50vh) rotate(360deg) scale(0); opacity: 0; }
+}
+
+@keyframes particleDiagonal {
+    0% { transform: translate(-50px, 100vh) rotate(0deg) scale(0); opacity: 0; }
+    15% { opacity: 1; transform: translate(10px, 85vh) rotate(45deg) scale(1); }
+    50% { transform: translate(50vw, 50vh) rotate(180deg) scale(1.2); opacity: 0.9; }
+    85% { transform: translate(calc(100vw - 30px), 15vh) rotate(315deg) scale(0.7); opacity: 0.2; }
+    100% { transform: translate(calc(100vw + 50px), -10vh) rotate(360deg) scale(0); opacity: 0; }
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px) scale(1); opacity: 0; }
+}
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-3deg); }
+    75% { transform: rotate(3deg); }
+}
+
+@keyframes pointRight {
+    0%, 100% { transform: translateX(0px); }
+    50% { transform: translateX(5px); }
+}
+
+/* Clases de animación */
+.particle { animation: float 6s ease-in-out infinite; }
+.pricing-particle { animation: particleFloat 15s infinite linear; opacity: 0; }
+.pricing-particle.horizontal { animation: particleHorizontal 20s infinite linear; }
+.pricing-particle.diagonal { animation: particleDiagonal 18s infinite linear; }
+.floating-element { animation: floatUp 15s infinite ease-in-out; }
+.animate-fade-in-up { animation: fadeInUp 1s ease-out; }
+.animate-wiggle { animation: wiggle 2s ease-in-out infinite; }
+.animate-point-right { animation: pointRight 2s ease-in-out infinite; }
+
+.pricing-particle.type-1 {
+    width: 4px; height: 4px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.8), rgba(59, 130, 246, 0.3));
+    box-shadow: 0 0 6px rgba(59, 130, 246, 0.5);
+}
+.pricing-particle.type-2 {
+    width: 6px; height: 6px;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.7), rgba(6, 182, 212, 0.2));
+    box-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
+}
+.pricing-particle.type-3 {
+    width: 3px; height: 3px;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.9), rgba(16, 185, 129, 0.4));
+    box-shadow: 0 0 4px rgba(16, 185, 129, 0.6);
+}
+.pricing-particle.type-4 {
+    width: 8px; height: 8px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.6), rgba(139, 92, 246, 0.1));
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+}
+
+.plan-features li { animation: slideInLeft 0.6s ease-out forwards; opacity: 0; }
+.plan-features li:nth-child(1) { animation-delay: 0.1s; }
+.plan-features li:nth-child(2) { animation-delay: 0.2s; }
+.plan-features li:nth-child(3) { animation-delay: 0.3s; }
+.plan-features li:nth-child(4) { animation-delay: 0.4s; }
+.plan-features li:nth-child(5) { animation-delay: 0.5s; }
+.plan-features li:nth-child(6) { animation-delay: 0.6s; }
+
+.animation-delay-300 { animation-delay: 0.3s; }
+.animation-delay-700 { animation-delay: 0.7s; }
+
+.cta-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+.cta-button:hover::before { left: 100%; }
+</style>
+
+<body class="font-sans bg-white min-h-screen overflow-x-hidden pt-16">
+    <!-- Partículas de fondo -->
+    <div class="particles fixed top-0 left-0 w-full h-full -z-10 pointer-events-none"></div>
+
+    <!-- Sección de precios -->
+        <div class="relative bg-white overflow-hidden py-24">
+        <!-- Partículas específicas para la sección de precios -->
+        <div class="pricing-particles absolute top-0 left-0 w-full h-full pointer-events-none z-10"></div>
+        
+        <!-- Elementos flotantes decorativos -->
+        <div class="floating-elements absolute top-0 left-0 w-full h-full pointer-events-none z-10">
+            <div class="floating-element absolute w-1 h-1 bg-gradient-to-r from-blue-500/30 to-cyan-500/30 rounded-full" style="left: 10%; animation-delay: 0s; animation-duration: 12s;"></div>
+            <div class="floating-element absolute w-1 h-1 bg-gradient-to-r from-blue-500/30 to-cyan-500/30 rounded-full" style="left: 20%; animation-delay: 2s; animation-duration: 15s;"></div>
+            <div class="floating-element absolute w-1 h-1 bg-gradient-to-r from-blue-500/30 to-cyan-500/30 rounded-full" style="left: 30%; animation-delay: 4s; animation-duration: 18s;"></div>
+            <div class="floating-element absolute w-1 h-1 bg-gradient-to-r from-blue-500/30 to-cyan-500/30 rounded-full" style="left: 70%; animation-delay: 1s; animation-duration: 14s;"></div>
+            <div class="floating-element absolute w-1 h-1 bg-gradient-to-r from-blue-500/30 to-cyan-500/30 rounded-full" style="left: 80%; animation-delay: 3s; animation-duration: 16s;"></div>
+            <div class="floating-element absolute w-1 h-1 bg-gradient-to-r from-blue-500/30 to-cyan-500/30 rounded-full" style="left: 90%; animation-delay: 5s; animation-duration: 13s;"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-5 relative z-20">
+            <!-- Header de la sección -->
+            <div class="text-center mb-20 animate-fade-in-up">
+                <p class="text-blue-500 font-semibold text-lg tracking-widest uppercase mb-4 relative">
+                    Planes de Lavado Premium
+                    <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-16 h-0.5 bg-gradient-to-r from-blue-500 to-cyan-500"></span>
+                </p>
+                <h2 class="text-5xl font-black text-slate-800 mb-5 leading-tight">Elige el plan perfecto para tu vehículo</h2>
+                <p class="text-slate-500 text-xl max-w-2xl mx-auto leading-relaxed">Servicios profesionales de lavado y detallado con la más alta calidad y tecnología avanzada</p>
+            </div>            <!-- Alertas de suscripción -->
+            {% if user.is_authenticated %}
+                {% if suscripcion_actual %}
+                    <div class="relative overflow-hidden bg-gradient-to-br from-emerald-500 via-green-600 to-teal-600 p-8 rounded-2xl mb-12 shadow-2xl shadow-emerald-500/25">
+                        <!-- Elementos decorativos de fondo -->
+                        <div class="absolute inset-0 bg-gradient-to-r from-emerald-400/10 to-teal-400/10"></div>
+                        <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+                        <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-teal-400/20 rounded-full blur-2xl"></div>
+                        
+                        <!-- Contenido principal -->
+                        <div class="relative z-10">
+                            <!-- Header con icono de éxito -->
+                            <div class="text-center mb-6">
+                                <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full mb-4">
+                                    <i class="fas fa-crown text-2xl text-yellow-300 animate-pulse"></i>
+                                </div>
+                                <h4 class="text-2xl font-black text-white mb-3">¡Suscripción Activa! 🎉</h4>
+                                <p class="text-white/90 text-lg leading-relaxed">
+                                    Estás disfrutando de todos los beneficios de tu plan premium
+                                </p>
+                            </div>
+
+                            <!-- Información de la suscripción -->
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="text-center md:text-left">
+                                        <div class="flex items-center justify-center md:justify-start gap-2 mb-2">
+                                            <i class="fas fa-star text-yellow-300"></i>
+                                            <span class="text-white/80 text-sm uppercase tracking-wide">Plan Actual</span>
+                                        </div>
+                                        <p class="text-2xl font-bold text-white">{{ suscripcion_actual.plan.nombre }}</p>
+                                    </div>
+                                    <div class="text-center md:text-right">
+                                        <div class="flex items-center justify-center md:justify-end gap-2 mb-2">
+                                            <i class="fas fa-car-wash text-blue-300"></i>
+                                            <span class="text-white/80 text-sm uppercase tracking-wide">Servicios Restantes</span>
+                                        </div>
+                                        <p class="text-2xl font-bold text-white">{{ suscripcion_actual.servicios_restantes }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Botón de acción -->
+                            <div class="text-center">
+                                <a href="{% url 'mi_suscripcion' %}" class="group relative overflow-hidden bg-white text-emerald-600 font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 inline-block">
+                                    <div class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <span class="relative z-10 group-hover:text-white transition-colors duration-300">
+                                        <i class="fas fa-cog mr-2 group-hover:rotate-180 transition-transform duration-300"></i>
+                                        Gestionar Mi Suscripción
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-600 p-8 rounded-2xl mb-12 shadow-2xl shadow-blue-500/25">
+                    <!-- Elementos decorativos de fondo -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-400/10"></div>
+                    <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+                    <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-cyan-400/20 rounded-full blur-2xl"></div>
+                    
+                    <!-- Contenido principal -->
+                    <div class="relative z-10">
+                        <!-- Header con icono animado -->
+                        <div class="text-center mb-6">
+                            <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full mb-4 animate-bounce">
+                                <i class="fas fa-rocket text-2xl text-white"></i>
+                            </div>
+                            <h4 class="text-2xl font-black text-white mb-3">¡Únete a AutoNew y transforma tu experiencia!</h4>
+                            <p class="text-white/90 text-lg leading-relaxed max-w-2xl mx-auto">
+                                Crea tu cuenta gratuita en segundos y accede a planes exclusivos con tecnología de vanguardia
+                            </p>
+                        </div>
+
+                        <!-- Beneficios destacados -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                            <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                                <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-check text-white text-sm"></i>
+                                </div>
+                                <span class="text-white font-medium text-sm">Registro gratuito</span>
+                            </div>
+                            <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-star text-white text-sm"></i>
+                                </div>
+                                <span class="text-white font-medium text-sm">Planes premium</span>
+                            </div>
+                            <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                                <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-shield-alt text-white text-sm"></i>
+                                </div>
+                                <span class="text-white font-medium text-sm">100% seguro</span>
+                            </div>
+                        </div>
+
+                        <!-- Botones de acción -->
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                            <a href="{% url 'login' %}" class="group relative overflow-hidden bg-white text-blue-600 font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto text-center">
+                                <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <span class="relative z-10 group-hover:text-white transition-colors duration-300">
+                                    <i class="fas fa-user-plus mr-2"></i>
+                                    Crear Cuenta Gratis
+                                </span>
+                            </a>
+                            
+                            <div class="flex items-center gap-3 text-white/80">
+                                <div class="w-8 h-0.5 bg-white/30"></div>
+                                <span class="text-sm font-medium">o</span>
+                                <div class="w-8 h-0.5 bg-white/30"></div>
+                            </div>
+                            
+                            <a href="{% url 'login' %}" class="group border-2 border-white/30 text-white font-bold py-4 px-8 rounded-xl backdrop-blur-sm hover:bg-white/10 hover:border-white/50 transform hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto text-center">
+                                <i class="fas fa-sign-in-alt mr-2 group-hover:scale-110 transition-transform duration-300"></i>
+                                Ya tengo cuenta
+                            </a>
+                        </div>
+
+                        <!-- Texto de confianza -->
+                        <div class="text-center mt-6">
+                            <p class="text-white/70 text-sm">
+                                <i class="fas fa-users mr-1"></i>
+                                Más de <span class="font-bold text-white">10,000+ clientes</span> confían en nosotros
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Layout con imagen a la izquierda y planes a la derecha -->
+            <div class="flex flex-col xl:flex-row gap-12 mt-16 items-start">
+                <!-- Imagen lateral izquierda -->
+                <div class="xl:w-1/3 w-full flex justify-center xl:justify-start xl:sticky xl:top-32 xl:mt-56">
+                    <div class="relative w-full flex flex-col items-center">
+                        <!-- Badge decorativo arriba de la imagen -->
+                        <div class="mb-6 w-fit bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-base font-bold py-3 px-6 rounded-full shadow-2xl animate-wiggle">
+                            <i class="fas fa-arrow-right mr-2 animate-pulse"></i>
+                            ¡Elige tu plan!
+                        </div>
+                        <!-- Efectos decorativos sutiles alrededor de la imagen -->
+                        <div class="absolute -inset-8 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
+                        <div class="absolute -top-8 -left-8 w-20 h-20 bg-blue-500/20 rounded-full blur-2xl"></div>
+                        <div class="absolute -bottom-8 -right-8 w-24 h-24 bg-cyan-500/20 rounded-full blur-2xl"></div>
+                        <!-- Imagen principal sin fondo -->
+                        <div class="relative mt-8">
+                            <img src="{% static 'img/planesimg.png' %}"
+                                 alt="Persona señalando hacia los planes"
+                                 class="w-full max-w-lg lg:max-w-xl xl:max-w-none h-auto object-contain transform hover:scale-110 transition-transform duration-500 animate-point-right drop-shadow-2xl">
+                            <!-- Indicador de dirección mejorado - Solo visible en desktop -->
+                            <div class="absolute top-1/3 -right-12 transform -translate-y-1/2 hidden xl:block">
+                                <div class="flex items-center gap-3 animate-point-right">
+                                    <div class="w-4 h-4 bg-blue-500 rounded-full animate-pulse shadow-lg"></div>
+                                    <div class="w-8 h-8 bg-blue-500 rounded-full animate-pulse animation-delay-300 shadow-lg"></div>
+                                    <div class="w-4 h-4 bg-blue-500 rounded-full animate-pulse animation-delay-700 shadow-lg"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Texto motivacional debajo de la imagen -->
+                        <div class="text-center mt-8">
+                            <p class="text-slate-700 font-bold text-xl">
+                                <i class="fas fa-star text-yellow-500 mr-2"></i>
+                                Tu plan ideal te espera
+                            </p>
+                            <p class="text-slate-500 text-sm mt-2">¡Encuentra el perfecto para ti!</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contenedor de planes a la derecha -->
+                <div class="xl:w-2/3 w-full">
+                    <div class="space-y-6">
+                        {% for plan in planes %}
+                        <div class="relative bg-white border border-slate-200 rounded-3xl overflow-hidden transition-all duration-500 ease-out shadow-lg shadow-slate-200/50 hover:shadow-2xl hover:shadow-slate-300/50 hover:-translate-y-2 hover:border-blue-300 group {% if plan.tipo == 'premium' %}bg-gradient-to-br from-blue-50/50 to-cyan-50/50 border-2 border-blue-500 shadow-xl shadow-blue-500/30{% endif %}">
+                    
+                            <!-- Badge "Más Popular" para plan premium -->
+                            {% if plan.tipo == 'premium' %}
+                                <div class="absolute top-4 right-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-2 px-4 rounded-full text-xs font-bold tracking-wide shadow-lg shadow-emerald-500/30 animate-pulse z-10">
+                                    <i class="fas fa-star mr-1"></i>
+                                    Más Popular
+                                </div>
+                            {% endif %}
+
+                            <div class="flex flex-col lg:flex-row">
+                                <!-- Sección izquierda - Info del plan -->
+                                <div class="lg:w-2/3 p-8">
+                                    <div class="flex items-center justify-between mb-6">
+                                        <div class="flex items-center gap-4">
+                                            <!-- Icono del plan -->
+                                            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 {% if plan.tipo == 'premium' %}from-emerald-500 to-emerald-600{% elif plan.tipo == 'completo' %}from-yellow-500 to-orange-500{% endif %} rounded-full flex items-center justify-center text-2xl text-white shadow-lg">
+                                                {% if plan.tipo == 'basico' %}
+                                                    <i class="fas fa-car"></i>
+                                                {% elif plan.tipo == 'premium' %}
+                                                    <i class="fas fa-star"></i>
+                                                {% else %}
+                                                    <i class="fas fa-crown"></i>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <h3 class="text-3xl font-bold text-slate-800 mb-2">{{ plan.nombre }}</h3>
+                                                <div class="inline-block bg-blue-100 text-blue-600 py-1 px-3 rounded-full text-sm font-semibold">
+                                                    Plan Mensual
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Características del plan -->
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div class="flex items-center gap-3 py-2 text-gray-700">
+                                            <span class="w-5 h-5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full flex items-center justify-center text-xs">
+                                                <i class="fas fa-check"></i>
+                                            </span>
+                                            {% if plan.cantidad_servicios_mes == 0 %}
+                                                Servicios ilimitados
+                                            {% else %}
+                                                {{ plan.cantidad_servicios_mes }} servicios por mes
+                                            {% endif %}
+                                        </div>
+                                        <div class="flex items-center gap-3 py-2 text-gray-700">
+                                            <span class="w-5 h-5 {% if plan.incluye_lavado_asientos %}bg-gradient-to-r from-emerald-500 to-emerald-600 text-white{% else %}bg-red-100 text-red-500{% endif %} rounded-full flex items-center justify-center text-xs">
+                                                <i class="fas {% if plan.incluye_lavado_asientos %}fa-check{% else %}fa-times{% endif %}"></i>
+                                            </span>
+                                            Lavado de asientos
+                                        </div>
+                                        <div class="flex items-center gap-3 py-2 text-gray-700">
+                                            <span class="w-5 h-5 {% if plan.incluye_aspirado %}bg-gradient-to-r from-emerald-500 to-emerald-600 text-white{% else %}bg-red-100 text-red-500{% endif %} rounded-full flex items-center justify-center text-xs">
+                                                <i class="fas {% if plan.incluye_aspirado %}fa-check{% else %}fa-times{% endif %}"></i>
+                                            </span>
+                                            Aspirado profesional
+                                        </div>
+                                        <div class="flex items-center gap-3 py-2 text-gray-700">
+                                            <span class="w-5 h-5 {% if plan.incluye_lavado_exterior %}bg-gradient-to-r from-emerald-500 to-emerald-600 text-white{% else %}bg-red-100 text-red-500{% endif %} rounded-full flex items-center justify-center text-xs">
+                                                <i class="fas {% if plan.incluye_lavado_exterior %}fa-check{% else %}fa-times{% endif %}"></i>
+                                            </span>
+                                            Lavado exterior
+                                        </div>
+                                        <div class="flex items-center gap-3 py-2 text-gray-700">
+                                            <span class="w-5 h-5 {% if plan.incluye_lavado_interior_humedo %}bg-gradient-to-r from-emerald-500 to-emerald-600 text-white{% else %}bg-red-100 text-red-500{% endif %} rounded-full flex items-center justify-center text-xs">
+                                                <i class="fas {% if plan.incluye_lavado_interior_humedo %}fa-check{% else %}fa-times{% endif %}"></i>
+                                            </span>
+                                            Lavado interior húmedo
+                                        </div>
+                                        <div class="flex items-center gap-3 py-2 text-gray-700">
+                                            <span class="w-5 h-5 {% if plan.incluye_encerado %}bg-gradient-to-r from-emerald-500 to-emerald-600 text-white{% else %}bg-red-100 text-red-500{% endif %} rounded-full flex items-center justify-center text-xs">
+                                                <i class="fas {% if plan.incluye_encerado %}fa-check{% else %}fa-times{% endif %}"></i>
+                                            </span>
+                                            {% if plan.incluye_detallado_completo %}
+                                                Detallado completo y encerado
+                                            {% else %}
+                                                Encerado básico
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Sección derecha - Precio y botón -->
+                                <div class="lg:w-1/3 bg-gradient-to-br from-slate-50 to-slate-100 {% if plan.tipo == 'premium' %}from-emerald-50 to-emerald-100{% elif plan.tipo == 'completo' %}from-yellow-50 to-orange-100{% endif %} p-8 flex flex-col justify-center items-center text-center">
+                                    <!-- Precio -->
+                                    <div class="mb-6">
+                                        <div class="flex items-baseline justify-center mb-2">
+                                            <span class="text-3xl text-slate-600">COP</span>
+                                            <span class="text-6xl font-black text-slate-800">{{ plan.precio_mensual|floatformat:0|intcomma }}</span>
+                                            <span class="text-2xl text-slate-500">/mes</span>
+                                        </div>
+                                        {% if plan.tipo == 'premium' %}
+                                            <p class="text-emerald-600 font-semibold text-sm">¡Mejor valor!</p>
+                                        {% elif plan.tipo == 'completo' %}
+                                            <p class="text-yellow-600 font-semibold text-sm">Experiencia premium</p>
+                                        {% else %}
+                                            <p class="text-slate-500 text-sm">Ideal para comenzar</p>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <!-- Botón de suscripción -->
+                                    {% if user.is_authenticated %}
+                                        {% if not suscripcion_actual %}
+                                            <a href="{% url 'suscribirse_plan' plan.id_plan %}" class="w-full bg-gradient-to-r from-blue-500 to-cyan-500 {% if plan.tipo == 'premium' %}from-emerald-500 to-emerald-600{% elif plan.tipo == 'completo' %}from-yellow-500 to-orange-500{% endif %} text-white font-bold py-4 px-6 rounded-xl uppercase tracking-wide transition-all duration-300 hover:-translate-y-1 hover:shadow-xl text-center block no-underline group">
+                                                <i class="fas fa-shopping-cart mr-2 group-hover:animate-bounce"></i>
+                                                {% if plan.tipo == 'premium' %}
+                                                    Elegir Premium
+                                                {% elif plan.tipo == 'completo' %}
+                                                    Plan Completo
+                                                {% else %}
+                                                    Comenzar Ahora
+                                                {% endif %}
+                                            </a>
+                                        {% else %}
+                                            {% if suscripcion_actual.plan.id_plan == plan.id_plan %}
+                                                <button class="w-full bg-emerald-500 text-white font-bold py-4 px-6 rounded-xl uppercase tracking-wide cursor-not-allowed">
+                                                    <i class="fas fa-check mr-2"></i>
+                                                    Plan Actual
+                                                </button>
+                                            {% else %}
+                                                <button class="w-full bg-gray-400 text-white font-bold py-4 px-6 rounded-xl uppercase tracking-wide cursor-not-allowed">
+                                                    <i class="fas fa-lock mr-2"></i>
+                                                    Ya tienes un plan
+                                                </button>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% else %}
+                                        <a href="{% url 'login' %}?next={% url 'suscribirse_plan' plan.id_plan %}" class="w-full bg-gradient-to-r from-blue-500 to-cyan-500 {% if plan.tipo == 'premium' %}from-emerald-500 to-emerald-600{% elif plan.tipo == 'completo' %}from-yellow-500 to-orange-500{% endif %} text-white font-bold py-4 px-6 rounded-xl uppercase tracking-wide transition-all duration-300 hover:-translate-y-1 hover:shadow-xl text-center block no-underline group">
+                                            <i class="fas fa-user-plus mr-2 group-hover:animate-bounce"></i>
+                                            {% if plan.tipo == 'premium' %}
+                                                Elegir Premium
+                                            {% elif plan.tipo == 'completo' %}
+                                                Plan Completo
+                                            {% else %}
+                                                Comenzar Ahora
+                                            {% endif %}
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de beneficios adicionales -->
+            <div class="mt-24">
+                <div class="text-center mb-16">
+                    <p class="text-blue-500 font-semibold text-lg tracking-widest uppercase mb-4 relative">
+                        Beneficios Exclusivos
+                        <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-16 h-0.5 bg-gradient-to-r from-blue-500 to-cyan-500"></span>
+                    </p>
+                    <h2 class="text-5xl font-black text-slate-800 mb-5 leading-tight">¿Por qué elegir nuestros planes?</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mt-16">
+                    <div class="text-center p-8 bg-white rounded-2xl shadow-lg shadow-slate-200/50 transition-all duration-300 hover:-translate-y-2.5 hover:shadow-xl hover:shadow-slate-300/50">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-5 text-white text-2xl">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-4">Servicio Rápido</h3>
+                        <p class="text-slate-500 leading-relaxed">Servicio express en menos de 60 minutos. Tu tiempo es valioso.</p>
+                    </div>
+                    
+                    <div class="text-center p-8 bg-white rounded-2xl shadow-lg shadow-slate-200/50 transition-all duration-300 hover:-translate-y-2.5 hover:shadow-xl hover:shadow-slate-300/50">
+                        <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-5 text-white text-2xl">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-4">Eco-Friendly</h3>
+                        <p class="text-slate-500 leading-relaxed">Productos biodegradables y técnicas que cuidan el medio ambiente.</p>
+                    </div>
+                    
+                    <div class="text-center p-8 bg-white rounded-2xl shadow-lg shadow-slate-200/50 transition-all duration-300 hover:-translate-y-2.5 hover:shadow-xl hover:shadow-slate-300/50">
+                        <div class="w-16 h-16 bg-gradient-to-br from-red-600 to-amber-500 rounded-full flex items-center justify-center mx-auto mb-5 text-white text-2xl">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-4">Garantía Total</h3>
+                        <p class="text-slate-500 leading-relaxed">100% satisfacción garantizada o devolvemos tu dinero.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Crear partículas animadas para el fondo general
+        function createParticles() {
+            const particlesContainer = document.querySelector('.particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle absolute w-0.5 h-0.5 bg-blue-500/40 rounded-full';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Crear partículas específicas para la sección de precios
+        function createPricingParticles() {
+            const pricingContainer = document.querySelector('.pricing-particles');
+            const particleCount = 80;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                
+                const types = ['type-1', 'type-2', 'type-3', 'type-4'];
+                const animations = ['', 'horizontal', 'diagonal'];
+                
+                const randomType = types[Math.floor(Math.random() * types.length)];
+                const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
+                
+                particle.className = `pricing-particle ${randomType} ${randomAnimation} absolute rounded-full`;
+                
+                // Posición inicial aleatoria
+                particle.style.left = Math.random() * 100 + '%';
+                
+                // Delay aleatorio para crear efecto continuo
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                
+                // Duración ligeramente variable
+                const baseDuration = randomAnimation === 'horizontal' ? 20 : 
+                                   randomAnimation === 'diagonal' ? 18 : 15;
+                particle.style.animationDuration = (baseDuration + Math.random() * 5) + 's';
+                
+                pricingContainer.appendChild(particle);
+            }
+        }
+
+        // Crear partículas adicionales cada cierto tiempo para efecto continuo
+        function continuousParticles() {
+            setInterval(() => {
+                const pricingContainer = document.querySelector('.pricing-particles');
+                const particle = document.createElement('div');
+                
+                const types = ['type-1', 'type-2', 'type-3', 'type-4'];
+                const animations = ['', 'horizontal', 'diagonal'];
+                
+                const randomType = types[Math.floor(Math.random() * types.length)];
+                const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
+                
+                particle.className = `pricing-particle ${randomType} ${randomAnimation} absolute rounded-full`;
+                particle.style.left = Math.random() * 100 + '%';
+                
+                const baseDuration = randomAnimation === 'horizontal' ? 20 : 
+                                   randomAnimation === 'diagonal' ? 18 : 15;
+                particle.style.animationDuration = (baseDuration + Math.random() * 3) + 's';
+                
+                pricingContainer.appendChild(particle);
+                
+                // Remover la partícula después de la animación
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, (baseDuration + 3) * 1000);
+                
+            }, 1500);
+        }
+
+        // Inicializar partículas cuando la página carga
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            createPricingParticles();
+            
+            // Iniciar la generación continua de partículas después de 2 segundos
+            setTimeout(continuousParticles, 2000);
+        });
+
+        // Animación de entrada para las tarjetas
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationDelay = `${index * 0.2}s`;
+                    entry.target.classList.add('animate-fade-in-up');
+                }
+            });
+        }, observerOptions);
+
+        // Observar las tarjetas de precios
+        document.querySelectorAll('.grid > div').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Contador animado para los precios
+        function animateCounter(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const current = Math.floor(progress * (end - start) + start);
+                element.textContent = current;
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Animar precios cuando aparecen en viewport
+        const priceObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const priceElement = entry.target.querySelector('.text-6xl');
+                    if (priceElement) {
+                        const finalPrice = parseInt(priceElement.textContent);
+                        priceElement.textContent = '0';
+                        animateCounter(priceElement, 0, finalPrice, 2000);
+                        priceObserver.unobserve(entry.target);
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.grid > div').forEach(card => {
+            priceObserver.observe(card);
+        });
+    </script>
+</body>
+</html>
+{% endblock  %}

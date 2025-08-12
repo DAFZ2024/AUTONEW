@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base/base.html" %}
 {% load static %}
 {% block content %}
 
@@ -142,6 +142,113 @@ body::before, body::after {
 .shadow-dynamic:hover {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
 }
+
+/* Animaciones de delay adicionales para el banner */
+.animation-delay-1000 {
+    animation-delay: 1s;
+}
+
+.animation-delay-3000 {
+    animation-delay: 3s;
+}
+
+.animation-delay-5000 {
+    animation-delay: 5s;
+}
+
+.animation-delay-7000 {
+    animation-delay: 7s;
+}
+
+/* Efecto shine para botones */
+@keyframes shine {
+    0% { transform: translateX(-100%) skewX(-15deg); }
+    100% { transform: translateX(200%) skewX(-15deg); }
+}
+
+.shine-effect {
+    position: relative;
+    overflow: hidden;
+}
+
+.shine-effect::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transform: skewX(-15deg);
+    transition: left 0.7s;
+}
+
+.shine-effect:hover::before {
+    left: 200%;
+}
+
+/* Animación para las estrellas de testimonios */
+@keyframes starGlow {
+    0% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.2) rotate(180deg); box-shadow: 0 0 20px rgba(255, 193, 7, 0.8); }
+    100% { transform: scale(1) rotate(360deg); }
+}
+
+.star-animation:hover {
+    animation: starGlow 0.6s ease-in-out;
+}
+
+/* Mejoras para el carousel de testimonios */
+#testimonial-carousel-track {
+    will-change: transform;
+}
+
+.testimonial-slide-transition {
+    transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Indicadores del carousel mejorados */
+.testimonial-dot {
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    cursor: pointer;
+}
+
+.testimonial-dot:hover {
+    transform: scale(1.3);
+}
+
+/* Animación de entrada para testimonios */
+@keyframes testimonialFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.testimonial-card {
+    animation: testimonialFadeIn 0.8s ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #testimonial-carousel-track {
+        transform: translateX(0) !important;
+    }
+    
+    .testimonial-controls {
+        padding: 0 10px;
+    }
+    
+    #testimonial-prev-btn,
+    #testimonial-next-btn {
+        width: 50px !important;
+        height: 50px !important;
+    }
+}
 </style>
 
 <!-- Sección Hero - Bienvenida a AutoNew -->
@@ -152,7 +259,6 @@ body::before, body::after {
         <div class="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-slate-200/60 to-gray-200/60 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-pulse animation-delay-2000"></div>
         <div class="absolute top-1/2 left-1/4 w-64 h-64 bg-gradient-to-r from-blue-200/40 to-slate-200/40 rounded-full mix-blend-multiply filter blur-2xl opacity-40 animate-pulse animation-delay-4000"></div>
     </div>
-    
     <!-- Contenido principal del hero -->
     <div class="relative z-10 min-h-screen flex items-center pt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -166,7 +272,6 @@ body::before, body::after {
                         </svg>
                         <span class="text-blue-600 font-semibold text-sm uppercase tracking-wide">Bienvenido a AutoNew</span>
                     </div>
-                    
                     <!-- Título principal -->
                     <div class="space-y-4">
                         <h1 class="text-5xl lg:text-7xl font-bold text-gray-900 leading-tight">
@@ -177,12 +282,10 @@ body::before, body::after {
                             para tu vehículo
                         </h1>
                         <p class="text-xl lg:text-2xl text-gray-600 leading-relaxed max-w-2xl">
-                            Servicios profesionales de lavado y detallado con tecnología de vanguardia. 
-                            <span class="font-semibold text-blue-600">Tu auto merece lo mejor.</span>
+                            Servicios profesionales de lavado y detallado. <span class="font-semibold text-blue-600">Tu auto merece lo mejor.</span>
                         </p>
                     </div>
-                    
-                    <!-- Características destacadas -->
+                    <!-- Características destacadas simplificadas -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div class="flex items-center space-x-3">
                             <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
@@ -203,79 +306,22 @@ body::before, body::after {
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="font-semibold text-gray-900">4 Ubicaciones</h3>
+                                <h3 class="font-semibold text-gray-900">Ubicaciones</h3>
                                 <p class="text-gray-600 text-sm">En toda la ciudad</p>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-12 h-12 bg-gradient-to-r from-slate-400 to-gray-500 rounded-xl flex items-center justify-center shadow-lg">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-gray-900">Calidad Premium</h3>
-                                <p class="text-gray-600 text-sm">Garantía 100%</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-slate-500 rounded-xl flex items-center justify-center shadow-lg">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-gray-900">24/7 Disponible</h3>
-                                <p class="text-gray-600 text-sm">Siempre a tu servicio</p>
-                            </div>
-                        </div>
                     </div>
-                    
-                    <!-- Botones de acción -->
+                    <!-- Botón de acción principal -->
                     <div class="flex flex-col sm:flex-row gap-4 pt-8">
-                        <a href="#servicios" 
+                        <a href="{% url 'servicios' %}" 
                            class="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-blue-500/25 btn-modern">
                             <span>Explorar Servicios</span>
                             <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                             </svg>
                         </a>
-                        {% if request.user.is_authenticated %}
-                            <a href="{% url 'reservas' %}" 
-                               class="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 font-bold border-2 border-blue-600 rounded-2xl hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
-                                <svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
-                                <span>Reservar Cita</span>
-                            </a>
-                        {% else %}
-                            <a href="{% url 'login' %}" 
-                               class="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 font-bold border-2 border-blue-600 rounded-2xl hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
-                                <svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013 3v1"/>
-                                </svg>
-                                <span>Iniciar Sesión</span>
-                            </a>
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Estadísticas rápidas -->
-                    <div class="grid grid-cols-3 gap-8 pt-12 border-t border-gray-200">
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-blue-600 mb-1">5,000+</div>
-                            <div class="text-sm text-gray-600">Clientes Felices</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-blue-600 mb-1">4.9/5</div>
-                            <div class="text-sm text-gray-600">Calificación</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-blue-600 mb-1">3</div>
-                            <div class="text-sm text-gray-600">Años de Experiencia</div>
-                        </div>
                     </div>
                 </div>
-                
                 <!-- Imagen del lado derecho -->
                 <div class="relative">
                     <div class="relative z-10">
@@ -285,10 +331,8 @@ body::before, body::after {
                                  alt="Lavado de auto profesional AutoNew" 
                                  class="w-full h-96 lg:h-[600px] object-cover"
                                  onerror="this.src='https://images.unsplash.com/photo-1601362840469-51e4d8d58785?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
-                            
                             <!-- Overlay con gradiente -->
                             <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
-                            
                             <!-- Badge flotante -->
                             <div class="absolute top-6 right-6 bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-lg">
                                 <div class="flex items-center space-x-2">
@@ -297,7 +341,6 @@ body::before, body::after {
                                 </div>
                             </div>
                         </div>
-                        
                         <!-- Tarjetas flotantes decorativas -->
                         <div class="absolute -bottom-8 -left-8 bg-white/95 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/20 float-animation">
                             <div class="flex items-center space-x-4">
@@ -312,7 +355,6 @@ body::before, body::after {
                                 </div>
                             </div>
                         </div>
-                        
                         <div class="absolute -top-8 -right-8 bg-white/95 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/20 float-animation animation-delay-2000">
                             <div class="flex items-center space-x-4">
                                 <div class="w-12 h-12 bg-gradient-to-r from-slate-500 to-gray-500 rounded-xl flex items-center justify-center">
@@ -327,7 +369,6 @@ body::before, body::after {
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Elementos decorativos del fondo -->
                     <div class="absolute inset-0 -z-10">
                         <div class="absolute top-1/4 left-1/4 w-32 h-32 bg-gradient-to-r from-blue-300 to-slate-300 rounded-full opacity-20 animate-pulse"></div>
@@ -337,7 +378,6 @@ body::before, body::after {
             </div>
         </div>
     </div>
-    
     <!-- Scroll indicator -->
     <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
         <div class="flex flex-col items-center space-y-2">
@@ -349,6 +389,107 @@ body::before, body::after {
     </div>
 </div>
 <!-- Fin Sección Hero -->
+
+<!-- Invitación de Autenticación - Solo para usuarios no logueados -->
+{% if not user.is_authenticated %}
+<div class="relative py-16 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 overflow-hidden">
+    <!-- Elementos decorativos de fondo -->
+    <div class="absolute inset-0">
+        <div class="absolute top-0 left-1/4 w-64 h-64 bg-white/10 rounded-full mix-blend-overlay filter blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-0 right-1/4 w-80 h-80 bg-white/5 rounded-full mix-blend-overlay filter blur-3xl animate-pulse animation-delay-2000"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-400/10 rounded-full mix-blend-overlay filter blur-3xl animate-pulse animation-delay-4000"></div>
+    </div>
+
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row items-center justify-center gap-12">
+            <!-- Imagen lado izquierdo solo en md+ -->
+            <div class="hidden md:flex md:w-1/2 items-center justify-center">
+                <img src="{% static 'img/1.png' %}" alt="Lavado de auto" class="w-[500px] max-w-full rounded-3xl object-cover" loading="lazy">
+            </div>
+            <!-- Bloque de texto y acciones -->
+            <div class="w-full md:w-1/2 text-center">
+                <!-- Icono principal -->
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl mb-8 shadow-xl">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 4h8m-8 0a2 2 0 00-2 2v6a2 2 0 002 2h8a2 2 0 002-2v-6a2 2 0 00-2-2m-8 0V9a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                    </svg>
+                </div>
+                <!-- Título y descripción -->
+                <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4 leading-tight">
+                    ¿Listo para reservar tu cita?
+                </h2>
+                <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
+                    Únete a miles de usuarios que ya disfrutan de nuestros servicios premium de lavado de vehículos
+                </p>
+                <!-- Características destacadas -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 max-w-4xl mx-auto">
+                    <div class="flex items-center justify-center space-x-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div class="w-10 h-10 bg-green-400/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <div class="font-semibold text-white text-sm">Reserva Rápida</div>
+                            <div class="text-blue-200 text-xs">En menos de 2 minutos</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center space-x-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div class="w-10 h-10 bg-blue-400/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <div class="font-semibold text-white text-sm">Ubicaciones Cercanas</div>
+                            <div class="text-blue-200 text-xs">En toda la ciudad</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center space-x-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div class="w-10 h-10 bg-purple-400/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <div class="font-semibold text-white text-sm">Servicio Garantizado</div>
+                            <div class="text-blue-200 text-xs">100% Satisfacción</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Botones de acción -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
+                    <a href="{% url 'login' %}?register=true" 
+                       class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-white text-blue-700 font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-white/25 shine-effect">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                        </svg>
+                        <span>Crear Cuenta</span>
+                    </a>
+                    <a href="{% url 'login' %}" 
+                       class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:bg-white hover:text-blue-700 hover:shadow-xl">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                        </svg>
+                        <span>Iniciar Sesión</span>
+                    </a>
+                </div>
+                <!-- Texto adicional -->
+                <p class="text-blue-200 text-sm mt-6">
+                    ¿Ya tienes cuenta? 
+                    <a href="{% url 'login' %}" class="text-white font-semibold hover:underline transition-all duration-300">
+                        Inicia sesión aquí
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <!-- Línea decorativa animada -->
+    <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 opacity-50"></div>
+</div>
+{% endif %}
+<!-- Fin Invitación de Autenticación -->
 
 <!-- Inicio Carousel con Tailwind -->
 {% load custom_tags %}
@@ -367,327 +508,7 @@ body::before, body::after {
     {% endif %}
 </div>
 
-<!-- Carousel Ultra Moderno con Tailwind CSS -->
-<div class="relative py-16 bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 overflow-hidden">
-    <!-- Elementos decorativos de fondo -->
-    <div class="absolute inset-0">
-        <div class="absolute top-20 left-20 w-96 h-96 bg-gradient-to-r from-blue-200 to-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-pulse"></div>
-        <div class="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-purple-200 to-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-pulse animation-delay-2000"></div>
-    </div>
-    
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Carrusel principal -->
-        <div id="modern-carousel" class="relative overflow-hidden rounded-3xl shadow-2xl">
-            <!-- Track del carrusel -->
-            <div class="flex transition-transform duration-700 ease-out" id="carousel-track">
-                <!-- Slide 1 -->
-                <div class="min-w-full relative">
-                    <div class="relative h-[500px] lg:h-[600px] bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 overflow-hidden">
-                        <!-- Imagen de fondo con overlay -->
-                        <div class="absolute inset-0">
-                            <img src="{% static 'img/carousel-1.jpg' %}" 
-                                 alt="Lavado profesional AutoNew" 
-                                 class="w-full h-full object-cover opacity-30"
-                                 onerror="this.style.display='none'">
-                            <div class="absolute inset-0 bg-gradient-to-r from-blue-600/80 to-purple-600/80"></div>
-                        </div>
-                        
-                        <!-- Contenido -->
-                        <div class="relative z-10 h-full flex items-center">
-                            <div class="max-w-4xl mx-auto px-8 text-center">
-                                <!-- Badge superior -->
-                                <div class="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/30 mb-6">
-                                    <svg class="w-5 h-5 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                                    </svg>
-                                    <span class="text-white font-semibold text-sm uppercase tracking-wide">Lavado & Detallado</span>
-                                </div>
-                                
-                                <!-- Título principal -->
-                                <h1 class="text-4xl lg:text-6xl xl:text-7xl font-bold text-white mb-6 leading-tight">
-                                    Mantén tu auto
-                                    <span class="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
-                                        como nuevo
-                                    </span>
-                                </h1>
-                                
-                                <!-- Descripción -->
-                                <p class="text-xl lg:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
-                                    Hacemos que la diferencia se note al salir.
-                                    <span class="font-semibold">¡Artistas del lavado!</span>
-                                </p>
-                                
-                                <!-- Botones de acción -->
-                                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                                    <a href="#servicios" 
-                                       class="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 font-bold rounded-2xl hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 hover:shadow-xl">
-                                        <span>Explorar Servicios</span>
-                                        <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                                        </svg>
-                                    </a>
-                                    <a href="{% url 'reservas' %}" 
-                                       class="inline-flex items-center justify-center px-8 py-4 bg-transparent text-white font-bold border-2 border-white rounded-2xl hover:bg-white hover:text-blue-600 transition-all duration-300 transform hover:scale-105">
-                                        <svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                        </svg>
-                                        <span>Reservar Cita</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Elementos decorativos flotantes -->
-                        <div class="absolute top-8 right-8 bg-white/20 backdrop-blur-md rounded-2xl p-4 border border-white/30">
-                            <div class="flex items-center space-x-2">
-                                <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                                <span class="text-white text-sm font-semibold">Disponible 24/7</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 2 -->
-                <div class="min-w-full relative">
-                    <div class="relative h-[500px] lg:h-[600px] bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 overflow-hidden">
-                        <!-- Imagen de fondo con overlay -->
-                        <div class="absolute inset-0">
-                            <img src="{% static 'img/carousel-2.jpg' %}" 
-                                 alt="Servicio de calidad AutoNew" 
-                                 class="w-full h-full object-cover opacity-30"
-                                 onerror="this.style.display='none'">
-                            <div class="absolute inset-0 bg-gradient-to-r from-emerald-600/80 to-cyan-600/80"></div>
-                        </div>
-                        
-                        <!-- Contenido -->
-                        <div class="relative z-10 h-full flex items-center">
-                            <div class="max-w-4xl mx-auto px-8 text-center">
-                                <!-- Badge superior -->
-                                <div class="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/30 mb-6">
-                                    <svg class="w-5 h-5 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    <span class="text-white font-semibold text-sm uppercase tracking-wide">Calidad Premium</span>
-                                </div>
-                                
-                                <!-- Título principal -->
-                                <h1 class="text-4xl lg:text-6xl xl:text-7xl font-bold text-white mb-6 leading-tight">
-                                    Un servicio de
-                                    <span class="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
-                                        calidad para ti
-                                    </span>
-                                </h1>
-                                
-                                <!-- Descripción -->
-                                <p class="text-xl lg:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
-                                    Damos lo mejor para que vivas una y otra vez una
-                                    <span class="font-semibold">nueva experiencia</span> con nuestro servicio.
-                                </p>
-                                
-                                <!-- Estadísticas rápidas -->
-                                <div class="grid grid-cols-3 gap-8 mb-8 max-w-2xl mx-auto">
-                                    <div class="text-center">
-                                        <div class="text-3xl font-bold text-white mb-1">4.9/5</div>
-                                        <div class="text-sm text-white/80">Calificación</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="text-3xl font-bold text-white mb-1">5,000+</div>
-                                        <div class="text-sm text-white/80">Clientes</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="text-3xl font-bold text-white mb-1">4</div>
-                                        <div class="text-sm text-white/80">Ubicaciones</div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Botón de acción -->
-                                <a href="#servicios" 
-                                   class="inline-flex items-center justify-center px-8 py-4 bg-white text-emerald-600 font-bold rounded-2xl hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 hover:shadow-xl">
-                                    <span>Conocer Más</span>
-                                    <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <!-- Badge de experiencia -->
-                        <div class="absolute top-8 right-8 bg-white/20 backdrop-blur-md rounded-2xl p-4 border border-white/30">
-                            <div class="text-center">
-                                <div class="text-2xl font-bold text-white">3+</div>
-                                <div class="text-xs text-white/80">Años de experiencia</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 3 -->
-                <div class="min-w-full relative">
-                    <div class="relative h-[500px] lg:h-[600px] bg-gradient-to-br from-purple-600 via-pink-600 to-red-600 overflow-hidden">
-                        <!-- Imagen de fondo con overlay -->
-                        <div class="absolute inset-0">
-                            <img src="{% static 'img/carousel-3.jpg' %}" 
-                                 alt="Tecnología avanzada AutoNew" 
-                                 class="w-full h-full object-cover opacity-30"
-                                 onerror="this.style.display='none'">
-                            <div class="absolute inset-0 bg-gradient-to-r from-purple-600/80 to-red-600/80"></div>
-                        </div>
-                        
-                        <!-- Contenido -->
-                        <div class="relative z-10 h-full flex items-center">
-                            <div class="max-w-4xl mx-auto px-8 text-center">
-                                <!-- Badge superior -->
-                                <div class="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/30 mb-6">
-                                    <svg class="w-5 h-5 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-                                    </svg>
-                                    <span class="text-white font-semibold text-sm uppercase tracking-wide">Tecnología Avanzada</span>
-                                </div>
-                                
-                                <!-- Título principal -->
-                                <h1 class="text-4xl lg:text-6xl xl:text-7xl font-bold text-white mb-6 leading-tight">
-                                    Tecnología avanzada
-                                    <span class="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
-                                        para tu vehículo
-                                    </span>
-                                </h1>
-                                
-                                <!-- Descripción -->
-                                <p class="text-xl lg:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
-                                    Utilizamos los mejores productos y técnicas del mercado para
-                                    <span class="font-semibold">cuidar tu inversión.</span>
-                                </p>
-                                
-                                <!-- Características destacadas -->
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8 max-w-2xl mx-auto">
-                                    <div class="flex items-center justify-center space-x-3 bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-                                        <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-emerald-500 rounded-lg flex items-center justify-center">
-                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                            </svg>
-                                        </div>
-                                        <span class="text-white font-medium">100% Ecológico</span>
-                                    </div>
-                                    <div class="flex items-center justify-center space-x-3 bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-                                        <div class="w-8 h-8 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-lg flex items-center justify-center">
-                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
-                                        </div>
-                                        <span class="text-white font-medium">Servicio Express</span>
-                                    </div>
-                                </div>
-                                
-                                <!-- Botón de acción -->
-                                <a href="{% url 'reservas' %}" 
-                                   class="inline-flex items-center justify-center px-8 py-4 bg-white text-purple-600 font-bold rounded-2xl hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 hover:shadow-xl">
-                                    <span>Reservar Ahora</span>
-                                    <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <!-- Badge de promoción -->
-                        <div class="absolute top-8 right-8 bg-white/20 backdrop-blur-md rounded-2xl p-4 border border-white/30">
-                            <div class="text-center">
-                                <div class="text-lg font-bold text-yellow-300">50% OFF</div>
-                                <div class="text-xs text-white/80">Nuevos clientes</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Controles de navegación modernos -->
-            <div class="absolute inset-y-0 left-0 flex items-center">
-                <button id="carousel-prev" 
-                        class="ml-4 group relative w-12 h-12 bg-white/80 backdrop-blur-md rounded-full shadow-lg hover:shadow-xl border border-white/20 transition-all duration-300 transform hover:scale-110">
-                    <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                    <svg class="relative w-6 h-6 text-gray-600 group-hover:text-blue-600 transition-colors duration-300 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <div class="absolute inset-y-0 right-0 flex items-center">
-                <button id="carousel-next" 
-                        class="mr-4 group relative w-12 h-12 bg-white/80 backdrop-blur-md rounded-full shadow-lg hover:shadow-xl border border-white/20 transition-all duration-300 transform hover:scale-110">
-                    <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                    <svg class="relative w-6 h-6 text-gray-600 group-hover:text-blue-600 transition-colors duration-300 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <!-- Indicadores de puntos -->
-            <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2">
-                <div class="flex space-x-3" id="carousel-dots">
-                    <button class="w-3 h-3 rounded-full transition-all duration-300 transform hover:scale-125" data-slide="0"></button>
-                    <button class="w-3 h-3 rounded-full transition-all duration-300 transform hover:scale-125" data-slide="1"></button>
-                    <button class="w-3 h-3 rounded-full transition-all duration-300 transform hover:scale-125" data-slide="2"></button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- JavaScript para el carrusel moderno -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const track = document.getElementById('carousel-track');
-    const slides = track.children;
-    const prevBtn = document.getElementById('carousel-prev');
-    const nextBtn = document.getElementById('carousel-next');
-    const dots = document.querySelectorAll('#carousel-dots button');
-    let currentSlide = 0;
-    
-    function updateCarousel() {
-        // Mover el track
-        track.style.transform = `translateX(-${currentSlide * 100}%)`;
-        
-        // Actualizar dots
-        dots.forEach((dot, index) => {
-            if (index === currentSlide) {
-                dot.classList.remove('bg-white/50');
-                dot.classList.add('bg-white', 'shadow-lg', 'scale-125');
-            } else {
-                dot.classList.remove('bg-white', 'shadow-lg', 'scale-125');
-                dot.classList.add('bg-white/50');
-            }
-        });
-    }
-    
-    // Event listeners
-    prevBtn.addEventListener('click', function() {
-        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-        updateCarousel();
-    });
-    
-    nextBtn.addEventListener('click', function() {
-        currentSlide = (currentSlide + 1) % slides.length;
-        updateCarousel();
-    });
-    
-    dots.forEach((dot, index) => {
-        dot.addEventListener('click', function() {
-            currentSlide = index;
-            updateCarousel();
-        });
-    });
-    
-    // Auto-play
-    setInterval(function() {
-        currentSlide = (currentSlide + 1) % slides.length;
-        updateCarousel();
-    }, 6000);
-    
-    // Inicializar
-    updateCarousel();
-});
-</script>
-
+<!-- Fin Sección Hero -->
 
 <!-- Inicio Nosotros - Diseño Moderno -->
 <div class="relative py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 overflow-hidden">
@@ -704,8 +525,9 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="relative group">
                 <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl opacity-20 group-hover:opacity-30 transition-all duration-500 blur-lg"></div>
                 <div class="relative bg-white rounded-3xl p-2 shadow-2xl group-hover:shadow-3xl transition-all duration-500 transform group-hover:scale-105">
+                    <!-- Solo la imagen del vehículo se anima -->
                     <img src="{% static 'img/autoimg.png' %}" alt="Auto" 
-                         class="w-full h-auto rounded-2xl">
+                         class="w-full h-auto rounded-2xl car-driving-animation">
                 </div>
                 <!-- Elementos flotantes decorativos -->
                 <div class="absolute -top-6 -right-6 w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl shadow-lg transform rotate-12 opacity-80"></div>
@@ -774,12 +596,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 <!-- Botón CTA -->
                 <div>
-                    <button class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-blue-500/25">
+                    <a href="{% url 'nosotros' %}" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-blue-500/25">
                         <span>Conoce más sobre nosotros</span>
                         <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                         </svg>
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -869,8 +691,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <!-- Servicio 2 -->
             <div class="group relative h-full">
-                <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
-                <div class="relative bg-white rounded-3xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-purple-300 transform hover:-translate-y-3 group-hover:-rotate-1">
+                <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
+                <div class="relative bg-white rounded-2xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-purple-300 transform hover:-translate-y-3 group-hover:-rotate-1">
                     <div class="relative mb-6 overflow-hidden rounded-2xl">
                         <div class="w-full h-48 bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center overflow-hidden group-hover:shadow-lg transition-all duration-700">
                             <img src="{% static 'img/servicios/lavado_interior.jpg' %}" 
@@ -961,8 +783,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <!-- Servicio 4 -->
             <div class="group relative h-full">
-                <div class="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
-                <div class="relative bg-white rounded-3xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-amber-300 transform hover:-translate-y-3 group-hover:-rotate-1">
+                <div class="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
+                <div class="relative bg-white rounded-2xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-amber-300 transform hover:-translate-y-3 group-hover:-rotate-1">
                     <div class="relative mb-6 overflow-hidden rounded-2xl">
                         <div class="w-full h-48 bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center overflow-hidden group-hover:shadow-lg transition-all duration-700">
                             <img src="{% static 'img/servicios/lavado_asiento.webp' %}" 
@@ -1008,8 +830,8 @@ document.addEventListener('DOMContentLoaded', function() {
             <!-- Servicios adicionales en segunda fila -->
             <!-- Servicio 5 -->
             <div class="group relative h-full">
-                <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-3xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
-                <div class="relative bg-white rounded-3xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-cyan-300 transform hover:-translate-y-3 group-hover:-rotate-1">
+                <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
+                <div class="relative bg-white rounded-2xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-cyan-300 transform hover:-translate-y-3 group-hover:-rotate-1">
                     <div class="relative mb-6 overflow-hidden rounded-2xl">
                         <div class="w-full h-48 bg-gradient-to-br from-cyan-100 to-blue-100 flex items-center justify-center overflow-hidden group-hover:shadow-lg transition-all duration-700">
                             <img src="{% static 'img/servicios/limpieza_ventana.webp' %}" 
@@ -1054,8 +876,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <!-- Servicio 6 -->
             <div class="group relative h-full">
-                <div class="absolute inset-0 bg-gradient-to-r from-rose-500 to-pink-500 rounded-3xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
-                <div class="relative bg-white rounded-3xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-rose-300 transform hover:-translate-y-3 group-hover:-rotate-1">
+                <div class="absolute inset-0 bg-gradient-to-r from-rose-500 to-pink-500 rounded-2xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
+                <div class="relative bg-white rounded-2xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-rose-300 transform hover:-translate-y-3 group-hover:-rotate-1">
                     <div class="relative mb-6 overflow-hidden rounded-2xl">
                         <div class="w-full h-48 bg-gradient-to-br from-rose-100 to-pink-100 flex items-center justify-center overflow-hidden group-hover:shadow-lg transition-all duration-700">
                             <img src="{% static 'img/servicios/limpieza_humeda.jpg' %}" 
@@ -1100,8 +922,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <!-- Servicio 7 -->
             <div class="group relative h-full">
-                <div class="absolute inset-0 bg-gradient-to-r from-violet-500 to-purple-500 rounded-3xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
-                <div class="relative bg-white rounded-3xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-violet-300 transform hover:-translate-y-3 group-hover:-rotate-1">
+                <div class="absolute inset-0 bg-gradient-to-r from-violet-500 to-purple-500 rounded-2xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
+                <div class="relative bg-white rounded-2xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-violet-300 transform hover:-translate-y-3 group-hover:-rotate-1">
                     <div class="relative mb-6 overflow-hidden rounded-2xl">
                         <div class="w-full h-48 bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center overflow-hidden group-hover:shadow-lg transition-all duration-700">
                             <img src="{% static 'img/servicios/cambio_aceite.jpg' %}" 
@@ -1146,8 +968,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <!-- Servicio 8 -->
             <div class="group relative h-full">
-                <div class="absolute inset-0 bg-gradient-to-r from-slate-500 to-gray-600 rounded-3xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
-                <div class="relative bg-white rounded-3xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-slate-300 transform hover:-translate-y-3 group-hover:-rotate-1">
+                <div class="absolute inset-0 bg-gradient-to-r from-slate-500 to-gray-600 rounded-2xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
+                <div class="relative bg-white rounded-2xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-slate-300 transform hover:-translate-y-3 group-hover:-rotate-1">
                     <div class="relative mb-6 overflow-hidden rounded-2xl">
                         <div class="w-full h-48 bg-gradient-to-br from-slate-100 to-gray-100 flex items-center justify-center overflow-hidden group-hover:shadow-lg transition-all duration-700">
                             <img src="{% static 'img/servicios/reparacion_frenos.jpg' %}" 
@@ -1193,12 +1015,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         <!-- CTA final -->
         <div class="text-center mt-16">
-            <button class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-blue-500/25">
+            <a href="{% url 'servicios' %}" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-blue-500/25">
                 <span>Ver todos los servicios</span>
                 <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                 </svg>
-            </button>
+            </a>
         </div>
     </div>
 </div>
@@ -1293,7 +1115,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="w-16 h-16 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
                             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
                         </div>
                         <h3 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors duration-300" data-toggle="counter-up">74000</h3>
                         <p class="text-gray-600 text-lg font-medium group-hover:text-gray-800 transition-colors duration-300">Servicios completados</p>
@@ -1302,7 +1123,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
         </div>
-
+        
         <!-- Elementos adicionales -->
         <div class="mt-20 text-center">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
@@ -1327,7 +1148,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="flex flex-col items-center space-y-4 p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-gray-100">
                     <div class="w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-500 rounded-xl flex items-center justify-center">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                         </svg>
                     </div>
                     <span class="text-gray-700 font-semibold">Clientes felices</span>
@@ -1338,465 +1159,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </div>
 <!-- Fin datos -->
-<!-- Banner Moderno con Tailwind -->
-<div class="container mx-auto px-4 py-16">
-    <div class="relative rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500"
-         style="background-image: url('{% static 'img/bg-banner.jpg' %}'); background-attachment: fixed; background-position: center; background-size: cover; min-height: 600px;">
-        
-        <!-- Overlay mejorado para mejor contraste -->
-        <div class="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-blue-900/50"></div>
-        
-        <!-- Elementos decorativos flotantes -->
-        <div class="absolute top-8 right-8 w-20 h-20 bg-gradient-to-r from-cyan-400/30 to-blue-500/30 rounded-3xl transform rotate-12 animate-pulse backdrop-blur-sm border border-white/20"></div>
-        <div class="absolute bottom-8 left-8 w-16 h-16 bg-gradient-to-r from-blue-400/30 to-indigo-500/30 rounded-2xl transform -rotate-12 animate-pulse animation-delay-2000 backdrop-blur-sm border border-white/20"></div>
-        <div class="absolute top-1/3 left-16 w-12 h-12 bg-gradient-to-r from-purple-400/20 to-pink-500/20 rounded-xl animate-pulse animation-delay-4000"></div>
-        
-        <!-- Contenido principal -->
-        <div class="relative z-10 text-center py-24 px-8 flex flex-col justify-center min-h-[600px]">
-            <!-- Oferta principal con mejor contraste -->
-            <div class="mb-12">
-                <div class="relative inline-block">
-                    <h1 class="text-8xl lg:text-9xl font-black text-white mb-4 uppercase tracking-wider transform hover:scale-105 transition-all duration-500 drop-shadow-2xl">
-                        50% OFF
-                    </h1>
-                    <!-- Brillo de fondo para el texto -->
-                    <div class="absolute inset-0 text-8xl lg:text-9xl font-black text-cyan-400/20 blur-sm uppercase tracking-wider -z-10">
-                        50% OFF
-                    </div>
-                </div>
-                
-                <!-- Etiqueta de urgencia rediseñada -->
-                <div class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white text-base font-bold rounded-full shadow-2xl animate-bounce backdrop-blur-sm border border-white/20">
-                    <span class="mr-2 text-lg">⏰</span> 
-                    <span class="uppercase tracking-wide">Oferta Limitada</span>
-                </div>
-            </div>
-            
-            <!-- Título principal con mejor tipografía -->
-            <div class="mb-10 space-y-4">
-                <h2 class="text-4xl lg:text-6xl font-bold text-white uppercase tracking-wide leading-tight drop-shadow-xl">
-                    <span class="block bg-gradient-to-r from-cyan-300 via-blue-300 to-white bg-clip-text text-transparent">
-                        Ofertas Especiales
-                    </span>
-                </h2>
-                <p class="text-2xl lg:text-3xl text-cyan-100 font-light">
-                    Para los miembros nuevos
-                </p>
-            </div>
-            
-            <!-- Información de validez mejorada -->
-            <div class="mb-12">
-                <div class="inline-block bg-white/10 backdrop-blur-md rounded-2xl px-8 py-4 border border-white/20">
-                    <p class="text-xl lg:text-2xl text-white font-semibold">
-                        🗓️ Válido hasta el 30 de enero del 2025
-                    </p>
-                </div>
-            </div>
-            
-            <!-- Beneficios clave rediseñados -->
-            <div class="flex flex-wrap justify-center items-center gap-6 mb-12">
-                <div class="flex items-center space-x-3 bg-white/10 backdrop-blur-md rounded-xl px-4 py-3 border border-white/20">
-                    <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
-                    <span class="text-white font-medium">Servicio Premium</span>
-                </div>
-                <div class="flex items-center space-x-3 bg-white/10 backdrop-blur-md rounded-xl px-4 py-3 border border-white/20">
-                    <div class="w-3 h-3 bg-blue-400 rounded-full animate-pulse animation-delay-2000 shadow-lg shadow-blue-400/50"></div>
-                    <span class="text-white font-medium">Atención Rápida</span>
-                </div>
-                <div class="flex items-center space-x-3 bg-white/10 backdrop-blur-md rounded-xl px-4 py-3 border border-white/20">
-                    <div class="w-3 h-3 bg-purple-400 rounded-full animate-pulse animation-delay-4000 shadow-lg shadow-purple-400/50"></div>
-                    <span class="text-white font-medium">Mejor Precio</span>
-                </div>
-            </div>
-            
-            <!-- Botones de acción mejorados -->
-            <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                <!-- Botón principal con efecto neón -->
-                <a href="/login" 
-                   class="group relative inline-flex items-center px-12 py-5 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:via-blue-500 hover:to-indigo-500 text-white font-bold text-xl rounded-2xl transition-all duration-500 transform hover:scale-110 hover:-translate-y-2 uppercase tracking-wide overflow-hidden shadow-2xl hover:shadow-cyan-500/50">
-                    <!-- Efecto de brillo animado -->
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                    <!-- Borde brillante -->
-                    <div class="absolute inset-0 rounded-2xl border-2 border-white/30 group-hover:border-white/60 transition-all duration-500"></div>
-                    <span class="relative z-10 mr-3">🚀 Regístrate Ahora</span>
-                    <svg class="relative z-10 w-6 h-6 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                    </svg>
-                </a>
-                
-                <!-- Botón secundario glassmorphism -->
-                <a href="#servicios" 
-                   class="group inline-flex items-center px-8 py-4 bg-white/20 hover:bg-white/30 text-white hover:text-cyan-100 font-semibold text-lg rounded-xl backdrop-blur-md border border-white/30 hover:border-white/50 transition-all duration-300 transform hover:scale-105 shadow-xl">
-                    <span class="mr-3">Ver Servicios</span>
-                    <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Banner End -->
 
-<!-- Sección de precios - Diseño Ultra Moderno -->
-<div class="relative py-24 bg-gradient-to-br from-gray-50 via-white to-blue-50 overflow-hidden">
-    <!-- Elementos decorativos de fondo -->
-    <div class="absolute inset-0">
-        <div class="absolute top-20 left-1/4 w-80 h-80 bg-gradient-to-r from-blue-200 to-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
-        <div class="absolute bottom-20 right-1/4 w-80 h-80 bg-gradient-to-r from-purple-200 to-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse animation-delay-2000"></div>
-    </div>
-    
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="text-center mb-20">
-            <div class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-amber-100 to-orange-100 rounded-full mb-6">
-                <span class="text-amber-600 font-semibold text-sm uppercase tracking-wide">Planes Premium</span>
-            </div>
-            <h2 class="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-                Elige el plan 
-                <span class="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">
-                    perfecto
-                </span>
-            </h2>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                Servicios profesionales de lavado y detallado con la más alta calidad y tecnología avanzada
-            </p>
-        </div>
-
-        <!-- Grid de planes -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <!-- Plan Básico -->
-            <div class="group relative">
-                <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-3xl opacity-0 group-hover:opacity-5 transition-all duration-500"></div>
-                <div class="relative bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-blue-200 transform hover:-translate-y-4">
-                    <!-- Header del plan -->
-                    <div class="text-center mb-8">
-                        <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-900 uppercase tracking-wide mb-2">
-                            Lavado Básico
-                        </h3>
-                        <p class="text-gray-600">Ideal para mantenimiento regular</p>
-                    </div>
-                    
-                    <!-- Precio -->
-                    <div class="text-center mb-8">
-                        <div class="flex items-baseline justify-center">
-                            <span class="text-2xl text-blue-600 font-semibold">$</span>
-                            <span class="text-5xl font-bold text-gray-900">69</span>
-                            <span class="text-2xl text-gray-600">.999</span>
-                        </div>
-                        <p class="text-gray-500 mt-2">Por mes</p>
-                    </div>
-                    
-                    <!-- Features -->
-                    <div class="space-y-4 mb-8">
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-700">Acceso al servicio 2 veces por mes</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-700">Lavado completo de asientos</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-700">Limpieza profunda con aspiradora</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-700">Lavado profesional de exteriores</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-400">Lavado húmedo de interiores</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-400">Limpieza especializada de ventanas</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Botón -->
-                    <form method="POST" action="https://gateway.payulatam.com/ppp-web-gateway/" class="w-full">
-                        <input type="hidden" name="merchantId" value="tu_merchant_id">
-                        <input type="hidden" name="accountId" value="tu_account_id">
-                        <input type="hidden" name="description" value="Plan Lavado Básico">
-                        <input type="hidden" name="amount" value="69.999">
-                        <input type="hidden" name="currency" value="COP">
-                        <input type="hidden" name="test" value="1">
-                        <input type="hidden" name="returnUrl" value="price.html">
-                        <input type="hidden" name="signature" value="firma_generada">
-                        <button type="submit" 
-                                class="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-blue-500/25">
-                            Comenzar Ahora
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Plan Premium (Destacado) -->
-            <div class="group relative scale-105 z-10">
-                <!-- Badge de popular -->
-                <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
-                    <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white px-6 py-2 rounded-full text-sm font-bold uppercase tracking-wider shadow-lg">
-                        Más Popular
-                    </div>
-                </div>
-                
-                <div class="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl opacity-10 group-hover:opacity-20 transition-all duration-500"></div>
-                <div class="relative bg-white rounded-3xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-500 border-2 border-amber-200 group-hover:border-amber-300 transform hover:-translate-y-6">
-                    <!-- Header del plan -->
-                    <div class="text-center mb-8 pt-4">
-                        <div class="w-16 h-16 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m8-16l2.5 2.5L16 4m2.5 2.5L16 9l2.5-2.5L21 9V3h-6zM12 12l4-4v7a4 4 0 01-8 0V8l4 4z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-900 uppercase tracking-wide mb-2">
-                            Limpieza Premium
-                        </h3>
-                        <p class="text-gray-600">La opción más elegida</p>
-                    </div>
-                    
-                    <!-- Precio -->
-                    <div class="text-center mb-8">
-                        <div class="flex items-baseline justify-center">
-                            <span class="text-2xl text-amber-600 font-semibold">$</span>
-                            <span class="text-5xl font-bold text-gray-900">99</span>
-                            <span class="text-2xl text-gray-600">.999</span>
-                        </div>
-                        <p class="text-gray-500 mt-2">Por mes</p>
-                    </div>
-                    
-                    <!-- Features -->
-                    <div class="space-y-4 mb-8">
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-700">Acceso al servicio 2 veces por mes</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-700">Lavado completo de asientos</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-700">Limpieza profunda con aspiradora</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-700">Lavado profesional de exteriores</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-700">Lavado húmedo de interiores</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-400">Limpieza especializada de ventanas</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Botón -->
-                    <form method="POST" action="https://gateway.payulatam.com/ppp-web-gateway/" class="w-full">
-                        <input type="hidden" name="merchantId" value="tu_merchant_id">
-                        <input type="hidden" name="accountId" value="tu_account_id">
-                        <input type="hidden" name="description" value="Plan Limpieza Premium">
-                        <input type="hidden" name="amount" value="99.999">
-                        <input type="hidden" name="currency" value="COP">
-                        <input type="hidden" name="test" value="1">
-                        <input type="hidden" name="returnUrl" value="price.html">
-                        <input type="hidden" name="signature" value="firma_generada">
-                        <button type="submit" 
-                                class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-amber-500/25">
-                            Elegir Premium
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Plan Completo -->
-            <div class="group relative">
-                <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl opacity-0 group-hover:opacity-5 transition-all duration-500"></div>
-                <div class="relative bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-purple-200 transform hover:-translate-y-4">
-                    <!-- Header del plan -->
-                    <div class="text-center mb-8">
-                        <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-900 uppercase tracking-wide mb-2">
-                            Limpieza Completa
-                        </h3>
-                        <p class="text-gray-600">El servicio más completo</p>
-                    </div>
-                    
-                    <!-- Precio -->
-                    <div class="text-center mb-8">
-                        <div class="flex items-baseline justify-center">
-                            <span class="text-2xl text-purple-600 font-semibold">$</span>
-                            <span class="text-5xl font-bold text-gray-900">139</span>
-                            <span class="text-2xl text-gray-600">.999</span>
-                        </div>
-                        <p class="text-gray-500 mt-2">Por mes</p>
-                    </div>
-                    
-                    <!-- Features -->
-                    <div class="space-y-4 mb-8">
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-700">Acceso al servicio 2 veces por mes</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-700">Lavado completo de asientos</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-700">Limpieza profunda con aspiradora</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-700">Lavado profesional de exteriores</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-700">Lavado húmedo de interiores</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="ml-3 text-gray-700">Limpieza especializada de ventanas</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Botón -->
-                    <form method="POST" action="https://gateway.payulatam.com/ppp-web-gateway/" class="w-full">
-                        <input type="hidden" name="merchantId" value="tu_merchant_id">
-                        <input type="hidden" name="accountId" value="tu_account_id">
-                        <input type="hidden" name="description" value="Plan Limpieza Completa">
-                        <input type="hidden" name="amount" value="139.999">
-                        <input type="hidden" name="currency" value="COP">
-                        <input type="hidden" name="test" value="1">
-                        <input type="hidden" name="returnUrl" value="price.html">
-                        <input type="hidden" name="signature" value="firma_generada">
-                        <button type="submit" 
-                                class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-purple-500/25">
-                            Plan Completo
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Beneficios adicionales -->
-        <div class="mt-20 text-center">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-                <div class="flex items-center justify-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <span class="text-gray-700 font-medium">Garantía de satisfacción</span>
-                </div>
-                <div class="flex items-center justify-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <span class="text-gray-700 font-medium">Servicio 24/7</span>
-                </div>
-                <div class="flex items-center justify-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                    </div>
-                    <span class="text-gray-700 font-medium">Servicio a domicilio</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Fin sección de precios -->
 
 
 <!-- Sección de ubicación - Diseño Ultra Moderno -->
@@ -1808,64 +1171,73 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid lg:grid-cols-2 gap-16 items-start">
-            <!-- Información de ubicaciones -->
-            <div class="space-y-12">
-                <!-- Header -->
-                <div class="space-y-6">
-                    <div class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-cyan-100 to-blue-100 rounded-full">
-                        <span class="text-cyan-600 font-semibold text-sm uppercase tracking-wide">Nuestras Ubicaciones</span>
-                    </div>
-                    <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
-                        Encuentra los 
-                        <span class="bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                            autolavados más cercanos
-                        </span>
-                    </h2>
-                    <p class="text-xl text-gray-600">
-                        Ubicaciones estratégicas en toda la ciudad para brindarte el mejor servicio donde te encuentres
-                    </p>
-                </div>
-                
-                <!-- Grid de ubicaciones -->
-                <div class="grid md:grid-cols-1 gap-6">
+        <!-- Header principal de la sección centrado -->
+        <div class="text-center mb-20">
+            <div class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-cyan-100 to-blue-100 rounded-full mb-8">
+                <svg class="w-5 h-5 text-cyan-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <span class="text-cyan-600 font-semibold text-sm uppercase tracking-wide">Nuestras Ubicaciones</span>
+            </div>
+            <h2 class="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+                Encuentra los 
+                <span class="bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    autolavados más cercanos
+                </span>
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Ubicaciones estratégicas en toda la ciudad para brindarte el mejor servicio donde te encuentres
+            </p>
+        </div>
+
+        <!-- Grid principal: 2/3 ubicaciones - 1/3 mapa -->
+        <div class="grid lg:grid-cols-3 gap-12 items-start">
+            <!-- Columna de ubicaciones (2/3 del espacio) -->
+            <div class="lg:col-span-2">
+                <!-- Grid de ubicaciones 2x2 -->
+                <div class="grid md:grid-cols-2 gap-6">
                     <!-- San Mateo -->
                     <div class="group relative">
                         <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl opacity-0 group-hover:opacity-5 transition-all duration-500"></div>
-                        <div class="relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-cyan-200 transform hover:-translate-y-2">
-                            <div class="flex items-start gap-6">
-                                <div class="flex-shrink-0">
-                                    <div class="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <div class="relative bg-white rounded-2xl p-5 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-cyan-200 transform hover:-translate-y-2 h-full">
+                            <div class="flex flex-col h-full">
+                                <!-- Header con icono y título -->
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <div class="w-12 h-12 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         </svg>
                                     </div>
-                                </div>
-                                <div class="flex-1 space-y-3">
-                                    <h3 class="text-2xl font-bold text-gray-900 group-hover:text-cyan-600 transition-colors duration-300">
+                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-cyan-600 transition-colors duration-300">
                                         San Mateo
                                     </h3>
-                                    <div class="flex items-center space-x-2 text-gray-600">
-                                        <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </div>
+                                
+                                <!-- Información -->
+                                <div class="space-y-3 flex-1">
+                                    <div class="flex items-start space-x-2">
+                                        <svg class="w-4 h-4 text-cyan-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         </svg>
-                                        <span class="text-lg">Cl. 25 #3-119 a 3-113</span>
+                                        <span class="text-sm text-gray-600">Cl. 25 #3-119 a 3-113</span>
                                     </div>
-                                    <div class="flex items-center space-x-2 text-gray-600">
-                                        <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                    <div class="flex items-center space-x-2">
+                                        <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                                         </svg>
-                                        <span class="text-lg font-medium">3145789064</span>
-                                    </div>
-                                    <div class="flex flex-wrap gap-2 mt-4">
-                                        <span class="px-3 py-1 bg-cyan-100 text-cyan-800 rounded-full text-sm font-medium">Abierto 24/7</span>
-                                        <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-sm font-medium">Servicio Express</span>
+                                        <span class="text-sm font-medium text-gray-700">3145789064</span>
                                     </div>
                                 </div>
+                                
+                                <!-- Tags -->
+                                <div class="flex flex-wrap gap-1 mt-4">
+                                    <span class="px-2 py-1 bg-cyan-100 text-cyan-800 rounded-full text-xs font-medium">24/7</span>
+                                    <span class="px-2 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-medium">Express</span>
+                                </div>
                             </div>
-                            <!-- Línea decorativa -->
                             <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 group-hover:w-full transition-all duration-500 rounded-bl-2xl"></div>
                         </div>
                     </div>
@@ -1896,7 +1268,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     </div>
                                     <div class="flex items-center space-x-2 text-gray-600">
                                         <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                                         </svg>
                                         <span class="text-lg font-medium">3116908480</span>
                                     </div>
@@ -1936,7 +1308,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     </div>
                                     <div class="flex items-center space-x-2 text-gray-600">
                                         <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                                         </svg>
                                         <span class="text-lg font-medium">3208809430</span>
                                     </div>
@@ -1976,7 +1348,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     </div>
                                     <div class="flex items-center space-x-2 text-gray-600">
                                         <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                                         </svg>
                                         <span class="text-lg font-medium">3106844039</span>
                                     </div>
@@ -1990,103 +1362,161 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     </div>
                 </div>
+                
+                <!-- Sección de estadísticas y beneficios debajo de las cards -->
+                <div class="mt-12">
+                    <!-- Estadísticas rápidas -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div class="text-2xl font-bold text-gray-900">24/7</div>
+                            <div class="text-sm text-gray-600">Disponibilidad</div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                            </div>
+                            <div class="text-2xl font-bold text-gray-900">30min</div>
+                            <div class="text-sm text-gray-600">Servicio Express</div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div class="text-2xl font-bold text-gray-900">100%</div>
+                            <div class="text-sm text-gray-600">Eco-Friendly</div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                </svg>
+                            </div>
+                            <div class="text-2xl font-bold text-gray-900">4.9★</div>
+                            <div class="text-sm text-gray-600">Calificación</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Banner de llamada a la acción -->
+                    <div class="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 rounded-2xl p-6 text-white text-center shadow-2xl">
+                        <h3 class="text-xl font-bold mb-2">¿Listo para el mejor lavado de tu vida?</h3>
+                        <p class="text-cyan-100 mb-4">Reserva ahora y obtén un descuento especial en tu primera visita</p>
+                        <button class="bg-white text-blue-600 px-6 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors duration-300 shadow-lg">
+                            Reservar Ahora
+                        </button>
+                    </div>
+                </div>
+                
             </div>
             
-            <!-- Mapa con diseño moderno -->
-            <div class="relative">
-                <div class="relative overflow-hidden rounded-3xl shadow-2xl">
-                    <!-- Decoración del mapa -->
-                    <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 z-10 rounded-3xl"></div>
-                    {% if request.user.is_authenticated %}
-                        <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d31816.581663186567!2d-74.2064128!3d4.580966399999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2sco!4v1725023364696!5m2!1ses-419!2sco"
-                            class="w-full h-96 lg:h-[700px] rounded-3xl"
-                            allowfullscreen
-                            loading="lazy"
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
-                    {% else %}
-                        <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d31816.581663186567!2d-74.2064128!3d4.580966399999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2sco!4v1725023364696!5m2!1ses-419!2sco"
-                            class="w-full h-96 lg:h-[700px] rounded-3xl"
-                            allowfullscreen
-                            loading="lazy"
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
-                    {% endif %}
+            <!-- Columna del mapa (1/3 del espacio) -->
+            <div class="lg:col-span-1">
+                <!-- Mapa con diseño moderno -->
+                <div class="sticky top-8">
+                    <div class="relative overflow-hidden rounded-3xl shadow-2xl">
+                        <!-- Decoración del mapa -->
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 z-10 rounded-3xl"></div>
+                        {% if request.user.is_authenticated %}
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d31816.581663186567!2d-74.2064128!3d4.580966399999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2sco!4v1725023364696!5m2!1ses-419!2sco"
+                                class="w-full h-96 lg:h-[600px] rounded-3xl"
+                                allowfullscreen
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        {% else %}
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d31816.581663186567!2d-74.2064128!3d4.580966399999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2sco!4v1725023364696!5m2!1ses-419!2sco"
+                                class="w-full h-96 lg:h-[600px] rounded-3xl"
+                                allowfullscreen
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        {% endif %}
+                        
+                        <!-- Overlay con información -->
+                        <div class="absolute top-6 left-6 bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-lg border border-white/20 z-20">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-900">4 Ubicaciones</p>
+                                    <p class="text-xs text-gray-600">Disponibles en toda la ciudad</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <!-- Overlay con información -->
-                    <div class="absolute top-6 left-6 bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-lg border border-white/20 z-20">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
+                    <!-- Contenedor flex para imagen y información lado a lado -->
+                    <div class="mt-6 flex flex-col lg:flex-row lg:items-center lg:space-x-8 space-y-6 lg:space-y-0">
+                        <!-- Imagen de contacto centrada verticalmente al lado izquierdo -->
+                        <div class="flex justify-center lg:justify-start flex-shrink-0">
+                            <img src="{% static 'img/imgcontact.png' %}" 
+                                 alt="Imagen de contacto" 
+                                 class="w-40 h-auto drop-shadow-xl hover:drop-shadow-2xl transition-all duration-300 transform hover:scale-105 filter hover:brightness-110">
+                        </div>
+                        
+                        <!-- Cards de información más anchas al lado derecho -->
+                        <div class="flex-1 space-y-6 max-w-none">
+                        <div class="bg-white/90 backdrop-blur-md rounded-2xl p-8 border border-gray-200/50 shadow-lg min-w-[350px] w-full">
+                            <h4 class="text-xl font-bold text-gray-900 mb-6">Horarios de Atención</h4>
+                            <div class="space-y-3 text-base text-gray-600">
+                                <div class="flex justify-between">
+                                    <span>Lunes - Viernes:</span>
+                                    <span class="font-medium">7:00 AM - 8:00 PM</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Sábados:</span>
+                                    <span class="font-medium">8:00 AM - 7:00 PM</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Domingos:</span>
+                                    <span class="font-medium">9:00 AM - 6:00 PM</span>
+                                </div>
                             </div>
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900">4 Ubicaciones</p>
-                                <p class="text-xs text-gray-600">Disponibles en toda la ciudad</p>
+                        </div>
+                        
+                        <div class="bg-white/90 backdrop-blur-md rounded-2xl p-8 border border-gray-200/50 shadow-lg min-w-[350px] w-full">
+                            <h4 class="text-xl font-bold text-gray-900 mb-6">Contacto General</h4>
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 012 2z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm text-gray-600">info@autonew.com</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm text-gray-600">3001234567</span>
+                                </div>
                             </div>
+                        </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Alerta para usuarios no autenticados con nuevo diseño -->
-        {% if not request.user.is_authenticated %}
-            <div class="mt-16">
-                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/50 p-8">
-                    <div class="absolute inset-0 bg-gradient-to-r from-amber-100/20 to-orange-100/20"></div>
-                    <div class="relative flex items-center justify-center gap-6">
-                        <div class="flex-shrink-0">
-                            <div class="w-16 h-16 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.734 0L4.08 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="text-center lg:text-left">
-                            <h3 class="text-2xl font-bold text-gray-900 mb-2">¡Accede a todas las funciones!</h3>
-                            <p class="text-lg text-gray-700 mb-4">
-                                Debes <a href="{% url 'login' %}" class="font-bold text-amber-600 hover:text-amber-700 underline transition-colors duration-300">iniciar sesión</a> 
-                                para reservar una cita y acceder a todas nuestras ubicaciones.
-                            </p>
-                            <a href="{% url 'login' %}" 
-                               class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
-                                <span>Iniciar Sesión</span>
-                                <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-        
-        <!-- Call to action final -->
-        <div class="mt-20 text-center">
-            <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 text-white relative overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm"></div>
-                <div class="relative z-10">
-                    <h3 class="text-3xl lg:text-4xl font-bold mb-4">
-                        ¿Listo para el mejor lavado de tu vehículo?
-                    </h3>
-                    <p class="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-                        Reserva tu cita en cualquiera de nuestras ubicaciones y disfruta de un servicio de calidad excepcional
-                    </p>
-                    <button class="inline-flex items-center px-8 py-4 bg-white text-blue-600 font-bold rounded-2xl hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 hover:shadow-xl">
-                        <span>Reservar Ahora</span>
-                        <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
 <!-- Fin sección de ubicación -->
 
 
@@ -2120,7 +1550,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
                 </svg>
-                <span class="text-blue-600 font-semibold text-sm uppercase tracking-widest">Opiniones Reales</span>
+                <span class="text-blue-600 font-semibold text-sm uppercase tracking-wider">Opiniones Reales</span>
             </div>
             
             <h2 class="text-5xl lg:text-7xl font-black text-gray-900 leading-tight mb-8">
@@ -2139,12 +1569,12 @@ document.addEventListener('DOMContentLoaded', function() {
             <!-- Carrusel de testimonios premium -->
             <div class="relative mb-16">
                 <!-- Contenedor del carrusel -->
-                <div class="overflow-hidden rounded-3xl">
-                    <div class="flex transition-transform duration-700 ease-out" id="testimonial-carousel-track">
+                <div class="overflow-hidden rounded-3xl bg-white/20 backdrop-blur-sm p-2">
+                    <div class="flex transition-transform duration-700 ease-out testimonial-slide-transition" id="testimonial-carousel-track">
                         {% for comentario in comentarios %}
                         <div class="w-full flex-shrink-0 px-4">
                             <div class="max-w-4xl mx-auto">
-                                <div class="group relative">
+                                <div class="group relative testimonial-card">
                                     <!-- Efecto de brillo de fondo -->
                                     <div class="absolute -inset-0.5 bg-gradient-to-r from-blue-400 to-slate-400 rounded-3xl blur opacity-0 group-hover:opacity-30 transition duration-1000 group-hover:duration-200"></div>
                                     
@@ -2180,14 +1610,14 @@ document.addEventListener('DOMContentLoaded', function() {
                                             <div class="flex items-center justify-center space-x-6">
                                                 <!-- Avatar con anillo animado -->
                                                 <div class="relative">
-                                                    <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-slate-400 rounded-full animate-spin"></div>
+                                                    <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-slate-400 rounded-full animate-spin" style="animation-duration: 3s;"></div>
                                                     <div class="relative bg-white rounded-full p-1">
                                                         {% if comentario.usuario.profile_picture %}
                                                             <img src="{{ comentario.usuario.profile_picture.url }}" 
                                                                  alt="{{ comentario.usuario.nombre_usuario }}" 
                                                                  class="w-20 h-20 rounded-full object-cover">
                                                         {% else %}
-                                                            <img src="{% static '/img/sin rostro.jpg' %}" 
+                                                            <img src="{% static 'img/sin rostro.jpg' %}" 
                                                                  alt="Usuario" 
                                                                  class="w-20 h-20 rounded-full object-cover">
                                                         {% endif %}
@@ -2229,10 +1659,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 
                 <!-- Controles de navegación -->
-                <div class="flex justify-center items-center space-x-8 mt-12">
+                <div class="flex justify-center items-center space-x-8 mt-12 testimonial-controls">
                     <!-- Botón anterior -->
                     <button id="testimonial-prev-btn" 
-                            class="group relative w-20 h-20 bg-white/90 backdrop-blur-xl rounded-2xl border border-gray-200/50 hover:border-blue-300/50 transition-all duration-300 transform hover:-translate-y-1 hover:scale-110 shadow-lg hover:shadow-xl">
+                            class="group relative w-20 h-20 bg-white/90 backdrop-blur-xl rounded-2xl border border-gray-200/50 hover:border-blue-300/50 transition-all duration-300 transform hover:-translate-y-1 hover:scale-110 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                            aria-label="Testimonio anterior">
                         <div class="absolute inset-0 bg-gradient-to-r from-blue-100/30 to-slate-100/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <svg class="relative w-8 h-8 text-gray-600 group-hover:text-blue-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -2242,15 +1673,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     <!-- Indicadores de puntos -->
                     <div class="flex space-x-3" id="testimonial-dots-container">
                         {% for comentario in comentarios %}
-                            <button class="w-4 h-4 rounded-full transition-all duration-300 transform hover:scale-125 testimonial-dot" 
-                                    data-slide="{{ forloop.counter0 }}">
+                            <button class="w-4 h-4 rounded-full transition-all duration-300 transform hover:scale-125 testimonial-dot bg-gray-300" 
+                                    data-slide="{{ forloop.counter0 }}"
+                                    aria-label="Ir al testimonio {{ forloop.counter }}">
                             </button>
                         {% endfor %}
                     </div>
                     
                     <!-- Botón siguiente -->
                     <button id="testimonial-next-btn" 
-                            class="group relative w-20 h-20 bg-white/90 backdrop-blur-xl rounded-2xl border border-gray-200/50 hover:border-blue-300/50 transition-all duration-300 transform hover:-translate-y-1 hover:scale-110 shadow-lg hover:shadow-xl">
+                            class="group relative w-20 h-20 bg-white/90 backdrop-blur-xl rounded-2xl border border-gray-200/50 hover:border-blue-300/50 transition-all duration-300 transform hover:-translate-y-1 hover:scale-110 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                            aria-label="Siguiente testimonio">
                         <div class="absolute inset-0 bg-gradient-to-r from-blue-100/30 to-slate-100/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <svg class="relative w-8 h-8 text-gray-600 group-hover:text-blue-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -2269,16 +1702,35 @@ document.addEventListener('DOMContentLoaded', function() {
             <!-- JavaScript para el carrusel -->
             <script>
             document.addEventListener('DOMContentLoaded', function() {
+                // Verificar que los elementos existan antes de proceder
                 const track = document.getElementById('testimonial-carousel-track');
-                const slides = track.children;
                 const prevBtn = document.getElementById('testimonial-prev-btn');
                 const nextBtn = document.getElementById('testimonial-next-btn');
                 const dots = document.querySelectorAll('.testimonial-dot');
                 const progress = document.getElementById('testimonial-progress');
+                
+                // Si no hay elementos del carousel, salir
+                if (!track || !prevBtn || !nextBtn || dots.length === 0 || !progress) {
+                    console.log('Elementos del carousel de testimonios no encontrados');
+                    return;
+                }
+                
+                const slides = track.children;
                 let currentSlide = 0;
                 let autoPlayInterval;
+                let isTransitioning = false;
+                
+                // Verificar que hay slides
+                if (slides.length === 0) {
+                    console.log('No hay slides en el carousel');
+                    return;
+                }
                 
                 function updateCarousel() {
+                    if (isTransitioning) return;
+                    
+                    isTransitioning = true;
+                    
                     // Mover el track
                     track.style.transform = `translateX(-${currentSlide * 100}%)`;
                     
@@ -2296,55 +1748,117 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Actualizar barra de progreso
                     const progressPercent = ((currentSlide + 1) / slides.length) * 100;
                     progress.style.width = progressPercent + '%';
+                    
+                    // Activar animación de estrellas del slide actual
+                    const currentStars = slides[currentSlide].querySelectorAll('.star-animation');
+                    currentStars.forEach((star, index) => {
+                        star.style.animationDelay = `${index * 100}ms`;
+                        star.classList.add('animate-bounce');
+                        setTimeout(() => {
+                            star.classList.remove('animate-bounce');
+                        }, 1000);
+                    });
+                    
+                    setTimeout(() => {
+                        isTransitioning = false;
+                    }, 700);
                 }
                 
                 function nextSlide() {
+                    if (isTransitioning) return;
                     currentSlide = (currentSlide + 1) % slides.length;
                     updateCarousel();
                 }
                 
                 function prevSlide() {
+                    if (isTransitioning) return;
                     currentSlide = (currentSlide - 1 + slides.length) % slides.length;
                     updateCarousel();
                 }
                 
                 function startAutoPlay() {
-                    autoPlayInterval = setInterval(nextSlide, 5000); // Cambiar cada 5 segundos
+                    if (slides.length <= 1) return; // No autoplay si solo hay 1 slide
+                    stopAutoPlay(); // Limpiar interval anterior
+                    autoPlayInterval = setInterval(nextSlide, 6000); // Cambiar cada 6 segundos
                 }
                 
                 function stopAutoPlay() {
-                    clearInterval(autoPlayInterval);
+                    if (autoPlayInterval) {
+                        clearInterval(autoPlayInterval);
+                        autoPlayInterval = null;
+                    }
                 }
                 
                 // Event listeners
-                prevBtn.addEventListener('click', function() {
-                    prevSlide();
-                    stopAutoPlay();
-                    startAutoPlay(); // Reiniciar autoplay
-                });
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        prevSlide();
+                        stopAutoPlay();
+                        setTimeout(startAutoPlay, 2000); // Reiniciar autoplay después de 2 segundos
+                    });
+                }
                 
-                nextBtn.addEventListener('click', function() {
-                    nextSlide();
-                    stopAutoPlay();
-                    startAutoPlay(); // Reiniciar autoplay
-                });
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        nextSlide();
+                        stopAutoPlay();
+                        setTimeout(startAutoPlay, 2000); // Reiniciar autoplay después de 2 segundos
+                    });
+                }
                 
                 dots.forEach((dot, index) => {
-                    dot.addEventListener('click', function() {
+                    dot.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (isTransitioning || currentSlide === index) return;
                         currentSlide = index;
                         updateCarousel();
                         stopAutoPlay();
-                        startAutoPlay(); // Reiniciar autoplay
+                        setTimeout(startAutoPlay, 2000); // Reiniciar autoplay después de 2 segundos
                     });
                 });
                 
-                // Pausar autoplay en hover
-                track.addEventListener('mouseenter', stopAutoPlay);
-                track.addEventListener('mouseleave', startAutoPlay);
+                // Pausar autoplay en hover del track
+                if (track) {
+                    track.addEventListener('mouseenter', stopAutoPlay);
+                    track.addEventListener('mouseleave', startAutoPlay);
+                }
+                
+                // Support para swipe en móviles
+                let startX = 0;
+                let endX = 0;
+                
+                track.addEventListener('touchstart', function(e) {
+                    startX = e.touches[0].clientX;
+                }, { passive: true });
+                
+                track.addEventListener('touchend', function(e) {
+                    endX = e.changedTouches[0].clientX;
+                    const diff = startX - endX;
+                    
+                    if (Math.abs(diff) > 50) { // Mínimo 50px de swipe
+                        if (diff > 0) {
+                            nextSlide(); // Swipe izquierda -> siguiente
+                        } else {
+                            prevSlide(); // Swipe derecha -> anterior
+                        }
+                        stopAutoPlay();
+                        setTimeout(startAutoPlay, 2000);
+                    }
+                }, { passive: true });
                 
                 // Inicializar
+                console.log('Inicializando carousel de testimonios con', slides.length, 'slides');
                 updateCarousel();
-                startAutoPlay();
+                
+                // Solo iniciar autoplay si hay más de 1 slide
+                if (slides.length > 1) {
+                    startAutoPlay();
+                }
+                
+                // Cleanup al cerrar la página
+                window.addEventListener('beforeunload', stopAutoPlay);
             });
             </script>
             
@@ -2354,10 +1868,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="relative bg-white/90 backdrop-blur-xl rounded-3xl p-16 border border-gray-200/50 shadow-xl">
                     <!-- Icono animado -->
                     <div class="relative w-32 h-32 mx-auto mb-8">
-                        <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-slate-400 rounded-full animate-pulse"></div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-slate-500 rounded-full animate-pulse"></div>
                         <div class="relative bg-white rounded-full p-8 backdrop-blur-xl shadow-lg">
                             <svg class="w-16 h-16 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3v1"/>
                             </svg>
                         </div>
                     </div>
@@ -2373,7 +1887,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button class="group relative inline-flex items-center px-10 py-5 bg-gradient-to-r from-blue-500 to-slate-600 hover:from-blue-600 hover:to-slate-700 text-white font-bold text-lg rounded-2xl transition-all duration-500 transform hover:scale-105 shadow-xl hover:shadow-2xl">
                         <span>Dejar mi opinión</span>
                         <svg class="ml-3 w-6 h-6 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                         </svg>
                         
                         <!-- Efecto de brillo -->
@@ -2383,62 +1897,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         {% endif %}
         
-        <!-- Sección de estadísticas impresionantes -->
-        <div class="mt-24">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <!-- Estadística 1 -->
-                <div class="text-center group">
-                    <div class="relative bg-white/90 backdrop-blur-xl rounded-2xl p-8 border border-gray-200/50 hover:border-blue-300/50 transition-all duration-500 transform hover:-translate-y-2 shadow-lg hover:shadow-xl">
-                        <div class="w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-3xl font-bold text-gray-900 mb-2">2,500+</h3>
-                        <p class="text-gray-600">Clientes Felices</p>
-                    </div>
-                </div>
-                
-                <!-- Estadística 2 -->
-                <div class="text-center group">
-                    <div class="relative bg-white/90 backdrop-blur-xl rounded-2xl p-8 border border-gray-200/50 hover:border-blue-300/50 transition-all duration-500 transform hover:-translate-y-2 shadow-lg hover:shadow-xl">
-                        <div class="w-16 h-16 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-3xl font-bold text-gray-900 mb-2">4.9/5</h3>
-                        <p class="text-gray-600">Calificación Promedio</p>
-                    </div>
-                </div>
-                
-                <!-- Estadística 3 -->
-                <div class="text-center group">
-                    <div class="relative bg-white/90 backdrop-blur-xl rounded-2xl p-8 border border-gray-200/50 hover:border-blue-300/50 transition-all duration-500 transform hover:-translate-y-2 shadow-lg hover:shadow-xl">
-                        <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-3xl font-bold text-gray-900 mb-2">98%</h3>
-                        <p class="text-gray-600">Recomendación</p>
-                    </div>
-                </div>
-                
-                <!-- Estadística 4 -->
-                <div class="text-center group">
-                    <div class="relative bg-white/90 backdrop-blur-xl rounded-2xl p-8 border border-gray-200/50 hover:border-blue-300/50 transition-all duration-500 transform hover:-translate-y-2 shadow-lg hover:shadow-xl">
-                        <div class="w-16 h-16 bg-gradient-to-r from-slate-500 to-gray-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-3xl font-bold text-gray-900 mb-2">5 años</h3>
-                        <p class="text-gray-600">De Experiencia</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
         
         <!-- Call to Action final -->
         <div class="mt-20 text-center">
@@ -2449,12 +1908,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
                     Únete a miles de clientes satisfechos que ya confían en nosotros
                 </p>
-                <button class="inline-flex items-center px-10 py-5 bg-gradient-to-r from-blue-500 to-slate-600 hover:from-blue-600 hover:to-slate-700 text-white font-bold text-lg rounded-2xl transition-all duration-500 transform hover:scale-105 shadow-xl hover:shadow-2xl">
-                    <span>Reservar mi cita</span>
-                    <svg class="ml-3 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                </button>
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'reservas' %}" class="inline-flex items-center px-10 py-5 bg-gradient-to-r from-blue-500 to-slate-600 hover:from-blue-600 hover:to-slate-700 text-white font-bold text-lg rounded-2xl transition-all duration-500 transform hover:scale-105 shadow-xl hover:shadow-2xl">
+                        <span>Reservar mi cita</span>
+                        <svg class="ml-3 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="inline-flex items-center px-10 py-5 bg-gradient-to-r from-blue-500 to-slate-600 hover:from-blue-600 hover:to-slate-700 text-white font-bold text-lg rounded-2xl transition-all duration-500 transform hover:scale-105 shadow-xl hover:shadow-2xl">
+                        <span>Iniciar Sesión</span>
+                        <svg class="ml-3 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3v1"/>
+                        </svg>
+                    </a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -2478,6 +1946,47 @@ document.addEventListener('DOMContentLoaded', function() {
 
 .animation-delay-4000 {
     animation-delay: 4s;
+}
+
+/* Animación específica para el vehículo conduciendo */
+@keyframes carDriving {
+    0% { 
+        transform: translateY(150vh) translateX(-100px) scale(0.7);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    80% {
+        transform: translateY(20px) translateX(20px) scale(0.95);
+    }
+    100% { 
+        transform: translateY(0px) translateX(0px) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Clase inicial para la imagen del vehículo */
+.car-driving-animation {
+    opacity: 0;
+    transform: translateY(150vh) translateX(-100px) scale(0.7);
+    transition: none;
+}
+
+/* Clase que se agrega cuando la animación debe comenzar */
+.car-driving-animation.start-driving {
+    animation: carDriving 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Efectos adicionales para simular movimiento */
+@keyframes engineVibration {
+    0%, 100% { filter: blur(0px); }
+    50% { filter: blur(0.5px); }
+}
+
+.car-driving-animation.start-driving {
+    animation: carDriving 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+               engineVibration 0.1s ease-in-out infinite 0.5s;
 }
 
 /* Efecto de brillo para las tarjetas */
@@ -2509,121 +2018,144 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Verificar si jQuery está cargado
     if (typeof jQuery === 'undefined') {
-        console.error('jQuery no está cargado');
+        console.log('jQuery no está cargado, pero el carousel de testimonios funciona con JavaScript vanilla');
     } else {
-        console.log('jQuery está disponible, carousel debe funcionar');
-        
-        // Forzar inicialización del carousel si no se ha hecho
-        setTimeout(function() {
-            if ($('.carousel .owl-carousel').length && !$('.carousel .owl-carousel').hasClass('owl-loaded')) {
-                $('.carousel .owl-carousel').owlCarousel({
-                    autoplay: true,
-                    animateOut: 'fadeOut',
-                    animateIn: 'fadeIn',
-                    items: 1,
-                    smartSpeed: 300,
-                    dots: false,
-                    loop: true,
-                    nav: true,
-                    navText: [
-                        '<i class="fa fa-angle-left" aria-hidden="true"></i>',
-                        '<i class="fa fa-angle-right" aria-hidden="true"></i>'
-                    ]
-                });
-            }
-        }, 1000);
+        console.log('jQuery está disponible');
     }
+    
+    // Animación del vehículo sincronizada con el scroll
+    const carImage = document.querySelector('.car-driving-animation');
+    
+    // Función para calcular la posición del vehículo basada en el scroll
+    function updateCarPosition() {
+        if (!carImage) return;
+        
+        // Buscar la sección "Nosotros"
+        const nosotrosSection = carImage.closest('.relative.py-20');
+        if (!nosotrosSection) return;
+        
+        const rect = nosotrosSection.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        
+        // Calcular el progreso del scroll para esta sección
+        // Comenzar la animación cuando la sección esté a punto de entrar
+        const triggerStart = windowHeight; // Cuando la sección toca la parte inferior
+        const triggerEnd = -rect.height; // Cuando la sección sale por arriba
+        
+        // Progreso de 0 a 1 basado en la posición de scroll
+        let progress = 0;
+        if (rect.top <= triggerStart && rect.top >= triggerEnd) {
+            progress = (triggerStart - rect.top) / (triggerStart - triggerEnd);
+            progress = Math.max(0, Math.min(1, progress)); // Limitar entre 0 y 1
+        } else if (rect.top < triggerEnd) {
+            progress = 1; // Animación completa
+        }
+        
+        // Aplicar transformaciones basadas en el progreso
+        if (progress > 0) {
+            // Calcular posiciones interpoladas
+            const startY = 150; // vh inicial
+            const endY = 0;
+            const startX = -100; // px inicial
+            const endX = 0;
+            const startScale = 0.7;
+            const endScale = 1;
+            const startOpacity = 0;
+            const endOpacity = 1;
+            
+            // Interpolación suave con easing
+            const easedProgress = easeOutCubic(progress);
+            
+            const currentY = startY - (startY - endY) * easedProgress;
+            const currentX = startX + (endX - startX) * easedProgress;
+            const currentScale = startScale + (endScale - startScale) * easedProgress;
+            const currentOpacity = startOpacity + (endOpacity - startOpacity) * Math.min(progress * 2, 1);
+            
+            // Aplicar las transformaciones
+            carImage.style.transform = `translateY(${currentY}vh) translateX(${currentX}px) scale(${currentScale})`;
+            carImage.style.opacity = currentOpacity;
+            
+            // Quitar las clases de animación CSS ya que controlamos manualmente
+            carImage.classList.remove('start-driving');
+            
+            // Efecto de vibración cuando esté en movimiento
+            if (progress > 0.1 && progress < 0.9) {
+                const vibration = Math.sin(Date.now() * 0.01) * 0.5;
+                carImage.style.filter = `blur(${Math.abs(vibration)}px)`;
+            } else {
+                carImage.style.filter = 'blur(0px)';
+            }
+        } else {
+            // Estado inicial
+            carImage.style.transform = `translateY(150vh) translateX(-100px) scale(0.7)`;
+            carImage.style.opacity = '0';
+            carImage.style.filter = 'blur(0px)';
+        }
+    }
+    
+    // Función de easing para suavizar la animación
+    function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+    }
+    
+    // Escuchar el evento scroll
+    let ticking = false;
+    function handleScrollAnimation() {
+        if (!ticking) {
+            requestAnimationFrame(function() {
+                updateCarPosition();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }
+    
+    // Agregar listener de scroll
+    window.addEventListener('scroll', handleScrollAnimation);
+    
+    // Verificar posición inicial
+    updateCarPosition();
 });
 </script>
 
-<!-- Estilos adicionales para el carousel -->
+<!-- Estilos adicionales para el carousel de testimonios -->
 <style>
-/* Estilos para los controles del carousel */
-.carousel .owl-nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    pointer-events: none;
-    z-index: 10;
+/* Optimizaciones de rendimiento para el carousel */
+#testimonial-carousel-track {
+    will-change: transform;
+    backface-visibility: hidden;
+    perspective: 1000px;
 }
 
-.carousel .owl-prev, 
-.carousel .owl-next {
-    background: rgba(77, 208, 225, 0.8) !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 50% !important;
-    width: 60px !important;
-    height: 60px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    pointer-events: auto;
-    transition: all 0.3s ease !important;
-    backdrop-filter: blur(10px);
-    font-size: 24px !important;
-}
-
-.carousel .owl-prev:hover, 
-.carousel .owl-next:hover {
-    background: rgba(77, 208, 225, 1) !important;
-    transform: scale(1.1);
-    box-shadow: 0 0 20px rgba(77, 208, 225, 0.5);
-}
-
-.carousel .owl-prev {
-    margin-left: 20px;
-}
-
-.carousel .owl-next {
-    margin-right: 20px;
-}
-
-/* Ocultar navegación por defecto y mostrar en hover */
-.carousel {
-    position: relative;
-}
-
-.carousel .owl-nav {
-    opacity: 0;
+/* Preloader para imágenes de testimonios */
+.testimonial-card img {
     transition: opacity 0.3s ease;
 }
 
-.carousel:hover .owl-nav {
-    opacity: 1;
+.testimonial-card img[src=""] {
+    opacity: 0;
 }
 
-/* Estilos para los dots si se habilitan */
-.carousel .owl-dots {
-    text-align: center;
-    padding-top: 20px;
-    position: absolute;
-    bottom: 20px;
-    width: 100%;
-    z-index: 10;
+/* Mejoras de accesibilidad */
+.testimonial-dot:focus,
+#testimonial-prev-btn:focus,
+#testimonial-next-btn:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
 }
 
-.carousel .owl-dot {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    margin: 0 5px;
-    background: rgba(255, 255, 255, 0.5) !important;
-    border-radius: 50%;
-    transition: all 0.3s ease;
+/* Indicador visual de loading */
+.testimonial-loading {
+    opacity: 0.5;
+    pointer-events: none;
 }
 
-.carousel .owl-dot.active {
-    background: rgba(77, 208, 225, 1) !important;
-    transform: scale(1.2);
-    box-shadow: 0 0 10px rgba(77, 208, 225, 0.5);
-}
-
-.carousel .owl-dot:hover {
-    background: rgba(77, 208, 225, 0.8) !important;
+/* Smooth scrolling para dispositivos móviles */
+@media (max-width: 768px) {
+    #testimonial-carousel-track {
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
 }
 </style>
 

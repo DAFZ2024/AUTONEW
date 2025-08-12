@@ -1,0 +1,1002 @@
+{% extends 'base/base_crud.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header mejorado -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg">
+                        <i class="fas fa-users text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                            Gestión de Usuarios
+                        </h1>
+                        <p class="text-gray-600 mt-1">Administra todos los usuarios del sistema de manera eficiente</p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button id="toggleFormButton"
+                       class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-2xl shadow-lg hover:from-green-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-plus mr-2"></i>
+                        Nuevo Usuario
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensajes de estado -->
+        {% if messages %}
+            <div class="mb-8 space-y-3">
+                {% for message in messages %}
+                    <div class="p-4 rounded-2xl shadow-lg backdrop-blur-xl border {% if message.tags == 'success' %}bg-green-50/80 border-green-200 text-green-800{% elif message.tags == 'error' %}bg-red-50/80 border-red-200 text-red-800{% elif message.tags == 'warning' %}bg-yellow-50/80 border-yellow-200 text-yellow-800{% else %}bg-blue-50/80 border-blue-200 text-blue-800{% endif %}">
+                        <div class="flex items-center">
+                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-3 text-lg"></i>
+                            <span class="font-medium">{{ message }}</span>
+                            <button type="button" class="ml-auto text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.style.display='none'">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+           
+        <!-- Estadísticas rápidas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Usuarios</p>
+                        <p class="text-3xl font-bold text-blue-600">{{ total_usuarios|default:0 }}</p>
+                    </div>
+                    <div class="p-3 bg-blue-100 rounded-xl">
+                        <i class="fas fa-users text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Administradores</p>
+                        <p class="text-3xl font-bold text-purple-600">{{ total_admins|default:0 }}</p>
+                    </div>
+                    <div class="p-3 bg-purple-100 rounded-xl">
+                        <i class="fas fa-user-shield text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Clientes</p>
+                        <p class="text-3xl font-bold text-emerald-600">{{ total_clientes|default:0 }}</p>
+                    </div>
+                    <div class="p-3 bg-emerald-100 rounded-xl">
+                        <i class="fas fa-user text-emerald-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Usuarios Inactivos</p>
+                        <p class="text-3xl font-bold text-orange-600">{{ total_usuarios_inactivos|default:0 }}</p>
+                    </div>
+                    <div class="p-3 bg-orange-100 rounded-xl">
+                        <i class="fas fa-user-slash text-orange-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de creación -->
+        <div id="formContainer" class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden mb-8" style="display: none;">
+            <div class="p-6 sm:p-8 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-900">Crear Nuevo Usuario</h2>
+                <p class="text-gray-600 mt-1">Completa la información del usuario</p>
+            </div>
+            
+            <div class="p-6 sm:p-8">
+                <form method="POST" class="space-y-6">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label for="nombre_completo" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-user mr-2 text-blue-600"></i>Nombre Completo
+                            </label>
+                            <input type="text" name="nombre_completo" 
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" 
+                                   placeholder="Nombre completo del usuario" required>
+                        </div>
+
+                        <div>
+                            <label for="nombre_usuario" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-at mr-2 text-blue-600"></i>Nombre de Usuario
+                            </label>
+                            <input type="text" name="nombre_usuario" 
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" 
+                                   placeholder="nombre_usuario" required>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label for="correo" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-envelope mr-2 text-blue-600"></i>Correo Electrónico
+                            </label>
+                            <input type="email" name="correo" 
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" 
+                                   placeholder="usuario@ejemplo.com" required>
+                        </div>
+
+                        <div>
+                            <label for="telefono" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-phone mr-2 text-blue-600"></i>Teléfono
+                            </label>
+                            <input type="text" name="telefono" 
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" 
+                                   placeholder="Número de teléfono" required>
+                        </div>
+                        <!-- Script para mostrar/ocultar el formulario de usuario -->
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var toggleFormButton = document.getElementById('toggleFormButton');
+                                var cancelFormButton = document.getElementById('cancelFormButton');
+                                var formContainer = document.getElementById('formContainer');
+
+                                if (toggleFormButton && formContainer) {
+                                    toggleFormButton.addEventListener('click', function() {
+                                        formContainer.style.display = 'block';
+                                    });
+                                }
+                                if (cancelFormButton && formContainer) {
+                                    cancelFormButton.addEventListener('click', function() {
+                                        formContainer.style.display = 'none';
+                                    });
+                                }
+                            });
+                        </script>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label for="direccion" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-map-marker-alt mr-2 text-blue-600"></i>Dirección
+                            </label>
+                            <input type="text" name="direccion" 
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" 
+                                   placeholder="Dirección del usuario" required>
+                        </div>
+
+                        <div>
+                            <label for="rol" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-user-tag mr-2 text-blue-600"></i>Rol
+                            </label>
+                            <select name="rol" 
+                                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" 
+                                    required>
+                                <option value="">Selecciona un rol</option>
+                                <option value="admin">Administrador</option>
+                                <option value="cliente">Cliente</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label for="contrasena1" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-lock mr-2 text-blue-600"></i>Contraseña
+                            </label>
+                            <input type="password" name="contrasena1" 
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" 
+                                   placeholder="Contraseña segura" required>
+                        </div>
+
+                        <div>
+                            <label for="contrasena2" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-lock mr-2 text-blue-600"></i>Confirmar Contraseña
+                            </label>
+                            <input type="password" name="contrasena2" 
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" 
+                                   placeholder="Confirma la contraseña" required>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        <button type="submit" 
+                                class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-300">
+                            <i class="fas fa-save mr-2"></i>
+                            Crear Usuario
+                        </button>
+                        <button type="button" id="cancelFormButton"
+                                class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-300">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Pestañas para usuarios activos/inactivos -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden mb-6">
+            <div class="p-4">
+                <div class="flex space-x-4">
+                    <a href="?tab=activos" 
+                       class="px-6 py-3 rounded-xl font-semibold transition-all duration-300 {% if tab_actual == 'activos' or not tab_actual %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %}">
+                        <i class="fas fa-user-check mr-2"></i>Usuarios Activos ({{ total_usuarios }})
+                    </a>
+                    <a href="?tab=inactivos" 
+                       class="px-6 py-3 rounded-xl font-semibold transition-all duration-300 {% if tab_actual == 'inactivos' %}bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-lg{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %}">
+                        <i class="fas fa-user-slash mr-2"></i>Usuarios Inactivos ({{ total_usuarios_inactivos }})
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de usuarios -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden">
+            <div class="p-6 sm:p-8 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-900">
+                    {% if tab_actual == 'inactivos' %}
+                        Usuarios Inactivos
+                    {% else %}
+                        Usuarios Activos
+                    {% endif %}
+                </h2>
+                <p class="text-gray-600 mt-1">Total: {{ usuarios|length }} usuario{{ usuarios|length|pluralize:"s" }}</p>
+            </div>
+                
+            {% if usuarios %}
+                <!-- Vista de escritorio -->
+                <div class="hidden lg:block overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50/80">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-user mr-2 text-blue-600"></i>Nombre Completo
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-at mr-2 text-blue-600"></i>Usuario
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-envelope mr-2 text-blue-600"></i>Correo
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-phone mr-2 text-blue-600"></i>Teléfono
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-map-marker-alt mr-2 text-blue-600"></i>Dirección
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-user-tag mr-2 text-blue-600"></i>Rol
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-cog mr-2 text-blue-600"></i>Acciones
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for usuario in usuarios %}
+                                <tr class="hover:bg-gray-50/80 transition-all duration-300">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10">
+                                                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                                                    <i class="fas fa-user text-white text-sm"></i>
+                                                </div>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-semibold text-gray-900">{{ usuario.nombre_completo }}</div>
+                                                <div class="text-sm text-gray-500">
+                                                    <i class="fas fa-at mr-1"></i>{{ usuario.nombre_usuario }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-gray-900">{{ usuario.nombre_usuario }}</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-gray-900">{{ usuario.correo }}</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-gray-900">
+                                            <i class="fas fa-phone-alt mr-2 text-gray-400"></i>{{ usuario.telefono }}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-gray-900">{{ usuario.direccion|truncatechars:30 }}</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {% if usuario.rol == 'admin' %}bg-purple-100 text-purple-800{% else %}bg-green-100 text-green-800{% endif %}">
+                                            {% if usuario.rol == 'admin' %}
+                                                <i class="fas fa-user-shield mr-1"></i>
+                                            {% else %}
+                                                <i class="fas fa-user mr-1"></i>
+                                            {% endif %}
+                                            {{ usuario.rol|title }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex space-x-2">
+                                            <a href="{% url 'editar_usuario' usuario.id_usuario %}" class="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-all duration-300 group">
+                                                <i class="fas fa-edit group-hover:scale-110 transition-transform"></i>
+                                            </a>
+                                            {% if tab_actual == 'inactivos' %}
+                                                <form method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de que quieres reactivar este usuario?')">
+                                                    {% csrf_token %}
+                                                    <button type="submit" name="reactivar" value="{{ usuario.id_usuario }}" 
+                                                            class="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-all duration-300 group">
+                                                        <i class="fas fa-user-check group-hover:scale-110 transition-transform"></i>
+                                                    </button>
+                                                </form>
+                                            {% else %}
+                                                <form method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de que quieres inactivar este usuario?')">
+                                                    {% csrf_token %}
+                                                    <button type="submit" name="eliminar" value="{{ usuario.id_usuario }}" 
+                                                            class="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-all duration-300 group">
+                                                        <i class="fas fa-user-slash group-hover:scale-110 transition-transform"></i>
+                                                    </button>
+                                                </form>
+                                            {% endif %}
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="7" class="px-6 py-12 text-center">
+                                        <div class="flex flex-col items-center justify-center space-y-4">
+                                            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center">
+                                                <i class="fas fa-users text-4xl text-gray-400"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-xl font-semibold text-gray-600 mb-2">No hay usuarios registrados</h4>
+                                                <p class="text-gray-500">Comienza creando tu primer usuario</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Vista móvil -->
+                <div class="lg:hidden space-y-4 p-4">
+                    {% for usuario in usuarios %}
+                        <div class="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-4 border border-gray-200 shadow-sm">
+                            <div class="flex items-center mb-3">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-slate-800 text-lg">{{ usuario.nombre_completo }}</h4>
+                                    <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full {% if usuario.rol == 'admin' %}bg-purple-100 text-purple-800{% else %}bg-green-100 text-green-800{% endif %}">
+                                        {% if usuario.rol == 'admin' %}
+                                            <i class="fas fa-user-shield mr-1"></i>
+                                        {% else %}
+                                            <i class="fas fa-user mr-1"></i>
+                                        {% endif %}
+                                        {{ usuario.rol|title }}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i class="fas fa-at mr-2 text-blue-500 w-4"></i>
+                                    <span>{{ usuario.nombre_usuario }}</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i class="fas fa-envelope mr-2 text-green-500 w-4"></i>
+                                    <span class="truncate">{{ usuario.correo }}</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i class="fas fa-phone mr-2 text-purple-500 w-4"></i>
+                                    <span>{{ usuario.telefono }}</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i class="fas fa-map-marker-alt mr-2 text-red-500 w-4"></i>
+                                    <span class="truncate">{{ usuario.direccion }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-2">
+                                <a href="{% url 'editar_usuario' usuario.id_usuario %}" class="flex-1 p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-all duration-300 group text-center">
+                                    <i class="fas fa-edit group-hover:scale-110 transition-transform mr-1"></i>Editar
+                                </a>
+                                {% if tab_actual == 'inactivos' %}
+                                    <form method="POST" class="flex-1">
+                                        {% csrf_token %}
+                                        <button type="submit" name="reactivar" value="{{ usuario.id_usuario }}" 
+                                                class="w-full p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-all duration-300 group" 
+                                                onclick="return confirm('¿Estás seguro de que quieres reactivar este usuario?');">
+                                            <i class="fas fa-user-check group-hover:scale-110 transition-transform mr-1"></i>Reactivar
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form method="POST" class="flex-1">
+                                        {% csrf_token %}
+                                        <button type="submit" name="eliminar" value="{{ usuario.id_usuario }}" 
+                                                class="w-full p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-all duration-300 group" 
+                                                onclick="return confirm('¿Estás seguro de que quieres inactivar este usuario?');">
+                                            <i class="fas fa-user-slash group-hover:scale-110 transition-transform mr-1"></i>Inactivar
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="text-center py-12">
+                            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-users text-3xl text-gray-400"></i>
+                            </div>
+                            {% if tab_actual == 'inactivos' %}
+                                <h4 class="text-lg font-semibold text-gray-600 mb-2">No hay usuarios inactivos</h4>
+                                <p class="text-gray-500 text-sm">Todos los usuarios están activos en el sistema</p>
+                            {% else %}
+                                <h4 class="text-lg font-semibold text-gray-600 mb-2">No hay usuarios activos</h4>
+                                <p class="text-gray-500 text-sm">Comienza creando tu primer usuario</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Modales de edición mejorados -->
+                {% for usuario in usuarios %}
+                    <div id="edit-{{ usuario.id_usuario }}" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 modal-overlay" onclick="closeModal('edit-{{ usuario.id_usuario }}')">
+                        <div class="modal-content">
+                            <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-gray-200 transform transition-all duration-300 scale-95 opacity-0" onclick="event.stopPropagation()">
+                                <!-- Header del modal con gradiente -->
+                                <div class="bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 px-6 py-4 relative overflow-hidden">
+                                    <div class="absolute inset-0 bg-black opacity-10"></div>
+                                    <div class="relative z-10 flex items-center justify-between">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30">
+                                                <i class="fas fa-user-edit text-white text-lg"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-xl font-bold text-white">Editar Usuario</h4>
+                                                <p class="text-blue-100 text-sm opacity-90">ID: #{{ usuario.id_usuario }}</p>
+                                            </div>
+                                        </div>
+                                        <button type="button" onclick="closeModal('edit-{{ usuario.id_usuario }}')" class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30 hover:bg-white/30 transition-all duration-200">
+                                            <i class="fas fa-times text-white"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Contenido del modal -->
+                                <div class="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
+                                    <form method="POST" id="user-form-{{ usuario.id_usuario }}" class="space-y-5">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="id_usuario" value="{{ usuario.id_usuario }}">
+                                        
+                                        <!-- Información Personal -->
+                                        <div class="bg-gradient-to-r from-gray-50 to-blue-50 rounded-2xl p-4 border border-gray-200 mb-6">
+                                            <h5 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                                <i class="fas fa-user-circle mr-2 text-blue-600"></i>Información Personal
+                                            </h5>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <!-- Nombre Completo -->
+                                                <div class="group">
+                                                    <label for="edit_nombre_completo_{{ usuario.id_usuario }}" class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-blue-600">
+                                                        <i class="fas fa-user mr-2 text-blue-600"></i>Nombre Completo
+                                                    </label>
+                                                    <div class="relative">
+                                                        <input type="text" 
+                                                               name="nombre_completo" 
+                                                               id="edit_nombre_completo_{{ usuario.id_usuario }}"
+                                                               value="{{ usuario.nombre_completo }}"
+                                                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm placeholder-gray-400" 
+                                                               placeholder="Nombre completo del usuario"
+                                                               required>
+                                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                                            <i class="fas fa-check text-green-500 hidden" id="check-nombre-{{ usuario.id_usuario }}"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Nombre Usuario -->
+                                                <div class="group">
+                                                    <label for="edit_nombre_usuario_{{ usuario.id_usuario }}" class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-blue-600">
+                                                        <i class="fas fa-at mr-2 text-blue-600"></i>Nombre Usuario
+                                                    </label>
+                                                    <div class="relative">
+                                                        <input type="text" 
+                                                               name="nombre_usuario" 
+                                                               id="edit_nombre_usuario_{{ usuario.id_usuario }}"
+                                                               value="{{ usuario.nombre_usuario }}"
+                                                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm placeholder-gray-400" 
+                                                               placeholder="nombre_usuario"
+                                                               required>
+                                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                                            <i class="fas fa-check text-green-500 hidden" id="check-usuario-{{ usuario.id_usuario }}"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Información de Contacto -->
+                                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-4 border border-green-200 mb-6">
+                                            <h5 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                                <i class="fas fa-address-book mr-2 text-green-600"></i>Información de Contacto
+                                            </h5>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <!-- Correo -->
+                                                <div class="group">
+                                                    <label for="edit_correo_{{ usuario.id_usuario }}" class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-green-600">
+                                                        <i class="fas fa-envelope mr-2 text-green-600"></i>Correo Electrónico
+                                                    </label>
+                                                    <div class="relative">
+                                                        <input type="email" 
+                                                               name="correo" 
+                                                               id="edit_correo_{{ usuario.id_usuario }}"
+                                                               value="{{ usuario.correo }}"
+                                                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm placeholder-gray-400" 
+                                                               placeholder="usuario@ejemplo.com"
+                                                               required>
+                                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                                            <i class="fas fa-check text-green-500 hidden" id="check-correo-{{ usuario.id_usuario }}"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Teléfono -->
+                                                <div class="group">
+                                                    <label for="edit_telefono_{{ usuario.id_usuario }}" class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-green-600">
+                                                        <i class="fas fa-phone mr-2 text-green-600"></i>Teléfono
+                                                    </label>
+                                                    <div class="relative">
+                                                        <input type="text" 
+                                                               name="telefono" 
+                                                               id="edit_telefono_{{ usuario.id_usuario }}"
+                                                               value="{{ usuario.telefono }}"
+                                                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm placeholder-gray-400" 
+                                                               placeholder="+57 300 123 4567"
+                                                               required>
+                                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                                            <i class="fas fa-check text-green-500 hidden" id="check-telefono-{{ usuario.id_usuario }}"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Información Adicional -->
+                                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-4 border border-purple-200 mb-6">
+                                            <h5 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                                <i class="fas fa-info-circle mr-2 text-purple-600"></i>Información Adicional
+                                            </h5>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <!-- Dirección -->
+                                                <div class="group md:col-span-1">
+                                                    <label for="edit_direccion_{{ usuario.id_usuario }}" class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-purple-600">
+                                                        <i class="fas fa-map-marker-alt mr-2 text-purple-600"></i>Dirección
+                                                    </label>
+                                                    <div class="relative">
+                                                        <textarea name="direccion" 
+                                                                  id="edit_direccion_{{ usuario.id_usuario }}"
+                                                                  rows="3"
+                                                                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm resize-none placeholder-gray-400" 
+                                                                  placeholder="Dirección completa del usuario"
+                                                                  required>{{ usuario.direccion }}</textarea>
+                                                        <div class="absolute top-3 right-3">
+                                                            <i class="fas fa-check text-green-500 hidden" id="check-direccion-{{ usuario.id_usuario }}"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Rol -->
+                                                <div class="group">
+                                                    <label for="edit_rol_{{ usuario.id_usuario }}" class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-purple-600">
+                                                        <i class="fas fa-user-tag mr-2 text-purple-600"></i>Rol del Usuario
+                                                    </label>
+                                                    <div class="relative">
+                                                        <select name="rol" 
+                                                                id="edit_rol_{{ usuario.id_usuario }}"
+                                                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm" 
+                                                                required>
+                                                            <option value="admin" {% if usuario.rol == 'admin' %}selected{% endif %}>👑 Administrador</option>
+                                                            <option value="cliente" {% if usuario.rol == 'cliente' %}selected{% endif %}>👤 Cliente</option>
+                                                        </select>
+                                                        <div class="absolute inset-y-0 right-0 flex items-center pr-8">
+                                                            <i class="fas fa-check text-green-500 hidden" id="check-rol-{{ usuario.id_usuario }}"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Seguridad -->
+                                        <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-4 border border-red-200">
+                                            <h5 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                                <i class="fas fa-shield-alt mr-2 text-red-600"></i>Cambio de Contraseña
+                                            </h5>
+                                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                                                <div class="flex items-center">
+                                                    <i class="fas fa-exclamation-triangle text-yellow-600 mr-2"></i>
+                                                    <p class="text-sm text-yellow-800">Deja estos campos vacíos si no deseas cambiar la contraseña.</p>
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <!-- Nueva Contraseña -->
+                                                <div class="group">
+                                                    <label for="edit_contrasena1_{{ usuario.id_usuario }}" class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-red-600">
+                                                        <i class="fas fa-key mr-2 text-red-600"></i>Nueva Contraseña
+                                                    </label>
+                                                    <div class="relative">
+                                                        <input type="password" 
+                                                               name="contrasena11" 
+                                                               id="edit_contrasena1_{{ usuario.id_usuario }}"
+                                                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm placeholder-gray-400" 
+                                                               placeholder="Nueva contraseña (opcional)">
+                                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                                            <button type="button" onclick="togglePassword('edit_contrasena1_{{ usuario.id_usuario }}', this)" class="text-gray-400 hover:text-gray-600">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Confirmar Contraseña -->
+                                                <div class="group">
+                                                    <label for="edit_contrasena2_{{ usuario.id_usuario }}" class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-red-600">
+                                                        <i class="fas fa-check-double mr-2 text-red-600"></i>Confirmar Contraseña
+                                                    </label>
+                                                    <div class="relative">
+                                                        <input type="password" 
+                                                               name="contrasena22" 
+                                                               id="edit_contrasena2_{{ usuario.id_usuario }}"
+                                                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm placeholder-gray-400" 
+                                                               placeholder="Confirmar nueva contraseña">
+                                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                                            <button type="button" onclick="togglePassword('edit_contrasena2_{{ usuario.id_usuario }}', this)" class="text-gray-400 hover:text-gray-600">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Vista previa del usuario -->
+                                        <div class="bg-gradient-to-r from-gray-50 to-indigo-50 rounded-2xl p-4 border border-gray-200">
+                                            <h5 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                                                <i class="fas fa-eye mr-2 text-indigo-600"></i>Vista Previa del Perfil
+                                            </h5>
+                                            <div class="bg-white rounded-xl p-4 border border-gray-200">
+                                                <div class="flex items-center space-x-4">
+                                                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                                                        <i class="fas fa-user text-white text-xl"></i>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <h6 class="font-bold text-gray-900 text-lg" id="preview-nombre-{{ usuario.id_usuario }}">{{ usuario.nombre_completo }}</h6>
+                                                        <p class="text-gray-600" id="preview-usuario-{{ usuario.id_usuario }}">@{{ usuario.nombre_usuario }}</p>
+                                                        <div class="flex items-center space-x-4 mt-2">
+                                                            <span class="text-sm text-gray-500" id="preview-correo-{{ usuario.id_usuario }}">{{ usuario.correo }}</span>
+                                                            <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800" id="preview-rol-{{ usuario.id_usuario }}">
+                                                                {% if usuario.rol == 'admin' %}👑 Admin{% else %}👤 Cliente{% endif %}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                
+                                <!-- Footer del modal -->
+                                <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-end space-y-2 sm:space-y-0 sm:space-x-3">
+                                    <button type="button" class="w-full sm:w-auto px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-300 text-sm flex items-center justify-center" 
+                                            onclick="closeModal('edit-{{ usuario.id_usuario }}')">
+                                        <i class="fas fa-times mr-2"></i>Cancelar
+                                    </button>
+                                    <button type="submit" form="user-form-{{ usuario.id_usuario }}" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-blue-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-sm flex items-center justify-center">
+                                        <i class="fas fa-save mr-2"></i>Guardar Cambios
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Funciones mejoradas para modales
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            const modalContent = modal.querySelector('.modal-content > div');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            // Permitir scroll en el fondo
+            
+            // Animar la aparición del modal
+            setTimeout(() => {
+                if (modalContent) {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('modal-show');
+                }
+            }, 10);
+            
+            // Configurar vista previa en tiempo real
+            setupEditPreview(modalId);
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            const modalContent = modal.querySelector('.modal-content > div');
+            
+            // Animar la desaparición del modal
+            if (modalContent) {
+                modalContent.classList.remove('modal-show');
+                modalContent.classList.add('scale-95', 'opacity-0');
+            }
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = 'auto';
+            }, 300);
+        }
+
+        // Configurar vista previa en tiempo real para modales de edición
+        function setupEditPreview(modalId) {
+            const userId = modalId.split('-')[1];
+            const nombreInput = document.getElementById(`edit_nombre_completo_${userId}`);
+            const usuarioInput = document.getElementById(`edit_nombre_usuario_${userId}`);
+            const correoInput = document.getElementById(`edit_correo_${userId}`);
+            const rolSelect = document.getElementById(`edit_rol_${userId}`);
+            
+            const previewNombre = document.getElementById(`preview-nombre-${userId}`);
+            const previewUsuario = document.getElementById(`preview-usuario-${userId}`);
+            const previewCorreo = document.getElementById(`preview-correo-${userId}`);
+            const previewRol = document.getElementById(`preview-rol-${userId}`);
+            
+            // Validación en tiempo real
+            function validarCampo(input, checkIcon) {
+                const isValid = input.value.trim().length > 0;
+                const icon = document.getElementById(checkIcon);
+                
+                if (isValid) {
+                    input.classList.remove('border-red-300', 'focus:border-red-500', 'focus:ring-red-100');
+                    input.classList.add('border-green-300', 'focus:border-green-500', 'focus:ring-green-100');
+                    if (icon) {
+                        icon.classList.remove('hidden');
+                        icon.classList.add('text-green-500');
+                    }
+                } else {
+                    input.classList.remove('border-green-300', 'focus:border-green-500', 'focus:ring-green-100');
+                    input.classList.add('border-red-300', 'focus:border-red-500', 'focus:ring-red-100');
+                    if (icon) {
+                        icon.classList.add('hidden');
+                    }
+                }
+            }
+            
+            // Actualizar vista previa de nombre
+            nombreInput?.addEventListener('input', function() {
+                if (previewNombre) {
+                    previewNombre.textContent = this.value || 'Nombre del usuario';
+                }
+                validarCampo(this, `check-nombre-${userId}`);
+            });
+            
+            // Actualizar vista previa de usuario
+            usuarioInput?.addEventListener('input', function() {
+                if (previewUsuario) {
+                    previewUsuario.textContent = '@' + (this.value || 'usuario');
+                }
+                validarCampo(this, `check-usuario-${userId}`);
+            });
+            
+            // Actualizar vista previa de correo
+            correoInput?.addEventListener('input', function() {
+                if (previewCorreo) {
+                    previewCorreo.textContent = this.value || 'correo@ejemplo.com';
+                }
+                validarCampo(this, `check-correo-${userId}`);
+            });
+            
+            // Actualizar vista previa de rol
+            rolSelect?.addEventListener('change', function() {
+                if (previewRol) {
+                    const texto = this.value === 'admin' ? '👑 Admin' : '👤 Cliente';
+                    const clases = this.value === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800';
+                    previewRol.textContent = texto;
+                    previewRol.className = `inline-flex px-2 py-1 text-xs font-medium rounded-full ${clases}`;
+                }
+                validarCampo(this, `check-rol-${userId}`);
+            });
+            
+            // Validar otros campos
+            const telefonoInput = document.getElementById(`edit_telefono_${userId}`);
+            const direccionInput = document.getElementById(`edit_direccion_${userId}`);
+            
+            telefonoInput?.addEventListener('input', function() {
+                validarCampo(this, `check-telefono-${userId}`);
+            });
+            
+            direccionInput?.addEventListener('input', function() {
+                validarCampo(this, `check-direccion-${userId}`);
+            });
+        }
+
+        // Función para mostrar/ocultar contraseñas
+        function togglePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Función para abrir modal en móviles (manteniendo compatibilidad)
+        function openMobileModal(userId) {
+            openModal('edit-' + userId);
+        }
+
+        // Toggle para mostrar/ocultar formulario de creación
+        document.getElementById('toggleFormButton').onclick = function() {
+            var formContainer = document.getElementById('formContainer');
+            if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+                formContainer.style.display = 'block';
+                // Scroll suave al formulario
+                formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                formContainer.style.display = 'none';
+            }
+        };
+
+        // Actualizar los botones de editar para usar la nueva función
+        document.addEventListener('DOMContentLoaded', function() {
+            // Reemplazar todos los onclick de botones de editar
+            const editButtons = document.querySelectorAll('button[onclick*="edit-"]');
+            editButtons.forEach(button => {
+                const onclick = button.getAttribute('onclick');
+                const userId = onclick.match(/edit-(\d+)/)[1];
+                button.setAttribute('onclick', `openModal('edit-${userId}')`);
+            });
+        });
+
+        // Cerrar modales con Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const openModals = document.querySelectorAll('.fixed.flex');
+                openModals.forEach(modal => {
+                    const modalId = modal.id;
+                    if (modalId) closeModal(modalId);
+                });
+            }
+        });
+
+        // Cerrar modales al hacer clic fuera de ellos (solo en desktop)
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth > 768) {
+                const modals = document.querySelectorAll('[id^="edit-"]');
+                modals.forEach(modal => {
+                    if (modal.classList.contains('flex') && !modal.querySelector('.bg-white').contains(event.target) && !event.target.closest('button[onclick*="edit-"]') && !event.target.closest('button[onclick*="openModal"]')) {
+                        closeModal(modal.id);
+                    }
+                });
+            }
+        });
+
+        // Validación de contraseñas en formularios de edición
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const password1 = this.querySelector('input[name="contrasena11"]');
+                const password2 = this.querySelector('input[name="contrasena22"]');
+                
+                if (password1 && password2) {
+                    if (password1.value !== password2.value && (password1.value !== '' || password2.value !== '')) {
+                        e.preventDefault();
+                        alert('Las contraseñas no coinciden');
+                        return false;
+                    }
+                }
+            });
+        });
+
+        // Cerrar alertas automáticamente después de 5 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            // Solo seleccionar las alertas de mensajes que tienen botón de cerrar
+            const messageAlerts = document.querySelectorAll('div[class*="bg-gradient-to-r"][class*="border"]');
+            messageAlerts.forEach((alert, index) => {
+                // Solo procesar si tiene un botón de cerrar (es una alerta de mensaje)
+                if (alert.querySelector('button[onclick*="display=\'none\'"]')) {
+                    setTimeout(() => {
+                        alert.style.opacity = '0';
+                        alert.style.transform = 'translateY(-20px)';
+                        setTimeout(() => {
+                            alert.style.display = 'none';
+                        }, 300);
+                    }, 5000 + (index * 1000));
+                }
+            });
+        });
+
+        // Animaciones de carga mejoradas para móviles
+        document.addEventListener('DOMContentLoaded', function() {
+            // Agregar efectos de hover a las filas de la tabla (solo en desktop)
+            if (window.innerWidth > 768) {
+                const tableRows = document.querySelectorAll('tbody tr');
+                tableRows.forEach((row, index) => {
+                    row.style.animationDelay = `${index * 0.1}s`;
+                    row.classList.add('animate-fadeInUp');
+                });
+            }
+
+            // Efectos suaves para los botones mejorados para móviles
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                // Solo aplicar efectos hover en dispositivos que no son táctiles
+                if (window.matchMedia('(hover: hover)').matches) {
+                    button.addEventListener('mouseenter', function() {
+                        this.style.transform = 'translateY(-2px) scale(1.02)';
+                    });
+                    
+                    button.addEventListener('mouseleave', function() {
+                        this.style.transform = 'translateY(0) scale(1)';
+                    });
+                }
+            });
+
+            // Optimizar animaciones para móviles
+            const cards = document.querySelectorAll('.animate-fadeInUp');
+            cards.forEach((card, index) => {
+                // Reducir delay en móviles para mejor rendimiento
+                if (window.innerWidth <= 768) {
+                    card.style.animationDelay = `${index * 0.05}s`;
+                }
+            });
+        });
+
+        // Optimización de scroll en móviles
+        if (window.innerWidth <= 768) {
+            // Deshabilitar scroll horizontal en móviles
+            document.body.style.overflowX = 'hidden';
+            
+            // Mejorar el scroll suave
+            document.documentElement.style.scrollBehavior = 'smooth';
+        }
+
+        // Prevenir zoom en inputs en iOS
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+            const inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    if (this.style.fontSize !== '16px') {
+                        this.style.fontSize = '16px';
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+
+{% endblock content %}

@@ -1,0 +1,1057 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+/* Animaciones personalizadas */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+@keyframes complaintBubbleFloat {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+        opacity: 1;
+    }
+    10% {
+        transform: translateY(-50px) translateX(10px) rotate(18deg) scale(1.05);
+        opacity: 1;
+    }
+    25% {
+        transform: translateY(-200px) translateX(20px) rotate(90deg) scale(1.1);
+        opacity: 0.9;
+    }
+    50% {
+        transform: translateY(-400px) translateX(-15px) rotate(180deg) scale(1.2);
+        opacity: 0.7;
+    }
+    75% {
+        transform: translateY(-700px) translateX(30px) rotate(270deg) scale(1.3);
+        opacity: 0.4;
+    }
+    90% {
+        transform: translateY(-900px) translateX(0px) rotate(340deg) scale(1.4);
+        opacity: 0.2;
+    }
+    100% {
+        transform: translateY(-120vh) translateX(0px) rotate(360deg) scale(1.5);
+        opacity: 0;
+    }
+}
+
+@keyframes textDisappearComplaint {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+}
+
+@keyframes bubbleAppearComplaint {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(0deg);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.1) rotate(10deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@keyframes complaintNotificationSlide {
+    0% {
+        opacity: 0;
+        transform: translateX(100px) scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: translateX(0) scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+@keyframes complaintConfettiFall {
+    0% {
+        transform: translateY(-100px) rotate(0deg) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg) scale(0.3);
+        opacity: 0;
+    }
+}
+
+@keyframes complaintSparkle {
+    0%, 100% {
+        transform: scale(0) rotate(0deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1) rotate(180deg);
+        opacity: 1;
+    }
+}
+
+@keyframes trailParticleComplaint {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.3) translateY(30px);
+    }
+}
+
+/* Clases de animación */
+.animate-fadeInUp {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.animate-slideInLeft {
+    animation: slideInLeft 0.8s ease-out;
+}
+
+.animate-slideInRight {
+    animation: slideInRight 0.8s ease-out;
+}
+
+/* Burbuja de queja flotante */
+.complaint-bubble {
+    position: fixed;
+    min-width: 200px;
+    max-width: 300px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(251, 146, 60, 0.95));
+    color: white;
+    border-radius: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 
+                0 0 20px rgba(239, 68, 68, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    font-size: 14px;
+    line-height: 1.4;
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+    word-wrap: break-word;
+    pointer-events: none;
+}
+
+.complaint-bubble.floating {
+    animation: complaintBubbleFloat 5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.complaint-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 20px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid rgba(239, 68, 68, 0.95);
+}
+
+.complaint-bubble::after {
+    content: '📢';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #f59e0b, #dc2626);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Animaciones de queja */
+.text-disappearing-complaint {
+    animation: textDisappearComplaint 0.8s ease-out forwards;
+}
+
+.bubble-appearing-complaint {
+    animation: bubbleAppearComplaint 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.complaint-notification {
+    animation: complaintNotificationSlide 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Confetti de queja */
+.complaint-confetti-particle {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    z-index: 9998;
+    pointer-events: none;
+    animation: complaintConfettiFall 3s ease-out forwards;
+}
+
+.complaint-confetti-particle.red {
+    background: #ef4444;
+    border-radius: 50%;
+}
+
+.complaint-confetti-particle.orange {
+    background: #f97316;
+    border-radius: 0;
+}
+
+.complaint-confetti-particle.yellow {
+    background: #eab308;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.complaint-confetti-particle.pink {
+    background: #ec4899;
+    border-radius: 50%;
+}
+
+.complaint-confetti-particle.amber {
+    background: #f59e0b;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+/* Sparkles de queja */
+.complaint-sparkle {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    background: #fbbf24;
+    border-radius: 50%;
+    z-index: 9999;
+    pointer-events: none;
+    animation: complaintSparkle 1s ease-in-out forwards;
+    box-shadow: 0 0 6px #fbbf24, 0 0 12px #fbbf24;
+}
+
+/* Partículas de rastro para queja */
+.complaint-trail-particle {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.6);
+    z-index: 9998;
+    pointer-events: none;
+    animation: trailParticleComplaint 1s ease-out forwards;
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+}
+
+/* Accesibilidad */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+</style>
+
+{% load custom_tags %}
+
+<!-- Fondo blanco con elementos decorativos -->
+<div class="bg-white min-h-screen pt-20 md:pt-24">
+    <!-- Elementos decorativos de fondo -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-200/30 to-slate-200/30 rounded-full blur-3xl opacity-60 animate-pulse"></div>
+        <div class="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-slate-200/30 to-gray-200/30 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/2 left-1/4 w-64 h-64 bg-gradient-to-br from-blue-200/30 to-slate-200/30 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 4s;"></div>
+    </div>
+
+    <div class="container mx-auto px-6 relative z-10 max-w-7xl">
+        <!-- Notificaciones -->
+        {% if messages %}
+            <div class="fixed top-24 right-4 z-50 max-w-md">
+                {% for message in messages %}
+                    <div class="mb-4 p-4 rounded-xl border-l-4 animate-slideInRight shadow-lg
+                        {% if message.tags == 'success' %}bg-green-50 border-green-500 text-green-700
+                        {% elif message.tags == 'error' %}bg-red-50 border-red-500 text-red-700
+                        {% elif message.tags == 'warning' %}bg-yellow-50 border-yellow-500 text-yellow-700
+                        {% else %}bg-blue-50 border-blue-500 text-blue-700
+                        {% endif %}">
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium">{{ message }}</span>
+                            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Hero Section -->
+        <section class="relative bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 rounded-3xl p-8 md:p-12 mb-12 overflow-hidden animate-fadeInUp">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="mb-6">
+                    <span class="inline-block px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-semibold rounded-full uppercase tracking-wider mb-6">
+                        Ponte en contacto
+                    </span>
+                </div>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6">
+                    <span class="bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
+                        Contacto para
+                    </span>
+                    <br>
+                    <span class="bg-gradient-to-r from-blue-600 to-slate-800 bg-clip-text text-transparent">
+                        Consultas
+                    </span>
+                </h1>
+                <p class="text-xl text-gray-600 leading-relaxed">
+                    Estamos aquí para ayudarte con cualquier consulta o queja que tengas
+                </p>
+            </div>
+        </section>
+
+        <!-- Layout Principal -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
+            <!-- Información de Contacto -->
+            <div class="animate-slideInLeft">
+                <div class="bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl transition-all duration-300">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-slate-800 bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
+                            Información de contacto
+                        </h2>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <!-- Horarios -->
+                        <div class="flex items-center p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 group">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                <i class="far fa-clock text-white text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-slate-800">Hora de apertura</h3>
+                                <p class="text-gray-600">Lunes - Viernes, 8:00 am - 4:00 pm</p>
+                            </div>
+                        </div>
+
+                        <!-- Teléfono -->
+                        <div class="flex items-center p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 group">
+                            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                <i class="fa fa-phone-alt text-white text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-slate-800">Llámanos</h3>
+                                <p class="text-gray-600">3114996440</p>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="flex items-center p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 group">
+                            <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-envelope text-white text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-slate-800">Email</h3>
+                                <p class="text-gray-600">autonew@gmail.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Formulario de Contacto -->
+            <div class="animate-slideInRight">
+                <div class="bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl transition-all duration-300">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-slate-800 bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
+                            Envíanos un mensaje
+                        </h2>
+                    </div>
+                    
+                    <form action="{% url 'contacto' %}" method="POST" autocomplete="off" class="space-y-6">
+                        {% csrf_token %}
+                        
+                        <div>
+                            <label for="contenido" class="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+                                <div class="w-5 h-5 flex items-center justify-center">
+                                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-blue-500">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26c.3.16.68.16.98 0L20 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                Tu mensaje
+                            </label>
+                            <textarea 
+                                name="contenido"
+                                id="contenido"
+                                required
+                                rows="6"
+                                placeholder="Escribe tu mensaje aquí..."
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 transition-all duration-300 resize-vertical min-h-32"
+                            ></textarea>
+                        </div>
+                        
+                        <div class="pt-4">
+                            <button 
+                                type="submit" 
+                                id="sendMessageButton"
+                                class="w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3 text-lg uppercase tracking-wide group"
+                            >
+                                <div class="w-5 h-5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                    </svg>
+                                </div>
+                                <span class="button-text">Enviar mensaje</span>
+                                <div class="hidden loading-spinner ml-2">
+                                    <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para crear feedback háptico en móviles
+    function createHapticFeedback() {
+        if ('vibrate' in navigator) {
+            // Patrón de vibración más intenso para quejas: vibrar 100ms, pausa 50ms, vibrar 150ms
+            navigator.vibrate([100, 50, 150]);
+        }
+    }
+    
+    // Función para reproducir sonido de queja (tono más serio)
+    function playComplaintSound() {
+        try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Configurar un sonido más grave para quejas
+            oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+            oscillator.frequency.setValueAtTime(500, audioContext.currentTime + 0.1);
+            oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.2);
+            
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01);
+            gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.4);
+            
+            oscillator.type = 'triangle';
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.4);
+        } catch (e) {
+            console.log('Audio no disponible');
+        }
+    }
+    
+    // Función para crear confetti de queja
+    function createComplaintConfetti(x, y) {
+        const colors = ['red', 'orange', 'yellow', 'pink', 'amber'];
+        const particleCount = 20;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            particle.className = `complaint-confetti-particle ${randomColor}`;
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            
+            // Variación en la posición inicial
+            particle.style.transform = `translateX(${(Math.random() - 0.5) * 200}px)`;
+            
+            // Duración aleatoria
+            particle.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            particle.style.animationDelay = Math.random() * 0.5 + 's';
+            
+            document.body.appendChild(particle);
+            
+            // Eliminar después de la animación
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 4000);
+        }
+    }
+    
+    // Función para crear sparkles de queja
+    function createComplaintSparkles(x, y) {
+        const sparkleCount = 10;
+        
+        for (let i = 0; i < sparkleCount; i++) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'complaint-sparkle';
+            
+            const offsetX = (Math.random() - 0.5) * 120;
+            const offsetY = (Math.random() - 0.5) * 120;
+            
+            sparkle.style.left = (x + offsetX) + 'px';
+            sparkle.style.top = (y + offsetY) + 'px';
+            sparkle.style.animationDelay = Math.random() * 0.5 + 's';
+            
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                if (sparkle.parentNode) {
+                    sparkle.parentNode.removeChild(sparkle);
+                }
+            }, 1500);
+        }
+    }
+
+    // Función para crear rastro de partículas detrás de la burbuja de queja
+    function createComplaintBubbleTrail(bubble) {
+        const trailInterval = setInterval(() => {
+            if (!bubble.parentNode) {
+                clearInterval(trailInterval);
+                return;
+            }
+            
+            const rect = bubble.getBoundingClientRect();
+            const particle = document.createElement('div');
+            particle.className = 'complaint-trail-particle';
+            
+            // Posicionar en el centro de la burbuja con un poco de variación
+            particle.style.left = (rect.left + rect.width / 2 + (Math.random() - 0.5) * 20) + 'px';
+            particle.style.top = (rect.top + rect.height / 2 + (Math.random() - 0.5) * 20) + 'px';
+            
+            document.body.appendChild(particle);
+            
+            // Eliminar la partícula después de la animación
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 1000);
+            
+        }, 80); // Crear una partícula cada 80ms (más frecuente para quejas)
+        
+        // Parar el rastro después de 4 segundos
+        setTimeout(() => {
+            clearInterval(trailInterval);
+        }, 4000);
+    }
+
+    // Función para crear la burbuja de queja flotante
+    function createComplaintBubble(text, startElement) {
+        const bubble = document.createElement('div');
+        bubble.className = 'complaint-bubble bubble-appearing-complaint';
+        bubble.textContent = text.substring(0, 80) + (text.length > 80 ? '...' : '');
+        
+        // Posicionar la burbuja en la ubicación del textarea
+        const rect = startElement.getBoundingClientRect();
+        const bubbleX = rect.left + rect.width / 2 - 150;
+        const bubbleY = rect.top + window.scrollY;
+        
+        bubble.style.left = bubbleX + 'px';
+        bubble.style.top = bubbleY + 'px';
+        
+        document.body.appendChild(bubble);
+        
+        // Aplicar la animación de flotación después de un breve delay
+        setTimeout(() => {
+            bubble.classList.remove('bubble-appearing-complaint');
+            bubble.classList.add('floating');
+            
+            // Iniciar el rastro de partículas
+            createComplaintBubbleTrail(bubble);
+        }, 500);
+        
+        // Crear efectos especiales cuando la burbuja "explota" al salir
+        setTimeout(() => {
+            // Crear confetti en la posición donde "sale" la burbuja
+            createComplaintConfetti(bubbleX + 150, 50);
+            createComplaintSparkles(bubbleX + 150, 50);
+        }, 4000);
+        
+        // Eliminar la burbuja después de la animación
+        setTimeout(() => {
+            if (bubble.parentNode) {
+                bubble.parentNode.removeChild(bubble);
+            }
+        }, 5500);
+        
+        return bubble;
+    }
+
+    // Función para mostrar notificación de éxito para quejas
+    function showComplaintSuccessNotification() {
+        // Eliminar notificaciones existentes
+        const existingNotifications = document.querySelectorAll('.custom-complaint-notification');
+        existingNotifications.forEach(notif => notif.remove());
+        
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-24 right-4 z-50 max-w-sm w-full custom-complaint-notification';
+        notification.innerHTML = `
+            <div class="mb-3 p-4 rounded-lg shadow-lg border backdrop-blur-sm bg-orange-50 border-orange-200 text-orange-800 complaint-notification" role="alert" aria-live="polite">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 mr-3">
+                            <svg class="w-5 h-5 text-orange-600 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <span class="text-sm font-medium">¡Tu queja ha sido enviada exitosamente! 📢</span>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                            class="ml-3 text-gray-400 hover:text-gray-600 transition-colors"
+                            aria-label="Cerrar notificación">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Anunciar para lectores de pantalla
+        const announcement = document.createElement('div');
+        announcement.setAttribute('aria-live', 'polite');
+        announcement.setAttribute('aria-atomic', 'true');
+        announcement.className = 'sr-only';
+        announcement.textContent = 'Tu queja ha sido enviada exitosamente y será procesada';
+        document.body.appendChild(announcement);
+        
+        setTimeout(() => {
+            if (announcement.parentNode) {
+                announcement.remove();
+            }
+        }, 1000);
+        
+        // Auto-eliminar después de 6 segundos (más tiempo para quejas)
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100px)';
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, 6000);
+    }
+
+    // Manejar el envío del formulario de contacto/queja con animación
+    const contactForm = document.querySelector('form[action*="contacto"]');
+    const textarea = document.querySelector('textarea[name="contenido"]');
+    const submitBtn = document.getElementById('sendMessageButton');
+    
+    if (contactForm && textarea && submitBtn) {
+        contactForm.addEventListener('submit', function(e) {
+            const complaintText = textarea.value.trim();
+            
+            if (complaintText.length > 0) {
+                // Prevenir el envío normal por un momento
+                e.preventDefault();
+                
+                // Guardar el texto original antes de que desaparezca
+                const originalText = complaintText;
+                
+                // Deshabilitar el botón y mostrar loading
+                submitBtn.disabled = true;
+                const buttonText = submitBtn.querySelector('.button-text');
+                const loadingSpinner = submitBtn.querySelector('.loading-spinner');
+                
+                if (buttonText && loadingSpinner) {
+                    buttonText.textContent = 'Enviando...';
+                    loadingSpinner.classList.remove('hidden');
+                }
+                
+                // Animar desaparición del texto
+                textarea.classList.add('text-disappearing-complaint');
+                
+                // Crear y animar la burbuja después de un breve delay
+                setTimeout(() => {
+                    createComplaintBubble(originalText, textarea);
+                    
+                    // Esperar un poco más y entonces enviar el formulario real
+                    setTimeout(() => {
+                        // Mostrar notificación de éxito
+                        showComplaintSuccessNotification();
+                        
+                        // Efectos adicionales de feedback
+                        createHapticFeedback();
+                        playComplaintSound();
+                        
+                        // Restaurar el formulario para envío real
+                        textarea.value = originalText;
+                        textarea.classList.remove('text-disappearing-complaint');
+                        
+                        if (buttonText && loadingSpinner) {
+                            buttonText.textContent = 'Enviar mensaje';
+                            loadingSpinner.classList.add('hidden');
+                        }
+                        submitBtn.disabled = false;
+                        
+                        // Enviar el formulario de forma tradicional después de la animación
+                        setTimeout(() => {
+                            contactForm.submit();
+                        }, 2000);
+                        
+                    }, 1500); // Esperar a que la burbuja esté flotando
+                    
+                }, 300); // Pequeño delay para la animación de desaparición del texto
+            }
+        });
+    }
+
+    // Auto-ocultar notificaciones existentes después de tiempo
+    const notifications = document.querySelectorAll('.fixed.top-24 > div');
+    notifications.forEach(notification => {
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100px)';
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, 5000);
+    });
+
+    // Mejoras del textarea
+    if (textarea) {
+        // Auto-resize del textarea con animación suave
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.max(this.scrollHeight, 120) + 'px';
+        });
+
+        // Efecto de contador de caracteres visual para quejas
+        textarea.addEventListener('input', function() {
+            const length = this.value.length;
+            if (length > 0) {
+                this.style.borderColor = length > 1000 ? '#dc2626' : '#f97316';
+                this.style.boxShadow = `0 0 0 2px ${length > 1000 ? 'rgba(220, 38, 38, 0.1)' : 'rgba(249, 115, 22, 0.1)'}`;
+            }
+        });
+    }
+});
+</script>
+
+<!-- JavaScript para animación de quejas -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form[action="{% url 'contacto' %}"]');
+    const button = document.getElementById('sendMessageButton');
+    const textarea = document.getElementById('contenido');
+    
+    if (form && button && textarea) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Obtener el texto de la queja antes de la animación
+            const contenidoTexto = textarea.value.trim();
+            
+            if (!contenidoTexto) {
+                alert('Por favor, escribe tu mensaje antes de enviarlo.');
+                return;
+            }
+            
+            console.log('Iniciando animación de queja...');
+            
+            // Deshabilitar el botón para evitar múltiples envíos
+            button.disabled = true;
+            button.style.opacity = '0.7';
+            
+            // Crear notificación ARIA para accesibilidad
+            const ariaNotification = document.createElement('div');
+            ariaNotification.setAttribute('aria-live', 'polite');
+            ariaNotification.setAttribute('aria-atomic', 'true');
+            ariaNotification.style.position = 'absolute';
+            ariaNotification.style.left = '-9999px';
+            ariaNotification.textContent = 'Enviando tu queja, por favor espera...';
+            document.body.appendChild(ariaNotification);
+            
+            // Feedback háptico más intenso para quejas
+            if (navigator.vibrate) {
+                navigator.vibrate([100, 50, 100, 50, 200]);
+            }
+            
+            // Sonido grave para quejas (más serio)
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                oscillator.frequency.setValueAtTime(150, audioContext.currentTime); // Frecuencia más grave
+                oscillator.type = 'sine';
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } catch (e) {
+                console.log('Audio no disponible');
+            }
+            
+            // 1. Animación de desaparición del texto
+            textarea.style.transition = 'all 0.6s ease-out';
+            textarea.style.transform = 'scale(0.9)';
+            textarea.style.opacity = '0.3';
+            
+            setTimeout(() => {
+                // 2. Crear burbuja flotante para queja (roja/naranja)
+                const bubble = document.createElement('div');
+                bubble.innerHTML = `
+                    <div style="
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%) scale(0);
+                        background: linear-gradient(135deg, #dc2626, #ea580c, #f59e0b);
+                        color: white;
+                        padding: 20px 30px;
+                        border-radius: 20px;
+                        font-size: 18px;
+                        font-weight: bold;
+                        z-index: 10000;
+                        box-shadow: 0 20px 40px rgba(220, 38, 38, 0.3);
+                        animation: quejaFloat 3s ease-out forwards;
+                        border: 3px solid rgba(255, 255, 255, 0.3);
+                        backdrop-filter: blur(10px);
+                    ">
+                        <i class="fas fa-exclamation-triangle" style="margin-right: 10px; color: #fbbf24;"></i>
+                        ¡Queja enviada con éxito!
+                    </div>
+                `;
+                
+                // Estilos CSS para animación de queja
+                const quejaStyles = document.createElement('style');
+                quejaStyles.textContent = `
+                    @keyframes quejaFloat {
+                        0% {
+                            transform: translate(-50%, -50%) scale(0) rotate(-10deg);
+                            opacity: 0;
+                        }
+                        20% {
+                            transform: translate(-50%, -50%) scale(1.1) rotate(2deg);
+                            opacity: 1;
+                        }
+                        40% {
+                            transform: translate(-50%, -50%) scale(1) rotate(-1deg);
+                        }
+                        60% {
+                            transform: translate(-50%, -50%) scale(1.05) rotate(1deg);
+                        }
+                        80% {
+                            transform: translate(-50%, -50%) scale(1) rotate(0deg) translateY(-20px);
+                        }
+                        100% {
+                            transform: translate(-50%, -50%) scale(0.9) rotate(0deg) translateY(-50px);
+                            opacity: 0;
+                        }
+                    }
+                    
+                    @keyframes quejaParticle {
+                        0% {
+                            transform: translate(0, 0) scale(1);
+                            opacity: 1;
+                        }
+                        100% {
+                            transform: translate(var(--dx), var(--dy)) scale(0);
+                            opacity: 0;
+                        }
+                    }
+                    
+                    @keyframes quejaSparkle {
+                        0%, 100% {
+                            transform: scale(0) rotate(0deg);
+                            opacity: 0;
+                        }
+                        50% {
+                            transform: scale(1) rotate(180deg);
+                            opacity: 1;
+                        }
+                    }
+                `;
+                document.head.appendChild(quejaStyles);
+                document.body.appendChild(bubble);
+                
+                // 3. Crear confetti temático para quejas (rojos/naranjas)
+                setTimeout(() => {
+                    const colors = ['#dc2626', '#ea580c', '#f59e0b', '#f97316', '#ef4444'];
+                    for (let i = 0; i < 30; i++) {
+                        const confetti = document.createElement('div');
+                        confetti.style.cssText = `
+                            position: fixed;
+                            top: 40%;
+                            left: 50%;
+                            width: 10px;
+                            height: 10px;
+                            background: ${colors[Math.floor(Math.random() * colors.length)]};
+                            border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+                            z-index: 9999;
+                            pointer-events: none;
+                            animation: quejaParticle 2s ease-out forwards;
+                        `;
+                        confetti.style.setProperty('--dx', (Math.random() - 0.5) * 400 + 'px');
+                        confetti.style.setProperty('--dy', (Math.random() - 0.5) * 400 + 'px');
+                        confetti.style.animationDelay = Math.random() * 0.3 + 's';
+                        document.body.appendChild(confetti);
+                        
+                        setTimeout(() => confetti.remove(), 2500);
+                    }
+                }, 800);
+                
+                // 4. Crear sparkles dorados para quejas
+                setTimeout(() => {
+                    for (let i = 0; i < 15; i++) {
+                        const sparkle = document.createElement('div');
+                        sparkle.innerHTML = '✨';
+                        sparkle.style.cssText = `
+                            position: fixed;
+                            top: ${40 + Math.random() * 20}%;
+                            left: ${45 + Math.random() * 10}%;
+                            font-size: ${12 + Math.random() * 8}px;
+                            color: #fbbf24;
+                            z-index: 9998;
+                            pointer-events: none;
+                            animation: quejaSparkle 1.5s ease-out forwards;
+                        `;
+                        sparkle.style.animationDelay = Math.random() * 0.5 + 's';
+                        document.body.appendChild(sparkle);
+                        
+                        setTimeout(() => sparkle.remove(), 2000);
+                    }
+                }, 1200);
+                
+                // 5. Crear rastro de partículas rojas
+                setTimeout(() => {
+                    for (let i = 0; i < 20; i++) {
+                        const particle = document.createElement('div');
+                        particle.style.cssText = `
+                            position: fixed;
+                            top: 50%;
+                            left: 50%;
+                            width: 4px;
+                            height: 4px;
+                            background: radial-gradient(circle, #dc2626, #ef4444);
+                            border-radius: 50%;
+                            z-index: 9997;
+                            pointer-events: none;
+                            animation: quejaParticle 3s ease-out forwards;
+                        `;
+                        particle.style.setProperty('--dx', (Math.random() - 0.5) * 600 + 'px');
+                        particle.style.setProperty('--dy', (Math.random() - 0.5) * 600 + 'px');
+                        particle.style.animationDelay = Math.random() * 0.8 + 's';
+                        document.body.appendChild(particle);
+                        
+                        setTimeout(() => particle.remove(), 3500);
+                    }
+                }, 1500);
+                
+                // 6. Mostrar notificación de éxito específica para quejas
+                setTimeout(() => {
+                    const notification = document.createElement('div');
+                    notification.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        background: linear-gradient(135deg, #ea580c, #f59e0b);
+                        color: white;
+                        padding: 15px 25px;
+                        border-radius: 15px;
+                        font-weight: bold;
+                        z-index: 10001;
+                        box-shadow: 0 10px 30px rgba(234, 88, 12, 0.3);
+                        animation: slideInRight 0.5s ease-out;
+                        border: 2px solid rgba(255, 255, 255, 0.2);
+                    `;
+                    notification.innerHTML = `
+                        <i class="fas fa-check-circle" style="margin-right: 8px; color: #fbbf24;"></i>
+                        Tu queja ha sido registrada correctamente
+                    `;
+                    document.body.appendChild(notification);
+                    
+                    // Actualizar notificación ARIA
+                    ariaNotification.textContent = 'Tu queja ha sido enviada exitosamente y será revisada por nuestro equipo.';
+                    
+                    setTimeout(() => notification.remove(), 5000);
+                }, 2500);
+                
+                // 7. Limpiar y enviar el formulario después de la animación
+                setTimeout(() => {
+                    console.log('Enviando queja al servidor...');
+                    bubble.remove();
+                    quejaStyles.remove();
+                    ariaNotification.remove();
+                    
+                    // Crear un formulario temporal con el contenido original
+                    const tempForm = document.createElement('form');
+                    tempForm.action = form.action;
+                    tempForm.method = 'POST';
+                    tempForm.style.display = 'none';
+                    
+                    // Añadir CSRF token
+                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+                    if (csrfToken) {
+                        const csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = 'csrfmiddlewaretoken';
+                        csrfInput.value = csrfToken.value;
+                        tempForm.appendChild(csrfInput);
+                    }
+                    
+                    // Añadir contenido
+                    const contenidoInput = document.createElement('textarea');
+                    contenidoInput.name = 'contenido';
+                    contenidoInput.value = contenidoTexto;
+                    tempForm.appendChild(contenidoInput);
+                    
+                    document.body.appendChild(tempForm);
+                    tempForm.submit();
+                }, 3500);
+                
+                // Limpiar burbuja
+                setTimeout(() => {
+                    bubble.remove();
+                }, 3000);
+                
+            }, 600);
+        });
+    }
+});
+</script>
+
+{% endblock  %}

@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <title>Correo enviado - AUTONEW</title>
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
+</head>
+<body>
+<main class="relative min-h-screen flex items-center justify-center p-4 font-poppins bg-white overflow-x-hidden">
+    <div class="w-full max-w-md mx-auto flex flex-col items-center">
+        <div class="text-center mb-8">
+            <h1 class="text-gray-800 font-bold text-2xl sm:text-3xl mb-3">¡Revisa tu correo!</h1>
+            <p class="text-gray-600 text-sm sm:text-base">Si el correo está registrado, recibirás un mensaje con instrucciones para restablecer tu contraseña.</p>
+        </div>
+        <div class="text-center mt-6">
+            <a href="/login/" class="text-primary font-medium text-sm hover:text-primary-600 hover:underline">Volver al login</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

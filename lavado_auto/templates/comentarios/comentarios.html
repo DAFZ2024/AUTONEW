@@ -1,0 +1,1033 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load custom_tags %}
+
+{% block content %}
+<!-- Notificaciones -->
+<div class="fixed top-24 right-4 z-50 max-w-sm w-full">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mb-3 p-4 rounded-lg shadow-lg border backdrop-blur-sm animate-fade-in-right 
+                {% if message.tags == 'success' %}bg-green-50 border-green-200 text-green-800
+                {% elif message.tags == 'error' %}bg-red-50 border-red-200 text-red-800
+                {% elif message.tags == 'warning' %}bg-yellow-50 border-yellow-200 text-yellow-800
+                {% else %}bg-blue-50 border-blue-200 text-blue-800
+                {% endif %}">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 mr-3">
+                            {% if message.tags == 'success' %}
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            {% elif message.tags == 'error' %}
+                                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            {% elif message.tags == 'warning' %}
+                                <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                </svg>
+                            {% else %}
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            {% endif %}
+                        </div>
+                        <span class="text-sm font-medium">{{ message }}</span>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-3 text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<!-- Fondo con gradiente decorativo mejorado -->
+<div class="fixed inset-0 bg-white -z-10">
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-cyan-50"></div>
+    <!-- Partículas de fondo sutiles -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="comment-particles"></div>
+    </div>
+    <div class="absolute inset-0">
+        <div class="absolute top-0 left-0 w-full h-full opacity-30">
+            <div class="absolute top-10 left-10 w-20 h-20 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+            <div class="absolute top-0 right-4 w-72 h-72 bg-cyan-200 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+            <div class="absolute -bottom-8 left-20 w-72 h-72 bg-teal-200 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Contenido principal -->
+<div class="relative min-h-screen top-24 pt-20 pb-32">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header de la página mejorado -->
+        <div class="text-center mb-12 animate-fade-in-up">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 rounded-2xl shadow-lg mb-6 animate-float">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-800 via-blue-600 to-cyan-600 bg-clip-text text-transparent mb-4">
+                Comentarios y Opiniones
+            </h1>
+            <p class="text-xl text-slate-600 max-w-2xl mx-auto">
+                Comparte tu experiencia y ayuda a otros clientes con tu opinión
+            </p>
+        </div>
+
+        <!-- Card principal de comentarios mejorado -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/50 overflow-hidden animate-fade-in-up" style="animation-delay: 0.2s;">
+            {% if user.is_authenticated %}
+                <!-- Formulario de comentarios -->
+                <div class="p-8">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 rounded-full flex items-center justify-center shadow-lg animate-pulse-soft">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h2 class="text-2xl font-bold text-slate-800">Escribe tu comentario</h2>
+                            <p class="text-slate-600">Tu opinión nos ayuda a mejorar cada día</p>
+                        </div>
+                    </div>
+
+                    <form method="POST" action="" class="space-y-6">
+                        {% csrf_token %}
+                        <div class="space-y-2">
+                            <label for="{{ form.comentario.id_for_label }}" class="block text-sm font-semibold text-slate-700">
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+                                    </svg>
+                                    Tu comentario
+                                </div>
+                            </label>
+                            <div class="relative">
+                                {{ form.comentario }}
+                            </div>
+                            {% if form.comentario.help_text %}
+                                <p class="text-sm text-slate-500">{{ form.comentario.help_text }}</p>
+                            {% endif %}
+                            {% if form.comentario.errors %}
+                                <div class="text-sm text-red-600">
+                                    {{ form.comentario.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="flex items-center justify-between pt-4">
+                            <div class="flex items-center text-sm text-slate-600 bg-slate-50 px-3 py-2 rounded-lg">
+                                <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-white text-xs font-bold">{{ user.username|first|upper }}</span>
+                                </div>
+                                <span>Publicando como <span class="font-semibold text-slate-800">{{ user.username }}</span></span>
+                            </div>
+                            <button type="submit" id="submitCommentBtn" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 hover:from-blue-600 hover:via-cyan-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 group">
+                                <svg class="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                </svg>
+                                <span class="button-text">Publicar comentario</span>
+                                <div class="hidden loading-spinner ml-2">
+                                    <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            {% else %}
+                <!-- Prompt de login mejorado -->
+                <div class="p-8 text-center">
+                    <div class="max-w-md mx-auto">
+                        <div class="w-20 h-20 bg-gradient-to-r from-slate-400 via-blue-400 to-cyan-400 rounded-full flex items-center justify-center mx-auto mb-6 animate-float">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Inicia sesión para comentar</h2>
+                        <p class="text-slate-600 mb-8">
+                            Para compartir tu experiencia necesitas estar autenticado en el sistema.
+                        </p>
+                        <div class="space-y-3">
+                            <a href="{% url 'login' %}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 hover:from-blue-600 hover:via-cyan-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 group">
+                                <svg class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                                </svg>
+                                Iniciar sesión
+                            </a>
+                            <div class="text-sm text-slate-500">
+                                ¿No tienes cuenta? 
+                                <a href="{% url 'login' %}" class="text-blue-600 hover:text-cyan-600 font-semibold transition-colors">Regístrate aquí</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Espaciado adicional para el footer -->
+        <div class="h-20"></div>
+    </div>
+</div>
+
+<style>
+/* Animaciones mejoradas */
+@keyframes blob {
+    0% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0px, 0px) scale(1); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-10px) scale(1.05); }
+}
+
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse-soft {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes commentParticleFloat {
+    0% {
+        transform: translateY(100vh) translateX(0px) rotate(0deg) scale(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(90vh) translateX(10px) rotate(45deg) scale(1);
+    }
+    50% {
+        transform: translateY(50vh) translateX(-15px) rotate(180deg) scale(1.1);
+        opacity: 0.6;
+    }
+    90% {
+        transform: translateY(10vh) translateX(10px) rotate(315deg) scale(0.8);
+        opacity: 0.2;
+    }
+    100% {
+        transform: translateY(-10vh) translateX(0px) rotate(360deg) scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes commentBubbleFloat {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+        opacity: 1;
+    }
+    10% {
+        transform: translateY(-50px) translateX(10px) rotate(18deg) scale(1.05);
+        opacity: 1;
+    }
+    25% {
+        transform: translateY(-200px) translateX(20px) rotate(90deg) scale(1.1);
+        opacity: 0.9;
+    }
+    50% {
+        transform: translateY(-400px) translateX(-15px) rotate(180deg) scale(1.2);
+        opacity: 0.7;
+    }
+    75% {
+        transform: translateY(-700px) translateX(30px) rotate(270deg) scale(1.3);
+        opacity: 0.4;
+    }
+    90% {
+        transform: translateY(-900px) translateX(0px) rotate(340deg) scale(1.4);
+        opacity: 0.2;
+    }
+    100% {
+        transform: translateY(-120vh) translateX(0px) rotate(360deg) scale(1.5);
+        opacity: 0;
+    }
+}
+
+@keyframes textDisappear {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+}
+
+@keyframes bubbleAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(0deg);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.1) rotate(10deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@keyframes successNotificationSlide {
+    0% {
+        opacity: 0;
+        transform: translateX(100px) scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: translateX(0) scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+@keyframes confettiFall {
+    0% {
+        transform: translateY(-100px) rotate(0deg) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg) scale(0.3);
+        opacity: 0;
+    }
+}
+
+@keyframes sparkle {
+    0%, 100% {
+        transform: scale(0) rotate(0deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1) rotate(180deg);
+        opacity: 1;
+    }
+}
+
+@keyframes trailParticle {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.3) translateY(30px);
+    }
+}
+
+.animate-blob {
+    animation: blob 7s infinite;
+}
+
+.animate-float {
+    animation: float 4s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out forwards;
+}
+
+.animate-pulse-soft {
+    animation: pulse-soft 3s ease-in-out infinite;
+}
+
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+    animation-delay: 4s;
+}
+
+.animate-fade-in-right {
+    animation: fadeInRight 0.5s ease-out;
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Partículas de comentarios */
+.comment-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.comment-particle {
+    position: absolute;
+    border-radius: 50%;
+    animation: commentParticleFloat 20s infinite linear;
+    opacity: 0;
+}
+
+.comment-particle.type-1 {
+    width: 3px;
+    height: 3px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.6), rgba(59, 130, 246, 0.1));
+    box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
+}
+
+.comment-particle.type-2 {
+    width: 4px;
+    height: 4px;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.5), rgba(6, 182, 212, 0.1));
+    box-shadow: 0 0 8px rgba(6, 182, 212, 0.3);
+}
+
+.comment-particle.type-3 {
+    width: 2px;
+    height: 2px;
+    background: radial-gradient(circle, rgba(20, 184, 166, 0.7), rgba(20, 184, 166, 0.2));
+    box-shadow: 0 0 4px rgba(20, 184, 166, 0.5);
+}
+
+/* Burbuja de comentario flotante */
+.comment-bubble {
+    position: fixed;
+    min-width: 200px;
+    max-width: 300px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(6, 182, 212, 0.95));
+    color: white;
+    border-radius: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 
+                0 0 20px rgba(59, 130, 246, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    font-size: 14px;
+    line-height: 1.4;
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+    word-wrap: break-word;
+    pointer-events: none;
+    /* La animación se aplicará dinámicamente */
+}
+
+.comment-bubble.floating {
+    animation: commentBubbleFloat 5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.comment-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 20px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid rgba(59, 130, 246, 0.95);
+}
+
+.comment-bubble::after {
+    content: '💬';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: float 2s ease-in-out infinite;
+}
+
+/* Animación de texto desapareciendo */
+.text-disappearing {
+    animation: textDisappear 0.8s ease-out forwards;
+}
+
+/* Animación de burbuja apareciendo */
+.bubble-appearing {
+    animation: bubbleAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+/* Notificación de éxito personalizada */
+.success-notification {
+    animation: successNotificationSlide 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Confetti particles */
+.confetti-particle {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    z-index: 9998;
+    pointer-events: none;
+    animation: confettiFall 3s ease-out forwards;
+}
+
+.confetti-particle.blue {
+    background: #3b82f6;
+    border-radius: 50%;
+}
+
+.confetti-particle.cyan {
+    background: #06b6d4;
+    border-radius: 0;
+}
+
+.confetti-particle.teal {
+    background: #14b8a6;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.confetti-particle.yellow {
+    background: #fbbf24;
+    border-radius: 50%;
+}
+
+.confetti-particle.pink {
+    background: #ec4899;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+/* Sparkle effects */
+.sparkle {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    background: #ffffff;
+    border-radius: 50%;
+    z-index: 9999;
+    pointer-events: none;
+    animation: sparkle 1s ease-in-out forwards;
+    box-shadow: 0 0 6px #ffffff, 0 0 12px #ffffff;
+}
+
+/* Partículas de rastro para la burbuja */
+.trail-particle {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(59, 130, 246, 0.6);
+    z-index: 9998;
+    pointer-events: none;
+    animation: trailParticle 1s ease-out forwards;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+}
+
+/* Accesibilidad */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Estilos adicionales para el formulario */
+textarea {
+    font-family: inherit;
+    line-height: 1.5;
+}
+textarea:focus {
+    outline: none;
+}
+
+/* Hover effects mejorados */
+.group:hover .group-hover\:rotate-12 {
+    transform: rotate(12deg);
+}
+
+.group:hover .group-hover\:scale-110 {
+    transform: scale(1.1);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para crear feedback háptico en móviles
+    function createHapticFeedback() {
+        if ('vibrate' in navigator) {
+            // Patrón de vibración: vibrar 50ms, pausa 50ms, vibrar 100ms
+            navigator.vibrate([50, 50, 100]);
+        }
+    }
+    
+    // Función para reproducir sonido (opcional, se puede deshabilitar)
+    function playSuccessSound() {
+        try {
+            // Crear un sonido sintético usando Web Audio API
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Configurar un sonido agradable
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.1);
+            oscillator.frequency.setValueAtTime(1200, audioContext.currentTime + 0.2);
+            
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01);
+            gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.3);
+            
+            oscillator.type = 'sine';
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        } catch (e) {
+            // Si falla la reproducción de sonido, continuar sin problemas
+            console.log('Audio no disponible');
+        }
+    }
+    function createConfetti(x, y) {
+        const colors = ['blue', 'cyan', 'teal', 'yellow', 'pink'];
+        const particleCount = 15;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            particle.className = `confetti-particle ${randomColor}`;
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            
+            // Variación en la posición inicial
+            particle.style.transform = `translateX(${(Math.random() - 0.5) * 200}px)`;
+            
+            // Duración aleatoria
+            particle.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            particle.style.animationDelay = Math.random() * 0.5 + 's';
+            
+            document.body.appendChild(particle);
+            
+            // Eliminar después de la animación
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 4000);
+        }
+    }
+    
+    // Función para crear efectos sparkle
+    function createSparkles(x, y) {
+        const sparkleCount = 8;
+        
+        for (let i = 0; i < sparkleCount; i++) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            
+            const offsetX = (Math.random() - 0.5) * 100;
+            const offsetY = (Math.random() - 0.5) * 100;
+            
+            sparkle.style.left = (x + offsetX) + 'px';
+            sparkle.style.top = (y + offsetY) + 'px';
+            sparkle.style.animationDelay = Math.random() * 0.5 + 's';
+            
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                if (sparkle.parentNode) {
+                    sparkle.parentNode.removeChild(sparkle);
+                }
+            }, 1500);
+        }
+    }
+
+    // Función para crear rastro de partículas detrás de la burbuja
+    function createBubbleTrail(bubble) {
+        const trailInterval = setInterval(() => {
+            if (!bubble.parentNode) {
+                clearInterval(trailInterval);
+                return;
+            }
+            
+            const rect = bubble.getBoundingClientRect();
+            const particle = document.createElement('div');
+            particle.className = 'trail-particle';
+            
+            // Posicionar en el centro de la burbuja con un poco de variación
+            particle.style.left = (rect.left + rect.width / 2 + (Math.random() - 0.5) * 20) + 'px';
+            particle.style.top = (rect.top + rect.height / 2 + (Math.random() - 0.5) * 20) + 'px';
+            
+            document.body.appendChild(particle);
+            
+            // Eliminar la partícula después de la animación
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 1000);
+            
+        }, 100); // Crear una partícula cada 100ms
+        
+        // Parar el rastro después de 4 segundos
+        setTimeout(() => {
+            clearInterval(trailInterval);
+        }, 4000);
+    }
+
+    // Función para crear la burbuja de comentario flotante
+    function createCommentBubble(text, startElement) {
+        const bubble = document.createElement('div');
+        bubble.className = 'comment-bubble bubble-appearing';
+        bubble.textContent = text.substring(0, 100) + (text.length > 100 ? '...' : '');
+        
+        // Posicionar la burbuja en la ubicación del textarea
+        const rect = startElement.getBoundingClientRect();
+        const bubbleX = rect.left + rect.width / 2 - 150;
+        const bubbleY = rect.top + window.scrollY;
+        
+        bubble.style.left = bubbleX + 'px';
+        bubble.style.top = bubbleY + 'px';
+        
+        document.body.appendChild(bubble);
+        
+        // Aplicar la animación de flotación después de un breve delay
+        setTimeout(() => {
+            bubble.classList.remove('bubble-appearing');
+            bubble.classList.add('floating');
+            
+            // Iniciar el rastro de partículas
+            createBubbleTrail(bubble);
+        }, 500);
+        
+        // Crear efectos especiales cuando la burbuja "explota" al salir
+        setTimeout(() => {
+            // Crear confetti en la posición donde "sale" la burbuja
+            createConfetti(bubbleX + 150, 50);
+            createSparkles(bubbleX + 150, 50);
+        }, 4000);
+        
+        // Eliminar la burbuja después de la animación
+        setTimeout(() => {
+            if (bubble.parentNode) {
+                bubble.parentNode.removeChild(bubble);
+            }
+        }, 5500);
+        
+        return bubble;
+    }
+
+    // Función para mostrar notificación de éxito personalizada
+    function showSuccessNotification() {
+        // Eliminar notificaciones existentes
+        const existingNotifications = document.querySelectorAll('.custom-success-notification');
+        existingNotifications.forEach(notif => notif.remove());
+        
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-24 right-4 z-50 max-w-sm w-full custom-success-notification';
+        notification.innerHTML = `
+            <div class="mb-3 p-4 rounded-lg shadow-lg border backdrop-blur-sm bg-green-50 border-green-200 text-green-800 success-notification" role="alert" aria-live="polite">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 mr-3">
+                            <svg class="w-5 h-5 text-green-600 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </div>
+                        <span class="text-sm font-medium">¡Comentario enviado con éxito! 🎉</span>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                            class="ml-3 text-gray-400 hover:text-gray-600 transition-colors"
+                            aria-label="Cerrar notificación">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Anunciar para lectores de pantalla
+        const announcement = document.createElement('div');
+        announcement.setAttribute('aria-live', 'polite');
+        announcement.setAttribute('aria-atomic', 'true');
+        announcement.className = 'sr-only';
+        announcement.textContent = 'Tu comentario ha sido enviado exitosamente';
+        document.body.appendChild(announcement);
+        
+        setTimeout(() => {
+            if (announcement.parentNode) {
+                announcement.remove();
+            }
+        }, 1000);
+        
+        // Auto-eliminar después de 5 segundos
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100px)';
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, 5000);
+    }
+
+    // Manejar el envío del formulario con animación
+    const commentForm = document.querySelector('form[method="POST"]');
+    const textarea = document.querySelector('textarea');
+    const submitBtn = document.getElementById('submitCommentBtn');
+    
+    if (commentForm && textarea && submitBtn) {
+        commentForm.addEventListener('submit', function(e) {
+            const commentText = textarea.value.trim();
+            
+            if (commentText.length > 0) {
+                // Prevenir el envío normal por un momento
+                e.preventDefault();
+                
+                // Guardar el texto original antes de que desaparezca
+                const originalText = commentText;
+                
+                // Deshabilitar el botón y mostrar loading
+                submitBtn.disabled = true;
+                const buttonText = submitBtn.querySelector('.button-text');
+                const loadingSpinner = submitBtn.querySelector('.loading-spinner');
+                
+                if (buttonText && loadingSpinner) {
+                    buttonText.textContent = 'Enviando...';
+                    loadingSpinner.classList.remove('hidden');
+                }
+                
+                // Animar desaparición del texto
+                textarea.classList.add('text-disappearing');
+                
+                // Crear y animar la burbuja después de un breve delay
+                setTimeout(() => {
+                    createCommentBubble(originalText, textarea);
+                    
+                    // Esperar un poco más y entonces enviar el formulario real
+                    setTimeout(() => {
+                        // Mostrar notificación de éxito
+                        showSuccessNotification();
+                        
+                        // Efectos adicionales de feedback
+                        createHapticFeedback();
+                        playSuccessSound();
+                        
+                        // Ahora sí enviar el formulario real con el texto original
+                        const formData = new FormData();
+                        
+                        // Agregar el token CSRF
+                        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                        formData.append('csrfmiddlewaretoken', csrfToken);
+                        
+                        // Agregar el comentario original
+                        formData.append(textarea.name, originalText);
+                        
+                        console.log('Enviando comentario:', originalText);
+                        console.log('Token CSRF:', csrfToken);
+                        console.log('Nombre del campo:', textarea.name);
+                        
+                        fetch(commentForm.action || window.location.href, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                console.log('Comentario enviado exitosamente:', data.message);
+                                // Recargar la página para mostrar el nuevo comentario
+                                setTimeout(() => window.location.reload(), 2000);
+                            } else {
+                                console.error('Error al enviar el comentario:', data.message);
+                                // Restaurar el formulario en caso de error
+                                restoreForm(originalText);
+                                alert('Error: ' + (data.message || 'No se pudo enviar el comentario'));
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error de red o JSON:', error);
+                            // Si falla AJAX, enviar de forma tradicional
+                            submitTraditionalForm(originalText);
+                        });
+                        
+                    }, 1500); // Esperar a que la burbuja esté flotando
+                    
+                }, 300); // Pequeño delay para la animación de desaparición del texto
+                
+                // Función para restaurar el formulario en caso de error
+                function restoreForm(text) {
+                    textarea.value = text;
+                    textarea.classList.remove('text-disappearing');
+                    
+                    if (buttonText && loadingSpinner) {
+                        buttonText.textContent = 'Publicar comentario';
+                        loadingSpinner.classList.add('hidden');
+                    }
+                    submitBtn.disabled = false;
+                }
+                
+                // Función para envío tradicional como respaldo
+                function submitTraditionalForm(text) {
+                    textarea.value = text;
+                    textarea.classList.remove('text-disappearing');
+                    
+                    if (buttonText && loadingSpinner) {
+                        buttonText.textContent = 'Publicar comentario';
+                        loadingSpinner.classList.add('hidden');
+                    }
+                    submitBtn.disabled = false;
+                    
+                    // Enviar de forma tradicional
+                    setTimeout(() => {
+                        commentForm.submit();
+                    }, 500);
+                }
+            }
+        });
+    }
+
+    // Crear partículas para comentarios
+    function createCommentParticles() {
+        const particlesContainer = document.querySelector('.comment-particles');
+        if (!particlesContainer) return;
+        
+        const particleCount = 25;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            
+            const types = ['type-1', 'type-2', 'type-3'];
+            const randomType = types[Math.floor(Math.random() * types.length)];
+            
+            particle.className = `comment-particle ${randomType}`;
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+            
+            particlesContainer.appendChild(particle);
+        }
+    }
+
+    // Crear partículas adicionales cada cierto tiempo
+    function continuousCommentParticles() {
+        setInterval(() => {
+            const particlesContainer = document.querySelector('.comment-particles');
+            if (!particlesContainer) return;
+
+            const particle = document.createElement('div');
+            const types = ['type-1', 'type-2', 'type-3'];
+            const randomType = types[Math.floor(Math.random() * types.length)];
+            
+            particle.className = `comment-particle ${randomType}`;
+            particle.style.left = Math.random() * 100 + '%';
+            
+            const duration = Math.random() * 8 + 12;
+            particle.style.animationDuration = duration + 's';
+            
+            particlesContainer.appendChild(particle);
+            
+            // Remover partícula después de la animación
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, duration * 1000);
+            
+        }, 4000);
+    }
+
+    // Inicializar partículas
+    createCommentParticles();
+    setTimeout(continuousCommentParticles, 3000);
+
+    // Auto-ocultar notificaciones después de 5 segundos
+    const notifications = document.querySelectorAll('.fixed.top-24 > div');
+    notifications.forEach(notification => {
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100px)';
+            setTimeout(() => notification.remove(), 300);
+        }, 5000);
+    });
+
+    // Mejoras del textarea
+    if (textarea) {
+        // Agregar clases CSS al textarea con estilos mejorados
+        textarea.className = 'w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-300 resize-vertical min-h-32 placeholder-slate-400 bg-white/50 backdrop-blur-sm';
+        textarea.placeholder = 'Comparte tu experiencia con nuestros servicios de lavado...';
+        
+        // Auto-resize del textarea con animación suave
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.max(this.scrollHeight, 120) + 'px';
+        });
+
+        // Efecto de contador de caracteres visual
+        textarea.addEventListener('input', function() {
+            const length = this.value.length;
+            if (length > 0) {
+                this.style.borderColor = length > 500 ? '#ef4444' : '#06b6d4';
+                this.style.boxShadow = `0 0 0 2px ${length > 500 ? 'rgba(239, 68, 68, 0.1)' : 'rgba(6, 182, 212, 0.1)'}`;
+            }
+        });
+    }
+
+    // Animación de entrada para elementos
+    const animatedElements = document.querySelectorAll('.animate-fade-in-up');
+    animatedElements.forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        
+        setTimeout(() => {
+            el.style.transition = 'all 0.8s ease-out';
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }, index * 200);
+    });
+});
+</script>
+
+{% endblock %}

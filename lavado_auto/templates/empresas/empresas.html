@@ -1,0 +1,1764 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load custom_tags %}
+{% block content %}
+
+<!-- Empresas con Tailwind CSS -->
+<div class="bg-white pt-20 md:pt-24">
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 min-h-screen flex items-center overflow-hidden">
+        <!-- Elementos decorativos de fondo mejorados -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-200/40 to-slate-200/40 rounded-full blur-3xl opacity-60 animate-pulse"></div>
+            <div class="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-slate-200/40 to-gray-200/40 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 2s;"></div>
+            <div class="absolute top-1/2 left-1/4 w-64 h-64 bg-gradient-to-br from-blue-200/40 to-slate-200/40 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 4s;"></div>
+            <!-- Nuevos elementos decorativos -->
+            <div class="absolute top-1/3 right-1/3 w-32 h-32 bg-gradient-to-br from-purple-200/30 to-blue-200/30 rounded-full blur-2xl opacity-50 animate-pulse" style="animation-delay: 6s;"></div>
+            <div class="absolute bottom-1/3 left-1/2 w-48 h-48 bg-gradient-to-br from-green-200/30 to-blue-200/30 rounded-full blur-2xl opacity-50 animate-pulse" style="animation-delay: 8s;"></div>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <!-- Contenido del texto -->
+                <div class="text-center lg:text-left">
+                    <div class="animate-fadeInUp">
+                        <span class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-semibold rounded-full uppercase tracking-wider mb-6 shadow-lg">
+                            <i class="fas fa-rocket mr-2 text-sm"></i>
+                            Revoluciona tu negocio
+                        </span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold mb-6 animate-fadeInUp leading-tight" style="animation-delay: 0.2s;">
+                        <span class="bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent block">
+                            Transforma tu
+                        </span>
+                        <span class="bg-gradient-to-r from-blue-600 to-slate-800 bg-clip-text text-transparent block">
+                            autolavado con
+                        </span>
+                        <span class="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block">
+                            AutoNew
+                        </span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed animate-fadeInUp max-w-2xl mx-auto lg:mx-0" style="animation-delay: 0.4s;">
+                        Conecta con más clientes, aumenta tus ventas y haz crecer tu negocio de forma inteligente con la plataforma líder en autolavados digitales
+                    </p>
+                    
+                    <!-- Estadísticas rápidas -->
+                    <div class="flex flex-wrap justify-center lg:justify-start gap-6 mb-8 animate-fadeInUp" style="animation-delay: 0.5s;">
+                        <div class="flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+                            <i class="fas fa-store text-blue-600"></i>
+                            <span class="text-sm font-semibold text-gray-700">500+ Autolavados</span>
+                        </div>
+                        <div class="flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+                            <i class="fas fa-users text-green-600"></i>
+                            <span class="text-sm font-semibold text-gray-700">10k+ Clientes</span>
+                        </div>
+                        <div class="flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+                            <i class="fas fa-star text-yellow-500"></i>
+                            <span class="text-sm font-semibold text-gray-700">95% Satisfacción</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fadeInUp" style="animation-delay: 0.6s;">
+                        <button onclick="showRegistrationForm()" class="group px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 hover:from-blue-700 hover:to-blue-800 flex items-center justify-center">
+                            <i class="fas fa-rocket mr-2 group-hover:animate-bounce"></i>
+                            Comenzar ahora
+                            <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                        </button>
+                        <a href="#features" class="group px-8 py-4 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex items-center justify-center">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            Más información
+                            <i class="fas fa-chevron-down ml-2 transform group-hover:translate-y-1 transition-transform duration-300"></i>
+                        </a>
+                    </div>
+
+                    <!-- Indicadores de confianza -->
+                    <div class="mt-8 animate-fadeInUp" style="animation-delay: 0.7s;">
+                        <p class="text-sm text-gray-500 mb-4">Confían en nosotros:</p>
+                        <div class="flex flex-wrap justify-center lg:justify-start items-center space-x-6 opacity-60">
+                            <div class="flex items-center space-x-2 bg-gray-100 rounded-lg px-3 py-1">
+                                <i class="fas fa-shield-alt text-green-600"></i>
+                                <span class="text-xs font-medium text-gray-600">Seguro</span>
+                            </div>
+                            <div class="flex items-center space-x-2 bg-gray-100 rounded-lg px-3 py-1">
+                                <i class="fas fa-clock text-blue-600"></i>
+                                <span class="text-xs font-medium text-gray-600">24/7</span>
+                            </div>
+                            <div class="flex items-center space-x-2 bg-gray-100 rounded-lg px-3 py-1">
+                                <i class="fas fa-medal text-yellow-600"></i>
+                                <span class="text-xs font-medium text-gray-600">Premium</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Imagen del hero -->
+                <div class="relative animate-fadeInUp" style="animation-delay: 0.3s;">
+                    <div class="relative">
+                        <!-- Imagen principal con efectos -->
+                        <div class="relative bg-gradient-to-br from-blue-100 to-slate-100 rounded-3xl p-8 shadow-2xl transform hover:scale-105 transition-transform duration-500">
+                            <!-- Mockup de dashboard -->
+                            <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                                <!-- Barra superior del dashboard -->
+                                <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-car text-white text-sm"></i>
+                                            </div>
+                                            <span class="text-white font-semibold">AutoNew Dashboard</span>
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                                            <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                                            <div class="w-3 h-3 bg-red-400 rounded-full"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Contenido del dashboard -->
+                                <div class="p-6 space-y-4">
+                                    <!-- Métricas -->
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-3 text-center">
+                                            <div class="text-2xl font-bold text-blue-600">127</div>
+                                            <div class="text-xs text-gray-600">Reservas hoy</div>
+                                        </div>
+                                        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-3 text-center">
+                                            <div class="text-2xl font-bold text-green-600">$2.5k</div>
+                                            <div class="text-xs text-gray-600">Ingresos</div>
+                                        </div>
+                                        <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-3 text-center">
+                                            <div class="text-2xl font-bold text-purple-600">98%</div>
+                                            <div class="text-xs text-gray-600">Satisfacción</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Gráfico simulado -->
+                                    <div class="bg-gray-50 rounded-xl p-4">
+                                        <div class="flex items-end justify-between h-20 space-x-1">
+                                            <div class="bg-blue-500 rounded-t w-full h-12 animate-pulse"></div>
+                                            <div class="bg-blue-400 rounded-t w-full h-16"></div>
+                                            <div class="bg-blue-600 rounded-t w-full h-20 animate-pulse"></div>
+                                            <div class="bg-blue-400 rounded-t w-full h-14"></div>
+                                            <div class="bg-blue-500 rounded-t w-full h-18 animate-pulse"></div>
+                                            <div class="bg-blue-600 rounded-t w-full h-16"></div>
+                                            <div class="bg-blue-500 rounded-t w-full h-19 animate-pulse"></div>
+                                        </div>
+                                        <div class="text-xs text-gray-500 mt-2 text-center">Reservas por día</div>
+                                    </div>
+
+                                    <!-- Lista de reservas -->
+                                    <div class="space-y-2">
+                                        <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                                            <div class="flex items-center space-x-2">
+                                                <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-check text-white text-xs"></i>
+                                                </div>
+                                                <span class="text-sm font-medium">Lavado Premium</span>
+                                            </div>
+                                            <span class="text-sm text-green-600 font-semibold">$45</span>
+                                        </div>
+                                        <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                                            <div class="flex items-center space-x-2">
+                                                <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center animate-pulse">
+                                                    <i class="fas fa-clock text-white text-xs"></i>
+                                                </div>
+                                                <span class="text-sm font-medium">Lavado Express</span>
+                                            </div>
+                                            <span class="text-sm text-blue-600 font-semibold">$25</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Elementos flotantes decorativos -->
+                        <div class="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl rotate-12 shadow-lg animate-bounce" style="animation-delay: 1s;">
+                            <div class="w-full h-full flex items-center justify-center">
+                                <i class="fas fa-trophy text-white text-2xl"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl -rotate-12 shadow-lg animate-pulse">
+                            <div class="w-full h-full flex items-center justify-center">
+                                <i class="fas fa-star text-white text-xl"></i>
+                            </div>
+                        </div>
+
+                        <div class="absolute top-1/2 -right-8 w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full shadow-lg animate-ping">
+                            <div class="w-full h-full flex items-center justify-center">
+                                <i class="fas fa-heart text-white text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Elementos de fondo adicionales -->
+                    <div class="absolute inset-0 -z-10">
+                        <div class="absolute top-10 left-10 w-32 h-32 bg-blue-200/30 rounded-full blur-xl animate-pulse"></div>
+                        <div class="absolute bottom-10 right-10 w-24 h-24 bg-purple-200/30 rounded-full blur-xl animate-pulse" style="animation-delay: 2s;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Indicador de scroll -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <a href="#stats" class="flex flex-col items-center text-gray-500 hover:text-blue-600 transition-colors duration-300">
+                <span class="text-xs mb-2">Descubre más</span>
+                <i class="fas fa-chevron-down text-lg"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Sección de estadísticas -->
+    <section id="stats" class="py-20 bg-white relative overflow-hidden">
+        <!-- Elementos decorativos de fondo -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-10 left-10 w-72 h-72 bg-gradient-to-br from-blue-100/30 to-slate-100/30 rounded-full blur-3xl opacity-50 animate-pulse"></div>
+            <div class="absolute bottom-10 right-10 w-96 h-96 bg-gradient-to-br from-slate-100/30 to-gray-100/30 rounded-full blur-3xl opacity-50 animate-pulse" style="animation-delay: 3s;"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-purple-100/20 to-blue-100/20 rounded-full blur-2xl opacity-40 animate-pulse" style="animation-delay: 6s;"></div>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-20">
+                <div class="animate-fadeInUp">
+                    <span class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-600 text-sm font-semibold rounded-full uppercase tracking-wider mb-6 shadow-lg">
+                        <i class="fas fa-chart-line mr-2 text-sm"></i>
+                        Nuestros Números
+                    </span>
+                </div>
+                <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-6 animate-fadeInUp" style="animation-delay: 0.2s;">
+                    Resultados que <span class="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Hablan por Sí Solos</span>
+                </h2>
+                <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto animate-fadeInUp" style="animation-delay: 0.4s;">
+                    Únete a miles de empresarios que ya están transformando sus negocios con AutoNew
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+                <!-- Estadística 1: Autolavados -->
+                <div class="stats-card group relative animate-fadeInUp" style="animation-delay: 0.6s;">
+                    <div class="relative bg-gradient-to-br from-blue-50 via-blue-50 to-slate-50 rounded-3xl p-8 lg:p-10 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-blue-100 hover:border-blue-200">
+                        <!-- Icono flotante -->
+                        <div class="absolute -top-6 left-1/2 transform -translate-x-1/2">
+                            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+                                <i class="fas fa-store text-2xl text-white group-hover:animate-pulse"></i>
+                            </div>
+                        </div>
+
+                        <!-- Contenido -->
+                        <div class="text-center pt-8">
+                            <div class="counter-wrapper mb-4">
+                                <div class="text-5xl lg:text-6xl font-extrabold text-transparent bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text mb-2 counter" data-target="500">
+                                    0
+                                </div>
+                                <span class="text-3xl font-bold text-blue-600">+</span>
+                            </div>
+                            <div class="text-xl lg:text-2xl text-slate-700 font-bold mb-4">Autolavados Registrados</div>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-6">
+                                Empresas que confían en nuestra plataforma para hacer crecer su negocio
+                            </p>
+
+                            <!-- Indicador de crecimiento -->
+                            <div class="flex items-center justify-center space-x-2 text-green-600 text-sm font-semibold">
+                                <i class="fas fa-arrow-up animate-bounce"></i>
+                                <span>+25% este mes</span>
+                            </div>
+
+                            <!-- Barra de progreso -->
+                            <div class="mt-4 w-full bg-blue-100 rounded-full h-2 overflow-hidden">
+                                <div class="progress-bar bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-2000 ease-out" style="width: 0%" data-width="85%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Efecto de brillo -->
+                        <div class="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 group-hover:translate-x-full transition-all duration-1000 transform -translate-x-full"></div>
+                    </div>
+                </div>
+
+                <!-- Estadística 2: Clientes -->
+                <div class="stats-card group relative animate-fadeInUp" style="animation-delay: 0.8s;">
+                    <div class="relative bg-gradient-to-br from-slate-50 via-gray-50 to-slate-50 rounded-3xl p-8 lg:p-10 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-slate-200 hover:border-slate-300">
+                        <!-- Icono flotante -->
+                        <div class="absolute -top-6 left-1/2 transform -translate-x-1/2">
+                            <div class="w-16 h-16 bg-gradient-to-br from-slate-500 to-slate-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+                                <i class="fas fa-users text-2xl text-white group-hover:animate-pulse"></i>
+                            </div>
+                        </div>
+
+                        <!-- Contenido -->
+                        <div class="text-center pt-8">
+                            <div class="counter-wrapper mb-4">
+                                <div class="text-5xl lg:text-6xl font-extrabold text-transparent bg-gradient-to-r from-slate-600 to-slate-700 bg-clip-text mb-2 counter" data-target="10">
+                                    0
+                                </div>
+                                <span class="text-3xl font-bold text-slate-600">k+</span>
+                            </div>
+                            <div class="text-xl lg:text-2xl text-slate-700 font-bold mb-4">Clientes Satisfechos</div>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-6">
+                                Usuarios activos que reservan servicios diariamente en nuestra plataforma
+                            </p>
+
+                            <!-- Indicador de actividad -->
+                            <div class="flex items-center justify-center space-x-2 text-blue-600 text-sm font-semibold">
+                                <div class="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
+                                <span>Activos ahora</span>
+                            </div>
+
+                            <!-- Barra de progreso -->
+                            <div class="mt-4 w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                <div class="progress-bar bg-gradient-to-r from-slate-500 to-slate-600 h-2 rounded-full transition-all duration-2000 ease-out" style="width: 0%" data-width="92%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Efecto de brillo -->
+                        <div class="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 group-hover:translate-x-full transition-all duration-1000 transform -translate-x-full"></div>
+                    </div>
+                </div>
+
+                <!-- Estadística 3: Satisfacción -->
+                <div class="stats-card group relative animate-fadeInUp" style="animation-delay: 1s;">
+                    <div class="relative bg-gradient-to-br from-green-50 via-emerald-50 to-blue-50 rounded-3xl p-8 lg:p-10 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-green-100 hover:border-green-200">
+                        <!-- Icono flotante -->
+                        <div class="absolute -top-6 left-1/2 transform -translate-x-1/2">
+                            <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+                                <i class="fas fa-star text-2xl text-white group-hover:animate-pulse"></i>
+                            </div>
+                        </div>
+
+                        <!-- Contenido -->
+                        <div class="text-center pt-8">
+                            <div class="counter-wrapper mb-4">
+                                <div class="text-5xl lg:text-6xl font-extrabold text-transparent bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text mb-2 counter" data-target="95">
+                                    0
+                                </div>
+                                <span class="text-3xl font-bold text-green-600">%</span>
+                            </div>
+                            <div class="text-xl lg:text-2xl text-slate-700 font-bold mb-4">Tasa de Satisfacción</div>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-6">
+                                De nuestros usuarios recomiendan AutoNew a otros empresarios del sector
+                            </p>
+
+                            <!-- Estrellas de rating -->
+                            <div class="flex items-center justify-center space-x-1 mb-4">
+                                <i class="fas fa-star text-yellow-400 text-lg animate-pulse"></i>
+                                <i class="fas fa-star text-yellow-400 text-lg animate-pulse" style="animation-delay: 0.2s;"></i>
+                                <i class="fas fa-star text-yellow-400 text-lg animate-pulse" style="animation-delay: 0.4s;"></i>
+                                <i class="fas fa-star text-yellow-400 text-lg animate-pulse" style="animation-delay: 0.6s;"></i>
+                                <i class="fas fa-star text-yellow-400 text-lg animate-pulse" style="animation-delay: 0.8s;"></i>
+                            </div>
+
+                            <!-- Barra de progreso -->
+                            <div class="mt-4 w-full bg-green-100 rounded-full h-2 overflow-hidden">
+                                <div class="progress-bar bg-gradient-to-r from-green-500 to-emerald-600 h-2 rounded-full transition-all duration-2000 ease-out" style="width: 0%" data-width="95%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Efecto de brillo -->
+                        <div class="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 group-hover:translate-x-full transition-all duration-1000 transform -translate-x-full"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección adicional de métricas -->
+            <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="text-center group">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-clock text-white"></i>
+                    </div>
+                    <div class="text-2xl font-bold text-slate-800 counter" data-target="24">0</div>
+                    <div class="text-sm text-gray-600">Horas disponible</div>
+                </div>
+
+                <div class="text-center group">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-handshake text-white"></i>
+                    </div>
+                    <div class="text-2xl font-bold text-slate-800 counter" data-target="99">0</div>
+                    <div class="text-sm text-gray-600">% Confiabilidad</div>
+                </div>
+
+                <div class="text-center group">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-rocket text-white"></i>
+                    </div>
+                    <div class="text-2xl font-bold text-slate-800 counter" data-target="300">0</div>
+                    <div class="text-sm text-gray-600">% Más ventas</div>
+                </div>
+
+                <div class="text-center group">
+                    <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-trophy text-white"></i>
+                    </div>
+                    <div class="text-2xl font-bold text-slate-800 counter" data-target="1">0</div>
+                    <div class="text-sm text-gray-600">Plataforma líder</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Características modernas -->
+    <section id="features" class="py-20 bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="inline-block px-4 py-2 bg-blue-100 text-blue-600 text-sm font-semibold rounded-full uppercase tracking-wider mb-4">
+                    Ventajas Exclusivas
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
+                    ¿Por qué elegir <span class="text-blue-600">AutoNew?</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Te ofrecemos las mejores herramientas para hacer crecer tu negocio de autolavado
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-rocket text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Visibilidad Máxima</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Tu autolavado aparecerá en los primeros resultados de búsqueda, llegando a miles de clientes potenciales cada día.
+                    </p>
+                </div>
+
+                <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200">
+                    <div class="w-16 h-16 bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-users text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Más Clientes</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Sistema de reservas online que facilita a los clientes encontrar y reservar tus servicios las 24 horas del día.
+                    </p>
+                </div>
+
+                <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-chart-line text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Crecimiento Garantizado</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Herramientas analíticas que te ayudan a entender a tus clientes y optimizar tu negocio para máxima rentabilidad.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Servicios en grid moderno -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="inline-block px-4 py-2 bg-blue-100 text-blue-600 text-sm font-semibold rounded-full uppercase tracking-wider mb-4">
+                    Lo que Ofrecemos
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
+                    Nuestros <span class="text-blue-600">Servicios</span>
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-bolt text-white"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-800 mb-2">Velocidad</h4>
+                    <p class="text-gray-600 text-sm">Registro instantáneo y publicidad inmediata</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-slate-50 to-gray-50 rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-hand-paper text-white"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-800 mb-2">Libertad Total</h4>
+                    <p class="text-gray-600 text-sm">Controla qué servicios ofrecer y cuándo</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-star text-white"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-800 mb-2">Calidad Premium</h4>
+                    <p class="text-gray-600 text-sm">Solo los mejores</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-headset text-white"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-800 mb-2">Soporte 24/7</h4>
+                    <p class="text-gray-600 text-sm">Asistencia completa cuando la necesites</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-white"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-800 mb-2">Seguro</h4>
+                    <p class="text-gray-600 text-sm">100% confiable</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline de beneficios -->
+    <section class="py-20 bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="inline-block px-4 py-2 bg-blue-100 text-blue-600 text-sm font-semibold rounded-full uppercase tracking-wider mb-4">
+                    Tu Proceso
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
+                    Tu Camino al <span class="text-blue-600">Éxito</span>
+                </h2>
+            </div>
+
+            <div class="max-w-5xl mx-auto">
+                <!-- Línea conectora vertical oculta en móvil -->
+                <div class="relative">
+                    <div class="hidden md:block absolute left-8 top-8 bottom-8 w-1 bg-gradient-to-b from-blue-200 via-slate-200 to-blue-200 rounded-full"></div>
+                    
+                    <div class="space-y-8">
+                        <!-- Step 1 -->
+                        <div class="timeline-item group relative">
+                            <div class="flex items-start space-x-6">
+                                <div class="relative flex-shrink-0">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110 relative z-10">
+                                        <i class="fas fa-eye text-xl group-hover:animate-pulse"></i>
+                                    </div>
+                                    <!-- Efecto de pulso -->
+                                    <div class="absolute inset-0 w-16 h-16 bg-blue-400 rounded-full animate-ping opacity-20"></div>
+                                </div>
+                                <div class="flex-1 bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-2xl hover:border-blue-200 transition-all duration-300 group-hover:-translate-y-1">
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div class="flex items-center space-x-3">
+                                            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-600 text-xs font-bold rounded-full uppercase tracking-wider">
+                                                Paso 1
+                                            </span>
+                                            <div class="hidden group-hover:flex items-center space-x-1 text-blue-600 text-sm">
+                                                <i class="fas fa-clock text-xs"></i>
+                                                <span>Inmediato</span>
+                                            </div>
+                                        </div>
+                                        <div class="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center group-hover:bg-blue-100 transition-colors duration-300">
+                                            <i class="fas fa-arrow-right text-blue-600 text-sm transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-blue-600 transition-colors duration-300">Visibilidad Garantizada</h3>
+                                    <p class="text-gray-600 leading-relaxed mb-4">
+                                        Tu negocio aparecerá en nuestra plataforma con máxima visibilidad ante miles de usuarios activos.
+                                    </p>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                        <div class="flex items-center space-x-1">
+                                            <i class="fas fa-users text-blue-500"></i>
+                                            <span>10k+ usuarios diarios</span>
+                                        </div>
+                                        <div class="flex items-center space-x-1">
+                                            <i class="fas fa-chart-line text-green-500"></i>
+                                            <span>300% más visibilidad</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="timeline-item group relative">
+                            <div class="flex items-start space-x-6">
+                                <div class="relative flex-shrink-0">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-slate-500 to-slate-600 rounded-full flex items-center justify-center text-white shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110 relative z-10">
+                                        <i class="fas fa-calendar-alt text-xl group-hover:animate-bounce"></i>
+                                    </div>
+                                    <div class="absolute inset-0 w-16 h-16 bg-slate-400 rounded-full animate-ping opacity-20"></div>
+                                </div>
+                                <div class="flex-1 bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-2xl hover:border-slate-200 transition-all duration-300 group-hover:-translate-y-1">
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div class="flex items-center space-x-3">
+                                            <span class="inline-block px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full uppercase tracking-wider">
+                                                Paso 2
+                                            </span>
+                                            <div class="hidden group-hover:flex items-center space-x-1 text-slate-600 text-sm">
+                                                <i class="fas fa-clock text-xs"></i>
+                                                <span>24/7 Activo</span>
+                                            </div>
+                                        </div>
+                                        <div class="w-8 h-8 bg-slate-50 rounded-full flex items-center justify-center group-hover:bg-slate-100 transition-colors duration-300">
+                                            <i class="fas fa-arrow-right text-slate-600 text-sm transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-slate-600 transition-colors duration-300">Reservas Automatizadas</h3>
+                                    <p class="text-gray-600 leading-relaxed mb-4">
+                                        Sistema de reservas online que funciona 24/7, capturando clientes incluso cuando duermes.
+                                    </p>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                        <div class="flex items-center space-x-1">
+                                            <i class="fas fa-moon text-indigo-500"></i>
+                                            <span>Funciona mientras duermes</span>
+                                        </div>
+                                        <div class="flex items-center space-x-1">
+                                            <i class="fas fa-mobile-alt text-blue-500"></i>
+                                            <span>App móvil incluida</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="timeline-item group relative">
+                            <div class="flex items-start space-x-6">
+                                <div class="relative flex-shrink-0">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110 relative z-10">
+                                        <i class="fas fa-tags text-xl group-hover:animate-spin"></i>
+                                    </div>
+                                    <div class="absolute inset-0 w-16 h-16 bg-purple-400 rounded-full animate-ping opacity-20"></div>
+                                </div>
+                                <div class="flex-1 bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-2xl hover:border-purple-200 transition-all duration-300 group-hover:-translate-y-1">
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div class="flex items-center space-x-3">
+                                            <span class="inline-block px-3 py-1 bg-purple-100 text-purple-600 text-xs font-bold rounded-full uppercase tracking-wider">
+                                                Paso 3
+                                            </span>
+                                            <div class="hidden group-hover:flex items-center space-x-1 text-purple-600 text-sm">
+                                                <i class="fas fa-percentage text-xs"></i>
+                                                <span>Ofertas especiales</span>
+                                            </div>
+                                        </div>
+                                        <div class="w-8 h-8 bg-purple-50 rounded-full flex items-center justify-center group-hover:bg-purple-100 transition-colors duration-300">
+                                            <i class="fas fa-arrow-right text-purple-600 text-sm transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-purple-600 transition-colors duration-300">Promociones Exclusivas</h3>
+                                    <p class="text-gray-600 leading-relaxed mb-4">
+                                        Acceso a campañas promocionales y descuentos especiales para atraer más clientes.
+                                    </p>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                        <div class="flex items-center space-x-1">
+                                            <i class="fas fa-bullhorn text-orange-500"></i>
+                                            <span>Campañas mensuales</span>
+                                        </div>
+                                        <div class="flex items-center space-x-1">
+                                            <i class="fas fa-gift text-purple-500"></i>
+                                            <span>Descuentos exclusivos</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 4 -->
+                        <div class="timeline-item group relative">
+                            <div class="flex items-start space-x-6">
+                                <div class="relative flex-shrink-0">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-white shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110 relative z-10">
+                                        <i class="fas fa-graduation-cap text-xl group-hover:animate-pulse"></i>
+                                    </div>
+                                    <div class="absolute inset-0 w-16 h-16 bg-green-400 rounded-full animate-ping opacity-20"></div>
+                                </div>
+                                <div class="flex-1 bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-2xl hover:border-green-200 transition-all duration-300 group-hover:-translate-y-1">
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div class="flex items-center space-x-3">
+                                            <span class="inline-block px-3 py-1 bg-green-100 text-green-600 text-xs font-bold rounded-full uppercase tracking-wider">
+                                                Paso 4
+                                            </span>
+                                            <div class="hidden group-hover:flex items-center space-x-1 text-green-600 text-sm">
+                                                <i class="fas fa-user-tie text-xs"></i>
+                                                <span>Coaching personal</span>
+                                            </div>
+                                        </div>
+                                        <div class="w-8 h-8 bg-green-50 rounded-full flex items-center justify-center group-hover:bg-green-100 transition-colors duration-300">
+                                            <i class="fas fa-arrow-right text-green-600 text-sm transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-green-600 transition-colors duration-300">Capacitación Personalizada</h3>
+                                    <p class="text-gray-600 leading-relaxed mb-4">
+                                        Formación completa para optimizar tu negocio y maximizar tus ganancias.
+                                    </p>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                        <div class="flex items-center space-x-1">
+                                            <i class="fas fa-video text-red-500"></i>
+                                            <span>Cursos en video</span>
+                                        </div>
+                                        <div class="flex items-center space-x-1">
+                                            <i class="fas fa-certificate text-green-500"></i>
+                                            <span>Certificación incluida</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 5 -->
+                        <div class="timeline-item group relative">
+                            <div class="flex items-start space-x-6">
+                                <div class="relative flex-shrink-0">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110 relative z-10">
+                                        <i class="fas fa-chart-bar text-xl group-hover:animate-bounce"></i>
+                                    </div>
+                                    <div class="absolute inset-0 w-16 h-16 bg-blue-500 rounded-full animate-ping opacity-20"></div>
+                                </div>
+                                <div class="flex-1 bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-2xl hover:border-blue-200 transition-all duration-300 group-hover:-translate-y-1">
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div class="flex items-center space-x-3">
+                                            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-600 text-xs font-bold rounded-full uppercase tracking-wider">
+                                                Paso 5
+                                            </span>
+                                            <div class="hidden group-hover:flex items-center space-x-1 text-blue-600 text-sm">
+                                                <i class="fas fa-rocket text-xs"></i>
+                                                <span>Dashboard avanzado</span>
+                                            </div>
+                                        </div>
+                                        <div class="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center group-hover:bg-blue-100 transition-colors duration-300">
+                                            <i class="fas fa-check text-blue-600 text-sm transform group-hover:scale-125 transition-transform duration-300"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-blue-600 transition-colors duration-300">Herramientas Avanzadas</h3>
+                                    <p class="text-gray-600 leading-relaxed mb-4">
+                                        Dashboard completo con métricas, análisis y herramientas de gestión empresarial.
+                                    </p>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                        <div class="flex items-center space-x-1">
+                                            <i class="fas fa-analytics text-blue-500"></i>
+                                            <span>Análisis en tiempo real</span>
+                                        </div>
+                                        <div class="flex items-center space-x-1">
+                                            <i class="fas fa-cog text-gray-500"></i>
+                                            <span>Gestión automatizada</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="py-20 bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 relative overflow-hidden">
+        <!-- Elementos decorativos de fondo -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-10 left-10 w-96 h-96 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-full blur-3xl opacity-60 animate-pulse"></div>
+            <div class="absolute bottom-10 right-10 w-80 h-80 bg-gradient-to-br from-purple-200/20 to-blue-200/20 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 3s;"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-green-200/15 to-blue-200/15 rounded-full blur-2xl opacity-50 animate-pulse" style="animation-delay: 6s;"></div>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="max-w-6xl mx-auto">
+                <!-- CTA Principal -->
+                <div class="text-center mb-16 animate-fadeInUp">
+                    <div class="relative">
+                        <!-- Badge superior -->
+                        <div class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-semibold rounded-full mb-6 shadow-lg animate-pulse">
+                            <i class="fas fa-fire mr-2 animate-bounce"></i>
+                            ¡Oferta por tiempo limitado!
+                        </div>
+                        
+                        <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-6 leading-tight">
+                            ¿Listo para <span class="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">revolucionar</span> 
+                            <br>tu autolavado?
+                        </h2>
+                        
+                        <p class="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed max-w-4xl mx-auto">
+                            Únete a la plataforma líder en autolavados digitales y multiplica tus ingresos desde el primer mes
+                        </p>
+
+                        <!-- Urgencia y beneficios -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                            <div class="group bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-white/50">
+                                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-rocket text-white text-xl"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-800 mb-2">Registro Gratis</h3>
+                                <p class="text-gray-600 text-sm">Sin costos iniciales ni compromisos a largo plazo</p>
+                            </div>
+
+                            <div class="group bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-white/50">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-chart-line text-white text-xl"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-800 mb-2">Resultados Inmediatos</h3>
+                                <p class="text-gray-600 text-sm">Clientes desde el primer día de activación</p>
+                            </div>
+
+                            <div class="group bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-white/50">
+                                <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-headset text-white text-xl"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-800 mb-2">Soporte 24/7</h3>
+                                <p class="text-gray-600 text-sm">Acompañamiento completo en tu crecimiento</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta principal del CTA -->
+                <div class="relative animate-fadeInUp" style="animation-delay: 0.3s;">
+                    <div class="bg-gradient-to-br from-white via-white to-blue-50/50 rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
+                        <!-- Contenido principal -->
+                        <div class="p-8 lg:p-12">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                                <!-- Texto y botones -->
+                                <div class="text-center lg:text-left">
+                                    <div class="flex items-center justify-center lg:justify-start mb-6">
+                                        <div class="flex items-center space-x-2 bg-gradient-to-r from-green-50 to-emerald-50 rounded-full px-4 py-2 border border-green-200">
+                                            <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                            <span class="text-green-700 font-semibold text-sm">Disponible ahora</span>
+                                        </div>
+                                    </div>
+
+                                    <h3 class="text-3xl lg:text-4xl font-bold text-slate-800 mb-4">
+                                        Comienza tu <span class="text-blue-600">transformación digital</span>
+                                    </h3>
+                                    
+                                    <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                                        Miles de autolavados ya están generando más ingresos con AutoNew. Es tu turno de ser parte del éxito.
+                                    </p>
+
+                                    <!-- Botones de acción -->
+                                    <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                                        <button onclick="showRegistrationForm()" class="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 hover:from-blue-700 hover:to-blue-800 flex items-center justify-center overflow-hidden">
+                                            <!-- Efecto de brillo -->
+                                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 group-hover:translate-x-full transition-all duration-1000 transform -translate-x-full"></div>
+                                            <i class="fas fa-rocket mr-3 group-hover:animate-bounce relative z-10"></i>
+                                            <span class="relative z-10">Registrar mi Empresa</span>
+                                            <i class="fas fa-arrow-right ml-3 transform group-hover:translate-x-1 transition-transform duration-300 relative z-10"></i>
+                                        </button>
+                                        
+                                        <button class="group px-8 py-4 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex items-center justify-center">
+                                            <i class="fas fa-play-circle mr-3 group-hover:animate-pulse"></i>
+                                            Ver Demo
+                                            <i class="fas fa-external-link-alt ml-3 text-sm"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Garantías -->
+                                    <div class="flex flex-wrap justify-center lg:justify-start items-center gap-6 text-sm text-gray-600">
+                                        <div class="flex items-center space-x-2">
+                                            <i class="fas fa-shield-alt text-green-600"></i>
+                                            <span>100% Seguro</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <i class="fas fa-clock text-blue-600"></i>
+                                            <span>Activación inmediata</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <i class="fas fa-medal text-yellow-600"></i>
+                                            <span>Garantía de satisfacción</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Panel de testimonios/estadísticas -->
+                                <div class="relative">
+                                    <div class="bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl p-8 border border-blue-100">
+                                        <!-- Testimonios rápidos -->
+                                        <div class="text-center mb-6">
+                                            <h4 class="text-lg font-bold text-slate-800 mb-4">Lo que dicen nuestros clientes:</h4>
+                                            
+                                            <div class="space-y-4">
+                                                <div class="bg-white rounded-xl p-4 shadow-sm">
+                                                    <div class="flex items-center justify-center mb-2">
+                                                        <div class="flex space-x-1">
+                                                            <i class="fas fa-star text-yellow-400"></i>
+                                                            <i class="fas fa-star text-yellow-400"></i>
+                                                            <i class="fas fa-star text-yellow-400"></i>
+                                                            <i class="fas fa-star text-yellow-400"></i>
+                                                            <i class="fas fa-star text-yellow-400"></i>
+                                                        </div>
+                                                    </div>
+                                                    <p class="text-sm text-gray-600 italic">"Tripliqué mis reservas en solo 2 meses"</p>
+                                                    <p class="text-xs text-gray-500 mt-1">- Carlos M., AutoLavado Premium</p>
+                                                </div>
+
+                                                <div class="bg-white rounded-xl p-4 shadow-sm">
+                                                    <div class="flex items-center justify-center mb-2">
+                                                        <div class="flex space-x-1">
+                                                            <i class="fas fa-star text-yellow-400"></i>
+                                                            <i class="fas fa-star text-yellow-400"></i>
+                                                            <i class="fas fa-star text-yellow-400"></i>
+                                                            <i class="fas fa-star text-yellow-400"></i>
+                                                            <i class="fas fa-star text-yellow-400"></i>
+                                                        </div>
+                                                    </div>
+                                                    <p class="text-sm text-gray-600 italic">"La mejor inversión para mi negocio"</p>
+                                                    <p class="text-xs text-gray-500 mt-1">- Ana L., Lavado Express</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Contador de tiempo -->
+                                            <div class="mt-6 p-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-xl border border-red-200">
+                                                <p class="text-sm font-semibold text-red-700 mb-2">⏰ Oferta especial termina en:</p>
+                                                <div class="flex justify-center space-x-2 text-red-600 font-bold">
+                                                    <div class="text-center">
+                                                        <div class="bg-white rounded-lg px-2 py-1 text-lg" id="hours">23</div>
+                                                        <div class="text-xs">Horas</div>
+                                                    </div>
+                                                    <div class="flex items-center text-lg">:</div>
+                                                    <div class="text-center">
+                                                        <div class="bg-white rounded-lg px-2 py-1 text-lg" id="minutes">59</div>
+                                                        <div class="text-xs">Min</div>
+                                                    </div>
+                                                    <div class="flex items-center text-lg">:</div>
+                                                    <div class="text-center">
+                                                        <div class="bg-white rounded-lg px-2 py-1 text-lg" id="seconds">45</div>
+                                                        <div class="text-xs">Seg</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Elementos flotantes -->
+                                    <div class="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-bounce"></div>
+                                    <div class="absolute -bottom-4 -left-4 w-6 h-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full animate-pulse"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Barra inferior con información adicional -->
+                        <div class="bg-gradient-to-r from-slate-50 to-blue-50 px-8 py-6 border-t border-slate-200">
+                            <div class="flex flex-col md:flex-row items-center justify-between text-sm text-gray-600">
+                                <div class="flex items-center space-x-6 mb-4 md:mb-0">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-users text-blue-600"></i>
+                                        <span>+500 empresas registradas</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-star text-yellow-500"></i>
+                                        <span>4.9/5 en satisfacción</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-lock text-green-600"></i>
+                                    <span>Datos protegidos con SSL</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Formulario de Registro de Empresa -->
+    <section id="registro-empresa" class="py-20 bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 relative overflow-hidden" style="display: none;">
+        <!-- Elementos decorativos de fondo -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl opacity-60 animate-pulse"></div>
+            <div class="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-purple-200/30 to-blue-200/30 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 3s;"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-green-200/20 to-blue-200/20 rounded-full blur-2xl opacity-50 animate-pulse" style="animation-delay: 6s;"></div>
+        </div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="max-w-4xl mx-auto">
+                <!-- Header del formulario -->
+                <div class="text-center mb-12 animate-fadeInUp">
+                    <div class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold rounded-full mb-6 shadow-lg">
+                        <i class="fas fa-sparkles mr-2 animate-pulse"></i>
+                        Únete a AutoNew
+                    </div>
+                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-6 leading-tight">
+                        Registra tu <span class="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Autolavado</span>
+                    </h2>
+                    <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                        Completa los datos para unirte a la plataforma líder en autolavados digitales
+                    </p>
+                </div>
+
+                <!-- Tarjeta principal del formulario -->
+                <div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 overflow-hidden animate-fadeInUp" style="animation-delay: 0.2s;">
+                    <!-- Barra superior decorativa -->
+                    <div class="h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600"></div>
+                    
+                    <div class="p-8 lg:p-12">
+                        <!-- Indicador de progreso -->
+                        <div class="mb-8">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-sm font-semibold text-gray-600">Paso 1 de 1</span>
+                                <span class="text-sm font-semibold text-blue-600">Información básica</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-1000 ease-out" style="width: 100%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Mostrar mensajes de éxito o error -->
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} mb-8 rounded-3xl border-0 shadow-2xl overflow-hidden {% if message.tags == 'success' %}bg-gradient-to-br from-green-50 via-emerald-50 to-green-50{% else %}bg-gradient-to-br from-red-50 via-rose-50 to-red-50{% endif %}">
+                                    {% if message.tags == 'success' %}
+                                        <div class="relative p-8">
+                                            <!-- Elemento decorativo superior -->
+                                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 via-emerald-500 to-green-600"></div>
+                                            
+                                            <div class="flex items-start">
+                                                <div class="flex-shrink-0">
+                                                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                                        <i class="fas fa-check-circle text-white text-2xl animate-bounce"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="ml-6 flex-1">
+                                                    <div class="flex items-center mb-3">
+                                                        <h4 class="text-2xl font-bold text-green-800">
+                                                            🎉 ¡Registro Exitoso!
+                                                        </h4>
+                                                        <div class="ml-4 flex space-x-1">
+                                                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+                                                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
+                                                        </div>
+                                                    </div>
+                                                    <p class="text-green-700 mb-6 font-medium text-lg">
+                                                        {{ message }}
+                                                    </p>
+                                                    
+                                                    <!-- Tarjeta de próximos pasos mejorada -->
+                                                    <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-green-200/50 shadow-lg">
+                                                        <div class="flex items-start">
+                                                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+                                                                <i class="fas fa-clock text-white text-lg"></i>
+                                                            </div>
+                                                            <div class="ml-4 flex-1">
+                                                                <h5 class="text-lg font-bold text-slate-800 mb-2 flex items-center">
+                                                                    Próximos pasos
+                                                                    <span class="ml-2 inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
+                                                                        Importante
+                                                                    </span>
+                                                                </h5>
+                                                                <p class="text-slate-700 leading-relaxed mb-4">
+                                                                    <strong class="text-blue-600">AutoNew se comunicará con usted dentro de las próximas 24 horas</strong> para realizar la verificación correspondiente de su empresa y activar su cuenta en la plataforma.
+                                                                </p>
+                                                                
+                                                                <!-- Lista de acciones -->
+                                                                <div class="space-y-3">
+                                                                    <div class="flex items-center text-slate-600">
+                                                                        <div class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                                                            <i class="fas fa-phone text-green-600 text-xs"></i>
+                                                                        </div>
+                                                                        <span class="text-sm">Mantenga disponible el teléfono registrado</span>
+                                                                    </div>
+                                                                    <div class="flex items-center text-slate-600">
+                                                                        <div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                                                            <i class="fas fa-envelope text-blue-600 text-xs"></i>
+                                                                        </div>
+                                                                        <span class="text-sm">Revise su correo electrónico regularmente</span>
+                                                                    </div>
+                                                                    <div class="flex items-center text-slate-600">
+                                                                        <div class="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                                                                            <i class="fas fa-file-alt text-purple-600 text-xs"></i>
+                                                                        </div>
+                                                                        <span class="text-sm">Prepare documentos de la empresa si es necesario</span>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <!-- Contador de tiempo mejorado -->
+                                                                <div class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200/50">
+                                                                    <div class="flex items-center justify-between mb-3">
+                                                                        <div class="flex items-center text-blue-700 text-sm font-semibold">
+                                                                            <i class="fas fa-info-circle mr-2 animate-pulse"></i>
+                                                                            <span>Este mensaje se cerrará automáticamente</span>
+                                                                        </div>
+                                                                        <div class="text-blue-600 font-bold text-lg">
+                                                                            <span id="countdown">15</span>s
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="w-full bg-blue-200 rounded-full h-2 overflow-hidden">
+                                                                        <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-1000" style="width: 100%"></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Efectos decorativos -->
+                                            <div class="absolute top-4 right-4 w-8 h-8 bg-green-200/30 rounded-full animate-ping"></div>
+                                            <div class="absolute bottom-4 left-4 w-6 h-6 bg-emerald-200/40 rounded-full animate-pulse"></div>
+                                        </div>
+                                    {% else %}
+                                        <div class="relative p-8">
+                                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-400 via-rose-500 to-red-600"></div>
+                                            
+                                            <div class="flex items-start">
+                                                <div class="flex-shrink-0">
+                                                    <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-rose-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                                        <i class="fas fa-exclamation-triangle text-white text-2xl animate-pulse"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="ml-6">
+                                                    <h4 class="text-2xl font-bold text-red-800 mb-3">
+                                                        ⚠️ Error en el registro
+                                                    </h4>
+                                                    <p class="text-red-700 text-lg leading-relaxed">
+                                                        {{ message }}
+                                                    </p>
+                                                    <div class="mt-4 p-4 bg-white/50 rounded-xl border border-red-200">
+                                                        <p class="text-red-600 text-sm">
+                                                            <i class="fas fa-lightbulb mr-2"></i>
+                                                            Revise los datos ingresados e intente nuevamente
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <!-- Formulario principal -->
+                        <form method="post" class="space-y-8">
+                            {% csrf_token %}
+                            
+                            <!-- Sección 1: Información de la empresa -->
+                            <div class="space-y-6">
+                                <div class="flex items-center mb-6">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3">
+                                        <i class="fas fa-building text-white text-sm"></i>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-slate-800">Información de la Empresa</h3>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <!-- Nombre de la empresa -->
+                                    <div class="group">
+                                        <label for="{{ form.nombre_empresa.id_for_label }}" class="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                                            <i class="fas fa-store text-blue-500 mr-2"></i>
+                                            Nombre de la Empresa *
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                                <i class="fas fa-building text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200"></i>
+                                            </div>
+                                            {{ form.nombre_empresa|add_class:"w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-400 bg-white hover:border-gray-300" }}
+                                        </div>
+                                        {% if form.nombre_empresa.errors %}
+                                            <div class="flex items-center mt-2 text-red-600 text-sm">
+                                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                                {{ form.nombre_empresa.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div class="group">
+                                        <label for="{{ form.email.id_for_label }}" class="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                                            <i class="fas fa-envelope text-blue-500 mr-2"></i>
+                                            Correo Electrónico *
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                                <i class="fas fa-at text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200"></i>
+                                            </div>
+                                            {{ form.email|add_class:"w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-400 bg-white hover:border-gray-300" }}
+                                        </div>
+                                        {% if form.email.errors %}
+                                            <div class="flex items-center mt-2 text-red-600 text-sm">
+                                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                                {{ form.email.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <!-- Teléfono -->
+                                    <div class="group">
+                                        <label for="{{ form.telefono.id_for_label }}" class="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                                            <i class="fas fa-phone text-blue-500 mr-2"></i>
+                                            Teléfono *
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                                <i class="fas fa-mobile-alt text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200"></i>
+                                            </div>
+                                            {{ form.telefono|add_class:"w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-400 bg-white hover:border-gray-300" }}
+                                        </div>
+                                        {% if form.telefono.errors %}
+                                            <div class="flex items-center mt-2 text-red-600 text-sm">
+                                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                                {{ form.telefono.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Dirección -->
+                                    <div class="group">
+                                        <label for="{{ form.direccion.id_for_label }}" class="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                                            <i class="fas fa-map-marker-alt text-blue-500 mr-2"></i>
+                                            Dirección *
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                                <i class="fas fa-location-dot text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200"></i>
+                                            </div>
+                                            {{ form.direccion|add_class:"w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 text-gray-900 placeholder-gray-400 bg-white hover:border-gray-300" }}
+                                        </div>
+                                        {% if form.direccion.errors %}
+                                            <div class="flex items-center mt-2 text-red-600 text-sm">
+                                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                                {{ form.direccion.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Divisor -->
+                            <div class="relative">
+                                <div class="absolute inset-0 flex items-center">
+                                    <div class="w-full border-t border-gray-200"></div>
+                                </div>
+                                <div class="relative flex justify-center">
+                                    <div class="px-4 bg-white">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-shield-alt text-white text-sm"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sección 2: Seguridad -->
+                            <div class="space-y-6">
+                                <div class="flex items-center mb-6">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
+                                        <i class="fas fa-lock text-white text-sm"></i>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-slate-800">Configuración de Seguridad</h3>
+                                </div>
+
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <!-- Contraseña -->
+                                    <div class="group">
+                                        <label for="{{ form.contrasena.id_for_label }}" class="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                                            <i class="fas fa-key text-purple-500 mr-2"></i>
+                                            Contraseña *
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                                <i class="fas fa-lock text-gray-400 group-focus-within:text-purple-500 transition-colors duration-200"></i>
+                                            </div>
+                                            {{ form.contrasena|add_class:"w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200 text-gray-900 placeholder-gray-400 bg-white hover:border-gray-300" }}
+                                            <button type="button" onclick="togglePassword('{{ form.contrasena.id_for_label }}')" class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                                                <i class="fas fa-eye text-gray-400 hover:text-purple-500 transition-colors duration-200" id="toggle-{{ form.contrasena.id_for_label }}"></i>
+                                            </button>
+                                        </div>
+                                        {% if form.contrasena.errors %}
+                                            <div class="flex items-center mt-2 text-red-600 text-sm">
+                                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                                {{ form.contrasena.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                        <!-- Indicador de fortaleza de contraseña -->
+                                        <div class="mt-3">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <span class="text-xs text-gray-600">Fortaleza de la contraseña</span>
+                                                <span id="password-strength-text" class="text-xs font-semibold text-gray-500">Débil</span>
+                                            </div>
+                                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                                <div id="password-strength-bar" class="bg-red-400 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Confirmar contraseña -->
+                                    <div class="group">
+                                        <label for="{{ form.confirmar_contrasena.id_for_label }}" class="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                                            <i class="fas fa-check-double text-purple-500 mr-2"></i>
+                                            Confirmar Contraseña *
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                                <i class="fas fa-shield-check text-gray-400 group-focus-within:text-purple-500 transition-colors duration-200"></i>
+                                            </div>
+                                            {{ form.confirmar_contrasena|add_class:"w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-100 focus:border-purple-500 transition-all duration-200 text-gray-900 placeholder-gray-400 bg-white hover:border-gray-300" }}
+                                            <button type="button" onclick="togglePassword('{{ form.confirmar_contrasena.id_for_label }}')" class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                                                <i class="fas fa-eye text-gray-400 hover:text-purple-500 transition-colors duration-200" id="toggle-{{ form.confirmar_contrasena.id_for_label }}"></i>
+                                            </button>
+                                        </div>
+                                        {% if form.confirmar_contrasena.errors %}
+                                            <div class="flex items-center mt-2 text-red-600 text-sm">
+                                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                                {{ form.confirmar_contrasena.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                        <!-- Indicador de coincidencia -->
+                                        <div id="password-match-indicator" class="mt-3 hidden">
+                                            <div class="flex items-center text-sm">
+                                                <i id="match-icon" class="fas fa-times-circle text-red-500 mr-2"></i>
+                                                <span id="match-text" class="text-red-600">Las contraseñas no coinciden</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Políticas de contraseña -->
+                                <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 border border-blue-200/50">
+                                    <div class="flex items-start">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mr-4">
+                                            <i class="fas fa-info-circle text-blue-600 text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-slate-800 mb-2">Requisitos de contraseña:</h4>
+                                            <ul class="text-sm text-slate-600 space-y-1">
+                                                <li class="flex items-center">
+                                                    <i class="fas fa-check text-green-500 text-xs mr-2"></i>
+                                                    Mínimo 8 caracteres
+                                                </li>
+                                                <li class="flex items-center">
+                                                    <i class="fas fa-check text-green-500 text-xs mr-2"></i>
+                                                    Al menos una letra mayúscula y minúscula
+                                                </li>
+                                                <li class="flex items-center">
+                                                    <i class="fas fa-check text-green-500 text-xs mr-2"></i>
+                                                    Al menos un número
+                                                </li>
+                                                <li class="flex items-center">
+                                                    <i class="fas fa-check text-green-500 text-xs mr-2"></i>
+                                                    Al menos un carácter especial (@, #, $, etc.)
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Errores generales del formulario -->
+                            {% if form.non_field_errors %}
+                                <div class="bg-red-50 border-l-4 border-red-400 p-6 rounded-r-2xl">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                                            <i class="fas fa-exclamation-triangle text-red-600 text-sm"></i>
+                                        </div>
+                                        <div class="text-red-700 font-medium">
+                                            {{ form.non_field_errors.0 }}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <!-- Botones de acción mejorados -->
+                            <div class="flex flex-col sm:flex-row gap-4 pt-8">
+                                <button type="submit" class="group relative flex-1 px-8 py-5 bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white font-bold text-lg rounded-2xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:from-blue-700 hover:via-purple-600 hover:to-blue-800 overflow-hidden">
+                                    <!-- Efecto de brillo animado -->
+                                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 group-hover:translate-x-full transition-all duration-1000 transform -translate-x-full"></div>
+                                    
+                                    <!-- Contenido del botón -->
+                                    <div class="relative z-10 flex items-center justify-center">
+                                        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300">
+                                            <i class="fas fa-rocket text-white group-hover:animate-bounce"></i>
+                                        </div>
+                                        <span class="flex-1">Registrar mi Empresa</span>
+                                        <i class="fas fa-arrow-right ml-3 transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                                    </div>
+                                    
+                                    <!-- Partículas decorativas -->
+                                    <div class="absolute top-2 right-2 w-2 h-2 bg-white/30 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-ping"></div>
+                                    <div class="absolute bottom-2 left-2 w-1 h-1 bg-white/40 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-pulse"></div>
+                                </button>
+                                
+                                <button type="button" onclick="hideRegistrationForm()" class="group flex-1 px-8 py-5 border-2 border-gray-300 text-gray-700 font-semibold text-lg rounded-2xl hover:bg-gray-50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 hover:border-gray-400 bg-white">
+                                    <div class="flex items-center justify-center">
+                                        <i class="fas fa-times mr-3 group-hover:rotate-90 transition-transform duration-300"></i>
+                                        <span>Cancelar</span>
+                                    </div>
+                                </button>
+                            </div>
+                            
+                            <!-- Información adicional -->
+                            <div class="pt-6 border-t border-gray-200">
+                                <div class="flex flex-col md:flex-row items-center justify-between text-sm text-gray-600">
+                                    <div class="flex items-center space-x-6 mb-4 md:mb-0">
+                                        <div class="flex items-center space-x-2">
+                                            <i class="fas fa-shield-alt text-green-600"></i>
+                                            <span>100% Seguro</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <i class="fas fa-clock text-blue-600"></i>
+                                            <span>Activación inmediata</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <i class="fas fa-headset text-purple-600"></i>
+                                            <span>Soporte 24/7</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-lock text-green-600"></i>
+                                        <span>Datos protegidos con SSL</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Testimonio flotante -->
+                <div class="mt-12 max-w-2xl mx-auto animate-fadeInUp" style="animation-delay: 0.4s;">
+                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50">
+                        <div class="flex items-center mb-4">
+                            <div class="flex space-x-1 mr-4">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                            </div>
+                            <span class="text-sm font-semibold text-gray-600">5.0 de 5 estrellas</span>
+                        </div>
+                        <blockquote class="text-gray-700 italic mb-4">
+                            "Desde que me registré en AutoNew, mis ventas se multiplicaron por 3. La plataforma es increíble y el soporte es excepcional."
+                        </blockquote>
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-white font-bold text-sm">JR</span>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-gray-800">Juan Rodríguez</div>
+                                <div class="text-sm text-gray-600">AutoLavado Premium</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Botón flotante de ayuda -->
+<div class="fixed bottom-6 right-6 z-50">
+    <button class="w-14 h-14 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center">
+        <i class="fas fa-question text-lg"></i>
+    </button>
+</div>
+
+<!-- Estilos CSS personalizados -->
+<style>
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fadeInUp {
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+</style>
+
+<script>
+    // Función para mostrar el formulario de registro
+    function showRegistrationForm() {
+        const formSection = document.getElementById('registro-empresa');
+        formSection.style.display = 'block';
+        formSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+
+    // Función para ocultar el formulario de registro
+    function hideRegistrationForm() {
+        const formSection = document.getElementById('registro-empresa');
+        formSection.style.display = 'none';
+    }
+
+    // Función para alternar visibilidad de contraseñas
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const toggleIcon = document.getElementById('toggle-' + fieldId);
+        
+        if (field.type === 'password') {
+            field.type = 'text';
+            toggleIcon.classList.remove('fa-eye');
+            toggleIcon.classList.add('fa-eye-slash');
+        } else {
+            field.type = 'password';
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
+        }
+    }
+
+    // Validación de fortaleza de contraseña
+    function checkPasswordStrength(password) {
+        let strength = 0;
+        let feedback = 'Muy débil';
+        let color = 'bg-red-400';
+        let width = '10%';
+
+        if (password.length >= 8) strength += 1;
+        if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength += 1;
+        if (password.match(/[0-9]/)) strength += 1;
+        if (password.match(/[^a-zA-Z0-9]/)) strength += 1;
+
+        switch (strength) {
+            case 0:
+            case 1:
+                feedback = 'Muy débil';
+                color = 'bg-red-400';
+                width = '20%';
+                break;
+            case 2:
+                feedback = 'Débil';
+                color = 'bg-orange-400';
+                width = '40%';
+                break;
+            case 3:
+                feedback = 'Media';
+                color = 'bg-yellow-400';
+                width = '70%';
+                break;
+            case 4:
+                feedback = 'Fuerte';
+                color = 'bg-green-400';
+                width = '100%';
+                break;
+        }
+
+        return { feedback, color, width };
+    }
+
+    // Validación de coincidencia de contraseñas
+    function checkPasswordMatch(password, confirmPassword) {
+        const indicator = document.getElementById('password-match-indicator');
+        const icon = document.getElementById('match-icon');
+        const text = document.getElementById('match-text');
+
+        if (confirmPassword.length > 0) {
+            indicator.classList.remove('hidden');
+            
+            if (password === confirmPassword) {
+                icon.className = 'fas fa-check-circle text-green-500 mr-2';
+                text.textContent = 'Las contraseñas coinciden';
+                text.className = 'text-green-600';
+            } else {
+                icon.className = 'fas fa-times-circle text-red-500 mr-2';
+                text.textContent = 'Las contraseñas no coinciden';
+                text.className = 'text-red-600';
+            }
+        } else {
+            indicator.classList.add('hidden');
+        }
+    }
+
+    // Event listeners para validación en tiempo real
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtener los campos de contraseña por su atributo name
+        const passwordField = document.querySelector('input[name="contrasena"]');
+        const confirmPasswordField = document.querySelector('input[name="confirmar_contrasena"]');
+        const strengthBar = document.getElementById('password-strength-bar');
+        const strengthText = document.getElementById('password-strength-text');
+
+        if (passwordField) {
+            passwordField.addEventListener('input', function() {
+                const strength = checkPasswordStrength(this.value);
+                
+                if (strengthBar && strengthText) {
+                    strengthBar.className = `h-2 rounded-full transition-all duration-300 ${strength.color}`;
+                    strengthBar.style.width = strength.width;
+                    strengthText.textContent = strength.feedback;
+                }
+
+                if (confirmPasswordField && confirmPasswordField.value) {
+                    checkPasswordMatch(this.value, confirmPasswordField.value);
+                }
+            });
+        }
+
+        if (confirmPasswordField) {
+            confirmPasswordField.addEventListener('input', function() {
+                if (passwordField) {
+                    checkPasswordMatch(passwordField.value, this.value);
+                }
+            });
+        }
+
+        // Animación de entrada para los campos del formulario
+        const formFields = document.querySelectorAll('#registro-empresa input, #registro-empresa textarea');
+        formFields.forEach((field, index) => {
+            field.addEventListener('focus', function() {
+                this.parentElement.classList.add('scale-105');
+            });
+            
+            field.addEventListener('blur', function() {
+                this.parentElement.classList.remove('scale-105');
+            });
+        });
+
+        // Validación visual en tiempo real
+        formFields.forEach(field => {
+            field.addEventListener('input', function() {
+                if (this.value.trim() !== '') {
+                    this.classList.add('border-green-300');
+                    this.classList.remove('border-red-300');
+                } else if (this.hasAttribute('required')) {
+                    this.classList.add('border-red-300');
+                    this.classList.remove('border-green-300');
+                }
+            });
+        });
+    });
+
+    // Smooth scrolling para los enlaces
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Animación de contadores
+    function animateCounter(element) {
+        const target = parseInt(element.dataset.target);
+        const duration = 2000; // 2 segundos
+        const step = target / (duration / 16); // 60fps
+        let current = 0;
+
+        const timer = setInterval(() => {
+            current += step;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            element.textContent = Math.floor(current);
+        }, 16);
+    }
+
+    // Animación de barras de progreso
+    function animateProgressBar(element) {
+        const targetWidth = element.dataset.width;
+        setTimeout(() => {
+            element.style.width = targetWidth;
+        }, 500);
+    }
+
+    // Contador de tiempo para el CTA
+    function startCountdown() {
+        const hoursElement = document.getElementById('hours');
+        const minutesElement = document.getElementById('minutes');
+        const secondsElement = document.getElementById('seconds');
+        
+        if (!hoursElement || !minutesElement || !secondsElement) return;
+
+        // Establecer tiempo inicial (24 horas desde ahora)
+        let totalSeconds = 24 * 60 * 60; // 24 horas en segundos
+        
+        const countdown = setInterval(() => {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            hoursElement.textContent = hours.toString().padStart(2, '0');
+            minutesElement.textContent = minutes.toString().padStart(2, '0');
+            secondsElement.textContent = seconds.toString().padStart(2, '0');
+
+            if (totalSeconds <= 0) {
+                clearInterval(countdown);
+                // Reiniciar el contador cuando llegue a cero
+                totalSeconds = 24 * 60 * 60;
+            } else {
+                totalSeconds--;
+            }
+        }, 1000);
+    }
+
+    // Animaciones al hacer scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-fadeInUp');
+                
+                // Animar contadores cuando son visibles
+                const counters = entry.target.querySelectorAll('.counter');
+                counters.forEach(counter => {
+                    if (!counter.classList.contains('animated')) {
+                        counter.classList.add('animated');
+                        animateCounter(counter);
+                    }
+                });
+
+                // Animar barras de progreso cuando son visibles
+                const progressBars = entry.target.querySelectorAll('.progress-bar');
+                progressBars.forEach(bar => {
+                    if (!bar.classList.contains('animated')) {
+                        bar.classList.add('animated');
+                        animateProgressBar(bar);
+                    }
+                });
+            }
+        });
+    }, observerOptions);
+
+    // Observar elementos que necesitan animación
+    document.querySelectorAll('.group, .stat-card, .timeline-item, .stats-card').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Inicializar contador cuando se carga la página
+    document.addEventListener('DOMContentLoaded', function() {
+        startCountdown();
+    });
+
+    // Si hay mensajes, mostrar automáticamente el formulario
+    {% if messages %}
+        document.addEventListener('DOMContentLoaded', function() {
+            showRegistrationForm();
+            
+            // Si es un mensaje de éxito, iniciar contador y ocultar el formulario después de más tiempo
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    let timeLeft = 15; // 15 segundos
+                    const countdownElement = document.getElementById('countdown');
+                    const progressBar = document.getElementById('progress-bar');
+                    
+                    // Actualizar contador cada segundo
+                    const countdownInterval = setInterval(function() {
+                        timeLeft--;
+                        if (countdownElement) {
+                            countdownElement.textContent = timeLeft;
+                        }
+                        if (progressBar) {
+                            const progressPercentage = (timeLeft / 15) * 100;
+                            progressBar.style.width = progressPercentage + '%';
+                        }
+                        
+                        if (timeLeft <= 0) {
+                            clearInterval(countdownInterval);
+                        }
+                    }, 1000);
+                    
+                    // Ocultar formulario después de 15 segundos
+                    setTimeout(function() {
+                        const formSection = document.getElementById('registro-empresa');
+                        formSection.style.display = 'none';
+                        
+                        // Scroll suave hacia el inicio
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                    }, 15000); // 15 segundos para que el usuario pueda leer completamente el mensaje
+                {% endif %}
+            {% endfor %}
+        });
+    {% endif %}
+</script>
+{% endblock %}

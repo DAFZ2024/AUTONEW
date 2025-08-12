@@ -1,0 +1,1572 @@
+{% extends 'base/base_crud.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header mejorado -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl shadow-lg">
+                        <i class="fas fa-concierge-bell text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                            Gestión de Servicios
+                        </h1>
+                        <p class="text-gray-600 mt-1">Administra todos los servicios del sistema de manera eficiente</p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="{% url 'crear_servicio' %}" 
+                       class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-2xl shadow-lg hover:from-green-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-plus mr-2"></i>
+                        Nuevo Servicio
+                    </a>
+                    <a href="{% url 'gestionar_asignaciones_servicios' %}" 
+                       class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-2xl shadow-lg hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-sitemap mr-2"></i>
+                        Gestionar Asignaciones
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensajes de estado -->
+        {% if messages %}
+            <div class="mb-8 space-y-3">
+                {% for message in messages %}
+                    <div class="p-4 rounded-2xl shadow-lg backdrop-blur-xl border {% if message.tags == 'success' %}bg-green-50/80 border-green-200 text-green-800{% elif message.tags == 'error' %}bg-red-50/80 border-red-200 text-red-800{% elif message.tags == 'warning' %}bg-yellow-50/80 border-yellow-200 text-yellow-800{% else %}bg-blue-50/80 border-blue-200 text-blue-800{% endif %}">
+                        <div class="flex items-center">
+                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-3 text-lg"></i>
+                            <span class="font-medium">{{ message }}</span>
+                            <button type="button" class="ml-auto text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.style.display='none'">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+            
+</head>
+
+<body class="bg-white min-h-screen">
+    <!-- Elementos decorativos de fondo -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-10 left-4 sm:top-20 sm:left-20 w-48 h-48 sm:w-96 sm:h-96 bg-gradient-to-br from-blue-200/30 to-slate-200/30 rounded-full blur-3xl opacity-60"></div>
+        <div class="absolute bottom-10 right-4 sm:bottom-20 sm:right-20 w-40 h-40 sm:w-80 sm:h-80 bg-gradient-to-br from-slate-200/30 to-gray-200/30 rounded-full blur-3xl opacity-60"></div>
+    </div>
+
+    <!-- Contenido principal -->
+    <main class="relative z-10 pt-4 sm:pt-8">
+        <div class="max-w-full xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Mensajes de estado -->
+            {% if messages %}
+                <div class="mb-6 space-y-3">
+                    {% for message in messages %}
+                        <div class="p-4 rounded-2xl shadow-lg animate-slideInDown {% if message.tags == 'success' %}bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 text-green-800{% elif message.tags == 'error' %}bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 text-red-800{% elif message.tags == 'warning' %}bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 text-yellow-800{% else %}bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-blue-800{% endif %}">
+                            <div class="flex items-center">
+                                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-3 text-lg"></i>
+                                <span class="font-medium">{{ message }}</span>
+                                <button type="button" class="ml-auto text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.style.display='none'">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+
+        <!-- Estadísticas rápidas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Servicios</p>
+                        <p class="text-3xl font-bold text-blue-600">{{ servicios|length }}</p>
+                    </div>
+                    <div class="p-3 bg-blue-100 rounded-xl">
+                        <i class="fas fa-concierge-bell text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Empresas</p>
+                        <p class="text-3xl font-bold text-emerald-600">{{ empresas|length|default:0 }}</p>
+                    </div>
+                    <div class="p-3 bg-emerald-100 rounded-xl">
+                        <i class="fas fa-building text-emerald-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Asignaciones</p>
+                        <p class="text-3xl font-bold text-purple-600">{{ total_asignaciones|default:0 }}</p>
+                    </div>
+                    <div class="p-3 bg-purple-100 rounded-xl">
+                        <i class="fas fa-link text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Pendientes</p>
+                        <p class="text-3xl font-bold text-indigo-600">{{ total_solicitudes_pendientes|default:0 }}</p>
+                    </div>
+                    <div class="p-3 bg-indigo-100 rounded-xl">
+                        <i class="fas fa-clock text-indigo-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <!-- Sección de Gestión de Solicitudes -->
+            {% if solicitudes_servicios %}
+            <div class="bg-white rounded-2xl p-4 sm:p-8 shadow-lg border border-gray-200 mb-6 sm:mb-8 animate-fadeInUp" style="animation-delay: 0.3s;">
+                <div class="text-center mb-6 sm:mb-8">
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-800 mb-2">
+                        <i class="fas fa-clipboard-list mr-2 text-orange-600"></i>
+                        Solicitudes de Servicios Pendientes
+                    </h3>
+                    <div class="w-16 sm:w-20 h-1 bg-gradient-to-r from-orange-600 to-orange-500 rounded-full mx-auto mb-4"></div>
+                    <p class="text-gray-600 text-sm">
+                        Tienes <span class="font-semibold text-orange-600">{{ total_solicitudes_pendientes }}</span> solicitudes pendientes de revisión
+                    </p>
+                </div>
+
+                <div class="grid gap-4">
+                    {% for solicitud in solicitudes_servicios %}
+                    <div class="bg-gray-50 rounded-xl p-4 sm:p-6 border-l-4 border-orange-400 hover:shadow-md transition-all duration-300">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-building text-orange-600 text-sm"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-slate-800 text-sm sm:text-base">{{ solicitud.empresa.nombre_empresa }}</h4>
+                                    <span class="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full font-medium">
+                                        {{ solicitud.get_estado_display }}
+                                    </span>
+                                </div>
+                                <div class="pl-11">
+                                    <p class="text-gray-700 font-medium text-sm">
+                                        <i class="fas fa-concierge-bell mr-2 text-blue-600"></i>
+                                        Servicio solicitado: <span class="text-blue-600">{{ solicitud.servicio_solicitado.nombre_servicio }}</span>
+                                    </p>
+                                    <p class="text-gray-600 text-sm mt-1">
+                                        <i class="fas fa-calendar-alt mr-2"></i>
+                                        Fecha de solicitud: {{ solicitud.fecha_solicitud|date:"d/m/Y H:i" }}
+                                    </p>
+                                    <p class="text-gray-600 text-sm mt-1">
+                                        <i class="fas fa-phone mr-2 text-green-600"></i>
+                                        Teléfono de contacto: <span class="font-medium text-green-700">{{ solicitud.telefono_contacto }}</span>
+                                    </p>
+                                    {% if solicitud.usuario_responsable %}
+                                    <p class="text-gray-600 text-sm mt-1">
+                                        <i class="fas fa-user mr-2 text-purple-600"></i>
+                                        Responsable: <span class="font-medium text-purple-700">{{ solicitud.usuario_responsable }}</span>
+                                    </p>
+                                    {% endif %}
+                                    {% if solicitud.motivo_solicitud %}
+                                    <p class="text-gray-600 text-sm mt-2">
+                                        <i class="fas fa-comment mr-2"></i>
+                                        <strong>Motivo:</strong> {{ solicitud.motivo_solicitud }}
+                                    </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-2 sm:flex-col lg:flex-row">
+                                <form method="POST" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" name="aprobar_solicitud" value="{{ solicitud.id_solicitud }}" 
+                                            class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                                            onclick="return confirm('¿Estás seguro de que deseas aprobar esta solicitud?')">
+                                        <i class="fas fa-check mr-1"></i>
+                                        Aprobar
+                                    </button>
+                                </form>
+                                
+                                <form method="POST" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" name="rechazar_solicitud" value="{{ solicitud.id_solicitud }}" 
+                                            class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                                            onclick="return confirm('¿Estás seguro de que deseas rechazar esta solicitud?')">
+                                        <i class="fas fa-times mr-1"></i>
+                                        Rechazar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <div class="bg-blue-50 rounded-2xl p-4 sm:p-6 border border-blue-200 mb-6 sm:mb-8 animate-fadeInUp" style="animation-delay: 0.3s;">
+                <div class="text-center">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-clipboard-check text-blue-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-blue-800 mb-2">No hay solicitudes pendientes</h3>
+                    <p class="text-blue-600 text-sm">Todas las solicitudes de servicios han sido procesadas.</p>
+                </div>
+            </div>
+            {% endif %}
+
+        
+        <!-- Formulario de creación -->
+        <div id="formContainer" class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden mb-8" style="display: none;">
+            <div class="p-6 sm:p-8 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-900">Crear Nuevo Servicio</h2>
+                <p class="text-gray-600 mt-1">Completa la información del servicio</p>
+            </div>
+            
+            <div class="p-6 sm:p-8">
+                <form method="POST" class="space-y-6">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label for="nombre_servicio" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-concierge-bell mr-2 text-blue-600"></i>Nombre del Servicio
+                            </label>
+                            <input type="text" name="nombre_servicio" 
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" 
+                                   placeholder="Ej: Lavado Completo" required>
+                        </div>
+
+                        <div>
+                            <label for="precio" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-dollar-sign mr-2 text-blue-600"></i>Precio
+                            </label>
+                            <input type="text" name="precio" 
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" 
+                                   placeholder="Ej: $500" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="descripcion" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-align-left mr-2 text-blue-600"></i>Descripción
+                        </label>
+                        <input type="text" name="descripcion" 
+                               class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" 
+                               placeholder="Descripción del servicio" required>
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        <button type="submit" 
+                                class="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-cyan-700 transform hover:scale-105 transition-all duration-300">
+                            <i class="fas fa-save mr-2"></i>
+                            Crear Servicio
+                        </button>
+                        <button type="button" id="cancelFormButton"
+                                class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-300">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+            
+        <!-- Lista de servicios -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden">
+            <div class="p-6 sm:p-8 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-900">Servicios Disponibles</h2>
+                <p class="text-gray-600 mt-1">Total: {{ servicios|length }} servicio{{ servicios|length|pluralize:"s" }}</p>
+            </div>
+            {% if servicios %}
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50/80">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Servicio</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Empresas</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for servicio in servicios %}
+                                <tr class="hover:bg-gray-50/50 transition-colors duration-200">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="flex-shrink-0">
+                                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                                    {{ servicio.id_servicio }}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="text-lg font-semibold text-gray-900">{{ servicio.nombre_servicio }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-gray-700">{{ servicio.descripcion|truncatechars:80 }}</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-2xl font-bold text-gray-900">${{ servicio.precio }}</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                                            <i class="fas fa-building mr-1"></i>
+                                            {{ servicio.empresas_asociadas|length|default:0 }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center space-x-2">
+                                            <a href="{% url 'detalle_servicio' servicio.id_servicio %}" 
+                                               class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 transform hover:scale-105"
+                                               title="Ver detalle">
+                                                <i class="fas fa-eye text-sm"></i>
+                                            </a>
+                                            <a href="{% url 'editar_servicio' servicio.id_servicio %}" 
+                                               class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105"
+                                               title="Editar servicio">
+                                                <i class="fas fa-edit text-sm"></i>
+                                            </a>
+                                            <a href="{% url 'gestionar_asignaciones_servicios' %}" 
+                                               class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105"
+                                               title="Gestionar asignaciones">
+                                                <i class="fas fa-building text-sm"></i>
+                                            </a>
+                                            <a href="{% url 'eliminar_servicio' servicio.id_servicio %}" 
+                                               class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-red-500 to-rose-500 text-white rounded-lg hover:from-red-600 hover:to-rose-600 transition-all duration-300 transform hover:scale-105"
+                                               title="Eliminar servicio">
+                                                <i class="fas fa-trash text-sm"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-16">
+                    <div class="mx-auto h-24 w-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-concierge-bell text-gray-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No hay servicios registrados</h3>
+                    <p class="text-gray-600 mb-6">Comienza creando tu primer servicio para ofrecer a los clientes.</p>
+                    <button onclick="document.getElementById('toggleFormButton').click()" 
+                       class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-2xl shadow-lg hover:from-blue-700 hover:to-cyan-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-plus mr-2"></i>
+                        Crear Primer Servicio
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Vista de tarjetas para móviles -->
+                <div class="lg:hidden space-y-6 p-4">
+                    {% for servicio in servicios %}
+                        <div class="group bg-white rounded-3xl border-2 border-gray-100 shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:border-blue-200">
+                            <!-- Header de la tarjeta con gradiente mejorado -->
+                            <div class="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 px-6 py-5 relative overflow-hidden">
+                                <!-- Patrón decorativo -->
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+                                <div class="absolute bottom-0 left-0 w-20 h-20 bg-black/10 rounded-full translate-y-10 -translate-x-10"></div>
+                                
+                                <div class="relative z-10 flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border-2 border-white/30 shadow-lg">
+                                            <i class="fas fa-concierge-bell text-white text-xl"></i>
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <h3 class="text-white font-bold text-xl truncate">{{ servicio.nombre_servicio }}</h3>
+                                            <div class="flex items-center space-x-2 mt-1">
+                                                <span class="inline-flex items-center px-2 py-1 bg-white/20 text-white text-xs rounded-lg font-medium border border-white/30">
+                                                    <i class="fas fa-hashtag mr-1 text-xs"></i>
+                                                    {{ servicio.id_servicio }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        <span class="inline-flex items-center px-4 py-2 text-lg font-bold bg-gradient-to-r from-green-400 to-emerald-400 text-white rounded-2xl shadow-lg border-2 border-green-300/50">
+                                            <i class="fas fa-dollar-sign mr-1 text-sm"></i>
+                                            {{ servicio.precio }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contenido de la tarjeta mejorado -->
+                            <div class="p-6 space-y-5">
+                                <!-- Descripción del servicio -->
+                                <div class="bg-gradient-to-r from-slate-50 to-blue-50 rounded-2xl p-4 border border-slate-200 group-hover:border-blue-300 transition-colors duration-300">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0 mt-1">
+                                            <i class="fas fa-align-left text-blue-600 text-sm"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <p class="text-xs text-slate-500 uppercase tracking-wider font-bold">Descripción del Servicio</p>
+                                                <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+                                            </div>
+                                            <p class="text-sm text-slate-700 leading-relaxed font-medium">{{ servicio.descripcion }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Información adicional -->
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="bg-purple-50 rounded-xl p-3 border border-purple-200">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-6 h-6 bg-purple-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-building text-purple-600 text-xs"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-purple-600 font-semibold">Empresas</p>
+                                                <p class="text-sm font-bold text-purple-700">{{ servicio.empresas_asociadas|length }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-green-50 rounded-xl p-3 border border-green-200">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-6 h-6 bg-green-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-star text-green-600 text-xs"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-green-600 font-semibold">Estado</p>
+                                                <p class="text-sm font-bold text-green-700">Activo</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Botones de acción mejorados -->
+                                <div class="border-t border-gray-200 pt-5">
+                                    <div class="grid grid-cols-3 gap-3">
+                                        <!-- Botón Editar -->
+                                        <button onclick="openModal('edit-{{ servicio.id_servicio }}')"
+                                                class="group/btn relative overflow-hidden flex flex-col items-center justify-center px-4 py-4 bg-gradient-to-br from-amber-400 via-yellow-500 to-orange-500 text-white font-bold rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 border-2 border-yellow-400/50 hover:border-yellow-300">
+                                            <div class="absolute inset-0 bg-gradient-to-br from-yellow-300/30 to-orange-400/30 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                                            <div class="relative z-10">
+                                                <i class="fas fa-edit text-lg mb-1 group-hover/btn:animate-bounce"></i>
+                                                <span class="text-xs font-extrabold block">Editar</span>
+                                            </div>
+                                        </button>
+                                        
+                                        <!-- Botón Asignar -->
+                                        <button onclick="openModal('empresa-{{ servicio.id_servicio }}')"
+                                                class="group/btn relative overflow-hidden flex flex-col items-center justify-center px-4 py-4 bg-gradient-to-br from-purple-500 via-indigo-500 to-blue-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 border-2 border-purple-400/50 hover:border-purple-300">
+                                            <div class="absolute inset-0 bg-gradient-to-br from-purple-400/30 to-blue-400/30 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                                            <div class="relative z-10">
+                                                <i class="fas fa-building text-lg mb-1 group-hover/btn:animate-bounce"></i>
+                                                <span class="text-xs font-extrabold block">Asignar</span>
+                                            </div>
+                                        </button>
+                                        
+                                        <!-- Botón eliminar -->
+                                        <form method="POST" class="flex-1">
+                                            {% csrf_token %}
+                                            <button type="submit" 
+                                                    name="eliminar" 
+                                                    value="{{ servicio.id_servicio }}" 
+                                                    class="group/btn relative overflow-hidden w-full flex flex-col items-center justify-center px-4 py-4 bg-gradient-to-br from-red-500 via-rose-500 to-pink-500 text-white font-bold rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 border-2 border-red-400/50 hover:border-red-300"
+                                                    onclick="return confirm('¿Estás seguro de que quieres eliminar este servicio?')">
+                                                <div class="absolute inset-0 bg-gradient-to-br from-red-400/30 to-pink-400/30 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                                                <div class="relative z-10">
+                                                    <i class="fas fa-trash text-lg mb-1 group-hover/btn:animate-bounce"></i>
+                                                    <span class="text-xs font-extrabold block">Eliminar</span>
+                                                </div>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="text-center py-20">
+                            <div class="inline-block p-10 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-3xl mb-8 shadow-lg border-2 border-blue-100">
+                                <i class="fas fa-concierge-bell text-7xl text-blue-400 mb-6 animate-pulse"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold text-slate-800 mb-4">No hay servicios registrados</h3>
+                            <p class="text-slate-600 max-w-md mx-auto mb-8 text-lg">
+                                Comienza creando tu primer servicio para ofrecer a tus clientes
+                            </p>
+                            <button onclick="document.getElementById('toggleFormButton').click()" class="px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold rounded-2xl hover:shadow-2xl hover:-translate-y-1 transform transition-all duration-300 text-lg">
+                                <i class="fas fa-plus mr-2"></i>
+                                Crear Primer Servicio
+                            </button>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Modales siguen igual pero fuera del loop -->
+                {% for servicio in servicios %}
+                    <!-- Modal de Asignar Empresa Mejorado -->
+                    <div id="empresa-{{ servicio.id_servicio }}" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 hidden modal-overlay" onclick="closeModal('empresa-{{ servicio.id_servicio }}')">
+                        <div class="modal-content">
+                            <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-gray-200 transform transition-all duration-300 scale-95 opacity-0" onclick="event.stopPropagation()">
+                            <!-- Header del modal con gradiente -->
+                            <div class="bg-gradient-to-r from-purple-500 via-purple-600 to-indigo-600 px-6 py-4 relative overflow-hidden">
+                                <div class="absolute inset-0 bg-black opacity-10"></div>
+                                <div class="relative z-10 flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30">
+                                            <i class="fas fa-building text-white text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center space-x-2">
+                                                <h4 class="text-xl font-bold text-white">Asignar Empresas</h4>
+                                                <span class="inline-flex items-center px-3 py-1 text-xs font-medium bg-green-400/20 text-green-100 rounded-full border border-green-400/30 backdrop-blur-sm">
+                                                    <i class="fas fa-shield-check mr-1"></i>Solo verificadas
+                                                </span>
+                                            </div>
+                                            <p class="text-purple-100 text-sm opacity-90 mt-1">{{ servicio.nombre_servicio }}</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="closeModal('empresa-{{ servicio.id_servicio }}')" class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30 hover:bg-white/30 transition-all duration-200">
+                                        <i class="fas fa-times text-white"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Estadísticas rápidas -->
+                            <div class="px-6 py-4 bg-gradient-to-r from-gray-50 to-purple-50 border-b border-gray-200">
+                                <div class="grid grid-cols-3 gap-4">
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold text-purple-600" id="total-empresas-{{ servicio.id_servicio }}">
+                                            {% for empresa in empresas %}{% if empresa.verificada %}{% endif %}{% endfor %}{{ empresas|length }}
+                                        </div>
+                                        <div class="text-xs text-gray-600">Total Verificadas</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold text-green-600" id="asignadas-{{ servicio.id_servicio }}">
+                                            {{ servicio.empresas_asociadas|length }}
+                                        </div>
+                                        <div class="text-xs text-gray-600">Ya Asignadas</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold text-blue-600" id="seleccionadas-{{ servicio.id_servicio }}">0</div>
+                                        <div class="text-xs text-gray-600">Seleccionadas</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Contenido del modal -->
+                            <div class="p-6 max-h-[50vh] overflow-y-auto custom-scrollbar">
+                                <!-- Buscador -->
+                                <div class="mb-6">
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                            <i class="fas fa-search text-gray-400"></i>
+                                        </div>
+                                        <input type="text" 
+                                               id="buscar-empresa-{{ servicio.id_servicio }}"
+                                               placeholder="Buscar empresa..."
+                                               class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm"
+                                               onkeyup="filtrarEmpresas({{ servicio.id_servicio }}, this.value)">
+                                    </div>
+                                </div>
+
+                                <!-- Acciones rápidas -->
+                                <div class="mb-6 flex flex-wrap gap-2">
+                                    <button type="button" onclick="seleccionarTodas({{ servicio.id_servicio }})" class="px-3 py-2 bg-green-100 text-green-700 text-xs font-medium rounded-lg hover:bg-green-200 transition-colors duration-200">
+                                        <i class="fas fa-check-double mr-1"></i>Seleccionar Todas
+                                    </button>
+                                    <button type="button" onclick="deseleccionarTodas({{ servicio.id_servicio }})" class="px-3 py-2 bg-red-100 text-red-700 text-xs font-medium rounded-lg hover:bg-red-200 transition-colors duration-200">
+                                        <i class="fas fa-times mr-1"></i>Deseleccionar Todas
+                                    </button>
+                                    <button type="button" onclick="invertirSeleccion({{ servicio.id_servicio }})" class="px-3 py-2 bg-blue-100 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-200 transition-colors duration-200">
+                                        <i class="fas fa-exchange-alt mr-1"></i>Invertir Selección
+                                    </button>
+                                </div>
+
+                                <form method="POST" id="empresa-form-{{ servicio.id_servicio }}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="servicio_id" value="{{ servicio.id_servicio }}">
+                                    
+                                    <div class="space-y-3" id="lista-empresas-{{ servicio.id_servicio }}">
+                                        {% for empresa in empresas %}
+                                            {% if empresa.verificada %}
+                                                <div class="empresa-item bg-gradient-to-r from-white to-gray-50 rounded-2xl border-2 border-gray-200 hover:border-purple-300 transition-all duration-300 overflow-hidden" data-nombre="{{ empresa.nombre_empresa|lower }}">
+                                                    <label for="empresa-{{ servicio.id_servicio }}-{{ empresa.id_empresa }}" class="flex items-center p-4 cursor-pointer hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50">
+                                                        <!-- Checkbox personalizado -->
+                                                        <div class="relative">
+                                                            <input type="checkbox" 
+                                                                   name="empresas" 
+                                                                   value="{{ empresa.id_empresa }}"
+                                                                   {% if empresa.id_empresa in servicio.empresas_asociadas %}checked{% endif %}
+                                                                   id="empresa-{{ servicio.id_servicio }}-{{ empresa.id_empresa }}"
+                                                                   class="w-5 h-5 text-purple-600 bg-white border-2 border-gray-300 rounded-lg focus:ring-purple-500 focus:ring-2 transition-all duration-200 checkbox-empresa"
+                                                                   onchange="actualizarContadores({{ servicio.id_servicio }})">
+                                                            <div class="absolute inset-0 w-5 h-5 bg-purple-600 rounded-lg opacity-0 transition-opacity duration-200 checkbox-bg"></div>
+                                                            <i class="fas fa-check absolute inset-0 w-5 h-5 text-white text-xs flex items-center justify-center opacity-0 transition-opacity duration-200 checkbox-check"></i>
+                                                        </div>
+                                                        
+                                                        <!-- Información de la empresa -->
+                                                        <div class="flex-1 ml-4">
+                                                            <div class="flex items-center justify-between">
+                                                                <div>
+                                                                    <h5 class="font-semibold text-gray-900 text-sm">{{ empresa.nombre_empresa }}</h5>
+                                                                    <div class="flex items-center mt-1 space-x-3">
+                                                                        {% if empresa.direccion %}
+                                                                        <p class="text-xs text-gray-600 flex items-center">
+                                                                            <i class="fas fa-map-marker-alt mr-1 text-gray-400"></i>
+                                                                            {{ empresa.direccion|truncatechars:30 }}
+                                                                        </p>
+                                                                        {% endif %}
+                                                                        {% if empresa.telefono %}
+                                                                        <p class="text-xs text-gray-600 flex items-center">
+                                                                            <i class="fas fa-phone mr-1 text-gray-400"></i>
+                                                                            {{ empresa.telefono }}
+                                                                        </p>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <!-- Badges de estado -->
+                                                                <div class="flex items-center space-x-2">
+                                                                    <span class="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                                                                        <i class="fas fa-check-circle mr-1"></i>Verificada
+                                                                    </span>
+                                                                    {% if empresa.id_empresa in servicio.empresas_asociadas %}
+                                                                    <span class="inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                                                                        <i class="fas fa-link mr-1"></i>Asignada
+                                                                    </span>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            {% endif %}
+                                        {% empty %}
+                                            <div class="text-center py-8">
+                                                <i class="fas fa-building text-4xl text-gray-300 mb-3"></i>
+                                                <p class="text-gray-500">No hay empresas verificadas disponibles</p>
+                                            </div>
+                                        {% endfor %}
+                                        
+                                        <!-- Mensaje cuando no hay resultados de búsqueda -->
+                                        <div id="no-results-{{ servicio.id_servicio }}" class="text-center py-8 hidden">
+                                            <i class="fas fa-search text-4xl text-gray-300 mb-3"></i>
+                                            <p class="text-gray-500">No se encontraron empresas con ese nombre</p>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <!-- Footer del modal -->
+                            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between space-y-3 sm:space-y-0">
+                                <div class="text-sm text-gray-600">
+                                    <span id="resumen-{{ servicio.id_servicio }}">0 empresas seleccionadas</span>
+                                </div>
+                                <div class="flex space-x-3">
+                                    <button type="button" class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-300 text-sm flex items-center" 
+                                            onclick="closeModal('empresa-{{ servicio.id_servicio }}')">
+                                        <i class="fas fa-times mr-2"></i>Cancelar
+                                    </button>
+                                    <button type="submit" form="empresa-form-{{ servicio.id_servicio }}" name="asignar_empresa" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-purple-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-sm flex items-center">
+                                        <i class="fas fa-save mr-2"></i>Guardar Asignaciones
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                    <!-- Modal de Editar Servicio Mejorado -->
+                    <div id="edit-{{ servicio.id_servicio }}" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 hidden modal-overlay" onclick="closeModal('edit-{{ servicio.id_servicio }}')">
+                        <div class="modal-content">
+                            <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-hidden shadow-2xl border border-gray-200 transform transition-all duration-300 scale-95 opacity-0" onclick="event.stopPropagation()">
+                            <!-- Header del modal con gradiente -->
+                            <div class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-orange-500 px-6 py-4 relative overflow-hidden">
+                                <div class="absolute inset-0 bg-black opacity-10"></div>
+                                <div class="relative z-10 flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30">
+                                            <i class="fas fa-edit text-white text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-xl font-bold text-white">Editar Servicio</h4>
+                                            <p class="text-yellow-100 text-sm opacity-90">ID: #{{ servicio.id_servicio }}</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="closeModal('edit-{{ servicio.id_servicio }}')" class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30 hover:bg-white/30 transition-all duration-200">
+                                        <i class="fas fa-times text-white"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Contenido del modal -->
+                            <div class="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
+                                <form method="POST" class="space-y-5">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="id_servicio" value="{{ servicio.id_servicio }}">
+                                    
+                                    <!-- Campo Nombre del Servicio -->
+                                    <div class="group">
+                                        <label for="edit_nombre_servicio_{{ servicio.id_servicio }}" class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-yellow-600">
+                                            <i class="fas fa-concierge-bell mr-2 text-yellow-600"></i>Nombre del Servicio
+                                        </label>
+                                        <div class="relative">
+                                            <input type="text" 
+                                                   name="nombre_servicio" 
+                                                   id="edit_nombre_servicio_{{ servicio.id_servicio }}"
+                                                   value="{{ servicio.nombre_servicio }}"
+                                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm placeholder-gray-400" 
+                                                   placeholder="Ej: Lavado Premium"
+                                                   required>
+                                            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                                <i class="fas fa-check text-green-500 hidden" id="check-nombre-{{ servicio.id_servicio }}"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Campo Descripción -->
+                                    <div class="group">
+                                        <label for="edit_descripcion_{{ servicio.id_servicio }}" class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-yellow-600">
+                                            <i class="fas fa-align-left mr-2 text-yellow-600"></i>Descripción
+                                        </label>
+                                        <div class="relative">
+                                            <textarea name="descripcion" 
+                                                      id="edit_descripcion_{{ servicio.id_servicio }}"
+                                                      rows="4"
+                                                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm resize-none placeholder-gray-400" 
+                                                      placeholder="Describe detalladamente el servicio..."
+                                                      required>{{ servicio.descripcion }}</textarea>
+                                            <div class="absolute top-3 right-3">
+                                                <i class="fas fa-check text-green-500 hidden" id="check-descripcion-{{ servicio.id_servicio }}"></i>
+                                            </div>
+                                        </div>
+                                        <div class="mt-1 text-xs text-gray-500 flex justify-between">
+                                            <span>Mínimo 10 caracteres</span>
+                                            <span id="char-count-{{ servicio.id_servicio }}">{{ servicio.descripcion|length }}/500</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Campo Precio -->
+                                    <div class="group">
+                                        <label for="edit_precio_{{ servicio.id_servicio }}" class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-yellow-600">
+                                            <i class="fas fa-dollar-sign mr-2 text-yellow-600"></i>Precio
+                                        </label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <span class="text-gray-500 sm:text-sm">$</span>
+                                            </div>
+                                            <input type="number" 
+                                                   name="precio" 
+                                                   id="edit_precio_{{ servicio.id_servicio }}"
+                                                   value="{{ servicio.precio }}"
+                                                   class="w-full pl-8 pr-12 py-3 border-2 border-gray-200 rounded-xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm placeholder-gray-400" 
+                                                   placeholder="0.00"
+                                                   min="0"
+                                                   step="0.01"
+                                                   required>
+                                            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                                <i class="fas fa-check text-green-500 hidden" id="check-precio-{{ servicio.id_servicio }}"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Vista previa del servicio -->
+                                    <div class="bg-gradient-to-r from-gray-50 to-blue-50 rounded-2xl p-4 border border-gray-200">
+                                        <h5 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                            <i class="fas fa-eye mr-2 text-blue-600"></i>Vista Previa
+                                        </h5>
+                                        <div class="bg-white rounded-xl p-3 border border-gray-200">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <h6 class="font-medium text-gray-900" id="preview-nombre-{{ servicio.id_servicio }}">{{ servicio.nombre_servicio }}</h6>
+                                                <span class="text-green-600 font-bold" id="preview-precio-{{ servicio.id_servicio }}">${{ servicio.precio }}</span>
+                                            </div>
+                                            <p class="text-sm text-gray-600" id="preview-descripcion-{{ servicio.id_servicio }}">{{ servicio.descripcion }}</p>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <!-- Footer del modal con botones -->
+                            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-end space-y-2 sm:space-y-0 sm:space-x-3">
+                                <button type="button" class="w-full sm:w-auto px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-300 text-sm flex items-center justify-center" 
+                                        onclick="closeModal('edit-{{ servicio.id_servicio }}')">
+                                    <i class="fas fa-times mr-2"></i>Cancelar
+                                </button>
+                                <button type="submit" form="edit-form-{{ servicio.id_servicio }}" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-semibold rounded-xl hover:from-yellow-600 hover:to-yellow-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-sm flex items-center justify-center">
+                                    <i class="fas fa-save mr-2"></i>Guardar Cambios
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+    </main>
+</body>
+
+<script>
+// Toggle del formulario
+document.getElementById('toggleFormButton').onclick = function() {
+    var formContainer = document.getElementById('formContainer');
+    if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+        formContainer.style.display = 'block';
+        this.innerHTML = '<i class="fas fa-times mr-2"></i>Cancelar';
+        formContainer.scrollIntoView({ behavior: 'smooth' });
+    } else {
+        formContainer.style.display = 'none';
+        this.innerHTML = '<i class="fas fa-plus mr-2"></i>Crear Nuevo Servicio';
+    }
+};
+
+// Función para expandir/contraer contenido
+function toggleContent(element, fullText) {
+    if (fullText && fullText.length > 50) {
+        if (element.textContent.length > 50) {
+            element.textContent = fullText.substring(0, 50) + '...';
+        } else {
+            element.textContent = fullText;
+        }
+    }
+}
+
+// Funciones mejoradas para modales
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    const modalContent = modal.querySelector('.modal-content > div');
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    // Permitir scroll en el fondo - no bloquear overflow del body
+    
+    // Animar la aparición del modal
+    setTimeout(() => {
+        if (modalContent) {
+            modalContent.classList.remove('scale-95', 'opacity-0');
+            modalContent.classList.add('modal-show');
+        }
+    }, 10);
+    
+    // Si es un modal de edición, configurar vista previa
+    if (modalId.startsWith('edit-')) {
+        setupEditPreview(modalId);
+    }
+    
+    // Si es un modal de empresas, inicializar contadores
+    if (modalId.startsWith('empresa-')) {
+        const servicioId = modalId.split('-')[1];
+        actualizarContadores(servicioId);
+    }
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    const modalContent = modal.querySelector('.modal-content > div');
+    
+    // Animar la desaparición del modal
+    if (modalContent) {
+        modalContent.classList.remove('modal-show');
+        modalContent.classList.add('scale-95', 'opacity-0');
+    }
+    
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        // Restaurar scroll normal
+        document.body.style.overflow = 'auto';
+    }, 300);
+}
+
+// Configurar vista previa en tiempo real para modales de edición
+function setupEditPreview(modalId) {
+    const servicioId = modalId.split('-')[1];
+    const nombreInput = document.getElementById(`edit_nombre_servicio_${servicioId}`);
+    const descripcionInput = document.getElementById(`edit_descripcion_${servicioId}`);
+    const precioInput = document.getElementById(`edit_precio_${servicioId}`);
+    
+    const previewNombre = document.getElementById(`preview-nombre-${servicioId}`);
+    const previewDescripcion = document.getElementById(`preview-descripcion-${servicioId}`);
+    const previewPrecio = document.getElementById(`preview-precio-${servicioId}`);
+    
+    // Contador de caracteres
+    const charCount = document.getElementById(`char-count-${servicioId}`);
+    
+    // Validación en tiempo real
+    function validarCampo(input, checkIcon) {
+        const isValid = input.value.trim().length > 0;
+        const icon = document.getElementById(checkIcon);
+        
+        if (isValid) {
+            input.classList.remove('border-red-300', 'focus:border-red-500', 'focus:ring-red-100');
+            input.classList.add('border-green-300', 'focus:border-green-500', 'focus:ring-green-100');
+            if (icon) {
+                icon.classList.remove('hidden');
+                icon.classList.add('text-green-500');
+            }
+        } else {
+            input.classList.remove('border-green-300', 'focus:border-green-500', 'focus:ring-green-100');
+            input.classList.add('border-red-300', 'focus:border-red-500', 'focus:ring-red-100');
+            if (icon) {
+                icon.classList.add('hidden');
+            }
+        }
+    }
+    
+    // Actualizar vista previa de nombre
+    nombreInput?.addEventListener('input', function() {
+        if (previewNombre) {
+            previewNombre.textContent = this.value || 'Nombre del servicio';
+        }
+        validarCampo(this, `check-nombre-${servicioId}`);
+    });
+    
+    // Actualizar vista previa de descripción con contador
+    descripcionInput?.addEventListener('input', function() {
+        if (previewDescripcion) {
+            previewDescripcion.textContent = this.value || 'Descripción del servicio';
+        }
+        if (charCount) {
+            charCount.textContent = `${this.value.length}/500`;
+            if (this.value.length > 500) {
+                charCount.classList.add('text-red-500');
+            } else {
+                charCount.classList.remove('text-red-500');
+            }
+        }
+        validarCampo(this, `check-descripcion-${servicioId}`);
+    });
+    
+    // Actualizar vista previa de precio
+    precioInput?.addEventListener('input', function() {
+        if (previewPrecio) {
+            const valor = parseFloat(this.value) || 0;
+            previewPrecio.textContent = `$${valor.toFixed(2)}`;
+        }
+        validarCampo(this, `check-precio-${servicioId}`);
+    });
+}
+
+// Funciones para gestión de empresas en modales
+function actualizarContadores(servicioId) {
+    const checkboxes = document.querySelectorAll(`#empresa-form-${servicioId} .checkbox-empresa`);
+    const totalElement = document.getElementById(`seleccionadas-${servicioId}`);
+    const resumenElement = document.getElementById(`resumen-${servicioId}`);
+    
+    let seleccionadas = 0;
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            seleccionadas++;
+            checkbox.closest('.empresa-item').classList.add('seleccionada');
+        } else {
+            checkbox.closest('.empresa-item').classList.remove('seleccionada');
+        }
+    });
+    
+    if (totalElement) {
+        totalElement.textContent = seleccionadas;
+        totalElement.classList.add('counter-update');
+        setTimeout(() => totalElement.classList.remove('counter-update'), 300);
+    }
+    
+    if (resumenElement) {
+        resumenElement.textContent = `${seleccionadas} empresa${seleccionadas !== 1 ? 's' : ''} seleccionada${seleccionadas !== 1 ? 's' : ''}`;
+    }
+}
+
+function seleccionarTodas(servicioId) {
+    const checkboxes = document.querySelectorAll(`#empresa-form-${servicioId} .checkbox-empresa:not(:checked)`);
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = true;
+    });
+    actualizarContadores(servicioId);
+}
+
+function deseleccionarTodas(servicioId) {
+    const checkboxes = document.querySelectorAll(`#empresa-form-${servicioId} .checkbox-empresa:checked`);
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    actualizarContadores(servicioId);
+}
+
+function invertirSeleccion(servicioId) {
+    const checkboxes = document.querySelectorAll(`#empresa-form-${servicioId} .checkbox-empresa`);
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = !checkbox.checked;
+    });
+    actualizarContadores(servicioId);
+}
+
+function filtrarEmpresas(servicioId, query) {
+    const empresaItems = document.querySelectorAll(`#lista-empresas-${servicioId} .empresa-item`);
+    const noResults = document.getElementById(`no-results-${servicioId}`);
+    let visibleCount = 0;
+    
+    const searchTerm = query.toLowerCase().trim();
+    
+    empresaItems.forEach(item => {
+        const nombre = item.dataset.nombre;
+        if (nombre.includes(searchTerm)) {
+            item.style.display = 'block';
+            visibleCount++;
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    
+    if (visibleCount === 0 && searchTerm !== '') {
+        noResults.classList.remove('hidden');
+    } else {
+        noResults.classList.add('hidden');
+    }
+}
+
+// Función para toggle del menú móvil
+function toggleMobileMenu(servicioId) {
+    const menu = document.getElementById('mobile-menu-' + servicioId);
+    const allMenus = document.querySelectorAll('[id^="mobile-menu-"]');
+    
+    // Cerrar todos los otros menús
+    allMenus.forEach(m => {
+        if (m.id !== 'mobile-menu-' + servicioId) {
+            m.classList.add('hidden');
+        }
+    });
+    
+    // Toggle del menú actual
+    menu.classList.toggle('hidden');
+}
+
+// Cerrar menús móviles al hacer click fuera
+document.addEventListener('click', function(e) {
+    const isMenuButton = e.target.closest('[onclick*="toggleMobileMenu"]');
+    const isMenuContent = e.target.closest('[id^="mobile-menu-"]');
+    
+    if (!isMenuButton && !isMenuContent) {
+        const allMenus = document.querySelectorAll('[id^="mobile-menu-"]');
+        allMenus.forEach(menu => {
+            menu.classList.add('hidden');
+        });
+    }
+});
+
+// Cerrar modal con Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const openModals = document.querySelectorAll('.fixed.flex');
+        openModals.forEach(modal => {
+            const modalId = modal.id;
+            if (modalId) closeModal(modalId);
+        });
+        // No forzar el overflow aquí ya que closeModal se encarga
+    }
+});
+
+// Auto-cerrar alertas después de 5 segundos
+setTimeout(() => {
+    document.querySelectorAll('.animate-slideInDown').forEach(alert => {
+        alert.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+        alert.style.opacity = '0';
+        alert.style.transform = 'translateY(-20px)';
+        setTimeout(() => alert.remove(), 500);
+    });
+}, 5000);
+
+// Animación de entrada para elementos
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+// Observar elementos con animación
+document.querySelectorAll('.animate-fadeInUp').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+    observer.observe(el);
+});
+
+// Mejorar la experiencia táctil en móviles
+document.addEventListener('DOMContentLoaded', function() {
+    // Agregar clase touch-manipulation a elementos interactivos
+    const touchElements = document.querySelectorAll('button, .clickable, .checkbox-empresa');
+    touchElements.forEach(el => {
+        el.classList.add('touch-manipulation');
+    });
+    
+    // Configurar eventos para checkboxes de empresas
+    document.querySelectorAll('.checkbox-empresa').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const servicioId = this.id.split('-')[1];
+            actualizarContadores(servicioId);
+        });
+    });
+    
+    // Prevenir zoom en inputs en iOS
+    const inputs = document.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            if (window.innerWidth < 768) {
+                this.style.fontSize = '16px';
+            }
+        });
+    });
+});
+
+// Función de confirmación mejorada para eliminaciones
+function confirmarEliminacion(nombre) {
+    return confirm(`¿Estás seguro de que deseas eliminar el servicio "${nombre}"?\n\nEsta acción no se puede deshacer.`);
+}
+
+// ========================
+// NUEVAS FUNCIONALIDADES MEJORADAS
+// ========================
+
+// Control de vistas (Grid vs Lista)
+document.addEventListener('DOMContentLoaded', function() {
+    const vistaGridBtn = document.getElementById('vista-grid');
+    const vistaListaBtn = document.getElementById('vista-lista');
+    const gridView = document.getElementById('grid-view');
+    const listView = document.getElementById('list-view');
+
+    if (vistaGridBtn && vistaListaBtn && gridView && listView) {
+        // Evento para cambiar a vista grid
+        vistaGridBtn.addEventListener('click', function() {
+            // Actualizar botones
+            vistaGridBtn.classList.add('bg-blue-600', 'text-white');
+            vistaGridBtn.classList.remove('text-gray-600', 'hover:text-gray-800');
+            vistaListaBtn.classList.remove('bg-blue-600', 'text-white');
+            vistaListaBtn.classList.add('text-gray-600', 'hover:text-gray-800');
+            
+            // Mostrar/ocultar vistas
+            gridView.classList.remove('hidden');
+            listView.classList.add('hidden');
+            
+            // Guardar preferencia
+            localStorage.setItem('vistaPreferida', 'grid');
+        });
+
+        // Evento para cambiar a vista lista
+        vistaListaBtn.addEventListener('click', function() {
+            // Actualizar botones
+            vistaListaBtn.classList.add('bg-blue-600', 'text-white');
+            vistaListaBtn.classList.remove('text-gray-600', 'hover:text-gray-800');
+            vistaGridBtn.classList.remove('bg-blue-600', 'text-white');
+            vistaGridBtn.classList.add('text-gray-600', 'hover:text-gray-800');
+            
+            // Mostrar/ocultar vistas
+            listView.classList.remove('hidden');
+            gridView.classList.add('hidden');
+            
+            // Guardar preferencia
+            localStorage.setItem('vistaPreferida', 'lista');
+        });
+
+        // Cargar vista preferida del usuario
+        const vistaPreferida = localStorage.getItem('vistaPreferida');
+        if (vistaPreferida === 'lista') {
+            vistaListaBtn.click();
+        }
+    }
+});
+
+// Funcionalidad de filtros y ordenamiento
+document.addEventListener('DOMContentLoaded', function() {
+    const filtroPrecio = document.getElementById('filtro-precio');
+    const ordenarPor = document.getElementById('ordenar-por');
+    const contadorVisible = document.getElementById('servicios-visibles');
+
+    if (filtroPrecio) {
+        filtroPrecio.addEventListener('change', function() {
+            aplicarFiltros();
+        });
+    }
+
+    if (ordenarPor) {
+        ordenarPor.addEventListener('change', function() {
+            aplicarOrdenamiento();
+        });
+    }
+
+    function aplicarFiltros() {
+        const rangoPrecio = filtroPrecio.value;
+        const servicioCards = document.querySelectorAll('.servicio-card, .servicio-row');
+        let visibles = 0;
+
+        servicioCards.forEach(card => {
+            const precio = parseFloat(card.dataset.precio);
+            let mostrar = true;
+
+            if (rangoPrecio) {
+                if (rangoPrecio === '0-500' && (precio > 500)) mostrar = false;
+                if (rangoPrecio === '500-1000' && (precio <= 500 || precio > 1000)) mostrar = false;
+                if (rangoPrecio === '1000-2000' && (precio <= 1000 || precio > 2000)) mostrar = false;
+                if (rangoPrecio === '2000+' && precio <= 2000) mostrar = false;
+            }
+
+            if (mostrar) {
+                card.style.display = '';
+                card.classList.add('animate-fadeInUp');
+                visibles++;
+            } else {
+                card.style.display = 'none';
+                card.classList.remove('animate-fadeInUp');
+            }
+        });
+
+        // Actualizar contador
+        if (contadorVisible) {
+            contadorVisible.textContent = visibles;
+            contadorVisible.classList.add('counter-update');
+            setTimeout(() => contadorVisible.classList.remove('counter-update'), 300);
+        }
+
+        // Mostrar mensaje si no hay resultados
+        mostrarMensajeVacio(visibles === 0);
+    }
+
+    function aplicarOrdenamiento() {
+        const criterio = ordenarPor.value;
+        const gridContainer = document.querySelector('#grid-view .grid');
+        const tableBody = document.querySelector('#list-view tbody');
+        
+        if (gridContainer) {
+            const cards = Array.from(gridContainer.children).filter(child => 
+                child.classList.contains('servicio-card')
+            );
+            cards.sort((a, b) => compararServicios(a, b, criterio));
+            cards.forEach(card => gridContainer.appendChild(card));
+        }
+
+        if (tableBody) {
+            const rows = Array.from(tableBody.children).filter(child => 
+                child.classList.contains('servicio-row')
+            );
+            rows.sort((a, b) => compararServicios(a, b, criterio));
+            rows.forEach(row => tableBody.appendChild(row));
+        }
+    }
+
+    function compararServicios(a, b, criterio) {
+        const nombreA = a.dataset.nombre;
+        const nombreB = b.dataset.nombre;
+        const precioA = parseFloat(a.dataset.precio);
+        const precioB = parseFloat(b.dataset.precio);
+        const idA = parseInt(a.dataset.id);
+        const idB = parseInt(b.dataset.id);
+
+        switch (criterio) {
+            case 'nombre':
+                return nombreA.localeCompare(nombreB);
+            case 'precio-asc':
+                return precioA - precioB;
+            case 'precio-desc':
+                return precioB - precioA;
+            case 'id':
+                return idA - idB;
+            default:
+                return 0;
+        }
+    }
+
+    function mostrarMensajeVacio(mostrar) {
+        const mensajeVacioGrid = document.querySelector('#grid-view .col-span-full');
+        const mensajeVacioLista = document.querySelector('#list-view tbody tr[style*="display: none"]');
+        
+        // Esta función se puede expandir para mostrar mensajes personalizados de filtros vacíos
+    }
+});
+
+// Funcionalidad de menús de acción
+function toggleActionMenu(servicioId) {
+    const menu = document.getElementById(`action-menu-${servicioId}`);
+    const allMenus = document.querySelectorAll('[id^="action-menu-"]');
+    
+    // Cerrar todos los otros menús
+    allMenus.forEach(m => {
+        if (m.id !== `action-menu-${servicioId}`) {
+            m.classList.add('hidden');
+        }
+    });
+    
+    // Toggle del menú actual con animación
+    if (menu.classList.contains('hidden')) {
+        menu.classList.remove('hidden');
+        menu.style.opacity = '0';
+        menu.style.transform = 'translateY(10px)';
+        setTimeout(() => {
+            menu.style.transition = 'opacity 0.2s ease-out, transform 0.2s ease-out';
+            menu.style.opacity = '1';
+            menu.style.transform = 'translateY(0)';
+        }, 10);
+    } else {
+        menu.style.opacity = '0';
+        menu.style.transform = 'translateY(10px)';
+        setTimeout(() => menu.classList.add('hidden'), 200);
+    }
+}
+
+// Funciones adicionales para el menú de acciones
+function duplicarServicio(servicioId) {
+    // Aquí se puede implementar la lógica para duplicar un servicio
+    alert(`Funcionalidad para duplicar servicio #${servicioId} - Por implementar`);
+    closeAllActionMenus();
+}
+
+function exportarServicio(servicioId) {
+    // Aquí se puede implementar la lógica para exportar datos del servicio
+    alert(`Funcionalidad para exportar servicio #${servicioId} - Por implementar`);
+    closeAllActionMenus();
+}
+
+function closeAllActionMenus() {
+    const allMenus = document.querySelectorAll('[id^="action-menu-"]');
+    allMenus.forEach(menu => {
+        menu.classList.add('hidden');
+    });
+}
+
+// Cerrar menús al hacer click fuera
+document.addEventListener('click', function(e) {
+    const isMenuButton = e.target.closest('[onclick*="toggleActionMenu"]');
+    const isMenuContent = e.target.closest('[id^="action-menu-"]');
+    
+    if (!isMenuButton && !isMenuContent) {
+        closeAllActionMenus();
+    }
+});
+
+// Mejorar animaciones y transiciones
+document.addEventListener('DOMContentLoaded', function() {
+    // Animar contadores al cargar
+    const contadores = document.querySelectorAll('[id*="contador"], [id*="servicios-visibles"]');
+    contadores.forEach(contador => {
+        const valor = parseInt(contador.textContent);
+        contador.textContent = '0';
+        
+        let actual = 0;
+        const incremento = Math.ceil(valor / 30);
+        const intervalo = setInterval(() => {
+            actual += incremento;
+            if (actual >= valor) {
+                contador.textContent = valor;
+                clearInterval(intervalo);
+            } else {
+                contador.textContent = actual;
+            }
+        }, 50);
+    });
+
+    // Agregar efectos de hover mejorados a las tarjetas
+    const servicioCards = document.querySelectorAll('.servicio-card');
+    servicioCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(-4px)';
+        });
+    });
+
+    // Precargar imágenes y optimizar rendimiento
+    const lazyElements = document.querySelectorAll('[data-lazy]');
+    if ('IntersectionObserver' in window) {
+        const lazyObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const element = entry.target;
+                    element.src = element.dataset.lazy;
+                    element.classList.remove('opacity-0');
+                    lazyObserver.unobserve(element);
+                }
+            });
+        });
+        
+        lazyElements.forEach(element => lazyObserver.observe(element));
+    }
+
+    // Mejorar accesibilidad con navegación por teclado
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Tab') {
+            document.body.classList.add('keyboard-navigation');
+        }
+    });
+    
+    </div>
+</div>
+
+<!-- Modales de edición y asignación de empresas -->
+{% for servicio in servicios %}
+    <!-- Modal de edición -->
+    <div id="edit-{{ servicio.id_servicio }}" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Editar Servicio</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="editar" value="{{ servicio.id_servicio }}">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+                        <input type="text" name="nombre_servicio" value="{{ servicio.nombre_servicio }}" 
+                               class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Precio</label>
+                        <input type="text" name="precio" value="{{ servicio.precio }}" 
+                               class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                        <input type="text" name="descripcion" value="{{ servicio.descripcion }}" 
+                               class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" required>
+                    </div>
+                </div>
+                <div class="flex gap-3 mt-6">
+                    <button type="submit" 
+                            class="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-cyan-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-save mr-2"></i>Guardar
+                    </button>
+                    <button type="button" onclick="closeModal('edit-{{ servicio.id_servicio }}')" 
+                            class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-300">
+                        <i class="fas fa-times mr-2"></i>Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de asignación de empresas -->
+    <div id="assign-{{ servicio.id_servicio }}" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-6 max-w-lg w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Asignar Empresas - {{ servicio.nombre_servicio }}</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="asignar_empresas" value="{{ servicio.id_servicio }}">
+                <div class="space-y-3 max-h-60 overflow-y-auto">
+                    {% for empresa in empresas %}
+                        <label class="flex items-center p-3 rounded-xl border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" name="empresas_seleccionadas" value="{{ empresa.id_empresa }}" 
+                                   class="mr-3 text-blue-600 rounded focus:ring-blue-500"
+                                   {% if empresa in servicio.empresas_asociadas.all %}checked{% endif %}>
+                            <div class="flex-1">
+                                <div class="font-medium text-gray-900">{{ empresa.nombre_empresa }}</div>
+                                <div class="text-sm text-gray-500">{{ empresa.telefono_empresa }}</div>
+                            </div>
+                        </label>
+                    {% endfor %}
+                </div>
+                <div class="flex gap-3 mt-6">
+                    <button type="submit" 
+                            class="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:from-purple-700 hover:to-blue-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-link mr-2"></i>Asignar
+                    </button>
+                    <button type="button" onclick="closeModal('assign-{{ servicio.id_servicio }}')" 
+                            class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-300">
+                        <i class="fas fa-times mr-2"></i>Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endfor %}
+
+<!-- JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Manejo del formulario de creación
+    const toggleFormButton = document.getElementById('toggleFormButton');
+    const formContainer = document.getElementById('formContainer');
+    const cancelFormButton = document.getElementById('cancelFormButton');
+
+    if (toggleFormButton && formContainer) {
+        toggleFormButton.addEventListener('click', function() {
+            if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+                formContainer.style.display = 'block';
+                toggleFormButton.innerHTML = '<i class="fas fa-times mr-2"></i>Cancelar';
+                formContainer.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                formContainer.style.display = 'none';
+                toggleFormButton.innerHTML = '<i class="fas fa-plus mr-2"></i>Nuevo Servicio';
+            }
+        });
+    }
+
+    if (cancelFormButton) {
+        cancelFormButton.addEventListener('click', function() {
+            formContainer.style.display = 'none';
+            toggleFormButton.innerHTML = '<i class="fas fa-plus mr-2"></i>Nuevo Servicio';
+        });
+    }
+
+    // Búsqueda en tiempo real
+    const searchInput = document.querySelector('input[name="nombre_servicio"]');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const tableRows = document.querySelectorAll('tbody tr');
+
+            tableRows.forEach(row => {
+                const serviceName = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                const serviceDescription = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+
+                if (serviceName.includes(searchTerm) || serviceDescription.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    }
+});
+
+// Funciones para modales
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Cerrar modal al hacer clic fuera
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('bg-black')) {
+        const modals = document.querySelectorAll('.fixed.inset-0');
+        modals.forEach(modal => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        });
+        document.body.style.overflow = 'auto';
+    }
+});
+</script>
+{% endblock %}

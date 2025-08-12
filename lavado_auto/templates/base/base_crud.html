@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Autonew-lavado de autos</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
+    <script  type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    {% load static %}
+    <!-- Estilo de plantilla -->
+    <link href="{% static "estilos/estilos.css" %}" rel="stylesheet" type="text/css" >
+</head>
+<body>
+    <style>
+        /* Estilos personalizados y ajustes para Tailwind */
+        body {
+            padding-top: 75px; /* Ajustado para el nuevo navbar */
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* Asegurar que los enlaces funcionen correctamente */
+        a {
+            text-decoration: none;
+        }
+        
+        /* Transiciones suaves globales */
+        * {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 300ms;
+        }
+        
+        /* Efectos de glassmorphism mejorados */
+        .navbar-glass {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Estilos para imagen de perfil - evitar aplastamiento */
+        .profile-image {
+            object-fit: cover;
+            aspect-ratio: 1 / 1;
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+        
+        /* Estilos específicos para imagen de perfil en navbar */
+        .profile-image-navbar {
+            width: 2.5rem !important; /* 40px - w-10 */
+            height: 2.5rem !important; /* 40px - h-10 */
+        }
+        
+        /* Estilos específicos para imagen de perfil en dropdown */
+        .profile-image-dropdown {
+            width: 3.5rem !important; /* 56px - w-14 */
+            height: 3.5rem !important; /* 56px - h-14 */
+        }
+        
+        /* Media queries para ajustar tamaños en móvil */
+        @media (max-width: 768px) {
+            .profile-image-navbar {
+                width: 2rem !important; /* 32px - más pequeño en móvil */
+                height: 2rem !important; /* 32px */
+            }
+            
+            .profile-image-dropdown {
+                width: 3rem !important; /* 48px - más pequeño en móvil */
+                height: 3rem !important; /* 48px */
+            }
+        }
+        
+        /* Asegurar que las imágenes sean visibles en PC */
+        @media (min-width: 1024px) {
+            .profile-image {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+            /* Asegurar que el contenedor de perfil tenga suficiente ancho en PC */
+            .group.bg-white\/60 {
+                min-width: 80px;
+                max-width: 120px;
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+            }
+            .profile-image-navbar {
+                width: 4rem !important; /* 64px - más ancho en PC */
+                height: 2.5rem !important; /* Mantener alto original (40px) */
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+            .profile-image-dropdown {
+                display: block !important;
+            }
+        }
+        
+        /* Efecto de cristal para dropdown mejorado */
+        .glass-effect {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        /* Animaciones personalizadas */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        /* Aplicar animaciones */
+        .animate-slide-down {
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        /* Hover effects mejorados */
+        .nav-link-hover:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Responsive breakpoints personalizados */
+        @media (max-width: 1024px) {
+            body {
+                padding-top: 70px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding-top: 65px;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            body {
+                padding-top: 60px;
+            }
+        }
+        
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+    <!-- Navbar con Tailwind CSS -->
+    <nav class="bg-white/90 backdrop-blur-xl shadow-xl border-b border-gray-200/50 px-4 sm:px-6 lg:px-8 py-3 fixed top-0 left-0 right-0 z-50">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Logo y marca mejorados -->
+            <div class="flex items-center space-x-3">
+                <!-- Información de usuario y perfil mejorada -->
+                {% if request.user.is_authenticated %}
+                <div class="flex items-center space-x-0">
+                    <!-- Contenedor del perfil con efecto glassmorphism -->
+                    <div class="relative group bg-white/60 backdrop-blur-sm rounded-2xl p-2 border border-gray-200/50 hover:border-blue-300/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10">
+                        <!-- Imagen de perfil mejorada -->
+                        <div class="relative">
+                            {% if request.user.profile_picture %}
+                                <img src="{{ request.user.profile_picture.url }}" 
+                                     alt="Foto de Perfil de {{ request.user.nombre_completo|default:request.user.nombre_usuario }}" 
+                                     class="profile-image profile-image-navbar rounded-xl border-2 border-white shadow-md ring-2 ring-blue-100 group-hover:ring-blue-300 transition-all duration-300 cursor-pointer"
+                                     onclick="toggleProfileMenu()">
+                            {% else %}
+                                <div class="profile-image-navbar rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-cyan-500 border-2 border-white shadow-md ring-2 ring-blue-100 group-hover:ring-blue-300 transition-all duration-300 cursor-pointer flex items-center justify-center"
+                                     onclick="toggleProfileMenu()">
+                                    <i class="fas fa-user text-white text-sm group-hover:scale-110 transition-transform duration-300"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Indicador de estado online mejorado -->
+                            <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full shadow-sm ring-1 ring-green-200 animate-pulse"></div>
+                        </div>
+                        
+                        <!-- Información del usuario (visible en pantallas grandes) -->
+                        <div class="absolute left-full ml-3 hidden xl:flex flex-col justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto">
+                            <span class="text-sm font-semibold text-slate-700 whitespace-nowrap">{{ request.user.nombre_completo|default:request.user.nombre_usuario }}</span>
+                            <span class="text-xs text-blue-600 font-medium">Administrador</span>
+                        </div>
+                        
+                        <!-- Tooltip de información del usuario -->
+                        <div class="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs py-2 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-50 shadow-xl">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                                <span>{{ request.user.nombre_completo|default:request.user.nombre_usuario }} - Online</span>
+                            </div>
+                            <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-t-2 border-transparent border-t-gray-900"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dropdown Menu mejorado -->
+                    <div id="profileDropdown" class="hidden absolute left-0 top-full mt-3 w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/60 z-50 overflow-hidden ring-1 ring-gray-900/5">
+                        <!-- Header del dropdown -->
+                        <div class="p-5 bg-gradient-to-r from-blue-50 to-cyan-50 border-b border-gray-100">
+                            <div class="flex items-center space-x-4">
+                                {% if request.user.profile_picture %}
+                                    <img src="{{ request.user.profile_picture.url }}" 
+                                         alt="Perfil" 
+                                         class="profile-image profile-image-dropdown rounded-xl border-3 border-white shadow-lg ring-2 ring-blue-200">
+                                {% else %}
+                                    <div class="profile-image-dropdown rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-cyan-500 border-3 border-white shadow-lg ring-2 ring-blue-200 flex items-center justify-center">
+                                        <i class="fas fa-user text-white text-xl"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-bold text-gray-900 truncate text-lg">{{ request.user.nombre_completo|default:request.user.nombre_usuario }}</p>
+                                    <p class="text-sm text-blue-600 font-medium truncate">{{ request.user.correo|default:'admin@autonew.com' }}</p>
+                                    <div class="flex items-center mt-1">
+                                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"></div>
+                                        <span class="text-xs text-green-600 font-medium">En línea</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Opciones del menú -->
+                        <div class="py-2">
+                            <a href="{% url 'perfil_admin' %}" class="group flex items-center px-5 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-all duration-200">
+                                <div class="w-10 h-10 bg-blue-100 group-hover:bg-blue-200 rounded-xl flex items-center justify-center mr-4 transition-colors duration-200">
+                                    <i class="fas fa-user-edit text-blue-600 text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">Editar Perfil</div>
+                                    <div class="text-xs text-gray-500">Actualizar información personal</div>
+                                </div>
+                            </a>
+                            <a href="/configuracion" class="group flex items-center px-5 py-3 text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-all duration-200">
+                                <div class="w-10 h-10 bg-purple-100 group-hover:bg-purple-200 rounded-xl flex items-center justify-center mr-4 transition-colors duration-200">
+                                    <i class="fas fa-cogs text-purple-600 text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">Configuración</div>
+                                    <div class="text-xs text-gray-500">Preferencias del sistema</div>
+                                </div>
+                            </a>
+                            
+                            <!-- Separador -->
+                            <div class="border-t border-gray-100 my-2 mx-5"></div>
+                            
+                            <a href="{% url 'logout_view' %}" class="group flex items-center px-5 py-3 text-red-600 hover:bg-red-50 transition-all duration-200">
+                                <div class="w-10 h-10 bg-red-100 group-hover:bg-red-200 rounded-xl flex items-center justify-center mr-4 transition-colors duration-200">
+                                    <i class="fas fa-sign-out-alt text-red-600 text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">Cerrar Sesión</div>
+                                    <div class="text-xs text-red-400">Salir del panel de administración</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="flex flex-col ml-4">
+                    <span class="text-xl lg:text-2xl font-black tracking-tight bg-gradient-to-r from-slate-800 via-blue-700 to-blue-600 bg-clip-text text-transparent">
+                        AUTO<span class="text-blue-500">NEW</span>
+                    </span>
+                    <span class="text-xs font-semibold text-blue-600/70 tracking-wider uppercase hidden lg:block">Admin Dashboard</span>
+                </div>
+            </div>
+            
+            <!-- Botón hamburguesa para móvil mejorado -->
+            <button class="lg:hidden p-2 rounded-xl hover:bg-slate-100 active:bg-slate-200 transition-all duration-200 border border-slate-200 hover:border-slate-300" onclick="toggleMobileMenu()">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            
+            <!-- Menú de navegación mejorado -->
+            <div id="navbar-menu" class="hidden lg:flex items-center space-x-1">
+                <!-- Grupo Principal: Gestión Core -->
+                <div class="flex items-center bg-gray-50/80 rounded-2xl p-1.5 border border-gray-200/50 backdrop-blur-sm">
+                    <a href="/homecrud" class="group px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center space-x-2 {% if request.path == '/homecrud' %}bg-blue-600 text-white shadow-lg shadow-blue-600/25{% else %}text-gray-600 hover:text-blue-600 hover:bg-white/70{% endif %}">
+                        <i class="fas fa-home text-sm group-hover:scale-110 transition-transform duration-300"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="/usuarioscrud" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-blue-600 hover:bg-white/70 transition-all duration-300 flex items-center space-x-2">
+                        <i class="fas fa-users text-sm text-blue-500 group-hover:scale-110 transition-transform duration-300"></i>
+                        <span>Usuarios</span>
+                    </a>
+                    <a href="/citascrud" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-emerald-600 hover:bg-emerald-50/70 transition-all duration-300 flex items-center space-x-2">
+                        <i class="fas fa-calendar-alt text-sm text-emerald-500 group-hover:scale-110 transition-transform duration-300"></i>
+                        <span>Citas</span>
+                    </a>
+                </div>
+                
+                <!-- Grupo Servicios -->
+                <div class="flex items-center bg-gray-50/80 rounded-2xl p-1.5 border border-gray-200/50 backdrop-blur-sm">
+                    <a href="/servicioscrud" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-purple-600 hover:bg-purple-50/70 transition-all duration-300 flex items-center space-x-2">
+                        <i class="fas fa-cogs text-sm text-purple-500 group-hover:scale-110 transition-transform duration-300"></i>
+                        <span>Servicios</span>
+                    </a>
+                    <a href="/empresascrud" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50/70 transition-all duration-300 flex items-center space-x-2">
+                        <i class="fas fa-building text-sm text-indigo-500 group-hover:scale-110 transition-transform duration-300"></i>
+                        <span>Empresas</span>
+                    </a>
+                </div>
+                
+                <!-- Grupo Planes y Suscripciones -->
+                <div class="flex items-center bg-gray-50/80 rounded-2xl p-1.5 border border-gray-200/50 backdrop-blur-sm">
+                    <a href="/planescrud" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-cyan-600 hover:bg-cyan-50/70 transition-all duration-300 flex items-center space-x-2">
+                        <i class="fas fa-layer-group text-sm text-cyan-500 group-hover:scale-110 transition-transform duration-300"></i>
+                        <span>Planes</span>
+                    </a>
+                    <a href="/planes-empresariales-crud" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-violet-600 hover:bg-violet-50/70 transition-all duration-300 flex items-center space-x-2">
+                        <i class="fas fa-briefcase text-sm text-violet-500 group-hover:scale-110 transition-transform duration-300"></i>
+                        <span>Planes Empresariales</span>
+                    </a>
+                </div>
+                
+                <!-- Grupo Feedback y Gestión -->
+                <div class="flex items-center bg-gray-50/80 rounded-2xl p-1.5 border border-gray-200/50 backdrop-blur-sm">
+                    <a href="/quejascrud" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-orange-600 hover:bg-orange-50/70 transition-all duration-300 flex items-center space-x-2">
+                        <i class="fas fa-exclamation-triangle text-sm text-orange-500 group-hover:scale-110 transition-transform duration-300"></i>
+                        <span>Quejas</span>
+                    </a>
+                    <a href="/comentarioscrud" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-green-600 hover:bg-green-50/70 transition-all duration-300 flex items-center space-x-2">
+                        <i class="fas fa-comments text-sm text-green-500 group-hover:scale-110 transition-transform duration-300"></i>
+                        <span>Comentarios</span>
+                    </a>
+                </div>
+            </div>
+                
+                <!-- Separador elegante -->
+                <div class="w-px h-8 bg-gradient-to-b from-transparent via-gray-300 to-transparent mx-4"></div>
+                
+                <!-- Botón de acción rápida (si no está autenticado) -->
+                {% if not request.user.is_authenticated %}
+                <div class="flex items-center">
+                    <a href="{% url 'logout_view' %}" class="group px-6 py-3 rounded-2xl text-sm font-semibold text-white bg-gradient-to-r from-red-500 via-red-600 to-pink-600 hover:from-red-600 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 border border-red-400/30">
+                        <i class="fas fa-sign-out-alt text-sm group-hover:rotate-12 transition-transform duration-300"></i>
+                        <span>Cerrar Sesión</span>
+                        <div class="absolute inset-0 bg-white/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Menú móvil mejorado -->
+        <div id="mobile-menu" class="lg:hidden hidden mt-4 pb-4 border-t border-gray-200">
+            <div class="grid grid-cols-2 gap-2 sm:gap-3 mt-4">
+                <!-- Primera columna -->
+                <div class="space-y-2">
+                    <a href="/homecrud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-slate-100 hover:text-slate-900 transition-all duration-300 {% if request.path == '/homecrud' %}bg-slate-800 text-white{% endif %}">
+                        <i class="fas fa-home mr-3 text-sm"></i>
+                        <span class="text-sm">Home</span>
+                    </a>
+                    <a href="/usuarioscrud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-blue-50 hover:text-blue-600 transition-all duration-300">
+                        <i class="fas fa-users mr-3 text-sm text-blue-500"></i>
+                        <span class="text-sm">Usuarios</span>
+                    </a>
+                    <a href="/citascrud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-blue-50 hover:text-blue-600 transition-all duration-300">
+                        <i class="fas fa-calendar-alt mr-3 text-sm text-blue-500"></i>
+                        <span class="text-sm">Citas</span>
+                    </a>
+                    <a href="/quejascrud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-orange-50 hover:text-orange-600 transition-all duration-300">
+                        <i class="fas fa-exclamation-triangle mr-3 text-sm text-orange-500"></i>
+                        <span class="text-sm">Quejas</span>
+                    </a>
+                    <a href="/comentarioscrud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-green-50 hover:text-green-600 transition-all duration-300">
+                        <i class="fas fa-comments mr-3 text-sm text-green-500"></i>
+                        <span class="text-sm">Comentarios</span>
+                    </a>
+                </div>
+                
+                <!-- Segunda columna -->
+                <div class="space-y-2">
+                    <a href="/servicioscrud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-purple-50 hover:text-purple-600 transition-all duration-300">
+                        <i class="fas fa-cogs mr-3 text-sm text-purple-500"></i>
+                        <span class="text-sm">Servicios</span>
+                    </a>
+                    <a href="/empresascrud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-indigo-50 hover:text-indigo-600 transition-all duration-300">
+                        <i class="fas fa-building mr-3 text-sm text-indigo-500"></i>
+                        <span class="text-sm">Empresas</span>
+                    </a>
+                    <a href="/planescrud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-cyan-50 hover:text-cyan-600 transition-all duration-300">
+                        <i class="fas fa-layer-group mr-3 text-sm text-cyan-500"></i>
+                        <span class="text-sm">Planes</span>
+                    </a>
+                    <a href="/planes-empresariales-crud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-purple-50 hover:text-purple-600 transition-all duration-300">
+                        <i class="fas fa-building mr-3 text-sm text-purple-500"></i>
+                        <span class="text-sm">P. Empresariales</span>
+                    </a>
+                    <a href="/suscripciones-individuales-crud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-300">
+                        <i class="fas fa-user-check mr-3 text-sm text-emerald-500"></i>
+                        <span class="text-sm">Suscripciones</span>
+                    </a>
+                    <a href="/citascomcrud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-blue-50 hover:text-blue-600 transition-all duration-300">
+                        <i class="fas fa-check-circle mr-3 text-sm text-blue-500"></i>
+                        <span class="text-sm">Completadas</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Botón de cerrar sesión móvil -->
+            <div class="mt-4 pt-4 border-t border-gray-200">
+                <a href="{% url 'logout_view' %}" class="w-full flex items-center justify-center px-4 py-3 rounded-xl text-white font-medium bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 shadow-lg transition-all duration-300 space-x-2">
+                    <i class="fas fa-sign-out-alt text-sm"></i>
+                    <span>Cerrar Sesión</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    {% block content  %}
+    {% endblock  %}
+
+
+    <!-- Footer con Tailwind CSS -->
+    <footer class="bg-gradient-to-br from-slate-50 to-blue-50 border-t border-gray-200 mt-16">
+        <div class="max-w-7xl mx-auto px-6 py-12">
+            <!-- Contenido principal del footer -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <!-- Información de la empresa -->
+                <div class="text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start space-x-3 mb-4">
+                        <div class="relative">
+                            <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full blur-sm opacity-50"></div>
+                            <img src="/static/img/logo.png" alt="Logo" class="relative w-10 h-10 rounded-full border-2 border-white shadow-lg">
+                        </div>
+                        <div class="flex flex-col">
+                            <h3 class="text-2xl font-black bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
+                                AUTO<span class="text-blue-500">NEW</span>
+                            </h3>
+                            <span class="text-xs font-medium text-gray-500 tracking-widest uppercase">Premium Service</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 leading-relaxed">
+                        Sistema integral de gestión para lavado automotriz profesional con tecnología de vanguardia.
+                    </p>
+                </div>
+                
+                <!-- Enlaces rápidos -->
+                <div class="text-center">
+                    <h4 class="text-lg font-semibold text-slate-800 mb-4">Módulos</h4>
+                    <div class="space-y-2">
+                        <a href="/usuarioscrud" class="block text-gray-600 hover:text-blue-600 transition-colors duration-300">Usuarios</a>
+                        <a href="/citascrud" class="block text-gray-600 hover:text-blue-600 transition-colors duration-300">Citas</a>
+                        <a href="/servicioscrud" class="block text-gray-600 hover:text-blue-600 transition-colors duration-300">Servicios</a>
+                        <a href="/empresascrud" class="block text-gray-600 hover:text-blue-600 transition-colors duration-300">Empresas</a>
+                    </div>
+                </div>
+                
+                <!-- Información de contacto -->
+                <div class="text-center md:text-right">
+                    <h4 class="text-lg font-semibold text-slate-800 mb-4">Administración</h4>
+                    <div class="space-y-2">
+                        <p class="text-gray-600">Panel de Control</p>
+                        <p class="text-gray-600">Gestión Completa</p>
+                        <p class="text-gray-600">24/7 Disponible</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Línea divisoria -->
+            <div class="border-t border-gray-300 pt-8">
+                <div class="text-center">
+                    <p class="text-gray-600 text-lg">
+                        &copy; 2025 <a href="/homecrud" class="text-slate-800 font-bold hover:text-blue-600 transition-colors duration-300 underline decoration-blue-300 hover:decoration-blue-600">AUTONEW</a>, 
+                        Todos los derechos reservados. 
+                        <br class="md:hidden">
+                        Diseñado por <a href="https://portafolio-freelancer.vercel.app/" target="_blank" class="text-slate-800 font-bold hover:text-blue-600 transition-colors duration-300 underline decoration-blue-300 hover:decoration-blue-600">Andres Forero</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript para menú móvil y perfil -->
+    <script>
+        // Toggle del menú móvil mejorado
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const button = document.querySelector('button[onclick="toggleMobileMenu()"]');
+            
+            mobileMenu.classList.toggle('hidden');
+            
+            // Cambiar ícono del botón con animación
+            const svg = button.querySelector('svg');
+            if (mobileMenu.classList.contains('hidden')) {
+                svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>';
+                button.classList.remove('bg-slate-200');
+            } else {
+                svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
+                button.classList.add('bg-slate-200');
+            }
+        }
+        
+        // Toggle del menú de perfil
+        function toggleProfileMenu() {
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+        
+        // Cerrar menús al hacer click fuera
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const profileDropdown = document.getElementById('profileDropdown');
+            const mobileButton = document.querySelector('button[onclick="toggleMobileMenu()"]');
+            const profileButton = document.querySelector('[onclick="toggleProfileMenu()"]');
+            
+            // Cerrar menú móvil si se hace click fuera
+            if (!mobileButton?.contains(event.target) && !mobileMenu?.contains(event.target)) {
+                mobileMenu?.classList.add('hidden');
+                const svg = mobileButton?.querySelector('svg');
+                if (svg) {
+                    svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>';
+                    mobileButton.classList.remove('bg-slate-200');
+                }
+            }
+            
+            // Cerrar menú de perfil si se hace click fuera
+            if (!profileButton?.contains(event.target) && !profileDropdown?.contains(event.target)) {
+                profileDropdown?.classList.add('hidden');
+            }
+        });
+        
+        // Cerrar menús al cambiar tamaño de pantalla
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 1024) {
+                const mobileMenu = document.getElementById('mobile-menu');
+                const mobileButton = document.querySelector('button[onclick="toggleMobileMenu()"]');
+                
+                mobileMenu?.classList.add('hidden');
+                const svg = mobileButton?.querySelector('svg');
+                if (svg) {
+                    svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>';
+                    mobileButton?.classList.remove('bg-slate-200');
+                }
+            }
+        });
+        
+        // Animaciones adicionales para mejor UX
+        document.addEventListener('DOMContentLoaded', function() {
+            // Agregar efecto de aparición suave al navbar
+            const navbar = document.querySelector('nav');
+            navbar.style.transform = 'translateY(-100%)';
+            navbar.style.transition = 'transform 0.5s ease-out';
+            
+            setTimeout(() => {
+                navbar.style.transform = 'translateY(0)';
+            }, 100);
+            
+            // Efectos de hover mejorados para los enlaces de navegación
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

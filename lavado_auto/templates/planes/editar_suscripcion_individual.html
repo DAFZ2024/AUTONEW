@@ -1,0 +1,134 @@
+{% extends 'base/base_crud.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-amber-50 to-orange-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
+            <div class="flex items-center space-x-4">
+                <div class="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl shadow-lg">
+                    <i class="fas fa-edit text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+                        Editar Suscripción
+                    </h1>
+                    <p class="text-gray-600 mt-1">Modifica los detalles de la suscripción de {{ suscripcion.usuario.nombre_completo }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información actual de la suscripción -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden mb-8">
+            <div class="p-6 sm:p-8 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-900">Información Actual</h2>
+            </div>
+            <div class="p-6 sm:p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Usuario</h3>
+                        <p class="text-gray-600">{{ suscripcion.usuario.nombre_completo }}</p>
+                        <p class="text-sm text-gray-500">{{ suscripcion.usuario.correo }}</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Plan</h3>
+                        <p class="text-gray-600">{{ suscripcion.plan.nombre }}</p>
+                        <p class="text-sm text-gray-500">${{ suscripcion.plan.precio_mensual }}/mes</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Período</h3>
+                        <p class="text-gray-600">{{ suscripcion.fecha_inicio|date:"d/m/Y" }} - {{ suscripcion.fecha_fin|date:"d/m/Y" }}</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Servicios Utilizados</h3>
+                        <p class="text-gray-600">
+                            {{ suscripcion.servicios_utilizados_mes }}
+                            {% if suscripcion.plan.cantidad_servicios_mes > 0 %}
+                                de {{ suscripcion.plan.cantidad_servicios_mes }}
+                            {% else %}
+                                (ilimitados)
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de edición -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden">
+            <div class="p-6 sm:p-8 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-900">Editar Suscripción</h2>
+                <p class="text-gray-600 mt-1">Modifica los campos que desees actualizar</p>
+            </div>
+
+            <div class="p-6 sm:p-8">
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <!-- Estado -->
+                    <div>
+                        <label for="estado" class="block text-lg font-semibold text-gray-900 mb-3">
+                            <i class="fas fa-toggle-on mr-2 text-amber-500"></i>
+                            Estado de la Suscripción
+                        </label>
+                        <select name="estado" id="estado" required 
+                                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all duration-300">
+                            <option value="activa" {% if suscripcion.estado == 'activa' %}selected{% endif %}>Activa</option>
+                            <option value="pausada" {% if suscripcion.estado == 'pausada' %}selected{% endif %}>Pausada</option>
+                            <option value="cancelada" {% if suscripcion.estado == 'cancelada' %}selected{% endif %}>Cancelada</option>
+                            <option value="vencida" {% if suscripcion.estado == 'vencida' %}selected{% endif %}>Vencida</option>
+                        </select>
+                    </div>
+
+                    <!-- Fecha de finalización -->
+                    <div>
+                        <label for="fecha_fin" class="block text-lg font-semibold text-gray-900 mb-3">
+                            <i class="fas fa-calendar-alt mr-2 text-amber-500"></i>
+                            Fecha de Finalización
+                        </label>
+                        <input type="date" name="fecha_fin" id="fecha_fin" 
+                               value="{{ suscripcion.fecha_fin|date:'Y-m-d' }}"
+                               class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all duration-300">
+                        <p class="mt-2 text-sm text-gray-500">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Modifica esta fecha para extender o reducir el período de la suscripción
+                        </p>
+                    </div>
+
+                    <!-- Auto renovar -->
+                    <div>
+                        <label class="flex items-center space-x-3">
+                            <input type="checkbox" name="auto_renovar" 
+                                   {% if suscripcion.auto_renovar %}checked{% endif %}
+                                   class="w-5 h-5 text-amber-600 bg-gray-100 border-gray-300 rounded focus:ring-amber-500 focus:ring-2">
+                            <span class="text-lg font-semibold text-gray-900">
+                                <i class="fas fa-sync mr-2 text-amber-500"></i>
+                                Renovación Automática
+                            </span>
+                        </label>
+                        <p class="mt-2 text-sm text-gray-500 ml-8">
+                            Si está habilitada, la suscripción se renovará automáticamente al finalizar el período actual
+                        </p>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                        <button type="submit" 
+                                class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-semibold rounded-2xl shadow-lg hover:from-amber-700 hover:to-orange-700 transform hover:scale-105 transition-all duration-300">
+                            <i class="fas fa-save mr-2"></i>
+                            Guardar Cambios
+                        </button>
+                        <a href="{% url 'suscripciones_individuales_crud' %}" 
+                           class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white font-semibold rounded-2xl shadow-lg hover:from-gray-600 hover:to-gray-700 transform hover:scale-105 transition-all duration-300">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

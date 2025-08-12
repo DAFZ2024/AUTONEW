@@ -1,0 +1,1684 @@
+{% extends "base/base_crud.html" %}
+
+{% block content %}
+{% load custom_tags %}
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .animate-slideInDown {
+            animation: slideInDown 0.5s ease-out;
+        }
+
+        /* Estilos para los tabs de estado */
+        .tab-button {
+            text-decoration: none !important;
+            display: inline-block;
+            cursor: pointer;
+        }
+        
+        .tab-button:hover {
+            text-decoration: none !important;
+        }
+        
+        .no-underline {
+            text-decoration: none !important;
+        }
+
+        /* Colores suaves para estados de reservas */
+        .bg-yellow-25 {
+            background-color: #fefce8;
+        }
+        
+        .bg-yellow-50 {
+            background-color: #fef3c7;
+        }
+        
+        .bg-yellow-75 {
+            background-color: #fed7aa;
+        }
+        
+        .bg-green-25 {
+            background-color: #f0fdf4;
+        }
+        
+        .bg-green-50 {
+            background-color: #dcfce7;
+        }
+        
+        .bg-green-75 {
+            background-color: #bbf7d0;
+        }
+        
+        .bg-red-25 {
+            background-color: #fef2f2;
+        }
+        
+        .bg-red-50 {
+            background-color: #fecaca;
+        }
+        
+        .bg-red-75 {
+            background-color: #fca5a5;
+        }
+
+        /* Gradientes para hover */
+        .hover\:from-yellow-50:hover {
+            --tw-gradient-from: #fef3c7;
+        }
+        
+        .hover\:to-yellow-75:hover {
+            --tw-gradient-to: #fed7aa;
+        }
+        
+        .hover\:from-green-50:hover {
+            --tw-gradient-from: #dcfce7;
+        }
+        
+        .hover\:to-green-75:hover {
+            --tw-gradient-to: #bbf7d0;
+        }
+        
+        .hover\:from-red-50:hover {
+            --tw-gradient-from: #fecaca;
+        }
+        
+        .hover\:to-red-75:hover {
+            --tw-gradient-to: #fca5a5;
+        }
+    </style>
+</head>
+
+<body class="bg-white min-h-screen">
+    <!-- Elementos decorativos de fondo -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-200/30 to-slate-200/30 rounded-full blur-3xl opacity-60"></div>
+        <div class="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-slate-200/30 to-gray-200/30 rounded-full blur-3xl opacity-60"></div>
+    </div>
+
+    <!-- Contenido principal -->
+    <main class="relative z-10 pt-8">
+        <div class="max-w-[1800px] mx-auto px-6">
+            <!-- Mensajes de estado -->
+            {% if messages %}
+                <div class="mb-6 space-y-3">
+                    {% for message in messages %}
+                        <div class="p-4 rounded-2xl shadow-lg animate-slideInDown {% if message.tags == 'success' %}bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 text-green-800{% elif message.tags == 'error' %}bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 text-red-800{% elif message.tags == 'warning' %}bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 text-yellow-800{% else %}bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-blue-800{% endif %}">
+                            <div class="flex items-center">
+                                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-3 text-lg"></i>
+                                <span class="font-medium">{{ message }}</span>
+                                <button type="button" class="ml-auto text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.style.display='none'">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Header mejorado -->
+            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8 animate-fadeInUp">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl shadow-lg">
+                            <i class="fas fa-calendar-check text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                                Gestión de Citas
+                            </h1>
+                            <p class="text-gray-600 mt-1">Administra todas las citas del sistema</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <a href="{% url 'crear_cita_admin' %}" 
+                           class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-2xl shadow-lg hover:from-blue-700 hover:to-cyan-700 transform hover:scale-105 transition-all duration-300">
+                            <i class="fas fa-plus mr-2"></i>
+                            Nueva Cita
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas rápidas -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8 animate-fadeInUp" style="animation-delay: 0.2s;">
+                <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-calendar-check text-white"></i>
+                        </div>
+                        <span class="text-2xl font-bold text-blue-600">{{ todas_las_reservas|length }}</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-800">Total Citas</h3>
+                    <p class="text-gray-600 text-sm">Todas las citas</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-clock text-white"></i>
+                        </div>
+                        <span class="text-2xl font-bold text-yellow-600">
+                            {{ todas_las_reservas|filter_by_estado:"pendiente" }}
+                        </span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-800">Pendientes</h3>
+                    <p class="text-gray-600 text-sm">Por completar</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-check-circle text-white"></i>
+                        </div>
+                        <span class="text-2xl font-bold text-green-600">
+                            {{ todas_las_reservas|filter_by_estado:"completado" }}
+                        </span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-800">Completadas</h3>
+                    <p class="text-gray-600 text-sm">Finalizadas</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-ban text-white"></i>
+                        </div>
+                        <span class="text-2xl font-bold text-red-600">
+                            {{ todas_las_reservas|filter_by_estado:"cancelada" }}
+                        </span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-800">Canceladas</h3>
+                    <p class="text-gray-600 text-sm">Anuladas</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-building text-white"></i>
+                        </div>
+                        <span class="text-2xl font-bold text-purple-600">{{ empresas|length }}</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-800">Empresas</h3>
+                    <p class="text-gray-600 text-sm">Disponibles</p>
+                </div>
+            </div>
+
+            <!-- Tabs de Estado -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 mb-6 animate-fadeInUp" style="animation-delay: 0.3s;">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-tasks text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800">Estado de las Citas</h3>
+                </div>
+                
+                <!-- Tabs de estado -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <a href="{% url 'citascrud' %}" id="tab-all" class="tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 {% if not request.GET.estado %}bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} no-underline">
+                        <i class="fas fa-list mr-2"></i>Todas ({{ todas_las_reservas|length }})
+                    </a>
+                    <a href="{% url 'citascrud' %}?estado=no_completado" id="tab-pendiente" class="tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 {% if request.GET.estado == 'no_completado' %}bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} no-underline">
+                        <i class="fas fa-clock mr-2"></i>Pendientes ({{ todas_las_reservas|filter_by_estado:"pendiente" }})
+                    </a>
+                    <a href="{% url 'citascrud' %}?estado=completado" id="tab-completado" class="tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 {% if request.GET.estado == 'completado' %}bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} no-underline">
+                        <i class="fas fa-check-circle mr-2"></i>Completadas ({{ todas_las_reservas|filter_by_estado:"completado" }})
+                    </a>
+                    <a href="{% url 'citascrud' %}?estado=cancelada" id="tab-cancelada" class="tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 {% if request.GET.estado == 'cancelada' %}bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} no-underline">
+                        <i class="fas fa-ban mr-2"></i>Canceladas ({{ todas_las_reservas|filter_by_estado:"cancelada" }})
+                    </a>
+                </div>
+                
+                <!-- Leyenda de colores -->
+                <div class="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-3 mb-4 border border-gray-200">
+                    <div class="flex items-center space-x-1 text-xs">
+                        <i class="fas fa-palette text-gray-600 mr-2"></i>
+                        <span class="text-gray-700 font-semibold mr-3">Leyenda:</span>
+                        <div class="flex items-center space-x-1">
+                            <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                            <span class="text-gray-600">Pendiente</span>
+                        </div>
+                        <div class="flex items-center space-x-1 ml-4">
+                            <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+                            <span class="text-gray-600">Completado</span>
+                        </div>
+                        <div class="flex items-center space-x-1 ml-4">
+                            <div class="w-3 h-3 bg-red-400 rounded-full"></div>
+                            <span class="text-gray-600">Cancelado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de filtros avanzados -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 mb-6 animate-fadeInUp" style="animation-delay: 0.4s;">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-filter text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800">Filtros Avanzados</h3>
+                    <div class="ml-auto">
+                        <button id="clearFilters" class="px-4 py-2 bg-gradient-to-r from-gray-500 to-gray-600 text-white text-sm font-medium rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-300">
+                            <i class="fas fa-times mr-2"></i>Limpiar Filtros
+                        </button>
+                    </div>
+                </div>
+                
+                <form method="GET" class="space-y-6">
+                    <!-- Primera fila de filtros -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Filtro por Empresa -->
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-indigo-600">
+                                <i class="fas fa-building mr-2 text-indigo-600"></i>Empresa
+                            </label>
+                            <select name="empresa" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm">
+                                <option value="">Todas las empresas</option>
+                                {% for empresa in empresas %}
+                                    <option value="{{ empresa.id_empresa }}" {% if request.GET.empresa == empresa.id_empresa|stringformat:"s" %}selected{% endif %}>
+                                        {{ empresa.nombre_empresa }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Filtro por Servicio -->
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-indigo-600">
+                                <i class="fas fa-concierge-bell mr-2 text-indigo-600"></i>Servicio
+                            </label>
+                            <select name="servicio" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm">
+                                <option value="">Todos los servicios</option>
+                                {% for servicio in servicios %}
+                                    <option value="{{ servicio.id_servicio }}" {% if request.GET.servicio == servicio.id_servicio|stringformat:"s" %}selected{% endif %}>
+                                        {{ servicio.nombre_servicio }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Filtro por Estado -->
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-indigo-600">
+                                <i class="fas fa-tasks mr-2 text-indigo-600"></i>Estado
+                            </label>
+                            <select name="estado" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm">
+                                <option value="">Todos los estados</option>
+                                <option value="no_completado" {% if request.GET.estado == 'no_completado' %}selected{% endif %}>🟡 Pendiente</option>
+                                <option value="completado" {% if request.GET.estado == 'completado' %}selected{% endif %}>🟢 Completado</option>
+                                <option value="cancelada" {% if request.GET.estado == 'cancelada' %}selected{% endif %}>🔴 Cancelado</option>
+                            </select>
+                        </div>
+
+                        <!-- Filtro por Cliente -->
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-indigo-600">
+                                <i class="fas fa-user mr-2 text-indigo-600"></i>Cliente
+                            </label>
+                            <input type="text" 
+                                   name="cliente" 
+                                   value="{{ request.GET.cliente }}"
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm placeholder-gray-400" 
+                                   placeholder="Buscar por nombre de cliente">
+                        </div>
+                    </div>
+
+                    <!-- Segunda fila de filtros -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                        <!-- Filtro por Fecha Desde -->
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-green-600">
+                                <i class="fas fa-calendar-plus mr-2 text-green-600"></i>Fecha Desde
+                            </label>
+                            <input type="date" 
+                                   name="fecha_desde" 
+                                   value="{{ request.GET.fecha_desde }}"
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm">
+                        </div>
+
+                        <!-- Filtro por Fecha Hasta -->
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-green-600">
+                                <i class="fas fa-calendar-minus mr-2 text-green-600"></i>Fecha Hasta
+                            </label>
+                            <input type="date" 
+                                   name="fecha_hasta" 
+                                   value="{{ request.GET.fecha_hasta }}"
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm">
+                        </div>
+
+                        <!-- Filtro por Nombre de Usuario -->
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-purple-600">
+                                <i class="fas fa-at mr-2 text-purple-600"></i>Usuario
+                            </label>
+                            <input type="text" 
+                                   name="usuario" 
+                                   value="{{ request.GET.usuario }}"
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm placeholder-gray-400" 
+                                   placeholder="@nombre_usuario">
+                        </div>
+
+                        <!-- Filtro por ID de Cita -->
+                        <div class="group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-orange-600">
+                                <i class="fas fa-hashtag mr-2 text-orange-600"></i>ID Cita
+                            </label>
+                            <input type="number" 
+                                   name="id_cita" 
+                                   value="{{ request.GET.id_cita }}"
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm placeholder-gray-400" 
+                                   placeholder="ID de la cita">
+                        </div>
+
+                        <!-- Botón de búsqueda -->
+                        <div class="flex items-end">
+                            <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white font-semibold rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-sm flex items-center justify-center">
+                                <i class="fas fa-search mr-2"></i>Buscar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filtros rápidos predefinidos -->
+                    <div class="border-t border-gray-200 pt-4">
+                        <div class="flex items-center mb-3">
+                            <i class="fas fa-bolt text-yellow-500 mr-2"></i>
+                            <span class="text-sm font-semibold text-gray-700">Filtros Rápidos:</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <a href="{% url 'citascrud' %}" class="px-3 py-2 bg-gray-100 text-gray-800 text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center no-underline">
+                                <i class="fas fa-times mr-1"></i>Limpiar Filtros
+                            </a>
+                            <a href="{% url 'citascrud' %}?estado=no_completado" class="px-3 py-2 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-lg hover:bg-yellow-200 transition-colors duration-200 flex items-center no-underline">
+                                <i class="fas fa-clock mr-1"></i>Solo Pendientes
+                            </a>
+                            <a href="{% url 'citascrud' %}?estado=completado" class="px-3 py-2 bg-green-100 text-green-800 text-xs font-medium rounded-lg hover:bg-green-200 transition-colors duration-200 flex items-center no-underline">
+                                <i class="fas fa-check-circle mr-1"></i>Solo Completadas
+                            </a>
+                            <a href="{% url 'citascrud' %}?estado=cancelada" class="px-3 py-2 bg-red-100 text-red-800 text-xs font-medium rounded-lg hover:bg-red-200 transition-colors duration-200 flex items-center no-underline">
+                                <i class="fas fa-ban mr-1"></i>Solo Canceladas
+                            </a>
+                            <button type="button" onclick="applyQuickFilter('hoy')" class="px-3 py-2 bg-blue-100 text-blue-800 text-xs font-medium rounded-lg hover:bg-blue-200 transition-colors duration-200 flex items-center">
+                                <i class="fas fa-calendar-day mr-1"></i>Hoy
+                            </button>
+                            <button type="button" onclick="applyQuickFilter('semana')" class="px-3 py-2 bg-purple-100 text-purple-800 text-xs font-medium rounded-lg hover:bg-purple-200 transition-colors duration-200 flex items-center">
+                                <i class="fas fa-calendar-week mr-1"></i>Esta Semana
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Resumen de filtros activos -->
+                    {% if request.GET %}
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="text-sm font-semibold text-blue-800 flex items-center">
+                                    <i class="fas fa-info-circle mr-2"></i>Filtros Activos
+                                </h4>
+                                <span class="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full">{{ reservas|length }} resultado{{ reservas|length|pluralize }}</span>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                {% if request.GET.empresa %}
+                                    <span class="inline-flex items-center px-2 py-1 text-xs bg-indigo-100 text-indigo-800 rounded-full">
+                                        <i class="fas fa-building mr-1"></i>Empresa: {% for empresa in empresas %}{% if empresa.id_empresa|stringformat:"s" == request.GET.empresa %}{{ empresa.nombre_empresa }}{% endif %}{% endfor %}
+                                    </span>
+                                {% endif %}
+                                {% if request.GET.servicio %}
+                                    <span class="inline-flex items-center px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                                        <i class="fas fa-concierge-bell mr-1"></i>Servicio: {% for servicio in servicios %}{% if servicio.id_servicio|stringformat:"s" == request.GET.servicio %}{{ servicio.nombre_servicio }}{% endif %}{% endfor %}
+                                    </span>
+                                {% endif %}
+                                {% if request.GET.estado %}
+                                    <span class="inline-flex items-center px-2 py-1 text-xs {% if request.GET.estado == 'no_completado' %}bg-yellow-100 text-yellow-800{% elif request.GET.estado == 'completado' %}bg-green-100 text-green-800{% elif request.GET.estado == 'cancelada' %}bg-red-100 text-red-800{% endif %} rounded-full">
+                                        <i class="fas fa-tasks mr-1"></i>Estado: {% if request.GET.estado == 'no_completado' %}Pendiente{% elif request.GET.estado == 'completado' %}Completado{% elif request.GET.estado == 'cancelada' %}Cancelado{% endif %}
+                                    </span>
+                                {% endif %}
+                                {% if request.GET.cliente %}
+                                    <span class="inline-flex items-center px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full">
+                                        <i class="fas fa-user mr-1"></i>Cliente: {{ request.GET.cliente }}
+                                    </span>
+                                {% endif %}
+                                {% if request.GET.fecha_desde %}
+                                    <span class="inline-flex items-center px-2 py-1 text-xs bg-orange-100 text-orange-800 rounded-full">
+                                        <i class="fas fa-calendar-plus mr-1"></i>Desde: {{ request.GET.fecha_desde }}
+                                    </span>
+                                {% endif %}
+                                {% if request.GET.fecha_hasta %}
+                                    <span class="inline-flex items-center px-2 py-1 text-xs bg-orange-100 text-orange-800 rounded-full">
+                                        <i class="fas fa-calendar-minus mr-1"></i>Hasta: {{ request.GET.fecha_hasta }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </form>
+            </div>
+
+            <!-- Contenido principal -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden mb-8 animate-fadeInUp" style="animation-delay: 0.2s;">
+                <!-- Header de la sección -->
+                <div class="px-6 py-4 bg-gradient-to-r from-slate-50 to-blue-50 border-b border-gray-200">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-800 flex items-center">
+                                <i class="fas fa-list mr-3 text-blue-600"></i>
+                                {% if request.GET %}Lista de Citas Filtradas{% else %}Lista de Todas las Citas{% endif %}
+                            </h2>
+                            <p class="text-sm text-gray-600 mt-1">
+                                {% if request.GET %}
+                                    Mostrando {{ reservas|length }} de las citas encontradas con los filtros aplicados
+                                {% else %}
+                                    Mostrando {{ reservas|length }} cita{{ reservas|length|pluralize }} en total
+                                {% endif %}
+                            </p>
+                        </div>
+                        {% if request.GET %}
+                            <div class="mt-3 sm:mt-0 flex gap-2">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                                    <i class="fas fa-filter mr-1"></i>
+                                    Filtros Activos
+                                </span>
+                                <button onclick="clearAllFilters()" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200 hover:bg-red-200 transition-colors">
+                                    <i class="fas fa-times mr-1"></i>
+                                    Limpiar
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Vista de tabla para desktop -->
+                <div class="hidden lg:block overflow-x-auto">
+                    <table class="w-full min-w-[1600px]">
+                        <thead>
+                            <tr class="bg-gradient-to-r from-slate-100 to-blue-100">
+                                <th class="px-3 py-4 text-left text-sm font-semibold text-slate-800 uppercase tracking-wider w-16">
+                                    <i class="fas fa-hashtag mr-1"></i>ID
+                                </th>
+                                <th class="px-3 py-4 text-left text-sm font-semibold text-slate-800 uppercase tracking-wider w-48">
+                                    <i class="fas fa-building mr-1"></i>Empresa
+                                </th>
+                                <th class="px-3 py-4 text-left text-sm font-semibold text-slate-800 uppercase tracking-wider w-32">
+                                    <i class="fas fa-calendar mr-1"></i>Fecha
+                                </th>
+                                <th class="px-3 py-4 text-left text-sm font-semibold text-slate-800 uppercase tracking-wider w-24">
+                                    <i class="fas fa-clock mr-1"></i>Hora
+                                </th>
+                                <th class="px-3 py-4 text-left text-sm font-semibold text-slate-800 uppercase tracking-wider w-44">
+                                    <i class="fas fa-concierge-bell mr-1"></i>Servicios
+                                </th>
+                                <th class="px-3 py-4 text-left text-sm font-semibold text-slate-800 uppercase tracking-wider w-44">
+                                    <i class="fas fa-user mr-1"></i>Cliente
+                                </th>
+                                <th class="px-3 py-4 text-left text-sm font-semibold text-slate-800 uppercase tracking-wider w-28">
+                                    <i class="fas fa-at mr-1"></i>Usuario
+                                </th>
+                                <th class="px-3 py-4 text-left text-sm font-semibold text-slate-800 uppercase tracking-wider w-28">
+                                    <i class="fas fa-tasks mr-1"></i>Estado
+                                </th>
+                                <th class="px-3 py-4 text-left text-sm font-semibold text-slate-800 uppercase tracking-wider w-64">
+                                    <i class="fas fa-cogs mr-1"></i>Acciones
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for reserva in reservas %}
+                                <tr class="transition-all duration-200 group {% if reserva.estado == 'pendiente' %}bg-gradient-to-r from-yellow-25 to-yellow-50 hover:from-yellow-50 hover:to-yellow-75 border-l-4 border-yellow-300{% elif reserva.estado == 'completado' %}bg-gradient-to-r from-green-25 to-green-50 hover:from-green-50 hover:to-green-75 border-l-4 border-green-300{% elif reserva.estado == 'cancelada' %}bg-gradient-to-r from-red-25 to-red-50 hover:from-red-50 hover:to-red-75 border-l-4 border-red-300{% else %}hover:bg-gradient-to-r hover:from-blue-25 hover:to-slate-25{% endif %}">
+                                    <td class="px-3 py-4 text-sm font-bold text-slate-800">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-3 h-8 rounded-l-full {% if reserva.estado == 'pendiente' %}bg-yellow-400{% elif reserva.estado == 'completado' %}bg-green-400{% elif reserva.estado == 'cancelada' %}bg-red-400{% else %}bg-gray-400{% endif %}"></div>
+                                            <span class="inline-flex items-center justify-center w-8 h-8 {% if reserva.estado == 'pendiente' %}bg-yellow-100 text-yellow-800{% elif reserva.estado == 'completado' %}bg-green-100 text-green-800{% elif reserva.estado == 'cancelada' %}bg-red-100 text-red-800{% else %}bg-blue-100 text-blue-800{% endif %} rounded-full text-xs font-bold">
+                                                {{ reserva.id_reserva }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-4 text-sm text-slate-700">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-8 h-8 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-building text-purple-600 text-xs"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium text-gray-900 max-w-36 truncate" title="{{ reserva.empresa.nombre_empresa }}">
+                                                    {{ reserva.empresa.nombre_empresa }}
+                                                </p>
+                                                <p class="text-xs text-gray-500">{{ reserva.empresa.direccion|truncatechars:25 }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-4 text-sm text-slate-700">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-8 h-8 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-calendar text-green-600 text-xs"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium text-gray-900">{{ reserva.fecha|date:"d/m/Y" }}</p>
+                                                <p class="text-xs text-gray-500">{{ reserva.fecha|date:"l" }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-4 text-sm text-slate-700">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-8 h-8 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-clock text-orange-600 text-xs"></i>
+                                            </div>
+                                            <span class="font-medium text-gray-900">{{ reserva.hora|time:"H:i" }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-4 text-sm text-slate-700">
+                                        <div class="space-y-1">
+                                            {% for reserva_servicio in reserva.reservaservicio_set.all %}
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 border border-indigo-200" title="{{ reserva_servicio.servicio.nombre_servicio }} - ${{ reserva_servicio.servicio.precio }}">
+                                                    <i class="fas fa-concierge-bell mr-1"></i>
+                                                    {{ reserva_servicio.servicio.nombre_servicio|truncatechars:18 }}
+                                                </span>
+                                                {% if not forloop.last %}<br>{% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-4 text-sm text-slate-700">
+                                        <div class="flex items-center space-x-3">
+                                            {% if reserva.usuario.profile_picture %}
+                                                <img src="{{ reserva.usuario.profile_picture.url }}" alt="{{ reserva.usuario.nombre_completo }}" class="w-8 h-8 rounded-full object-cover border-2 border-gray-200">
+                                            {% else %}
+                                                <div class="w-8 h-8 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-user text-blue-600 text-xs"></i>
+                                                </div>
+                                            {% endif %}
+                                            <div>
+                                                <p class="font-medium text-gray-900 max-w-36 truncate" title="{{ reserva.usuario.nombre_completo }}">
+                                                    {{ reserva.usuario.nombre_completo }}
+                                                </p>
+                                                {% if reserva.usuario.telefono %}
+                                                    <p class="text-xs text-gray-500">{{ reserva.usuario.telefono }}</p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-4 text-sm text-slate-700">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-6 h-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center">
+                                                <i class="fas fa-at text-gray-600 text-xs"></i>
+                                            </div>
+                                            <span class="text-gray-900 font-medium text-xs" title="{{ reserva.usuario.nombre_usuario }}">
+                                                {{ reserva.usuario.nombre_usuario|truncatechars:12 }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-4">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border-2 transition-all duration-200 {% if reserva.estado == 'pendiente' %}bg-yellow-50 text-yellow-800 border-yellow-300 shadow-yellow-100{% elif reserva.estado == 'completado' %}bg-green-50 text-green-800 border-green-300 shadow-green-100{% else %}bg-red-50 text-red-800 border-red-300 shadow-red-100{% endif %} shadow-lg">
+                                            {% if reserva.estado == 'pendiente' %}
+                                                <i class="fas fa-clock mr-1"></i>Pendiente
+                                            {% elif reserva.estado == 'completado' %}
+                                                <i class="fas fa-check-circle mr-1"></i>Completado
+                                            {% else %}
+                                                <i class="fas fa-times-circle mr-1"></i>Cancelado
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td class="px-3 py-4">
+                                        <div class="flex items-center gap-2 min-w-[240px]">
+                                            {% if reserva.estado == 'pendiente' %}
+                                                <form method="POST" action="{% url 'cambiar_estado_reserva' reserva.id_reserva %}" class="flex-1">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-xs font-semibold rounded-lg text-white bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                                        <i class="fas fa-check mr-1"></i>Completar
+                                                    </button>
+                                                </form>
+                                            {% else %}
+                                                <div class="flex-1 px-4 py-2 text-xs text-center text-gray-500 bg-gray-100 rounded-lg border border-gray-200">
+                                                    <i class="fas fa-check-circle mr-1 text-green-600"></i>Finalizado
+                                                </div>
+                                            {% endif %}
+                                            
+                                            {% if reserva.estado == 'pendiente' %}
+                                                <button class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-xs font-semibold rounded-lg text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5" onclick="openEditModal({{ reserva.id_reserva }}, '{{ reserva.empresa.id_empresa }}', '{{ reserva.fecha|date:'Y-m-d' }}', '{{ reserva.hora|time:'H:i' }}')" title="Editar cita">
+                                                    <i class="fas fa-edit mr-1"></i>Editar
+                                                </button>
+                                            {% else %}
+                                                <div class="inline-flex items-center justify-center px-4 py-2 text-xs text-center text-gray-500 bg-gray-100 rounded-lg border border-gray-200">
+                                                    <i class="fas fa-lock mr-1"></i>No Editable
+                                                </div>
+                                            {% endif %}
+
+                                            {% if reserva.estado == 'pendiente' %}
+                                                <form method="POST" class="inline">
+                                                    {% csrf_token %}
+                                                    <button type="submit" name="eliminar" value="{{ reserva.id_reserva }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-xs font-semibold rounded-lg text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5" onclick="return confirm('¿Estás seguro de que quieres cancelar esta cita?');" title="Cancelar cita">
+                                                        <i class="fas fa-ban mr-1"></i>Cancelar
+                                                    </button>
+                                                </form>
+                                            {% elif reserva.estado == 'completado' %}
+                                                <form method="POST" class="inline">
+                                                    {% csrf_token %}
+                                                    <button type="submit" name="eliminar" value="{{ reserva.id_reserva }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-xs font-semibold rounded-lg text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5" onclick="return confirm('¿Estás seguro de que quieres eliminar esta cita completada?');" title="Eliminar cita completada">
+                                                        <i class="fas fa-trash-alt mr-1"></i>Eliminar
+                                                    </button>
+                                                </form>
+                                            {% else %}
+                                                <div class="inline-flex items-center justify-center px-4 py-2 text-xs text-center text-gray-500 bg-gray-100 rounded-lg border border-gray-200">
+                                                    <i class="fas fa-ban mr-1 text-red-600"></i>Cancelado
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Vista de tarjetas para móviles -->
+                <div class="lg:hidden space-y-4 p-4">
+                    {% for reserva in reservas %}
+                        <div class="rounded-2xl border shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 {% if reserva.estado == 'pendiente' %}bg-gradient-to-r from-yellow-25 to-yellow-50 border-yellow-200 shadow-yellow-100{% elif reserva.estado == 'completado' %}bg-gradient-to-r from-green-25 to-green-50 border-green-200 shadow-green-100{% elif reserva.estado == 'cancelada' %}bg-gradient-to-r from-red-25 to-red-50 border-red-200 shadow-red-100{% else %}bg-gradient-to-r from-white to-slate-50 border-gray-200{% endif %}">
+                            <!-- Header de la tarjeta -->
+                            <div class="bg-gradient-to-r {% if reserva.estado == 'pendiente' %}from-yellow-500 to-yellow-600{% elif reserva.estado == 'completado' %}from-green-500 to-green-600{% else %}from-red-500 to-red-600{% endif %} px-4 py-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-12 h-12 bg-white/20 backdrop-blur rounded-full flex items-center justify-center">
+                                            <i class="fas fa-calendar-check text-white text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-white font-bold text-lg">Cita #{{ reserva.id_reserva }}</h3>
+                                            <div class="flex items-center text-white/90 text-sm">
+                                                <i class="fas fa-calendar-day mr-1"></i>
+                                                <span>{{ reserva.fecha|date:"d/m/Y" }}</span>
+                                                <span class="mx-2">•</span>
+                                                <i class="fas fa-clock mr-1"></i>
+                                                <span>{{ reserva.hora|time:"H:i" }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold {% if reserva.estado == 'pendiente' %}bg-yellow-100 text-yellow-800 border border-yellow-300{% elif reserva.estado == 'completado' %}bg-green-100 text-green-800 border border-green-300{% else %}bg-red-100 text-red-800 border border-red-300{% endif %} shadow-lg">
+                                            {% if reserva.estado == 'pendiente' %}
+                                                <i class="fas fa-clock mr-1"></i>Pendiente
+                                            {% elif reserva.estado == 'completado' %}
+                                                <i class="fas fa-check-circle mr-1"></i>Completado
+                                            {% else %}
+                                                <i class="fas fa-times-circle mr-1"></i>Cancelado
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contenido de la tarjeta -->
+                            <div class="p-4 space-y-4">
+                                <!-- Grid de información principal -->
+                                <div class="grid grid-cols-1 gap-4">
+                                    <!-- Empresa -->
+                                    <div class="flex items-start space-x-3 p-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl border border-purple-200">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-building text-white text-sm"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs text-purple-600 uppercase tracking-wider font-bold mb-1">Empresa</p>
+                                            <p class="text-base font-bold text-gray-900 truncate">{{ reserva.empresa.nombre_empresa }}</p>
+                                            <p class="text-sm text-gray-600 truncate">{{ reserva.empresa.direccion }}</p>
+                                            {% if reserva.empresa.telefono %}
+                                                <p class="text-xs text-gray-500 mt-1">
+                                                    <i class="fas fa-phone mr-1"></i>{{ reserva.empresa.telefono }}
+                                                </p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <!-- Servicios -->
+                                    <div class="flex items-start space-x-3 p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-xl border border-green-200">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-concierge-bell text-white text-sm"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs text-green-600 uppercase tracking-wider font-bold mb-2">Servicios Solicitados</p>
+                                            <div class="space-y-2">
+                                                {% for reserva_servicio in reserva.reservaservicio_set.all %}
+                                                    <div class="flex items-center justify-between bg-white rounded-lg p-2 border border-green-200">
+                                                        <div class="flex items-center space-x-2">
+                                                            <i class="fas fa-star text-green-500"></i>
+                                                            <span class="text-sm font-medium text-gray-900">{{ reserva_servicio.servicio.nombre_servicio }}</span>
+                                                        </div>
+                                                        <span class="text-sm font-bold text-green-600">${{ reserva_servicio.servicio.precio }}</span>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Cliente -->
+                                    <div class="flex items-start space-x-3 p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl border border-blue-200">
+                                        <div class="flex-shrink-0">
+                                            {% if reserva.usuario.profile_picture %}
+                                                <img src="{{ reserva.usuario.profile_picture.url }}" alt="{{ reserva.usuario.nombre_completo }}" class="w-10 h-10 rounded-full object-cover border-2 border-blue-300">
+                                            {% else %}
+                                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                                                    <i class="fas fa-user text-white text-sm"></i>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs text-blue-600 uppercase tracking-wider font-bold mb-1">Cliente</p>
+                                            <p class="text-base font-bold text-gray-900">{{ reserva.usuario.nombre_completo }}</p>
+                                            <div class="flex items-center space-x-4 mt-1">
+                                                <p class="text-sm text-gray-600 flex items-center">
+                                                    <i class="fas fa-at mr-1"></i>{{ reserva.usuario.nombre_usuario }}
+                                                </p>
+                                                {% if reserva.usuario.telefono %}
+                                                    <p class="text-sm text-gray-600 flex items-center">
+                                                        <i class="fas fa-phone mr-1"></i>{{ reserva.usuario.telefono }}
+                                                    </p>
+                                                {% endif %}
+                                            </div>
+                                            {% if reserva.usuario.correo %}
+                                                <p class="text-xs text-gray-500 mt-1 truncate">
+                                                    <i class="fas fa-envelope mr-1"></i>{{ reserva.usuario.correo }}
+                                                </p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Acciones -->
+                                <div class="border-t border-gray-200 pt-4 mt-4">
+                                    <div class="space-y-3">
+                                        {% if reserva.estado == 'pendiente' %}
+                                            <form method="POST" action="{% url 'cambiar_estado_reserva' reserva.id_reserva %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-3 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                                    <i class="fas fa-check mr-2"></i>Marcar como Completado
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <div class="w-full px-4 py-3 text-sm font-bold text-center text-green-700 bg-green-100 rounded-xl border-2 border-green-300">
+                                                <i class="fas fa-check-circle mr-2"></i>Cita ya Finalizada
+                                            </div>
+                                        {% endif %}
+                                        
+                                        {% if reserva.estado == 'pendiente' %}
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <button class="inline-flex items-center justify-center px-4 py-3 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5" onclick="openEditModal({{ reserva.id_reserva }}, '{{ reserva.empresa.id_empresa }}', '{{ reserva.fecha|date:'Y-m-d' }}', '{{ reserva.hora|time:'H:i' }}')">
+                                                    <i class="fas fa-edit mr-2"></i>Editar
+                                                </button>
+                                                
+                                                <form method="POST" class="flex-1">
+                                                    {% csrf_token %}
+                                                    <button type="submit" name="eliminar" value="{{ reserva.id_reserva }}" class="w-full inline-flex items-center justify-center px-4 py-3 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5" onclick="return confirm('¿Estás seguro de que quieres cancelar esta cita?');">
+                                                        <i class="fas fa-ban mr-2"></i>Cancelar
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        {% elif reserva.estado == 'completado' %}
+                                            <form method="POST" class="w-full">
+                                                {% csrf_token %}
+                                                <button type="submit" name="eliminar" value="{{ reserva.id_reserva }}" class="w-full inline-flex items-center justify-center px-4 py-3 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5" onclick="return confirm('¿Estás seguro de que quieres eliminar esta cita completada?');">
+                                                    <i class="fas fa-trash-alt mr-2"></i>Eliminar Cita Completada
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <div class="w-full px-4 py-3 text-sm font-bold text-center text-gray-700 bg-gray-100 rounded-xl border-2 border-gray-300">
+                                                <i class="fas fa-ban mr-2 text-red-600"></i>Cita Cancelada - No Editable
+                                            </div>
+                                        {% endif %}
+                                        
+                                        <!-- Información adicional -->
+                                        <div class="flex items-center justify-between text-xs text-gray-500 mt-3 pt-3 border-t border-gray-100">
+                                            <span>
+                                                <i class="fas fa-clock mr-1"></i>
+                                                Creado: {{ reserva.fecha|date:"d/m/Y" }}
+                                            </span>
+                                            <span>
+                                                <i class="fas fa-hashtag mr-1"></i>
+                                                ID: {{ reserva.id_reserva }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if not reservas %}
+                    <!-- Estado vacío mejorado -->
+                    <div class="text-center py-20 px-6">
+                        <div class="max-w-md mx-auto">
+                            <div class="inline-block p-8 bg-gradient-to-br from-blue-50 via-slate-50 to-purple-50 rounded-3xl mb-8 shadow-lg border border-gray-200">
+                                {% if request.GET %}
+                                    <i class="fas fa-search-minus text-6xl text-gray-400 mb-4"></i>
+                                {% else %}
+                                    <i class="fas fa-calendar-times text-6xl text-gray-400 mb-4"></i>
+                                {% endif %}
+                            </div>
+                            
+                            {% if request.GET %}
+                                <h3 class="text-3xl font-bold text-slate-800 mb-4">Sin resultados</h3>
+                                <p class="text-lg text-gray-600 mb-6">
+                                    No se encontraron citas que coincidan con los filtros aplicados.
+                                </p>
+                                <div class="space-y-4">
+                                    <button onclick="clearAllFilters()" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                                        <i class="fas fa-times-circle mr-2"></i>Limpiar Filtros
+                                    </button>
+                                    <p class="text-sm text-gray-500">
+                                        O intenta con diferentes criterios de búsqueda
+                                    </p>
+                                </div>
+                            {% else %}
+                                <h3 class="text-3xl font-bold text-slate-800 mb-4">¡Todo al día!</h3>
+                                <p class="text-lg text-gray-600 mb-6">
+                                    No tienes citas programadas en este momento. Cuando se agenden nuevas citas aparecerán aquí.
+                                </p>
+                                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                                    <a href="{% url 'crear_cita_admin' %}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                                        <i class="fas fa-plus mr-2"></i>Nueva Cita
+                                    </a>
+                                    <a href="{% url 'homecrud' %}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white font-semibold rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                                        <i class="fas fa-home mr-2"></i>Ir al Dashboard
+                                    </a>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Estadísticas adicionales en estado vacío -->
+                            {% if not request.GET %}
+                                <div class="mt-10 pt-8 border-t border-gray-200">
+                                    <h4 class="text-lg font-semibold text-gray-700 mb-4">Estadísticas</h4>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border border-blue-200">
+                                            <i class="fas fa-calendar-check text-2xl text-blue-600 mb-2"></i>
+                                            <p class="text-sm text-blue-600 font-semibold">Total Citas</p>
+                                            <p class="text-xl font-bold text-blue-800">0</p>
+                                        </div>
+                                        <div class="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border border-green-200">
+                                            <i class="fas fa-building text-2xl text-green-600 mb-2"></i>
+                                            <p class="text-sm text-green-600 font-semibold">Empresas</p>
+                                            <p class="text-xl font-bold text-green-800">{{ empresas|length }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Edición -->
+    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden transform scale-95 transition-all duration-300">
+            <!-- Header del Modal -->
+            <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                            <i class="fas fa-edit text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white">Editar Cita</h3>
+                            <p class="text-blue-100 text-sm">ID: <span id="modal-cita-id">#</span></p>
+                        </div>
+                    </div>
+                    <button onclick="closeEditModal()" class="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors duration-200">
+                        <i class="fas fa-times text-white"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Contenido del Modal -->
+            <div class="p-8 overflow-y-auto max-h-[calc(90vh-140px)]">
+                <form method="POST" id="editForm" class="space-y-6">
+                    {% csrf_token %}
+                    <input type="hidden" name="id_reserva" id="edit-id-reserva">
+                    
+                    <!-- Grid de campos -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Empresa -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-gray-700 mb-3">
+                                <i class="fas fa-building mr-2 text-blue-600"></i>Empresa
+                            </label>
+                            <div class="relative">
+                                <select name="empresa" id="edit-empresa" class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm appearance-none" required>
+                                    {% for empresa in empresas %}
+                                        <option value="{{ empresa.id_empresa }}">{{ empresa.nombre_empresa }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                    <i class="fas fa-chevron-down text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Servicio -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-gray-700 mb-3">
+                                <i class="fas fa-concierge-bell mr-2 text-blue-600"></i>Servicio
+                            </label>
+                            <div class="relative">
+                                <select name="servicio" id="edit-servicio" class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm appearance-none" required>
+                                    <option value="">Selecciona primero una empresa</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                    <i class="fas fa-chevron-down text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fecha -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-gray-700 mb-3">
+                                <i class="fas fa-calendar-day mr-2 text-green-600"></i>Fecha
+                            </label>
+                            <input type="date" 
+                                   name="fecha" 
+                                   id="edit-fecha" 
+                                   class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm" 
+                                   required>
+                        </div>
+
+                        <!-- Hora -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-gray-700 mb-3">
+                                <i class="fas fa-clock mr-2 text-orange-600"></i>Hora
+                            </label>
+                            <div class="relative">
+                                <select name="hora" id="edit-hora" class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm appearance-none" required>
+                                    <option value="">Selecciona primero una fecha</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                    <i class="fas fa-chevron-down text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información adicional -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-info-circle text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-blue-800 mb-2">Información de la Cita</h4>
+                                <p class="text-blue-700 text-sm">Los cambios se aplicarán inmediatamente. Asegúrate de que la nueva fecha y hora estén disponibles.</p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Footer del Modal -->
+            <div class="bg-gray-50 px-8 py-6 border-t border-gray-200">
+                <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3 space-y-3 space-y-reverse sm:space-y-0">
+                    <button type="button" 
+                            onclick="closeEditModal()" 
+                            class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white font-semibold rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all duration-300 flex items-center justify-center">
+                        <i class="fas fa-times mr-2"></i>Cancelar
+                    </button>
+                    <button type="submit" 
+                            form="editForm"
+                            class="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center">
+                        <i class="fas fa-save mr-2"></i>Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript para el Modal -->
+    <script>
+        // Variables globales para el modal
+        let modalServiciosOriginales = {};
+        let modalHoraOriginal = '';
+
+        function openEditModal(citaId, empresaId, fecha, hora) {
+            const modal = document.getElementById('editModal');
+            const form = document.getElementById('editForm');
+            
+            // Llenar los datos del modal
+            document.getElementById('modal-cita-id').textContent = '#' + citaId;
+            document.getElementById('edit-id-reserva').value = citaId;
+            document.getElementById('edit-empresa').value = empresaId;
+            document.getElementById('edit-fecha').value = fecha;
+            
+            // Guardar valores originales
+            modalHoraOriginal = hora;
+            
+            // Mostrar el modal con animación
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100', 'pointer-events-auto');
+            modal.querySelector('.bg-white').classList.remove('scale-95');
+            modal.querySelector('.bg-white').classList.add('scale-100');
+            
+            // Bloquear scroll del body
+            document.body.style.overflow = 'hidden';
+            
+            // Cargar servicios de la empresa y horas disponibles
+            cargarServiciosEmpresaModal(empresaId);
+            cargarHorasDisponiblesModal(fecha, empresaId, hora);
+        }
+        
+        function closeEditModal() {
+            const modal = document.getElementById('editModal');
+            
+            // Ocultar el modal con animación
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.classList.remove('opacity-100', 'pointer-events-auto');
+            modal.querySelector('.bg-white').classList.add('scale-95');
+            modal.querySelector('.bg-white').classList.remove('scale-100');
+            
+            // Restaurar scroll del body
+            document.body.style.overflow = 'auto';
+        }
+
+        // Función para cargar servicios de una empresa en el modal
+        function cargarServiciosEmpresaModal(empresaId) {
+            const servicioSelect = document.getElementById('edit-servicio');
+            
+            if (!empresaId) {
+                servicioSelect.innerHTML = '<option value="">Selecciona primero una empresa</option>';
+                return;
+            }
+
+            // Mostrar loading
+            servicioSelect.innerHTML = '<option value="">Cargando servicios...</option>';
+
+            // Realizar petición AJAX
+            fetch(`/ajax/obtener-servicios-empresa/?empresa_id=${empresaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        servicioSelect.innerHTML = `<option value="">Error: ${data.error}</option>`;
+                        return;
+                    }
+
+                    if (data.servicios.length === 0) {
+                        servicioSelect.innerHTML = '<option value="">No hay servicios disponibles</option>';
+                        return;
+                    }
+
+                    // Limpiar y agregar servicios
+                    servicioSelect.innerHTML = '<option value="">Seleccionar servicio</option>';
+                    data.servicios.forEach(servicio => {
+                        const option = document.createElement('option');
+                        option.value = servicio.id_servicio;
+                        option.textContent = `${servicio.nombre_servicio} - $${servicio.precio}`;
+                        servicioSelect.appendChild(option);
+                    });
+
+                    // Guardar servicios originales para posible restauración
+                    modalServiciosOriginales = data.servicios;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    servicioSelect.innerHTML = '<option value="">Error al cargar servicios</option>';
+                });
+        }
+
+        // Función para cargar horas disponibles en el modal
+        function cargarHorasDisponiblesModal(fecha, empresaId, horaActual) {
+            const horaSelect = document.getElementById('edit-hora');
+            
+            if (!fecha) {
+                horaSelect.innerHTML = '<option value="">Selecciona primero una fecha</option>';
+                return;
+            }
+
+            // Mostrar loading
+            horaSelect.innerHTML = '<option value="">Cargando horas disponibles...</option>';
+
+            // Construir URL con parámetros
+            let url = `/ajax/obtener-horas-disponibles/?fecha=${fecha}`;
+            if (empresaId) {
+                url += `&empresa_id=${empresaId}`;
+            }
+
+            // Realizar petición AJAX
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        horaSelect.innerHTML = `<option value="">Error: ${data.error}</option>`;
+                        return;
+                    }
+
+                    // Limpiar y agregar horas disponibles
+                    horaSelect.innerHTML = '<option value="">Seleccionar hora</option>';
+
+                    // Siempre incluir la hora actual como opción (aunque esté "ocupada")
+                    if (horaActual) {
+                        const optionActual = document.createElement('option');
+                        optionActual.value = horaActual;
+                        optionActual.textContent = `${horaActual} (actual)`;
+                        optionActual.selected = true;
+                        horaSelect.appendChild(optionActual);
+                    }
+
+                    // Agregar otras horas disponibles
+                    data.horas_disponibles.forEach(hora => {
+                        // No duplicar la hora actual
+                        if (hora.valor !== horaActual) {
+                            const option = document.createElement('option');
+                            option.value = hora.valor;
+                            option.textContent = hora.texto;
+                            horaSelect.appendChild(option);
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    horaSelect.innerHTML = '<option value="">Error al cargar horas</option>';
+                });
+        }
+
+        // Event listeners para el modal
+        document.addEventListener('DOMContentLoaded', function() {
+            const editEmpresaSelect = document.getElementById('edit-empresa');
+            const editFechaInput = document.getElementById('edit-fecha');
+
+            // Escuchar cambios en la empresa del modal
+            editEmpresaSelect.addEventListener('change', function() {
+                const empresaId = this.value;
+                cargarServiciosEmpresaModal(empresaId);
+                
+                // También actualizar horas si hay fecha seleccionada
+                const fecha = editFechaInput.value;
+                if (fecha) {
+                    cargarHorasDisponiblesModal(fecha, empresaId, modalHoraOriginal);
+                }
+            });
+
+            // Escuchar cambios en la fecha del modal
+            editFechaInput.addEventListener('change', function() {
+                const fecha = this.value;
+                const empresaId = editEmpresaSelect.value;
+                cargarHorasDisponiblesModal(fecha, empresaId, null); // No preservar hora al cambiar fecha
+            });
+        });
+        
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('editModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditModal();
+            }
+        });
+        
+        // Cerrar modal con tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeEditModal();
+            }
+        });
+
+        // Función para limpiar filtros
+        document.getElementById('clearFilters')?.addEventListener('click', function() {
+            window.location.href = window.location.pathname;
+        });
+    </script>
+</body>
+
+<!-- JavaScript para toggle de formularios de edición y carga de horas -->
+<script>
+    function toggleEdit(elementId) {
+        const editRow = document.getElementById(elementId);
+        if (editRow.classList.contains('hidden')) {
+            // Cerrar todos los otros formularios (tanto desktop como móvil)
+            document.querySelectorAll('[id^="edit-"]').forEach(form => {
+                form.classList.add('hidden');
+            });
+            // Mostrar el formulario actual
+            editRow.classList.remove('hidden');
+            
+            // Scroll suave al formulario
+            editRow.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        } else {
+            editRow.classList.add('hidden');
+        }
+    }
+
+    // Función para limpiar todos los filtros
+    function clearAllFilters() {
+        // Obtener la URL actual sin parámetros
+        const baseUrl = window.location.origin + window.location.pathname;
+        window.location.href = baseUrl;
+    }
+
+    // Event listener para el botón de limpiar filtros
+    document.getElementById('clearFilters').addEventListener('click', clearAllFilters);
+
+    // Función para aplicar filtro rápido
+    function applyQuickFilter(filterType) {
+        console.log('applyQuickFilter llamada con tipo:', filterType);
+        
+        const form = document.querySelector('form[method="GET"]');
+        if (!form) {
+            console.error('Formulario no encontrado');
+            return;
+        }
+        
+        console.log('Formulario encontrado:', form);
+        
+        // Limpiar todos los campos del formulario
+        const inputs = form.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            if (input.type !== 'submit') {
+                input.value = '';
+            }
+        });
+        
+        console.log('Campos limpiados, aplicando filtro:', filterType);
+        
+        // Aplicar filtro específico
+        switch(filterType) {
+            case 'pendientes':
+                const estadoSelectPendientes = form.querySelector('select[name="estado"]');
+                if (estadoSelectPendientes) {
+                    estadoSelectPendientes.value = 'no_completado';
+                    console.log('Filtro pendientes aplicado');
+                }
+                break;
+            case 'completadas':
+                const estadoSelectCompletadas = form.querySelector('select[name="estado"]');
+                if (estadoSelectCompletadas) {
+                    estadoSelectCompletadas.value = 'completado';
+                    console.log('Filtro completadas aplicado');
+                }
+                break;
+            case 'canceladas':
+                const estadoSelectCanceladas = form.querySelector('select[name="estado"]');
+                if (estadoSelectCanceladas) {
+                    estadoSelectCanceladas.value = 'cancelada';
+                    console.log('Filtro canceladas aplicado');
+                }
+                break;
+            case 'hoy':
+                const today = new Date().toISOString().split('T')[0];
+                const fechaDesdeHoy = form.querySelector('input[name="fecha_desde"]');
+                const fechaHastaHoy = form.querySelector('input[name="fecha_hasta"]');
+                if (fechaDesdeHoy && fechaHastaHoy) {
+                    fechaDesdeHoy.value = today;
+                    fechaHastaHoy.value = today;
+                    console.log('Filtro hoy aplicado:', today);
+                }
+                break;
+            case 'semana':
+                const today2 = new Date();
+                const firstDay = new Date(today2.setDate(today2.getDate() - today2.getDay()));
+                const lastDay = new Date(today2.setDate(today2.getDate() - today2.getDay() + 6));
+                const fechaDesdeSemana = form.querySelector('input[name="fecha_desde"]');
+                const fechaHastaSemana = form.querySelector('input[name="fecha_hasta"]');
+                if (fechaDesdeSemana && fechaHastaSemana) {
+                    fechaDesdeSemana.value = firstDay.toISOString().split('T')[0];
+                    fechaHastaSemana.value = lastDay.toISOString().split('T')[0];
+                    console.log('Filtro semana aplicado:', fechaDesdeSemana.value, 'hasta', fechaHastaSemana.value);
+                }
+                break;
+        }
+        
+        console.log('Enviando formulario...');
+        // Enviar el formulario
+        form.submit();
+    }
+
+    // Mejorar la UX de los filtros con efectos visuales
+    document.addEventListener('DOMContentLoaded', function() {
+        // Resaltar campos con valores
+        const inputs = document.querySelectorAll('input[name], select[name]');
+        inputs.forEach(input => {
+            if (input.value && input.value !== '') {
+                input.classList.add('border-indigo-400', 'bg-indigo-50');
+                input.parentElement.classList.add('transform', 'scale-105');
+            }
+            
+            // Agregar efecto visual al cambiar valores
+            input.addEventListener('change', function() {
+                if (this.value && this.value !== '') {
+                    this.classList.add('border-indigo-400', 'bg-indigo-50');
+                    this.parentElement.classList.add('transform', 'scale-105');
+                } else {
+                    this.classList.remove('border-indigo-400', 'bg-indigo-50');
+                    this.parentElement.classList.remove('transform', 'scale-105');
+                }
+                
+                // Actualizar contador de filtros en tiempo real
+                updateFilterCounter();
+            });
+        });
+
+        // Función para actualizar contador de filtros
+        function updateFilterCounter() {
+            let filledFilters = 0;
+            document.querySelectorAll('input[name], select[name]').forEach(input => {
+                if (input.value && input.value !== '' && input.type !== 'submit') {
+                    filledFilters++;
+                }
+            });
+
+            // Mostrar badge con número de filtros activos
+            const filterButton = document.querySelector('button[type="submit"]');
+            if (filledFilters > 0) {
+                filterButton.innerHTML = `<i class="fas fa-search mr-2"></i>Buscar (${filledFilters})`;
+                filterButton.classList.add('animate-pulse', 'bg-gradient-to-r', 'from-green-600', 'to-green-700');
+                filterButton.classList.remove('from-indigo-600', 'to-indigo-700');
+            } else {
+                filterButton.innerHTML = `<i class="fas fa-search mr-2"></i>Buscar`;
+                filterButton.classList.remove('animate-pulse', 'bg-gradient-to-r', 'from-green-600', 'to-green-700');
+                filterButton.classList.add('from-indigo-600', 'to-indigo-700');
+            }
+        }
+
+        // Contador inicial de filtros activos
+        updateFilterCounter();
+                    this.classList.add('border-indigo-400', 'bg-indigo-50');
+                    this.parentElement.classList.add('transform', 'scale-105');
+                } else {
+                    this.classList.remove('border-indigo-400', 'bg-indigo-50');
+                    this.parentElement.classList.remove('transform', 'scale-105');
+                }
+            });
+        });
+
+        // Contador de filtros activos
+        const activeFilters = document.querySelectorAll('input[name], select[name]').length;
+        let filledFilters = 0;
+        
+        document.querySelectorAll('input[name], select[name]').forEach(input => {
+            if (input.value && input.value !== '') {
+                filledFilters++;
+            }
+        });
+
+        // Mostrar badge con número de filtros activos
+        if (filledFilters > 0) {
+            const filterButton = document.querySelector('button[type="submit"]');
+            filterButton.innerHTML = `<i class="fas fa-search mr-2"></i>Buscar (${filledFilters})`;
+            filterButton.classList.add('animate-pulse');
+        }
+    });
+    
+    // Cargar horas disponibles cuando cambia la fecha en cada formulario (desktop y móvil)
+    document.querySelectorAll('[id^="fecha-"]').forEach(fechaSelect => {
+        const idParts = fechaSelect.id.split('-');
+        const isMobile = idParts[1] === 'mobile';
+        const reservaId = isMobile ? idParts[2] : idParts[1];
+        const horaSelectId = isMobile ? `hora-mobile-${reservaId}` : `hora-${reservaId}`;
+        const horaSelect = document.getElementById(horaSelectId);
+        
+        fechaSelect.addEventListener('change', function() {
+            const fechaSeleccionada = this.value;
+            
+            // Obtener empresa y servicio del formulario
+            const empresaSelect = fechaSelect.closest('form').querySelector('select[name="empresa"]');
+            const servicioSelect = fechaSelect.closest('form').querySelector('select[name="servicio"]');
+            
+            const empresaId = empresaSelect ? empresaSelect.value : '';
+            const servicioId = servicioSelect ? servicioSelect.value : '';
+            
+            if (empresaId && servicioId && horaSelect) {
+                // Lógica para obtener horas disponibles de la API
+                fetch(`/api/hours/?empresa_id=${empresaId}&servicio_id=${servicioId}&fecha=${fechaSeleccionada}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error en la respuesta del servidor');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        horaSelect.innerHTML = '';  // Limpiar horas
+                        if (data.horas && data.horas.length > 0) {
+                            data.horas.forEach(hora => {
+                                const option = document.createElement('option');
+                                option.value = hora;
+                                option.textContent = hora;
+                                horaSelect.appendChild(option);
+                            });
+                        } else {
+                            const option = document.createElement('option');
+                            option.value = '';
+                            option.textContent = 'No hay horas disponibles';
+                            horaSelect.appendChild(option);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching hours:', error);
+                        if (horaSelect) {
+                            horaSelect.innerHTML = '<option value="">Error al cargar horas</option>';
+                        }
+                    });
+            }
+        });
+    });
+
+    // Auto-completado inteligente para campo de cliente
+    const clienteInput = document.querySelector('input[name="cliente"]');
+    if (clienteInput) {
+        let debounceTimer;
+        clienteInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                const query = this.value.trim();
+                if (query.length >= 2) {
+                    // Mostrar sugerencias visuales
+                    this.classList.add('border-blue-400', 'shadow-lg');
+                    this.setAttribute('placeholder', 'Escribiendo... 🔍');
+                } else {
+                    this.classList.remove('border-blue-400', 'shadow-lg');
+                    this.setAttribute('placeholder', 'Buscar por nombre de cliente');
+                }
+            }, 300);
+        });
+    }
+
+    // Auto-completado inteligente para campo de usuario
+    const usuarioInput = document.querySelector('input[name="usuario"]');
+    if (usuarioInput) {
+        let debounceTimer;
+        usuarioInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                const query = this.value.trim();
+                if (query.length >= 2) {
+                    this.classList.add('border-purple-400', 'shadow-lg');
+                    this.setAttribute('placeholder', 'Escribiendo... 🔍');
+                } else {
+                    this.classList.remove('border-purple-400', 'shadow-lg');
+                    this.setAttribute('placeholder', '@nombre_usuario');
+                }
+            }, 300);
+        });
+    }
+
+    // Validación inteligente de fechas
+    const fechaDesde = document.querySelector('input[name="fecha_desde"]');
+    const fechaHasta = document.querySelector('input[name="fecha_hasta"]');
+    
+    if (fechaDesde && fechaHasta) {
+        fechaDesde.addEventListener('change', function() {
+            if (fechaHasta.value && this.value > fechaHasta.value) {
+                fechaHasta.value = this.value;
+                showNotification('La fecha "hasta" se ajustó automáticamente', 'info');
+            }
+        });
+        
+        fechaHasta.addEventListener('change', function() {
+            if (fechaDesde.value && this.value < fechaDesde.value) {
+                fechaDesde.value = this.value;
+                showNotification('La fecha "desde" se ajustó automáticamente', 'info');
+            }
+        });
+    }
+
+    // Función para mostrar notificaciones temporales
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 z-50 p-4 rounded-xl shadow-lg transform transition-all duration-300 translate-x-full`;
+        
+        switch(type) {
+            case 'success':
+                notification.classList.add('bg-green-100', 'border', 'border-green-200', 'text-green-800');
+                break;
+            case 'error':
+                notification.classList.add('bg-red-100', 'border', 'border-red-200', 'text-red-800');
+                break;
+            case 'info':
+            default:
+                notification.classList.add('bg-blue-100', 'border', 'border-blue-200', 'text-blue-800');
+                break;
+        }
+        
+        notification.innerHTML = `
+            <div class="flex items-center">
+                <i class="fas fa-info-circle mr-2"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Animar entrada
+        setTimeout(() => {
+            notification.classList.remove('translate-x-full');
+        }, 100);
+        
+        // Auto-remover después de 3 segundos
+        setTimeout(() => {
+            notification.classList.add('translate-x-full');
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
+    
+    // Función para filtrar por estado usando los tabs
+    function filterByStatus(status) {
+        console.log('filterByStatus llamada con estado:', status);
+        
+        const form = document.querySelector('form[method="GET"]');
+        const estadoSelect = document.querySelector('select[name="estado"]');
+        
+        console.log('Form encontrado:', form);
+        console.log('Select estado encontrado:', estadoSelect);
+        
+        if (form && estadoSelect) {
+            // Actualizar el valor del select de estado
+            if (status === 'all') {
+                estadoSelect.value = '';
+                console.log('Estableciendo estado a: vacío (todas)');
+            } else if (status === 'pendiente') {
+                estadoSelect.value = 'no_completado';
+                console.log('Estableciendo estado a: no_completado');
+            } else {
+                estadoSelect.value = status;
+                console.log('Estableciendo estado a:', status);
+            }
+            
+            console.log('Valor del select después del cambio:', estadoSelect.value);
+            
+            // Enviar el formulario
+            console.log('Enviando formulario...');
+            form.submit();
+        } else {
+            console.error('No se encontró el formulario o el select de estado');
+            if (!form) console.error('form[method="GET"] no encontrado');
+            if (!estadoSelect) console.error('select[name="estado"] no encontrado');
+        }
+    }
+
+    // Actualizar apariencia de tabs activos
+    function updateTabAppearance() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentStatus = urlParams.get('estado');
+        
+        // Resetear todos los tabs
+        document.querySelectorAll('.tab-button').forEach(tab => {
+            tab.className = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gray-100 text-gray-700 hover:bg-gray-200';
+        });
+        
+        // Activar el tab correspondiente
+        let activeTab;
+        if (!currentStatus) {
+            activeTab = document.getElementById('tab-all');
+            if (activeTab) activeTab.className = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg';
+        } else if (currentStatus === 'no_completado') {
+            activeTab = document.getElementById('tab-pendiente');
+            if (activeTab) activeTab.className = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg';
+        } else if (currentStatus === 'completado') {
+            activeTab = document.getElementById('tab-completado');
+            if (activeTab) activeTab.className = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg';
+        } else if (currentStatus === 'cancelada') {
+            activeTab = document.getElementById('tab-cancelada');
+            if (activeTab) activeTab.className = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg';
+        }
+    }
+
+    // Ejecutar al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM cargado - inicializando tabs de estado...');
+        updateTabAppearance();
+        
+        // Verificar que los elementos existen
+        const form = document.querySelector('form[method="GET"]');
+        const estadoSelect = document.querySelector('select[name="estado"]');
+        console.log('Verificación DOM - Form:', form ? 'encontrado' : 'NO encontrado');
+        console.log('Verificación DOM - Select estado:', estadoSelect ? 'encontrado' : 'NO encontrado');
+        
+        // Verificar que los botones de tabs existen
+        const tabButtons = document.querySelectorAll('.tab-button');
+        console.log('Botones de tabs encontrados:', tabButtons.length);
+        
+        // Hacer las funciones disponibles globalmente
+        window.filterByStatus = filterByStatus;
+        window.applyQuickFilter = applyQuickFilter;
+        console.log('Funciones filterByStatus y applyQuickFilter disponibles globalmente');
+    });
+    
+    // Desvanecer alertas después de 5 segundos
+    setTimeout(() => {
+        // Solo seleccionar las alertas de mensajes (que están en el contenedor mb-6 space-y-3)
+        const alertsContainer = document.querySelector('.mb-6.space-y-3');
+        if (alertsContainer) {
+            const alerts = alertsContainer.querySelectorAll('[class*="bg-gradient-to-r"][class*="border"]');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        alert.style.display = 'none';
+                    }, 500);
+                }, 5000);
+            });
+        }
+    }, 1000);
+</script>
+{% endblock content %}

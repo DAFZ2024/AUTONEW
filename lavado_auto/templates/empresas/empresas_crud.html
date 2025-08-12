@@ -1,0 +1,546 @@
+{% extends 'base/base_crud.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header mejorado -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg">
+                        <i class="fas fa-building text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                            Gestión de Empresas
+                        </h1>
+                        <p class="text-gray-600 mt-1">Administra todas las empresas del sistema de manera eficiente</p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button id="toggleFormButton"
+                       class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-2xl shadow-lg hover:from-green-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-plus mr-2"></i>
+                        Nueva Empresa
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensajes de estado -->
+        {% if messages %}
+            <div class="mb-8 space-y-3">
+                {% for message in messages %}
+                    <div class="p-4 rounded-2xl shadow-lg backdrop-blur-xl border {% if message.tags == 'success' %}bg-green-50/80 border-green-200 text-green-800{% elif message.tags == 'error' %}bg-red-50/80 border-red-200 text-red-800{% elif message.tags == 'warning' %}bg-yellow-50/80 border-yellow-200 text-yellow-800{% else %}bg-blue-50/80 border-blue-200 text-blue-800{% endif %}">
+                        <div class="flex items-center">
+                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-3 text-lg"></i>
+                            <span class="font-medium">{{ message }}</span>
+                            <button type="button" class="ml-auto text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.style.display='none'">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+           
+        <!-- Estadísticas rápidas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Empresas</p>
+                        <p class="text-3xl font-bold text-purple-600">{{ total_empresas|default:0 }}</p>
+                    </div>
+                    <div class="p-3 bg-purple-100 rounded-xl">
+                        <i class="fas fa-building text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Verificadas</p>
+                        <p class="text-3xl font-bold text-emerald-600">{{ empresas_verificadas|default:0 }}</p>
+                    </div>
+                    <div class="p-3 bg-emerald-100 rounded-xl">
+                        <i class="fas fa-shield-check text-emerald-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Pendientes</p>
+                        <p class="text-3xl font-bold text-orange-600">{{ empresas_pendientes|default:0 }}</p>
+                    </div>
+                    <div class="p-3 bg-orange-100 rounded-xl">
+                        <i class="fas fa-clock text-orange-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Con Servicios</p>
+                        <p class="text-3xl font-bold text-indigo-600">{{ empresas_con_servicios|default:0 }}</p>
+                    </div>
+                    <div class="p-3 bg-indigo-100 rounded-xl">
+                        <i class="fas fa-link text-indigo-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de creación -->
+        <div id="formContainer" class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden mb-8" style="display: none;">
+            <div class="p-6 sm:p-8 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-900">Crear Nueva Empresa</h2>
+                <p class="text-gray-600 mt-1">Completa la información de la empresa</p>
+            </div>
+            
+            <div class="p-6 sm:p-8">
+                <form method="POST" class="space-y-6">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label for="nombre_empresa" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-building mr-2 text-purple-600"></i>Nombre de la Empresa
+                            </label>
+                            <input type="text" name="nombre_empresa" 
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300" 
+                                   placeholder="Nombre de la empresa" required>
+                        </div>
+
+                        <div>
+                            <label for="telefono" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-phone mr-2 text-purple-600"></i>Teléfono
+                            </label>
+                            <input type="text" name="telefono" 
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300" 
+                                   placeholder="Número de teléfono" required>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-envelope mr-2 text-purple-600"></i>Email
+                            </label>
+                            <input type="email" name="email" 
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300" 
+                                   placeholder="correo@empresa.com" required>
+                        </div>
+
+                        <div>
+                            <label for="contrasena" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-lock mr-2 text-purple-600"></i>Contraseña
+                            </label>
+                            <input type="password" name="contrasena" 
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300" 
+                                   placeholder="Contraseña temporal" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="direccion" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-map-marker-alt mr-2 text-purple-600"></i>Dirección
+                        </label>
+                        <input type="text" name="direccion" 
+                               class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300" 
+                               placeholder="Dirección completa de la empresa" required>
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        <button type="submit" 
+                                class="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:from-purple-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-300">
+                            <i class="fas fa-save mr-2"></i>
+                            Crear Empresa
+                        </button>
+                        <button type="button" id="cancelFormButton"
+                                class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-300">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Lista de empresas -->
+
+        
+</head>
+
+<body class="bg-white min-h-screen">
+    <!-- Elementos decorativos de fondo -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-200/30 to-slate-200/30 rounded-full blur-3xl opacity-60"></div>
+        <div class="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-slate-200/30 to-gray-200/30 rounded-full blur-3xl opacity-60"></div>
+    </div>
+
+    <!-- Contenido principal -->
+    <main class="relative z-10 pt-8">
+        <div class="max-w-[1600px] mx-auto px-4 lg:px-6">
+            <!-- Mensajes de estado -->
+            {% if messages %}
+                <div class="mb-6 space-y-3">
+                    {% for message in messages %}
+                        <div class="p-4 rounded-2xl shadow-lg animate-slideInDown {% if message.tags == 'success' %}bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 text-green-800{% elif message.tags == 'error' %}bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 text-red-800{% elif message.tags == 'warning' %}bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 text-yellow-800{% else %}bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-blue-800{% endif %}">
+                            <div class="flex items-center">
+                                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-triangle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} mr-3 text-lg"></i>
+                                <span class="font-medium">{{ message }}</span>
+                                <button type="button" class="ml-auto text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.style.display='none'">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+    
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden">
+            <div class="p-6 sm:p-8 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-900">Empresas Registradas</h2>
+                <p class="text-gray-600 mt-1">Total: {{ empresas|length }} empresa{{ empresas|length|pluralize:"s" }}</p>
+            </div>
+            
+            {% if empresas %}
+                <!-- Vista de escritorio -->
+                <div class="hidden lg:block overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50/80">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-hashtag mr-2 text-purple-600"></i>ID
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-building mr-2 text-purple-600"></i>Empresa
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-envelope mr-2 text-purple-600"></i>Email
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-phone mr-2 text-purple-600"></i>Teléfono
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-shield-check mr-2 text-purple-600"></i>Estado
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-cog mr-2 text-purple-600"></i>Acciones
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for empresa in empresas %}
+                            <tr class="hover:bg-gray-50/80 transition-all duration-300">
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-800">
+                                        #{{ empresa.id_empresa }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+                                                <i class="fas fa-building text-white text-sm"></i>
+                                            </div>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-semibold text-gray-900">{{ empresa.nombre_empresa }}</div>
+                                            <div class="text-sm text-gray-500">
+                                                <i class="fas fa-map-marker-alt mr-1"></i>{{ empresa.direccion|truncatechars:30 }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900">{{ empresa.email }}</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900">
+                                        <i class="fas fa-phone-alt mr-2 text-gray-400"></i>{{ empresa.telefono }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    {% if empresa.verificada %}
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                            <i class="fas fa-check-circle mr-1"></i>Verificada
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+                                            <i class="fas fa-clock mr-1"></i>Pendiente
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex space-x-2">
+                                        <a href="{% url 'editar_empresa' empresa.id_empresa %}"
+                                                class="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-all duration-300 group">
+                                            <i class="fas fa-edit group-hover:scale-110 transition-transform"></i>
+                                        </a>
+                                        <a href="{% url 'asignar_servicio_empresa' empresa.id_empresa %}"
+                                           class="p-2 bg-teal-100 text-teal-600 rounded-lg hover:bg-teal-200 transition-all duration-300 group">
+                                            <i class="fas fa-link group-hover:scale-110 transition-transform"></i>
+                                        </a>
+                                        <form method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta empresa?')">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="eliminar" value="{{ empresa.id_empresa }}">
+                                            <button type="submit" 
+                                                    class="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-all duration-300 group">
+                                                <i class="fas fa-trash group-hover:scale-110 transition-transform"></i>
+                                            </button>
+                                        </form>
+                                        {% if not empresa.verificada %}
+                                        <form method="POST" class="inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="verificar" value="{{ empresa.id_empresa }}">
+                                            <button type="submit" 
+                                                    class="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-all duration-300 group">
+                                                <i class="fas fa-check group-hover:scale-110 transition-transform"></i>
+                                            </button>
+                                        </form>
+                                        {% else %}
+                                        <form method="POST" class="inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="desverificar" value="{{ empresa.id_empresa }}">
+                                            <button type="submit" 
+                                                    class="p-2 bg-orange-100 text-orange-600 rounded-lg hover:bg-orange-200 transition-all duration-300 group">
+                                                <i class="fas fa-times group-hover:scale-110 transition-transform"></i>
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Vista móvil -->
+                <div class="lg:hidden space-y-6 p-4">
+                    {% for empresa in empresas %}
+                        <div class="group bg-white rounded-3xl border-2 border-gray-100 shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:border-purple-200">
+                            <!-- Header de la tarjeta -->
+                            <div class="bg-gradient-to-br from-purple-600 via-indigo-600 to-purple-700 px-6 py-5 relative overflow-hidden">
+                                <!-- Patrón decorativo -->
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+                                <div class="absolute bottom-0 left-0 w-20 h-20 bg-black/10 rounded-full translate-y-10 -translate-x-10"></div>
+                                
+                                <div class="relative z-10 flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                                            <i class="fas fa-building text-white text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xl font-bold text-white">{{ empresa.nombre_empresa }}</h3>
+                                            <div class="flex items-center mt-1">
+                                                <span class="text-white/80 text-sm">#{{ empresa.id_empresa }}</span>
+                                                {% if empresa.verificada %}
+                                                    <span class="ml-2 bg-green-500/20 text-green-100 px-2 py-1 rounded-full text-xs font-medium">
+                                                        <i class="fas fa-check-circle mr-1"></i>Verificada
+                                                    </span>
+                                                {% else %}
+                                                    <span class="ml-2 bg-yellow-500/20 text-yellow-100 px-2 py-1 rounded-full text-xs font-medium">
+                                                        <i class="fas fa-clock mr-1"></i>Pendiente
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contenido de la tarjeta -->
+                            <div class="p-6 space-y-4">
+                                <!-- Información de contacto -->
+                                <div class="space-y-3">
+                                    <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl">
+                                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-envelope text-purple-600 text-sm"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-xs text-gray-500 font-medium">Email</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ empresa.email }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-phone text-blue-600 text-sm"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-xs text-gray-500 font-medium">Teléfono</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ empresa.telefono }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl">
+                                        <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-map-marker-alt text-green-600 text-sm"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-xs text-gray-500 font-medium">Dirección</p>
+                                            <p class="text-sm font-semibold text-gray-900">{{ empresa.direccion }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Botones de acción -->
+                                <div class="border-t border-gray-200 pt-4">
+                                    <div class="space-y-3">
+                                        <a href="{% url 'editar_empresa' empresa.id_empresa %}"
+                                                class="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-300">
+                                            <i class="fas fa-edit mr-2"></i>
+                                            Editar
+                                        </a>
+                                        
+                                        <a href="{% url 'asignar_servicio_empresa' empresa.id_empresa %}"
+                                           class="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-teal-500 to-teal-600 text-white font-semibold rounded-xl shadow-lg hover:from-teal-600 hover:to-teal-700 transform hover:scale-105 transition-all duration-300">
+                                            <i class="fas fa-link mr-2"></i>
+                                            Asignar Servicios
+                                        </a>
+                                        
+                                        <form method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta empresa?')">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="eliminar" value="{{ empresa.id_empresa }}">
+                                            <button type="submit" 
+                                                    class="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-xl shadow-lg hover:from-red-600 hover:to-red-700 transform hover:scale-105 transition-all duration-300">
+                                                <i class="fas fa-trash mr-2"></i>
+                                                Eliminar
+                                            </button>
+                                        </form>
+                                    </div>
+                                    
+                                    {% if not empresa.verificada %}
+                                    <form method="POST" class="mt-3">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="verificar" value="{{ empresa.id_empresa }}">
+                                        <button type="submit" 
+                                                class="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-xl shadow-lg hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-300">
+                                            <i class="fas fa-check mr-2"></i>
+                                            Verificar Empresa
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <form method="POST" class="mt-3">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="desverificar" value="{{ empresa.id_empresa }}">
+                                        <button type="submit" 
+                                                class="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-xl shadow-lg hover:from-orange-600 hover:to-orange-700 transform hover:scale-105 transition-all duration-300">
+                                            <i class="fas fa-times mr-2"></i>
+                                            Desverificar Empresa
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-16">
+                    <div class="mx-auto h-24 w-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-building text-gray-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No hay empresas registradas</h3>
+                    <p class="text-gray-600 mb-6">Comienza creando tu primera empresa para el sistema.</p>
+                    <button onclick="document.getElementById('toggleFormButton').click()" 
+                       class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-2xl shadow-lg hover:from-purple-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-plus mr-2"></i>
+                        Crear Primera Empresa
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript mejorado -->
+<script>
+// Toggle del formulario
+document.getElementById('toggleFormButton').onclick = function() {
+    var formContainer = document.getElementById('formContainer');
+    if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+        formContainer.style.display = 'block';
+        this.innerHTML = '<i class="fas fa-times mr-2"></i>Cancelar';
+        formContainer.scrollIntoView({ behavior: 'smooth' });
+    } else {
+        formContainer.style.display = 'none';
+        this.innerHTML = '<i class="fas fa-plus mr-2"></i>Nueva Empresa';
+    }
+};
+
+// Botón cancelar formulario
+document.getElementById('cancelFormButton').onclick = function() {
+    document.getElementById('formContainer').style.display = 'none';
+    document.getElementById('toggleFormButton').innerHTML = '<i class="fas fa-plus mr-2"></i>Nueva Empresa';
+};
+
+// Auto-cerrar alertas después de 5 segundos
+setTimeout(() => {
+    document.querySelectorAll('.animate-slideInDown').forEach(alert => {
+        alert.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+        alert.style.opacity = '0';
+        alert.style.transform = 'translateY(-20px)';
+        setTimeout(() => alert.remove(), 500);
+    });
+}, 5000);
+
+// Animación de entrada para elementos
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+// Observar elementos con animación
+document.querySelectorAll('.animate-fadeInUp').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+    observer.observe(el);
+});
+
+// Mejorar la experiencia táctil en móviles
+document.addEventListener('DOMContentLoaded', function() {
+    // Agregar clase touch-manipulation a elementos interactivos
+    const touchElements = document.querySelectorAll('button, .clickable');
+    touchElements.forEach(el => {
+        el.classList.add('touch-manipulation');
+    });
+    
+    // Prevenir zoom en inputs en iOS
+    const inputs = document.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            if (window.innerWidth < 768) {
+                this.style.fontSize = '16px';
+            }
+        });
+    });
+});
+
+// Función de confirmación mejorada para eliminaciones
+function confirmarEliminacion(nombre) {
+    return confirm(`¿Estás seguro de que deseas eliminar la empresa "${nombre}"?\n\nEsta acción no se puede deshacer.`);
+}
+</script>
+
+{% endblock %}

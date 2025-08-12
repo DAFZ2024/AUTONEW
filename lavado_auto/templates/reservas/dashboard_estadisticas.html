@@ -1,0 +1,372 @@
+{% extends "base/base_crud.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8">
+    <!-- Header del Dashboard -->
+    <div class="max-w-7xl mx-auto mb-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+            <div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-2">
+                    Dashboard de Estadísticas
+                </h1>
+                <p class="text-lg text-gray-600">
+                    Resumen completo del sistema AutoNew - {{ fecha_hoy|date:"d/m/Y" }}
+                </p>
+            </div>
+            <div class="flex items-center space-x-2 bg-white rounded-lg px-4 py-2 shadow-sm">
+                <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <span class="text-sm font-medium text-gray-700">Sistema Activo</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Métricas Principales -->
+    <div class="max-w-7xl mx-auto mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Total Usuarios -->
+            <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 mb-1">Total Usuarios</p>
+                            <p class="text-3xl font-bold text-blue-600">{{ total_usuarios }}</p>
+                            <p class="text-xs text-green-600 mt-1">+{{ usuarios_mes }} este mes</p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-users text-blue-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Reservas -->
+            <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 mb-1">Total Reservas</p>
+                            <p class="text-3xl font-bold text-emerald-600">{{ total_reservas }}</p>
+                            <p class="text-xs text-emerald-600 mt-1">{{ reservas_hoy }} hoy</p>
+                        </div>
+                        <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-calendar-check text-emerald-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Empresas -->
+            <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 mb-1">Empresas</p>
+                            <p class="text-3xl font-bold text-purple-600">{{ total_empresas }}</p>
+                            <p class="text-xs text-purple-600 mt-1">{{ empresas_verificadas }} verificadas</p>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-building text-purple-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ingresos Estimados -->
+            <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 mb-1">Ingresos Est. Mes</p>
+                            <p class="text-3xl font-bold text-yellow-600">${{ ingresos_estimados_mes }}</p>
+                            <p class="text-xs text-yellow-600 mt-1">{{ reservas_mes }} reservas</p>
+                        </div>
+                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-dollar-sign text-yellow-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos y Estadísticas Detalladas -->
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Estado de Reservas -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Estado de Reservas</h3>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-4 h-4 bg-yellow-500 rounded-full"></div>
+                        <span class="text-gray-700">Pendientes</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-bold text-yellow-600">{{ reservas_pendientes }}</span>
+                        <div class="w-32 bg-gray-200 rounded-full h-2 ml-4">
+                            <div class="bg-yellow-500 h-2 rounded-full" style="width: {% if total_reservas > 0 %}{{ reservas_pendientes|floatformat:0|mul:100|div:total_reservas }}%{% else %}0%{% endif %}"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-4 h-4 bg-green-500 rounded-full"></div>
+                        <span class="text-gray-700">Completadas</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-bold text-green-600">{{ reservas_completadas }}</span>
+                        <div class="w-32 bg-gray-200 rounded-full h-2 ml-4">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: {{ tasa_completadas }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-4 h-4 bg-red-500 rounded-full"></div>
+                        <span class="text-gray-700">Canceladas</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-bold text-red-600">{{ reservas_canceladas }}</span>
+                        <div class="w-32 bg-gray-200 rounded-full h-2 ml-4">
+                            <div class="bg-red-500 h-2 rounded-full" style="width: {{ tasa_canceladas }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Tasa de éxito: <span class="font-bold text-green-600">{{ tasa_completadas }}%</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Reservas por Día (Última Semana) -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Reservas - Última Semana</h3>
+            <div class="space-y-3">
+                {% for dia in reservas_por_dia %}
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-600 w-16">{{ dia.fecha }}</span>
+                    <div class="flex-1 mx-4">
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-blue-500 h-3 rounded-full transition-all duration-500" 
+                                 style="width: {% if dia.total > 0 %}{{ dia.total|mul:10 }}%{% else %}2%{% endif %}"></div>
+                        </div>
+                    </div>
+                    <span class="text-sm font-bold text-blue-600 w-8">{{ dia.total }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas Detalladas -->
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Usuarios Detalle -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-users text-blue-500 mr-2"></i>
+                Usuarios
+            </h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Activos</span>
+                    <span class="font-bold text-green-600">{{ usuarios_activos }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Administradores</span>
+                    <span class="font-bold text-purple-600">{{ usuarios_admin }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Clientes</span>
+                    <span class="font-bold text-blue-600">{{ usuarios_cliente }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Servicios y Planes -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-cogs text-purple-500 mr-2"></i>
+                Servicios y Planes
+            </h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Servicios</span>
+                    <span class="font-bold text-purple-600">{{ total_servicios }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Planes Activos</span>
+                    <span class="font-bold text-cyan-600">{{ total_planes }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Planes Empresariales</span>
+                    <span class="font-bold text-indigo-600">{{ total_planes_empresariales }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Suscripciones Activas</span>
+                    <span class="font-bold text-emerald-600">{{ total_suscripciones_activas }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback y Soporte -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-comment-dots text-green-500 mr-2"></i>
+                Feedback
+            </h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Comentarios</span>
+                    <span class="font-bold text-green-600">{{ total_comentarios }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Este Mes</span>
+                    <span class="font-bold text-blue-600">{{ comentarios_mes }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Quejas Pendientes</span>
+                    <span class="font-bold text-red-600">{{ quejas_pendientes }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Quejas Resueltas</span>
+                    <span class="font-bold text-green-600">{{ quejas_respondidas }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actividad Reciente -->
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Reservas Recientes -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-clock text-blue-500 mr-2"></i>
+                Reservas Recientes
+            </h3>
+            <div class="space-y-4">
+                {% for reserva in reservas_recientes %}
+                <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                    <div>
+                        <p class="font-medium text-gray-900">{{ reserva.usuario.nombre_completo }}</p>
+                        <p class="text-sm text-gray-600">{{ reserva.empresa.nombre_empresa }}</p>
+                        <p class="text-xs text-gray-500">{{ reserva.fecha|date:"d/m/Y" }} - {{ reserva.hora }}</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-block px-2 py-1 text-xs rounded-full
+                            {% if reserva.estado == 'completado' %}bg-green-100 text-green-800
+                            {% elif reserva.estado == 'pendiente' %}bg-yellow-100 text-yellow-800
+                            {% else %}bg-red-100 text-red-800{% endif %}">
+                            {{ reserva.get_estado_display }}
+                        </span>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-gray-500 text-center py-4">No hay reservas recientes</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Servicios Más Populares -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-star text-yellow-500 mr-2"></i>
+                Servicios Más Populares
+            </h3>
+            <div class="space-y-4">
+                {% for servicio in servicios_mas_reservados %}
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="font-medium text-gray-900">{{ servicio.nombre_servicio }}</p>
+                        <p class="text-sm text-gray-600">${{ servicio.precio }}</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-bold text-blue-600">{{ servicio.total_reservas }}</span>
+                        <p class="text-xs text-gray-500">reservas</p>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-gray-500 text-center py-4">No hay datos de servicios</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Empresas Más Activas -->
+    <div class="max-w-7xl mx-auto mb-8">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-building text-indigo-500 mr-2"></i>
+                Empresas Más Activas
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for empresa in empresas_activas %}
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <h4 class="font-medium text-gray-900">{{ empresa.nombre_empresa }}</h4>
+                    <p class="text-sm text-gray-600">{{ empresa.direccion }}</p>
+                    <div class="mt-2 flex justify-between items-center">
+                        <span class="text-xs text-gray-500">{{ empresa.telefono }}</span>
+                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                            {{ empresa.total_reservas }} reservas
+                        </span>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-gray-500 text-center py-4 col-span-3">No hay datos de empresas</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones Rápidas -->
+    <div class="max-w-7xl mx-auto">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Acciones Rápidas</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="/usuarioscrud" class="flex flex-col items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                    <i class="fas fa-user-plus text-2xl text-blue-600 mb-2"></i>
+                    <span class="text-sm font-medium text-blue-900">Gestionar Usuarios</span>
+                </a>
+                <a href="/citascrud" class="flex flex-col items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                    <i class="fas fa-calendar-plus text-2xl text-green-600 mb-2"></i>
+                    <span class="text-sm font-medium text-green-900">Nueva Reserva</span>
+                </a>
+                <a href="/empresascrud" class="flex flex-col items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
+                    <i class="fas fa-building text-2xl text-purple-600 mb-2"></i>
+                    <span class="text-sm font-medium text-purple-900">Gestionar Empresas</span>
+                </a>
+                <a href="/quejascrud" class="flex flex-col items-center p-4 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+                    <i class="fas fa-exclamation-triangle text-2xl text-red-600 mb-2"></i>
+                    <span class="text-sm font-medium text-red-900">Ver Quejas</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Actualizar números con animación
+document.addEventListener('DOMContentLoaded', function() {
+    const animateNumbers = document.querySelectorAll('.text-3xl.font-bold');
+    animateNumbers.forEach(element => {
+        const finalNumber = parseInt(element.textContent);
+        let currentNumber = 0;
+        const increment = finalNumber / 50;
+        const timer = setInterval(() => {
+            currentNumber += increment;
+            if (currentNumber >= finalNumber) {
+                element.textContent = finalNumber;
+                clearInterval(timer);
+            } else {
+                element.textContent = Math.floor(currentNumber);
+            }
+        }, 30);
+    });
+
+    // Auto-refresh cada 5 minutos
+    setTimeout(() => {
+        location.reload();
+    }, 300000);
+});
+</script>
+{% endblock %}

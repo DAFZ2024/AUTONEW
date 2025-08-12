@@ -1,0 +1,253 @@
+{% extends 'base/base_crud.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div class="flex items-center space-x-4">
+                    <a href="{% url 'servicioscrud' %}" 
+                       class="p-3 bg-gray-100 hover:bg-gray-200 rounded-2xl transition-colors duration-300">
+                        <i class="fas fa-arrow-left text-gray-600"></i>
+                    </a>
+                    <div class="p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl shadow-lg">
+                        <i class="fas fa-concierge-bell text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                            {{ servicio.nombre_servicio }}
+                        </h1>
+                        <p class="text-gray-600 mt-1">Detalle completo del servicio</p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-3">
+                    <a href="{% url 'editar_servicio' servicio.id_servicio %}" 
+                       class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-cyan-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-edit mr-2"></i>
+                        Editar
+                    </a>
+                    <a href="{% url 'gestionar_asignaciones_servicios' %}" 
+                       class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-xl shadow-lg hover:from-green-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-building mr-2"></i>
+                        Gestionar Asignaciones
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas rápidas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">ID del Servicio</p>
+                        <p class="text-3xl font-bold text-blue-600">#{{ servicio.id_servicio }}</p>
+                    </div>
+                    <div class="p-3 bg-blue-100 rounded-xl">
+                        <i class="fas fa-hashtag text-blue-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Precio</p>
+                        <p class="text-3xl font-bold text-green-600">${{ servicio.precio|floatformat:0 }}</p>
+                    </div>
+                    <div class="p-3 bg-green-100 rounded-xl">
+                        <i class="fas fa-dollar-sign text-green-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Empresas Asignadas</p>
+                        <p class="text-3xl font-bold text-purple-600">{{ total_empresas_asignadas }}</p>
+                    </div>
+                    <div class="p-3 bg-purple-100 rounded-xl">
+                        <i class="fas fa-building text-purple-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Reservas</p>
+                        <p class="text-3xl font-bold text-orange-600">{{ total_reservas }}</p>
+                    </div>
+                    <div class="p-3 bg-orange-100 rounded-xl">
+                        <i class="fas fa-calendar-check text-orange-600"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Información del servicio -->
+            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-info-circle mr-3 text-blue-500"></i>
+                    Información del Servicio
+                </h2>
+                
+                <div class="space-y-6">
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Nombre del Servicio</label>
+                        <p class="text-xl font-bold text-gray-800">{{ servicio.nombre_servicio }}</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Descripción</label>
+                        <p class="text-gray-800 leading-relaxed">{{ servicio.descripcion }}</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">Precio</label>
+                        <p class="text-2xl font-bold text-green-600">${{ servicio.precio|floatformat:0 }} COP</p>
+                    </div>
+                </div>
+
+                <!-- Acciones rápidas -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Acciones Rápidas</h3>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="{% url 'editar_servicio' servicio.id_servicio %}" 
+                           class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-700 rounded-xl hover:bg-blue-200 transition-colors">
+                            <i class="fas fa-edit mr-2"></i>
+                            Editar Servicio
+                        </a>
+                        <a href="{% url 'eliminar_servicio' servicio.id_servicio %}" 
+                           class="inline-flex items-center px-4 py-2 bg-red-100 text-red-700 rounded-xl hover:bg-red-200 transition-colors">
+                            <i class="fas fa-trash-alt mr-2"></i>
+                            Eliminar
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empresas asignadas -->
+            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        <i class="fas fa-building mr-3 text-purple-500"></i>
+                        Empresas Asignadas
+                    </h2>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                        {{ total_empresas_asignadas }} empresa{{ total_empresas_asignadas|pluralize }}
+                    </span>
+                </div>
+
+                {% if empresas_asignadas %}
+                    <div class="space-y-4 max-h-96 overflow-y-auto">
+                        {% for asignacion in empresas_asignadas %}
+                            <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors duration-200">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="p-2 bg-purple-100 rounded-lg">
+                                            <i class="fas fa-building text-purple-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-800">{{ asignacion.empresa.nombre_empresa }}</h3>
+                                            <p class="text-sm text-gray-600">{{ asignacion.empresa.direccion }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        {% if asignacion.empresa.verificada %}
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <i class="fas fa-check-circle mr-1"></i>
+                                                Verificada
+                                            </span>
+                                        {% else %}
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                <i class="fas fa-clock mr-1"></i>
+                                                Pendiente
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-3 flex items-center justify-between text-sm text-gray-600">
+                                    <span>
+                                        <i class="fas fa-phone mr-1"></i>
+                                        {{ asignacion.empresa.telefono }}
+                                    </span>
+                                    <span>
+                                        <i class="fas fa-envelope mr-1"></i>
+                                        {{ asignacion.empresa.email }}
+                                    </span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-12">
+                        <div class="p-4 bg-gray-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                            <i class="fas fa-building text-gray-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-600 mb-2">No hay empresas asignadas</h3>
+                        <p class="text-gray-500 mb-4">Este servicio aún no está disponible en ninguna empresa</p>
+                        <a href="{% url 'gestionar_asignaciones_servicios' %}" 
+                           class="inline-flex items-center px-4 py-2 bg-purple-100 text-purple-700 rounded-xl hover:bg-purple-200 transition-colors">
+                            <i class="fas fa-plus mr-2"></i>
+                            Asignar Empresas
+                        </a>
+                    </div>
+                {% endif %}
+
+                <!-- Botón para gestionar asignaciones -->
+                {% if empresas_asignadas %}
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <a href="{% url 'gestionar_asignaciones_servicios' %}" 
+                           class="w-full inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-300">
+                            <i class="fas fa-cogs mr-2"></i>
+                            Gestionar Asignaciones
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Historial y actividad reciente -->
+        <div class="mt-8 bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-chart-line mr-3 text-green-500"></i>
+                Resumen de Actividad
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6 border border-blue-200">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-semibold text-blue-900">Estado del Servicio</h3>
+                        <i class="fas fa-check-circle text-blue-600"></i>
+                    </div>
+                    <p class="text-blue-800">Activo y disponible para reservas</p>
+                </div>
+                
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-semibold text-green-900">Disponibilidad</h3>
+                        <i class="fas fa-globe text-green-600"></i>
+                    </div>
+                    <p class="text-green-800">Disponible en {{ total_empresas_asignadas }} empresa{{ total_empresas_asignadas|pluralize }}</p>
+                </div>
+                
+                <div class="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-6 border border-orange-200">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-semibold text-orange-900">Popularidad</h3>
+                        <i class="fas fa-star text-orange-600"></i>
+                    </div>
+                    <p class="text-orange-800">{{ total_reservas }} reserva{{ total_reservas|pluralize }} realizada{{ total_reservas|pluralize }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

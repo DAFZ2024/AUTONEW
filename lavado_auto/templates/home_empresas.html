@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Autonew - Panel de Empresa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: #ffffff;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(200, 200, 200, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+        }
+
+        .navbar-glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo-container {
+            position: relative;
+        }
+
+        .logo-container::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .logo-container:hover::before {
+            opacity: 1;
+        }
+
+        .logo-img {
+            position: relative;
+            z-index: 2;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .stats-card {
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Optimizaciones móviles adicionales */
+        @media (max-width: 640px) {
+            .feature-card {
+                padding: 1rem;
+            }
+            
+            .feature-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.25rem;
+            }
+            
+            .stats-card {
+                padding: 1rem;
+                min-height: 80px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            
+            .glass-card {
+                border-radius: 12px;
+            }
+            
+            /* Mejoras de legibilidad en móvil */
+            body {
+                font-size: 16px;
+            }
+            
+            /* Espaciado optimizado para touch */
+            button, a {
+                min-height: 44px;
+            }
+
+            /* Mejoras para el navbar en móvil */
+            .navbar-glass {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            /* Optimización de scroll en móvil */
+            .max-h-64 {
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        /* Optimizaciones para pantallas muy pequeñas */
+        @media (max-width: 375px) {
+            .stats-card .text-2xl,
+            .stats-card .text-3xl {
+                font-size: 1.5rem;
+                line-height: 1.2;
+            }
+            
+            .feature-card h4 {
+                font-size: 1rem;
+            }
+            
+            .feature-card p {
+                font-size: 0.875rem;
+            }
+
+            /* Padding reducido para pantallas muy pequeñas */
+            main {
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+            }
+        }
+
+        /* Mejoras para landscape en móvil */
+        @media (max-width: 896px) and (orientation: landscape) {
+            .pt-24 {
+                padding-top: 5rem;
+            }
+            
+            .stats-card {
+                min-height: 70px;
+            }
+        }
+
+        /* Animaciones suaves para transiciones */
+        @media (prefers-reduced-motion: no-preference) {
+            .feature-card,
+            .stats-card,
+            .glass-card {
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+        }
+
+        /* Reducir animaciones para usuarios que prefieren menos movimiento */
+        @media (prefers-reduced-motion: reduce) {
+            .animate-fadeInUp,
+            .floating-element {
+                animation: none;
+            }
+            
+            .feature-card:hover {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Elementos flotantes decorativos -->
+    <div class="floating-elements">
+        <i class="fas fa-car floating-element text-gray-200 text-4xl" style="top: 10%; left: 15%; animation-delay: 0s;"></i>
+        <i class="fas fa-wrench floating-element text-gray-200 text-3xl" style="top: 20%; right: 20%; animation-delay: 2s;"></i>
+        <i class="fas fa-building floating-element text-gray-200 text-3xl" style="bottom: 30%; left: 10%; animation-delay: 4s;"></i>
+        <i class="fas fa-users floating-element text-gray-200 text-2xl" style="bottom: 20%; right: 15%; animation-delay: 1s;"></i>
+    </div>
+
+    <!-- Navbar - Optimizado para móviles -->
+    <nav class="navbar-glass shadow-lg px-4 sm:px-6 lg:px-8 py-3 sm:py-4 fixed top-0 left-0 right-0 z-50">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Logo y marca -->
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <div class="logo-container">
+                    <i class="fas fa-car logo-img w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-lg sm:text-2xl text-white bg-gradient-to-r from-blue-500 to-purple-600"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800">AUTONEW</h1>
+                    <p class="text-xs sm:text-sm text-gray-600 hidden sm:block">Panel de Empresa</p>
+                </div>
+            </div>
+
+            <!-- Navegación Desktop -->
+            <div class="hidden lg:flex items-center space-x-6">
+                <a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                    <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                </a>
+                <a href="{% url 'citas_empresa' %}" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                    <i class="fas fa-calendar-alt mr-2"></i>Citas
+                </a>
+                <a href="{% url 'reportes_empresa' %}" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                    <i class="fas fa-chart-bar mr-2"></i>Reportes
+                </a>
+                <a href="{% url 'perfil_empresa' %}" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                    <i class="fas fa-user-cog mr-2"></i>Perfil
+                </a>
+            </div>
+
+            <!-- Usuario y opciones -->
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <div class="hidden md:block text-right">
+                    <p class="text-gray-800 font-semibold text-sm lg:text-base truncate max-w-32 lg:max-w-none">{{ empresa.nombre_empresa }}</p>
+                    <p class="text-gray-600 text-xs lg:text-sm">Administrador</p>
+                </div>
+                <div class="relative">
+                    <button class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-lg hover:shadow-xl transition-all">
+                        <i class="fas fa-building text-sm sm:text-base"></i>
+                    </button>
+                </div>
+                <!-- Menú hamburguesa para móvil -->
+                <button onclick="toggleMobileMenu()" class="lg:hidden text-gray-600 hover:text-blue-500 transition-colors p-2" title="Menú">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+                <button onclick="logout()" class="hidden sm:block text-gray-600 hover:text-red-500 transition-colors p-2" title="Cerrar Sesión">
+                    <i class="fas fa-sign-out-alt text-lg sm:text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Menú móvil -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white/95 backdrop-blur-sm border-t border-gray-200 mt-3 -mx-4 px-4 py-4">
+            <div class="space-y-3">
+                <a href="#" class="flex items-center text-gray-700 hover:text-blue-600 font-medium transition-colors py-2">
+                    <i class="fas fa-tachometer-alt mr-3 w-5"></i>Dashboard
+                </a>
+                <a href="{% url 'citas_empresa' %}" class="flex items-center text-gray-700 hover:text-blue-600 font-medium transition-colors py-2">
+                    <i class="fas fa-calendar-alt mr-3 w-5"></i>Citas
+                </a>
+                <a href="{% url 'reportes_empresa' %}" class="flex items-center text-gray-700 hover:text-blue-600 font-medium transition-colors py-2">
+                    <i class="fas fa-chart-bar mr-3 w-5"></i>Reportes
+                </a>
+                <a href="{% url 'perfil_empresa' %}" class="flex items-center text-gray-700 hover:text-blue-600 font-medium transition-colors py-2">
+                    <i class="fas fa-user-cog mr-3 w-5"></i>Perfil
+                </a>
+                <div class="border-t border-gray-200 pt-3 mt-3">
+                    <div class="md:hidden mb-3">
+                        <p class="text-gray-800 font-semibold text-sm">{{ empresa.nombre_empresa }}</p>
+                        <p class="text-gray-600 text-xs">Administrador</p>
+                    </div>
+                    <button onclick="logout()" class="flex items-center text-red-600 hover:text-red-800 font-medium transition-colors py-2 w-full text-left">
+                        <i class="fas fa-sign-out-alt mr-3 w-5"></i>Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="pt-24 pb-12 px-4">
+        <div class="max-w-7xl mx-auto">
+            
+            <!-- Bienvenida - Optimizada para móviles -->
+            <div class="glass-card p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 animate-fadeInUp">
+                <div class="text-center text-gray-800">
+                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 flex items-center justify-center flex-wrap">
+                        <i class="fas fa-building mr-2 sm:mr-3 text-blue-600"></i>
+                        <span class="text-center">Bienvenido al Panel de Empresa</span>
+                    </h2>
+                    <p class="text-base sm:text-lg lg:text-xl text-gray-600 mb-4 sm:mb-6 px-2">Gestiona tu negocio de lavado de autos de manera eficiente</p>
+                    <div class="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                        <span class="px-3 sm:px-4 py-2 bg-blue-100 rounded-full text-sm font-medium text-blue-800 w-full sm:w-auto text-center">
+                            <i class="fas fa-clock mr-1 sm:mr-2"></i>Última actividad: Hoy
+                        </span>
+                        <span class="px-3 sm:px-4 py-2 bg-green-100 rounded-full text-sm font-medium text-green-800 w-full sm:w-auto text-center">
+                            <i class="fas fa-chart-line mr-1 sm:mr-2"></i>Estado: Activo
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas Rápidas - Optimizadas para móviles -->
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
+                <div class="stats-card animate-fadeInUp col-span-2 lg:col-span-1" style="animation-delay: 0.1s; background: linear-gradient(135deg, #3B82F6, #1D4ED8);">
+                    <div class="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">{{ reservas_pendientes }}</div>
+                    <div class="text-xs sm:text-sm opacity-80">
+                        <i class="fas fa-calendar-check mr-1"></i>
+                        <span class="hidden sm:inline">Citas Pendientes</span>
+                        <span class="sm:hidden">Pendientes</span>
+                    </div>
+                </div>
+                <div class="stats-card animate-fadeInUp" style="animation-delay: 0.2s; background: linear-gradient(135deg, #10B981, #047857);">
+                    <div class="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">{{ total_reservas }}</div>
+                    <div class="text-xs sm:text-sm opacity-80">
+                        <i class="fas fa-calendar mr-1"></i>
+                        <span class="hidden sm:inline">Total Reservas</span>
+                        <span class="sm:hidden">Total</span>
+                    </div>
+                </div>
+                <div class="stats-card animate-fadeInUp" style="animation-delay: 0.3s; background: linear-gradient(135deg, #8B5CF6, #7C3AED);">
+                    <div class="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">{{ reservas_completadas }}</div>
+                    <div class="text-xs sm:text-sm opacity-80">
+                        <i class="fas fa-check-circle mr-1"></i>
+                        <span class="hidden sm:inline">Completadas</span>
+                        <span class="sm:hidden">Hechas</span>
+                    </div>
+                </div>
+                <div class="stats-card animate-fadeInUp" style="animation-delay: 0.4s; background: linear-gradient(135deg, #F59E0B, #D97706);">
+                    <div class="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">{{ reservas_hoy }}</div>
+                    <div class="text-xs sm:text-sm opacity-80">
+                        <i class="fas fa-calendar-day mr-1"></i>
+                        <span class="hidden sm:inline">Citas Hoy</span>
+                        <span class="sm:hidden">Hoy</span>
+                    </div>
+                </div>
+                <div class="stats-card animate-fadeInUp col-span-2 lg:col-span-1" style="animation-delay: 0.5s; background: linear-gradient(135deg, #EF4444, #DC2626);">
+                    <div class="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">
+                        {% if ingresos_mes > 0 %}
+                            ${{ ingresos_mes }}
+                        {% else %}
+                            ${{ ingresos_totales|default:0 }}
+                        {% endif %}
+                    </div>
+                    <div class="text-xs sm:text-sm opacity-80">
+                        <i class="fas fa-dollar-sign mr-1"></i>
+                        {% if ingresos_mes > 0 %}
+                            <span class="hidden sm:inline">Ingresos Mes</span>
+                            <span class="sm:hidden">Mes</span>
+                        {% else %}
+                            <span class="hidden sm:inline">Ingresos Totales</span>
+                            <span class="sm:hidden">Total</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Funcionalidades Principales - Optimizadas para móviles -->
+            <div class="mb-6 sm:mb-8">
+                <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6 text-center">
+                    <i class="fas fa-tools mr-2 text-blue-600"></i>
+                    Panel de Control
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                    
+                    <!-- Gestión de Citas - Optimizada para móviles -->
+                    <div class="feature-card animate-fadeInUp" style="animation-delay: 0.1s;">
+                        <div class="feature-icon bg-gradient-to-r from-blue-500 to-blue-600">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h4 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">Gestión de Citas</h4>
+                        <p class="text-sm sm:text-base text-gray-600 mb-4">Administra las citas de tus clientes, horarios y disponibilidad.</p>
+                        <a href="{% url 'citas_empresa' %}" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors block text-center text-sm sm:text-base">
+                            <i class="fas fa-calendar-plus mr-2"></i>
+                            Gestionar Citas
+                        </a>
+                    </div>
+
+                    <!-- Reportes - Optimizada para móviles -->
+                    <div class="feature-card animate-fadeInUp" style="animation-delay: 0.2s;">
+                        <div class="feature-icon bg-gradient-to-r from-orange-500 to-orange-600">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h4 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">Reportes</h4>
+                        <p class="text-sm sm:text-base text-gray-600 mb-4">Visualiza estadísticas y reportes de tu negocio.</p>
+                        <a href="{% url 'reportes_empresa' %}" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors block text-center text-sm sm:text-base">
+                            <i class="fas fa-chart-line mr-2"></i>
+                            Ver Reportes
+                        </a>
+                    </div>
+
+                    <!-- Configuración - Optimizada para móviles -->
+                    <div class="feature-card animate-fadeInUp" style="animation-delay: 0.3s;">
+                        <div class="feature-icon bg-gradient-to-r from-gray-500 to-gray-600">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <h4 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">Perfil de Empresa</h4>
+                        <p class="text-sm sm:text-base text-gray-600 mb-4">Gestiona los datos y configuración de tu empresa.</p>
+                        <a href="{% url 'perfil_empresa' %}" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors block text-center text-sm sm:text-base">
+                            <i class="fas fa-user-edit mr-2"></i>
+                            Gestionar Perfil
+                        </a>
+                    </div>
+
+                    <!-- Notificaciones - Optimizada para móviles -->
+                    <div class="feature-card animate-fadeInUp" style="animation-delay: 0.4s;">
+                        <div class="feature-icon bg-gradient-to-r from-red-500 to-red-600">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h4 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">Notificaciones</h4>
+                        <p class="text-sm sm:text-base text-gray-600 mb-4">Gestiona las notificaciones y alertas del sistema.</p>
+                        <button class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors text-sm sm:text-base">
+                            <i class="fas fa-envelope mr-2"></i>
+                            Ver Notificaciones
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actividad Reciente - Optimizada para móviles -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
+                <!-- Actividad Reciente -->
+                <div class="glass-card p-4 sm:p-6 animate-fadeInUp" style="animation-delay: 0.7s;">
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">
+                        <i class="fas fa-history mr-2 text-blue-600"></i>
+                        Actividad Reciente
+                    </h3>
+                    <div class="space-y-2 sm:space-y-3 max-h-64 overflow-y-auto">
+                        {% for actividad in actividad_reciente %}
+                        <div class="flex items-center justify-between bg-gray-100 rounded-lg p-2 sm:p-3">
+                            <div class="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
+                                <div class="w-7 h-7 sm:w-8 sm:h-8 {% if actividad.reserva.estado == 'completado' %}bg-green-500{% else %}bg-blue-500{% endif %} rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas {% if actividad.reserva.estado == 'completado' %}fa-check-circle{% else %}fa-calendar-check{% endif %} text-white text-xs sm:text-sm"></i>
+                                </div>
+                                <div class="text-gray-800 min-w-0 flex-1">
+                                    <p class="font-medium text-sm sm:text-base truncate">
+                                        {% if actividad.reserva.estado == 'completado' %}Servicio completado{% else %}Nueva cita agendada{% endif %}
+                                    </p>
+                                    <p class="text-xs sm:text-sm text-gray-600 truncate">
+                                        {{ actividad.reserva.usuario.nombre_completo }} - ${{ actividad.precio_total|floatformat:0 }}
+                                    </p>
+                                </div>
+                            </div>
+                            <span class="text-gray-500 text-xs sm:text-sm flex-shrink-0 ml-2">
+                                {{ actividad.reserva.fecha|date:"d/m" }}
+                            </span>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-6 sm:py-8">
+                            <i class="fas fa-calendar-times text-3xl sm:text-4xl text-gray-400 mb-2"></i>
+                            <p class="text-sm sm:text-base text-gray-500">No hay actividad reciente</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Próximas Citas - Optimizada para móviles -->
+                <div class="glass-card p-4 sm:p-6 animate-fadeInUp" style="animation-delay: 0.8s;">
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">
+                        <i class="fas fa-clock mr-2 text-blue-600"></i>
+                        Próximas Citas
+                    </h3>
+                    <div class="space-y-2 sm:space-y-3 max-h-64 overflow-y-auto">
+                        {% for reserva in reservas_proximas %}
+                        <div class="bg-gray-100 rounded-lg p-2 sm:p-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center space-x-2 flex-1 min-w-0">
+                                    <div class="w-7 h-7 sm:w-8 sm:h-8 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-user text-white text-xs sm:text-sm"></i>
+                                    </div>
+                                    <div class="text-gray-800 min-w-0 flex-1">
+                                        <p class="font-medium text-sm sm:text-base truncate">{{ reserva.usuario.nombre_completo }}</p>
+                                    </div>
+                                </div>
+                                <span class="text-yellow-600 text-xs sm:text-sm font-medium flex-shrink-0">
+                                    {{ reserva.fecha|date:"d/m" }}
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs sm:text-sm">
+                                <span class="text-gray-600 flex items-center">
+                                    <i class="fas fa-clock mr-1"></i>{{ reserva.hora|time:"H:i" }}
+                                </span>
+                                <span class="text-gray-600 flex items-center">
+                                    <i class="fas fa-wrench mr-1"></i>{{ reserva.servicios.count }} servicio{{ reserva.servicios.count|pluralize }}
+                                </span>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-6 sm:py-8">
+                            <i class="fas fa-calendar-plus text-3xl sm:text-4xl text-gray-400 mb-2"></i>
+                            <p class="text-sm sm:text-base text-gray-500">No hay citas próximas</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if reservas_proximas %}
+                    <div class="mt-3 sm:mt-4 text-center">
+                        <a href="{% url 'citas_empresa' %}" class="text-blue-600 hover:text-blue-800 text-sm transition-colors">
+                            Ver todas las citas <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Función para alternar el menú móvil
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenu) {
+                mobileMenu.classList.toggle('hidden');
+            }
+        }
+
+        // Cerrar menú móvil al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuButton = event.target.closest('button[onclick="toggleMobileMenu()"]');
+            
+            if (mobileMenu && !mobileMenu.contains(event.target) && !menuButton) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+
+        // Función para cerrar sesión
+        function logout() {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                window.location.href = '/logout-empresa/'; // Ruta específica para logout de empresas
+            }
+        }
+
+        // Animaciones de entrada escalonadas
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.animate-fadeInUp');
+            elements.forEach((element, index) => {
+                element.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            // Efecto de typing para el título principal
+            const title = document.querySelector('h2');
+            if (title) {
+                const titleText = title.textContent.trim(); // Solo el texto, sin HTML
+                const titleIcon = title.querySelector('i'); // Guardar el ícono
+                title.innerHTML = ''; // Limpiar el contenido
+                
+                // Restaurar el ícono
+                if (titleIcon) {
+                    title.appendChild(titleIcon);
+                }
+                
+                // Crear un span para el texto
+                const textSpan = document.createElement('span');
+                title.appendChild(textSpan);
+                
+                let i = 0;
+                const typeWriter = () => {
+                    if (i < titleText.length) {
+                        textSpan.textContent += titleText.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 50);
+                    }
+                };
+                setTimeout(typeWriter, 800);
+            }
+
+            // Efecto de contador para las estadísticas
+            const statsNumbers = document.querySelectorAll('.stats-card .text-3xl');
+            statsNumbers.forEach(stat => {
+                // Saltear la tarjeta de ingresos para evitar conflictos con el símbolo $
+                if (stat.textContent.includes('$')) {
+                    return; // No aplicar el efecto contador a valores monetarios
+                }
+                
+                const finalNumber = parseInt(stat.textContent.replace(/[^0-9]/g, ''));
+                if (!isNaN(finalNumber) && finalNumber > 0) {
+                    let currentNumber = 0;
+                    const increment = finalNumber / 50;
+                    const timer = setInterval(() => {
+                        currentNumber += increment;
+                        if (currentNumber >= finalNumber) {
+                            stat.textContent = finalNumber.toLocaleString();
+                            clearInterval(timer);
+                        } else {
+                            stat.textContent = Math.floor(currentNumber).toLocaleString();
+                        }
+                    }, 30);
+                }
+            });
+        });
+
+        // Navegación responsive
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+    </script>
+</body>
+
+</html>

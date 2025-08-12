@@ -14,6 +14,7 @@ from pathlib import Path
 import os 
 
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'tailwind',
     'theme',
     'django_browser_reload',
+    'django.contrib.humanize',
 ]
 
 TAILWIND_APP_NAME = 'theme'
@@ -55,6 +57,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'lavado_auto.middleware_active_user.ActiveUserMiddleware',  # Verificar usuarios activos
     'django.contrib.messages.middleware.MessageMiddleware',
     'lavado_auto.middleware.AdminCRUDMiddleware',  # Middleware reactivado
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -94,6 +97,23 @@ DATABASES = {
 }
 
 
+#load_dotenv()
+
+#DATABASES = {
+   # 'default': {
+       # 'ENGINE': 'django.db.backends.postgresql',
+        #'NAME': 'postgres',
+        #'USER': os.getenv('DB_USER', 'postgres'),
+        #'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        #'HOST': os.getenv('DB_HOST', ''),
+        #'PORT': os.getenv('DB_PORT', '5432'),
+        #'OPTIONS': {
+         #   'sslmode': 'require',  # Supabase requiere SSL
+        #},
+    #}
+#}
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -113,8 +133,11 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 AUTH_USER_MODEL = 'lavado_auto.Usuario'
 
+USERNAME_FIELD = 'nombre_usuario'
+EMAIL_FIELD = 'correo'
+
 # Configuración para redirecciones de login
-LOGIN_URL = 'logincrud'  # URL a la que se redirige cuando se requiere login
+LOGIN_URL = 'login'  # URL a la que se redirige cuando se requiere login
 LOGIN_REDIRECT_URL = 'homecrud'  # URL a la que se redirige después de login exitoso
 LOGOUT_REDIRECT_URL = 'home'  # URL a la que se redirige después de logout
 
@@ -148,3 +171,18 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Configuración de correo electrónico
+# Para desarrollo, usaremos la consola (los correos se mostrarán en la terminal)
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Para producción, descomenta y configura lo siguiente:
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'du28fo@gmail.com'  # Cambia por tu correo
+EMAIL_HOST_PASSWORD = 'ejxb aayi vydq omge'  # Usa contraseña de aplicación
+
+DEFAULT_FROM_EMAIL = 'AutoNew <noreply@autonew.com>'
+EMAIL_SUBJECT_PREFIX = '[AutoNew] '

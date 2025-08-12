@@ -1,248 +1,369 @@
-{% extends "base_crud.html" %}
+{% extends "base/base_crud.html" %}
 
 {% block content %}
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <title>Bienvenido a AutoNew</title>
-    {% load static %}
-    
-    <style>
-        /* Reset de conflictos con Bootstrap */
-        * {
-            box-sizing: border-box;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 0.6;
-            }
-            50% {
-                opacity: 0.8;
-            }
-        }
-
-        .animate-fadeInUp {
-            animation: fadeInUp 0.6s ease-out;
-        }
-
-        .animate-pulse {
-            animation: pulse 3s ease-in-out infinite;
-        }
-
-        /* Asegurar que Tailwind funcione */
-        .bg-white { background-color: white !important; }
-        .text-blue-600 { color: #2563eb !important; }
-        .text-slate-800 { color: #1e293b !important; }
-        .text-gray-600 { color: #4b5563 !important; }
-        .rounded-2xl { border-radius: 1rem !important; }
-        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important; }
-        .grid { display: grid !important; }
-        .gap-8 { gap: 2rem !important; }
-        .p-8 { padding: 2rem !important; }
-        .mb-6 { margin-bottom: 1.5rem !important; }
-        .text-2xl { font-size: 1.5rem !important; line-height: 2rem !important; }
-        .font-bold { font-weight: 700 !important; }
-    </style>
-</head>
-
-<body class="bg-white min-h-screen">
-    <!-- Elementos decorativos de fondo -->
-    <div class="fixed inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-200/50 to-slate-200/50 rounded-full blur-3xl opacity-60 animate-pulse"></div>
-        <div class="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-slate-200/50 to-gray-200/50 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 2s;"></div>
-        <div class="absolute top-1/2 left-1/4 w-64 h-64 bg-gradient-to-br from-blue-200/50 to-slate-200/50 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 4s;"></div>
-    </div>
-
-    <!-- Contenido principal -->
-    <main class="relative z-10 pt-20 md:pt-24">
-        <!-- Header de bienvenida -->
-        <div class="max-w-7xl mx-auto px-6 py-12">
-            <div class="text-center max-w-4xl mx-auto mb-16">
-                <div class="animate-fadeInUp">
-                    <span class="inline-block px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-semibold rounded-full uppercase tracking-wider mb-6">
-                        Panel de Administración
-                    </span>
-                </div>
-                <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 animate-fadeInUp" style="animation-delay: 0.2s;">
-                    <span class="bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
-                        AUTONEW
-                    </span>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 mt-8 via-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8">
+    <!-- Header del Dashboard -->
+    <div class="max-w-7xl mx-auto mb-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+            <div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-2">
+                    Dashboard de Estadísticas
                 </h1>
-                <p class="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed animate-fadeInUp" style="animation-delay: 0.4s;">
-                    Gestión Integral del Sistema de Lavado Automotriz
+                <p class="text-lg text-gray-600">
+                    Resumen completo del sistema AutoNew - {{ fecha_hoy|date:"d/m/Y" }}
                 </p>
             </div>
+            <div class="flex items-center space-x-2 bg-white rounded-lg px-4 py-2 shadow-sm">
+                <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <span class="text-sm font-medium text-gray-700">Sistema Activo</span>
+            </div>
+        </div>
+    </div>
 
-            <!-- Sección de estadísticas -->
-            <div class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-3xl p-8 mb-16 border border-gray-200 shadow-lg animate-fadeInUp" style="animation-delay: 0.6s;">
-                <div class="text-center mb-8">
-                    <h3 class="text-2xl font-bold text-slate-800 mb-2">Gestión Integral del Sistema</h3>
-                    <p class="text-gray-600">Control total de todas las operaciones</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
-                        <div class="text-4xl font-bold text-blue-600 mb-2">6</div>
-                        <div class="text-gray-600 font-medium">Módulos</div>
-                    </div>
-                    <div class="text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
-                        <div class="text-4xl font-bold text-blue-600 mb-2">100%</div>
-                        <div class="text-gray-600 font-medium">Funcional</div>
-                    </div>
-                    <div class="text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
-                        <div class="text-4xl font-bold text-blue-600 mb-2">24/7</div>
-                        <div class="text-gray-600 font-medium">Disponible</div>
+    <!-- Métricas Principales -->
+    <div class="max-w-7xl mx-auto mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Total Usuarios -->
+            <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 mb-1">Total Usuarios</p>
+                            <p class="text-3xl font-bold text-blue-600">{{ total_usuarios }}</p>
+                            <p class="text-xs text-green-600 mt-1">+{{ usuarios_mes }} este mes</p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-users text-blue-600 text-xl"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Grid de módulos principales -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Gestión de Usuarios -->
-                <a href="/usuarioscrud" class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200 no-underline animate-fadeInUp" style="animation-delay: 0.1s;">
-                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-users text-2xl text-white"></i>
+            <!-- Total Reservas -->
+            <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 mb-1">Total Reservas</p>
+                            <p class="text-3xl font-bold text-emerald-600">{{ total_reservas }}</p>
+                            <p class="text-xs text-emerald-600 mt-1">{{ reservas_hoy }} hoy</p>
+                        </div>
+                        <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-calendar-check text-emerald-600 text-xl"></i>
+                        </div>
                     </div>
-                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Gestión de Usuarios</h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">
-                        Administra completamente la base de usuarios del sistema con herramientas avanzadas de gestión.
-                    </p>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-3 py-1 bg-blue-100 text-blue-600 text-sm font-medium rounded-full">Ver</span>
-                        <span class="px-3 py-1 bg-blue-100 text-blue-600 text-sm font-medium rounded-full">Eliminar</span>
-                        <span class="px-3 py-1 bg-blue-100 text-blue-600 text-sm font-medium rounded-full">Editar</span>
-                    </div>
-                </a>
+                </div>
+            </div>
 
-                <!-- Control de Citas -->
-                <a href="/citascrud" class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200 no-underline animate-fadeInUp" style="animation-delay: 0.2s;">
-                    <div class="w-16 h-16 bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-calendar-check text-2xl text-white"></i>
+            <!-- Total Empresas -->
+            <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 mb-1">Empresas</p>
+                            <p class="text-3xl font-bold text-purple-600">{{ total_empresas }}</p>
+                            <p class="text-xs text-purple-600 mt-1">{{ empresas_verificadas }} verificadas</p>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-building text-purple-600 text-xl"></i>
+                        </div>
                     </div>
-                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Control de Citas</h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">
-                        Supervisa y administra todas las citas programadas en el sistema de manera eficiente.
-                    </p>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-3 py-1 bg-slate-100 text-slate-600 text-sm font-medium rounded-full">Ver</span>
-                        <span class="px-3 py-1 bg-slate-100 text-slate-600 text-sm font-medium rounded-full">Editar</span>
-                        <span class="px-3 py-1 bg-slate-100 text-slate-600 text-sm font-medium rounded-full">Eliminar</span>
-                    </div>
-                </a>
+                </div>
+            </div>
 
-                <!-- Moderación de Comentarios -->
-                <a href="/comentarioscrud" class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200 no-underline animate-fadeInUp" style="animation-delay: 0.3s;">
-                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-comments text-2xl text-white"></i>
+            <!-- Ingresos Estimados -->
+            <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 mb-1">Ingresos Est. Mes</p>
+                            <p class="text-3xl font-bold text-yellow-600">${{ ingresos_estimados_mes }}</p>
+                            <p class="text-xs text-yellow-600 mt-1">{{ reservas_mes }} reservas</p>
+                        </div>
+                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-dollar-sign text-yellow-600 text-xl"></i>
+                        </div>
                     </div>
-                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Moderación de Comentarios</h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">
-                        Revisa y modera los comentarios de usuarios para mantener la calidad del contenido.
-                    </p>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-3 py-1 bg-green-100 text-green-600 text-sm font-medium rounded-full">Ver</span>
-                        <span class="px-3 py-1 bg-green-100 text-green-600 text-sm font-medium rounded-full">Eliminar</span>
-                    </div>
-                </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                <!-- Atención de Quejas -->
-                <a href="/quejascrud" class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200 no-underline animate-fadeInUp" style="animation-delay: 0.4s;">
-                    <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-exclamation-triangle text-2xl text-white"></i>
+    <!-- Gráficos y Estadísticas Detalladas -->
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Estado de Reservas -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Estado de Reservas</h3>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-4 h-4 bg-yellow-500 rounded-full"></div>
+                        <span class="text-gray-700">Pendientes</span>
                     </div>
-                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Atención de Quejas</h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">
-                        Gestiona las quejas de usuarios proporcionando respuestas rápidas y efectivas.
-                    </p>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-3 py-1 bg-orange-100 text-orange-600 text-sm font-medium rounded-full">Ver</span>
-                        <span class="px-3 py-1 bg-orange-100 text-orange-600 text-sm font-medium rounded-full">Contestar</span>
-                        <span class="px-3 py-1 bg-orange-100 text-orange-600 text-sm font-medium rounded-full">Eliminar</span>
+                    <div class="flex items-center space-x-4">
+                        <span class="font-bold text-yellow-600">{{ reservas_pendientes }}</span>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div class="bg-yellow-500 h-2 rounded-full" style="width: {{ porcentaje_pendientes }}%"></div>
+                        </div>
                     </div>
-                </a>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-4 h-4 bg-green-500 rounded-full"></div>
+                        <span class="text-gray-700">Completadas</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="font-bold text-green-600">{{ reservas_completadas }}</span>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: {{ tasa_completadas }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-4 h-4 bg-red-500 rounded-full"></div>
+                        <span class="text-gray-700">Canceladas</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="font-bold text-red-600">{{ reservas_canceladas }}</span>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div class="bg-red-500 h-2 rounded-full" style="width: {{ tasa_canceladas }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Tasa de éxito: <span class="font-bold text-green-600">{{ tasa_completadas }}%</span>
+                </p>
+            </div>
+        </div>
 
-                <!-- Administración de Servicios -->
-                <a href="/servicioscrud" class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200 no-underline animate-fadeInUp" style="animation-delay: 0.5s;">
-                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-cogs text-2xl text-white"></i>
+        <!-- Reservas por Día (Última Semana) -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Reservas - Última Semana</h3>
+            <div class="space-y-3">
+                {% for dia in reservas_por_dia %}
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-600 w-16">{{ dia.fecha }}</span>
+                    <div class="flex-1 mx-4">
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-blue-500 h-3 rounded-full transition-all duration-500" 
+                                 style="width: {% if dia.total > 5 %}100%{% elif dia.total > 0 %}{% widthratio dia.total 1 20 %}%{% else %}2%{% endif %}"></div>
+                        </div>
                     </div>
-                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Administración de Servicios</h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">
-                        Crea, modifica y administra todos los servicios disponibles en la plataforma.
-                    </p>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-3 py-1 bg-purple-100 text-purple-600 text-sm font-medium rounded-full">Ver</span>
-                        <span class="px-3 py-1 bg-purple-100 text-purple-600 text-sm font-medium rounded-full">Eliminar</span>
-                        <span class="px-3 py-1 bg-purple-100 text-purple-600 text-sm font-medium rounded-full">Crear</span>
-                    </div>
-                </a>
+                    <span class="text-sm font-bold text-blue-600 w-8">{{ dia.total }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 
-                <!-- Gestión de Empresas -->
-                <a href="/empresascrud" class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200 no-underline animate-fadeInUp" style="animation-delay: 0.6s;">
-                    <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-building text-2xl text-white"></i>
+    <!-- Estadísticas Detalladas -->
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Usuarios Detalle -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-users text-blue-500 mr-2"></i>
+                Usuarios
+            </h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Activos</span>
+                    <span class="font-bold text-green-600">{{ usuarios_activos }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Administradores</span>
+                    <span class="font-bold text-purple-600">{{ usuarios_admin }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Clientes</span>
+                    <span class="font-bold text-blue-600">{{ usuarios_cliente }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Servicios y Planes -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-cogs text-purple-500 mr-2"></i>
+                Servicios y Planes
+            </h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Servicios</span>
+                    <span class="font-bold text-purple-600">{{ total_servicios }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Planes Activos</span>
+                    <span class="font-bold text-cyan-600">{{ total_planes }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Planes Empresariales</span>
+                    <span class="font-bold text-indigo-600">{{ total_planes_empresariales }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Suscripciones Activas</span>
+                    <span class="font-bold text-emerald-600">{{ total_suscripciones_activas }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback y Soporte -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-comment-dots text-green-500 mr-2"></i>
+                Feedback
+            </h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Comentarios</span>
+                    <span class="font-bold text-green-600">{{ total_comentarios }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Este Mes</span>
+                    <span class="font-bold text-blue-600">{{ comentarios_mes }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Quejas Pendientes</span>
+                    <span class="font-bold text-red-600">{{ quejas_pendientes }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Quejas Resueltas</span>
+                    <span class="font-bold text-green-600">{{ quejas_respondidas }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actividad Reciente -->
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Reservas Recientes -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-clock text-blue-500 mr-2"></i>
+                Reservas Recientes
+            </h3>
+            <div class="space-y-4">
+                {% for reserva in reservas_recientes %}
+                <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                    <div>
+                        <p class="font-medium text-gray-900">{{ reserva.usuario.nombre_completo }}</p>
+                        <p class="text-sm text-gray-600">{{ reserva.empresa.nombre_empresa }}</p>
+                        <p class="text-xs text-gray-500">{{ reserva.fecha|date:"d/m/Y" }} - {{ reserva.hora }}</p>
                     </div>
-                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Gestión de Empresas</h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">
-                        Administra el registro y información de empresas asociadas al sistema.
-                    </p>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-3 py-1 bg-indigo-100 text-indigo-600 text-sm font-medium rounded-full">Ver</span>
-                        <span class="px-3 py-1 bg-indigo-100 text-indigo-600 text-sm font-medium rounded-full">Eliminar</span>
-                        <span class="px-3 py-1 bg-indigo-100 text-indigo-600 text-sm font-medium rounded-full">Crear</span>
+                    <div class="text-right">
+                        <span class="inline-block px-2 py-1 text-xs rounded-full
+                            {% if reserva.estado == 'completado' %}bg-green-100 text-green-800
+                            {% elif reserva.estado == 'pendiente' %}bg-yellow-100 text-yellow-800
+                            {% else %}bg-red-100 text-red-800{% endif %}">
+                            {{ reserva.get_estado_display }}
+                        </span>
                     </div>
+                </div>
+                {% empty %}
+                <p class="text-gray-500 text-center py-4">No hay reservas recientes</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Servicios Más Populares -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-star text-yellow-500 mr-2"></i>
+                Servicios Más Populares
+            </h3>
+            <div class="space-y-4">
+                {% for servicio in servicios_mas_reservados %}
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="font-medium text-gray-900">{{ servicio.nombre_servicio }}</p>
+                        <p class="text-sm text-gray-600">${{ servicio.precio }}</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-bold text-blue-600">{{ servicio.total_reservas }}</span>
+                        <p class="text-xs text-gray-500">reservas</p>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-gray-500 text-center py-4">No hay datos de servicios</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Empresas Más Activas -->
+    <div class="max-w-7xl mx-auto mb-8">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-building text-indigo-500 mr-2"></i>
+                Empresas Más Activas
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for empresa in empresas_activas %}
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <h4 class="font-medium text-gray-900">{{ empresa.nombre_empresa }}</h4>
+                    <p class="text-sm text-gray-600">{{ empresa.direccion }}</p>
+                    <div class="mt-2 flex justify-between items-center">
+                        <span class="text-xs text-gray-500">{{ empresa.telefono }}</span>
+                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                            {{ empresa.total_reservas }} reservas
+                        </span>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-gray-500 text-center py-4 col-span-3">No hay datos de empresas</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones Rápidas -->
+    <div class="max-w-7xl mx-auto">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Acciones Rápidas</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="/usuarioscrud" class="flex flex-col items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                    <i class="fas fa-user-plus text-2xl text-blue-600 mb-2"></i>
+                    <span class="text-sm font-medium text-blue-900">Gestionar Usuarios</span>
+                </a>
+                <a href="/citascrud" class="flex flex-col items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                    <i class="fas fa-calendar-plus text-2xl text-green-600 mb-2"></i>
+                    <span class="text-sm font-medium text-green-900">Nueva Reserva</span>
+                </a>
+                <a href="/empresascrud" class="flex flex-col items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
+                    <i class="fas fa-building text-2xl text-purple-600 mb-2"></i>
+                    <span class="text-sm font-medium text-purple-900">Gestionar Empresas</span>
+                </a>
+                <a href="/quejascrud" class="flex flex-col items-center p-4 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+                    <i class="fas fa-exclamation-triangle text-2xl text-red-600 mb-2"></i>
+                    <span class="text-sm font-medium text-red-900">Ver Quejas</span>
                 </a>
             </div>
         </div>
-    </main>
+    </div>
+</div>
 
-    <script>
-        // CÓDIGO PROBLEMÁTICO COMENTADO - Causaba logout automático al navegar
-        /*
-        window.addEventListener("beforeunload", function(event) {
-            // Enviar una solicitud al servidor para cerrar sesión
-            fetch("{% url 'logout_view' %}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'  // Incluir el token CSRF
-                },
-            }).then(response => {
-                // Opcional: manejar la respuesta si es necesario
-            }).catch(error => {
-                console.log('Error al cerrar sesión:', error);
-            });
-        });
-        */
-
-        // Efectos de hover mejorados
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('a[href*="crud"]');
-            
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-8px) scale(1.02)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
-                });
-            });
-        });
-    </script>
-</body>
-
+<script>
+// Actualizar números con animación
+document.addEventListener('DOMContentLoaded', function() {
+    const animateNumbers = document.querySelectorAll('.text-3xl.font-bold');
+    animateNumbers.forEach(element => {
+        const finalNumber = parseInt(element.textContent);
+        if (isNaN(finalNumber)) return;
+        
+        let currentNumber = 0;
+        const increment = finalNumber / 50;
+        const timer = setInterval(() => {
+            currentNumber += increment;
+            if (currentNumber >= finalNumber) {
+                element.textContent = finalNumber;
+                clearInterval(timer);
+            } else {
+                element.textContent = Math.floor(currentNumber);
+            }
+        }, 30);
+    });
+});
+</script>
 {% endblock %}

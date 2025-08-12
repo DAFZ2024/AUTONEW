@@ -1,0 +1,166 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        padding: 80px 0;
+    }
+
+    .cancel-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .cancel-header {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .cancel-content {
+        padding: 40px;
+    }
+
+    .warning-box {
+        background: #fef3c7;
+        border: 1px solid #f59e0b;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+    }
+
+    .warning-title {
+        color: #92400e;
+        font-weight: 700;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .warning-text {
+        color: #92400e;
+        line-height: 1.6;
+    }
+
+    .plan-info {
+        background: #f8fafc;
+        padding: 20px;
+        border-radius: 12px;
+        margin: 20px 0;
+    }
+
+    .btn {
+        padding: 16px 24px;
+        border-radius: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .btn-danger {
+        background: #ef4444;
+        color: white;
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .btn-danger:hover {
+        background: #dc2626;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-secondary {
+        background: #6b7280;
+        color: white;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .btn-secondary:hover {
+        background: #4b5563;
+        color: white;
+    }
+
+    .back-btn {
+        display: inline-block;
+        color: #6b7280;
+        text-decoration: none;
+        margin-bottom: 20px;
+        font-weight: 500;
+    }
+
+    .back-btn:hover {
+        color: #3b82f6;
+    }
+</style>
+
+<div class="cancel-container">
+    <div class="cancel-header">
+        <h1><i class="fas fa-exclamation-triangle"></i> Cancelar Suscripción</h1>
+        <p>¿Estás seguro de que quieres cancelar tu suscripción?</p>
+    </div>
+
+    <div class="cancel-content">
+        <a href="{% url 'mi_suscripcion' %}" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Volver a Mi Suscripción
+        </a>
+
+        <div class="plan-info">
+            <h3>Plan Actual: {{ suscripcion.plan.nombre }}</h3>
+            <p><strong>Precio:</strong> ${{ suscripcion.plan.precio_mensual }} por mes</p>
+            <p><strong>Servicios restantes:</strong> {{ suscripcion.servicios_restantes }}</p>
+            <p><strong>Fecha de renovación:</strong> {{ suscripcion.fecha_fin|date:"d/m/Y" }}</p>
+        </div>
+
+        <div class="warning-box">
+            <div class="warning-title">
+                <i class="fas fa-exclamation-circle"></i>
+                Importante: ¿Qué pasará al cancelar?
+            </div>
+            <ul class="warning-text">
+                <li>Tu suscripción seguirá activa hasta {{ suscripcion.fecha_fin|date:"d/m/Y" }}</li>
+                <li>Podrás seguir usando tus servicios restantes hasta esa fecha</li>
+                <li>No se realizarán más cobros automáticos</li>
+                <li>Después de la fecha de vencimiento, perderás acceso a los beneficios del plan</li>
+                <li>Podrás reactivar tu suscripción en cualquier momento</li>
+            </ul>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <form method="POST">
+                {% csrf_token %}
+                <a href="{% url 'mi_suscripcion' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> No, mantener mi suscripción
+                </a>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Sí, cancelar mi suscripción
+                </button>
+            </form>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #f1f5f9;">
+            <p style="color: #64748b; font-size: 0.9rem;">
+                ¿Tienes problemas con tu plan? 
+                <a href="{% url 'contacto' %}" style="color: #3b82f6;">Contáctanos</a> 
+                para ayudarte a encontrar la mejor solución.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

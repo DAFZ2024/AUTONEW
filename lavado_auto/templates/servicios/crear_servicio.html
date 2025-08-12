@@ -1,0 +1,159 @@
+{% extends 'base/base_crud.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
+            <div class="flex items-center space-x-4 mb-6">
+                <a href="{% url 'servicioscrud' %}" 
+                   class="p-3 bg-gray-100 hover:bg-gray-200 rounded-2xl transition-colors duration-300">
+                    <i class="fas fa-arrow-left text-gray-600"></i>
+                </a>
+                <div class="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg">
+                    <i class="fas fa-plus text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                        Crear Nuevo Servicio
+                    </h1>
+                    <p class="text-gray-600 mt-1">Agrega un nuevo servicio al sistema</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensajes de estado -->
+        {% if messages %}
+            <div class="mb-8 space-y-3">
+                {% for message in messages %}
+                    <div class="p-4 rounded-2xl shadow-lg backdrop-blur-xl border {% if message.tags == 'success' %}bg-green-50/80 border-green-200 text-green-800{% elif message.tags == 'error' %}bg-red-50/80 border-red-200 text-red-800{% elif message.tags == 'warning' %}bg-yellow-50/80 border-yellow-200 text-yellow-800{% else %}bg-blue-50/80 border-blue-200 text-blue-800{% endif %}">
+                        <div class="flex items-center">
+                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-3 text-lg"></i>
+                            <span class="font-medium">{{ message }}</span>
+                            <button type="button" class="ml-auto text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.style.display='none'">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Formulario de creación -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-8">
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Nombre del Servicio -->
+                <div class="grid grid-cols-1 gap-6">
+                    <div>
+                        <label for="{{ form.nombre_servicio.id_for_label }}" 
+                               class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-tag mr-2 text-blue-500"></i>
+                            Nombre del Servicio
+                        </label>
+                        <div class="relative">
+                            {{ form.nombre_servicio }}
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                <i class="fas fa-concierge-bell text-gray-400"></i>
+                            </div>
+                        </div>
+                        {% if form.nombre_servicio.errors %}
+                            <div class="mt-2 text-sm text-red-600">
+                                {{ form.nombre_servicio.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div>
+                    <label for="{{ form.descripcion.id_for_label }}" 
+                           class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-align-left mr-2 text-blue-500"></i>
+                        Descripción
+                    </label>
+                    {{ form.descripcion }}
+                    {% if form.descripcion.errors %}
+                        <div class="mt-2 text-sm text-red-600">
+                            {{ form.descripcion.errors }}
+                        </div>
+                    {% endif %}
+                    <p class="mt-2 text-sm text-gray-500">Describe detalladamente qué incluye este servicio</p>
+                </div>
+
+                <!-- Precio -->
+                <div>
+                    <label for="{{ form.precio.id_for_label }}" 
+                           class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-dollar-sign mr-2 text-blue-500"></i>
+                        Precio
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">$</span>
+                        </div>
+                        {{ form.precio }}
+                    </div>
+                    {% if form.precio.errors %}
+                        <div class="mt-2 text-sm text-red-600">
+                            {{ form.precio.errors }}
+                        </div>
+                    {% endif %}
+                    <p class="mt-2 text-sm text-gray-500">Ingresa el precio en COP (pesos colombianos)</p>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                    <button type="submit" 
+                            class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold py-3 px-6 rounded-2xl shadow-lg hover:from-green-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-save mr-2"></i>
+                        Crear Servicio
+                    </button>
+                    
+                    <a href="{% url 'servicioscrud' %}" 
+                       class="flex-1 bg-gray-100 text-gray-700 font-semibold py-3 px-6 rounded-2xl shadow-lg hover:bg-gray-200 transform hover:scale-105 transition-all duration-300 text-center">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="mt-8 bg-blue-50/80 backdrop-blur-xl rounded-2xl border border-blue-200 p-6">
+            <div class="flex items-start space-x-3">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-info-circle text-blue-500 text-xl mt-1"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-blue-900 mb-2">Información importante</h3>
+                    <ul class="text-blue-800 space-y-1 text-sm">
+                        <li>• El nombre del servicio debe ser único en el sistema</li>
+                        <li>• La descripción ayudará a los clientes a entender qué incluye el servicio</li>
+                        <li>• El precio puede ser modificado posteriormente</li>
+                        <li>• Una vez creado, podrás asignar este servicio a empresas específicas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos adicionales para el formulario */
+.form-control {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300;
+}
+
+textarea.form-control {
+    @apply min-h-[120px] resize-vertical;
+}
+
+input[type="number"].form-control {
+    @apply pl-8;
+}
+</style>
+{% endblock %}

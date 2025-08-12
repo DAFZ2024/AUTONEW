@@ -1,0 +1,56 @@
+# CONFIGURACIÓN PARA PROGRAMADOR DE TAREAS DE WINDOWS
+# Instrucciones para configurar la tarea automática
+
+## OPCIÓN 1: Programador de Tareas de Windows (Recomendado)
+
+1. Abrir "Programador de tareas" (Task Scheduler)
+2. Hacer clic en "Crear tarea básica"
+3. Configurar:
+   - Nombre: "Auto-completar Reservas Django"
+   - Descripción: "Marca automáticamente como completadas las reservas que han pasado 4 horas"
+   
+4. Desencadenador:
+   - Frecuencia: Diariamente
+   - Hora: Cada hora (o según prefieras)
+   - Repetir cada: 1 hora
+   - Durante: Indefinidamente
+
+5. Acción:
+   - Programa: C:\Windows\System32\cmd.exe
+   - Argumentos: /c "c:\Users\du28f\Downloads\PROJECT DJANGO\AUTONEW-DJANGO\auto_completar_reservas.bat"
+   - Iniciar en: c:\Users\du28f\Downloads\PROJECT DJANGO\AUTONEW-DJANGO
+
+## OPCIÓN 2: Comando Manual
+
+Ejecutar manualmente cuando sea necesario:
+```cmd
+cd "c:\Users\du28f\Downloads\PROJECT DJANGO\AUTONEW-DJANGO"
+python manage.py marcar_completadas
+```
+
+## OPCIÓN 3: Comando con Parámetros Personalizados
+
+```cmd
+# Modo de prueba (no hace cambios)
+python manage.py marcar_completadas --dry-run
+
+# Cambiar a 2 horas en lugar de 4
+python manage.py marcar_completadas --horas=2
+
+# Combinado
+python manage.py marcar_completadas --horas=6 --dry-run
+```
+
+## LOGS
+
+Los logs se guardan en:
+- logs/auto_completar_reservas.log (ejecuciones del script)
+- Django logs (configurados en settings.py)
+
+## NOTAS IMPORTANTES
+
+1. El comando busca reservas pendientes cuya fecha+hora ya pasó por más de X horas
+2. Solo marca como "completado", nunca elimina reservas
+3. Genera logs detallados para auditoría
+4. Funciona tanto manualmente como automáticamente
+5. La función también se ejecuta automáticamente cuando se accede a citas_crud

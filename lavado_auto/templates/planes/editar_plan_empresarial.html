@@ -1,0 +1,322 @@
+{% extends 'base/base_crud.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <a href="{% url 'planes_empresariales_crud' %}" 
+                       class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </a>
+                    <div class="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl shadow-lg">
+                        <i class="fas fa-edit text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+                            Editar Plan: {{ plan.nombre }}
+                        </h1>
+                        <p class="text-gray-600 mt-1">Modificar la configuración del plan empresarial</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <form method="post" class="space-y-8">
+            {% csrf_token %}
+            
+            <!-- Información básica -->
+            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-info-circle text-purple-600 mr-3"></i>
+                    Información Básica
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="nombre" class="block text-sm font-medium text-gray-700 mb-2">
+                            Nombre del Plan *
+                        </label>
+                        <input type="text" id="nombre" name="nombre" value="{{ plan.nombre }}" required
+                               class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300"
+                               placeholder="Ej: Plan Corporativo Premium">
+                    </div>
+                    
+                    <div>
+                        <label for="tipo" class="block text-sm font-medium text-gray-700 mb-2">
+                            Tipo de Plan *
+                        </label>
+                        <select id="tipo" name="tipo" required
+                                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300">
+                            <option value="">Seleccionar tipo...</option>
+                            <option value="basico_flota" {% if plan.tipo == 'basico_flota' %}selected{% endif %}>Básico para Flotas</option>
+                            <option value="premium_flota" {% if plan.tipo == 'premium_flota' %}selected{% endif %}>Premium para Flotas</option>
+                            <option value="corporativo" {% if plan.tipo == 'corporativo' %}selected{% endif %}>Plan Corporativo</option>
+                            <option value="transporte_publico" {% if plan.tipo == 'transporte_publico' %}selected{% endif %}>Transporte Público</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <label for="descripcion" class="block text-sm font-medium text-gray-700 mb-2">
+                        Descripción *
+                    </label>
+                    <textarea id="descripcion" name="descripcion" rows="4" required
+                              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300"
+                              placeholder="Describe las características y beneficios del plan empresarial...">{{ plan.descripcion }}</textarea>
+                </div>
+            </div>
+
+            <!-- Configuración de precios -->
+            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-dollar-sign text-emerald-600 mr-3"></i>
+                    Configuración de Precios
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div>
+                        <label for="precio_mensual_por_vehiculo" class="block text-sm font-medium text-gray-700 mb-2">
+                            Precio Mensual por Vehículo *
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                            <input type="number" step="0.01" id="precio_mensual_por_vehiculo" name="precio_mensual_por_vehiculo" 
+                                   value="{{ plan.precio_mensual_por_vehiculo }}" required
+                                   class="w-full pl-8 pr-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300"
+                                   placeholder="0.00">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="precio_base_mensual" class="block text-sm font-medium text-gray-700 mb-2">
+                            Precio Base Mensual
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                            <input type="number" step="0.01" id="precio_base_mensual" name="precio_base_mensual" 
+                                   value="{{ plan.precio_base_mensual }}"
+                                   class="w-full pl-8 pr-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300"
+                                   placeholder="0.00">
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">Precio fijo independiente del número de vehículos</p>
+                    </div>
+                    
+                    <div>
+                        <label for="descuento_volumen" class="block text-sm font-medium text-gray-700 mb-2">
+                            Descuento por Volumen (%)
+                        </label>
+                        <input type="number" step="0.01" min="0" max="100" id="descuento_volumen" name="descuento_volumen" 
+                               value="{{ plan.descuento_volumen }}"
+                               class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300"
+                               placeholder="0.00">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Límites de vehículos -->
+            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-car text-blue-600 mr-3"></i>
+                    Límites de Vehículos
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="vehiculos_minimos" class="block text-sm font-medium text-gray-700 mb-2">
+                            Vehículos Mínimos *
+                        </label>
+                        <input type="number" min="1" id="vehiculos_minimos" name="vehiculos_minimos" 
+                               value="{{ plan.vehiculos_minimos }}" required
+                               class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300"
+                               placeholder="5">
+                    </div>
+                    
+                    <div>
+                        <label for="vehiculos_maximos" class="block text-sm font-medium text-gray-700 mb-2">
+                            Vehículos Máximos
+                        </label>
+                        <input type="number" min="1" id="vehiculos_maximos" name="vehiculos_maximos"
+                               value="{% if plan.vehiculos_maximos %}{{ plan.vehiculos_maximos }}{% endif %}"
+                               class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300"
+                               placeholder="Dejar vacío para ilimitado">
+                        <p class="text-sm text-gray-500 mt-1">Dejar vacío para permitir cantidad ilimitada</p>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <label for="servicios_por_vehiculo_mes" class="block text-sm font-medium text-gray-700 mb-2">
+                        Servicios por Vehículo por Mes
+                    </label>
+                    <input type="number" min="0" id="servicios_por_vehiculo_mes" name="servicios_por_vehiculo_mes" 
+                           value="{{ plan.servicios_por_vehiculo_mes }}"
+                           class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300"
+                           placeholder="0 para ilimitado">
+                    <p class="text-sm text-gray-500 mt-1">0 = servicios ilimitados por vehículo</p>
+                </div>
+            </div>
+
+            <!-- Servicios incluidos -->
+            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-cogs text-cyan-600 mr-3"></i>
+                    Servicios Incluidos
+                </h2>
+                
+                {% if servicios %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {% for servicio in servicios %}
+                            <label class="flex items-center p-4 rounded-xl border border-gray-200 hover:border-purple-300 hover:bg-purple-50 transition-all duration-200 cursor-pointer">
+                                <input type="checkbox" name="servicios_incluidos" value="{{ servicio.id_servicio }}"
+                                       {% if servicio in plan.servicios_incluidos.all %}checked{% endif %}
+                                       class="h-5 w-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
+                                <div class="ml-3">
+                                    <div class="font-medium text-gray-900">{{ servicio.nombre_servicio }}</div>
+                                    <div class="text-sm text-gray-500">${{ servicio.precio|floatformat:0 }}</div>
+                                </div>
+                            </label>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-8">
+                        <p class="text-gray-500">No hay servicios disponibles. <a href="{% url 'servicioscrud' %}" class="text-purple-600 hover:underline">Crear servicios primero</a></p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Características del plan -->
+            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-star text-amber-600 mr-3"></i>
+                    Características del Plan
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Servicios básicos -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Servicios Básicos</h3>
+                        
+                        <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
+                            <input type="checkbox" name="incluye_lavado_asientos" {% if plan.incluye_lavado_asientos %}checked{% endif %}
+                                   class="h-5 w-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
+                            <span class="ml-3 text-gray-900">Lavado de asientos</span>
+                        </label>
+                        
+                        <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
+                            <input type="checkbox" name="incluye_aspirado" {% if plan.incluye_aspirado %}checked{% endif %}
+                                   class="h-5 w-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
+                            <span class="ml-3 text-gray-900">Aspirado</span>
+                        </label>
+                        
+                        <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
+                            <input type="checkbox" name="incluye_lavado_exterior" {% if plan.incluye_lavado_exterior %}checked{% endif %}
+                                   class="h-5 w-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
+                            <span class="ml-3 text-gray-900">Lavado exterior</span>
+                        </label>
+                        
+                        <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
+                            <input type="checkbox" name="incluye_lavado_interior_humedo" {% if plan.incluye_lavado_interior_humedo %}checked{% endif %}
+                                   class="h-5 w-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
+                            <span class="ml-3 text-gray-900">Lavado interior húmedo</span>
+                        </label>
+                        
+                        <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
+                            <input type="checkbox" name="incluye_encerado" {% if plan.incluye_encerado %}checked{% endif %}
+                                   class="h-5 w-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
+                            <span class="ml-3 text-gray-900">Encerado</span>
+                        </label>
+                        
+                        <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
+                            <input type="checkbox" name="incluye_detallado_completo" {% if plan.incluye_detallado_completo %}checked{% endif %}
+                                   class="h-5 w-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
+                            <span class="ml-3 text-gray-900">Detallado completo</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Servicios empresariales -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Servicios Empresariales</h3>
+                        
+                        <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
+                            <input type="checkbox" name="incluye_servicio_domicilio" {% if plan.incluye_servicio_domicilio %}checked{% endif %}
+                                   class="h-5 w-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
+                            <span class="ml-3 text-gray-900">Servicio a domicilio</span>
+                        </label>
+                        
+                        <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
+                            <input type="checkbox" name="incluye_mantenimiento_programado" {% if plan.incluye_mantenimiento_programado %}checked{% endif %}
+                                   class="h-5 w-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
+                            <span class="ml-3 text-gray-900">Mantenimiento programado</span>
+                        </label>
+                        
+                        <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
+                            <input type="checkbox" name="incluye_reporte_mensual" {% if plan.incluye_reporte_mensual %}checked{% endif %}
+                                   class="h-5 w-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
+                            <span class="ml-3 text-gray-900">Reporte mensual</span>
+                        </label>
+                        
+                        <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
+                            <input type="checkbox" name="incluye_soporte_24_7" {% if plan.incluye_soporte_24_7 %}checked{% endif %}
+                                   class="h-5 w-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
+                            <span class="ml-3 text-gray-900">Soporte 24/7</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8">
+                <div class="flex flex-col sm:flex-row gap-4 sm:justify-end">
+                    <a href="{% url 'planes_empresariales_crud' %}" 
+                       class="px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-2xl hover:bg-gray-300 transition-all duration-300 text-center">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancelar
+                    </a>
+                    <button type="submit" 
+                            class="px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-semibold rounded-2xl shadow-lg hover:from-amber-700 hover:to-orange-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-save mr-2"></i>
+                        Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Script para validaciones -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const vehiculosMinimos = document.getElementById('vehiculos_minimos');
+    const vehiculosMaximos = document.getElementById('vehiculos_maximos');
+    
+    // Validación de vehículos máximos
+    vehiculosMaximos.addEventListener('input', function() {
+        const minimos = parseInt(vehiculosMinimos.value);
+        const maximos = parseInt(this.value);
+        
+        if (maximos && maximos < minimos) {
+            this.setCustomValidity('Los vehículos máximos deben ser mayor o igual a los mínimos');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+    
+    vehiculosMinimos.addEventListener('input', function() {
+        const minimos = parseInt(this.value);
+        const maximos = parseInt(vehiculosMaximos.value);
+        
+        if (maximos && maximos < minimos) {
+            vehiculosMaximos.setCustomValidity('Los vehículos máximos deben ser mayor o igual a los mínimos');
+        } else {
+            vehiculosMaximos.setCustomValidity('');
+        }
+    });
+});
+</script>
+{% endblock %}

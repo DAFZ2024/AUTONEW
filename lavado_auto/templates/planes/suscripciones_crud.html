@@ -1,0 +1,193 @@
+{% extends "base/base_crud.html" %}
+
+{% block content %}
+<style>
+    .modern-card {
+        background: linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%);
+        border: none;
+        border-radius: 1.5rem;
+        box-shadow: 0 10px 30px rgba(30, 64, 175, 0.08), 0 10px 10px -5px rgba(59, 130, 246, 0.04);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin-top: 60px;
+    }
+    .modern-card:hover {
+        box-shadow: 0 20px 40px rgba(30, 64, 175, 0.13), 0 10px 10px -5px rgba(59, 130, 246, 0.08);
+    }
+    .card-header-modern {
+        background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+        color: white;
+        padding: 2rem 2.5rem 1.5rem 2.5rem;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+    .card-header-modern h4 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 2rem;
+        letter-spacing: 0.03em;
+    }
+    .table-modern {
+        margin: 0;
+        border: none;
+        width: 100%;
+    }
+    .table-modern thead th {
+        background: linear-gradient(135deg, #e0e7ef 0%, #f1f5f9 100%);
+        border: none;
+        padding: 18px 12px;
+        font-weight: 700;
+        color: #1e293b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.9rem;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    .table-modern tbody tr {
+        border: none;
+        transition: all 0.3s ease;
+    }
+    .table-modern tbody tr:hover {
+        background: linear-gradient(135deg, #e0e7ef 0%, #f1f5f9 100%);
+        transform: scale(1.01);
+    }
+    .table-modern tbody td {
+        padding: 18px 12px;
+        border: none;
+        vertical-align: middle;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .badge-modern {
+        padding: 7px 16px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+    }
+    .badge-success-modern {
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(34, 197, 94, 0.18);
+    }
+    .badge-danger-modern {
+        background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.18);
+    }
+    .badge-warning-modern {
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e42 100%);
+        color: #1e293b;
+        box-shadow: 0 4px 15px rgba(251, 191, 36, 0.18);
+    }
+    .table-responsive {
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+    @media (max-width: 768px) {
+        .card-header-modern {
+            padding: 1.2rem 1rem 1rem 1rem;
+            text-align: center;
+        }
+        .modern-card {
+            margin-top: 30px;
+        }
+        .table-modern thead th, .table-modern tbody td {
+            padding: 10px 6px;
+            font-size: 0.8rem;
+        }
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-11 col-xl-10">
+            <div class="modern-card">
+                <div class="card-header-modern">
+                    <h4><i class="fas fa-address-card me-2"></i>Gestión de Suscripciones</h4>
+                    <p class="mb-0 opacity-75">Administra las suscripciones de los usuarios</p>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-modern">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Usuario</th>
+                                    <th>Plan</th>
+                                    <th>Estado</th>
+                                    <th>Fecha Inicio</th>
+                                    <th>Fecha Fin</th>
+                                    <th>Servicios Usados</th>
+                                    <th>Auto Renovar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for suscripcion in suscripciones %}
+                                <tr>
+                                    <td>{{ suscripcion.id_suscripcion }}</td>
+                                    <td>{{ suscripcion.usuario.nombre_usuario }}</td>
+                                    <td>{{ suscripcion.plan.nombre }}</td>
+                                    <td>
+                                        {% if suscripcion.estado == 'activa' %}
+                                            <span class="badge-modern badge-success-modern"><i class="fas fa-check-circle me-1"></i>{{ suscripcion.get_estado_display }}</span>
+                                        {% elif suscripcion.estado == 'vencida' %}
+                                            <span class="badge-modern badge-danger-modern"><i class="fas fa-times-circle me-1"></i>{{ suscripcion.get_estado_display }}</span>
+                                        {% else %}
+                                            <span class="badge-modern badge-warning-modern"><i class="fas fa-exclamation-triangle me-1"></i>{{ suscripcion.get_estado_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ suscripcion.fecha_inicio|date:"d/m/Y" }}</td>
+                                    <td>{{ suscripcion.fecha_fin|date:"d/m/Y" }}</td>
+                                    <td>{{ suscripcion.servicios_utilizados_mes }}/{{ suscripcion.plan.cantidad_servicios_mes|default:"∞" }}</td>
+                                    <td>
+                                        {% if suscripcion.auto_renovar %}
+                                            <i class="fas fa-check text-success"></i>
+                                        {% else %}
+                                            <i class="fas fa-times text-danger"></i>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center py-5">
+                                        <i class="fas fa-address-card fa-2x mb-2 text-primary opacity-50"></i>
+                                        <div class="fw-bold">No hay suscripciones registradas</div>
+                                        <div class="text-muted">Aún no se han creado suscripciones</div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-gradient-to-r from-blue-50 to-indigo-50 border-top-0 rounded-bottom-3 px-4 py-3">
+                    <p class="text-muted mb-0">Total de suscripciones: <span class="fw-bold">{{ suscripciones.count }}</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+// Animar las filas de la tabla al cargar
+document.addEventListener('DOMContentLoaded', function() {
+    const rows = document.querySelectorAll('.table-modern tbody tr');
+    rows.forEach((row, index) => {
+        row.style.opacity = '0';
+        row.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            row.style.transition = 'all 0.5s ease';
+            row.style.opacity = '1';
+            row.style.transform = 'translateY(0)';
+        }, index * 80);
+    });
+});
+</script>
+{% endblock %}

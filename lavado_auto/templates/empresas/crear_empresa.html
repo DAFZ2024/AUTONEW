@@ -1,0 +1,350 @@
+{% extends 'base/base_crud.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
+            <div class="flex items-center space-x-4">
+                <a href="{% url 'empresascrud' %}" class="p-3 bg-gradient-to-br from-gray-500 to-gray-600 rounded-2xl shadow-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-300">
+                    <i class="fas fa-arrow-left text-white text-xl"></i>
+                </a>
+                <div class="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg">
+                    <i class="fas fa-building-circle-plus text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                        Crear Nueva Empresa
+                    </h1>
+                    <p class="text-gray-600 mt-1">Completa todos los campos para registrar una nueva empresa</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensajes de estado -->
+        {% if messages %}
+            <div class="mb-8 space-y-3">
+                {% for message in messages %}
+                    <div class="p-4 rounded-2xl shadow-lg backdrop-blur-xl border {% if message.tags == 'success' %}bg-green-50/80 border-green-200 text-green-800{% elif message.tags == 'error' %}bg-red-50/80 border-red-200 text-red-800{% elif message.tags == 'warning' %}bg-yellow-50/80 border-yellow-200 text-yellow-800{% else %}bg-blue-50/80 border-blue-200 text-blue-800{% endif %}">
+                        <div class="flex items-center">
+                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-3 text-lg"></i>
+                            <span class="font-medium">{{ message }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Formulario principal -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden">
+            <div class="p-6 sm:p-8 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-900">Información de la Empresa</h2>
+                <p class="text-gray-600 mt-1">Todos los campos son obligatorios</p>
+            </div>
+            
+            <div class="p-6 sm:p-8">
+                <form method="POST" class="space-y-8">
+                    {% csrf_token %}
+                    
+                    <!-- Información básica -->
+                    <div class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl p-6 border border-purple-200">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-info-circle mr-3 text-purple-600"></i>
+                            Información Básica
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <label for="nombre_empresa" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-building mr-2 text-purple-600"></i>Nombre de la Empresa *
+                                </label>
+                                <input type="text" name="nombre_empresa" id="nombre_empresa"
+                                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300" 
+                                       placeholder="Ej: AutoLavado Premium S.A." required>
+                                <p class="text-xs text-gray-500 mt-1">Nombre comercial de la empresa</p>
+                            </div>
+
+                            <div>
+                                <label for="tipo_empresa" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-industry mr-2 text-purple-600"></i>Tipo de Empresa *
+                                </label>
+                                <select name="tipo_empresa" id="tipo_empresa"
+                                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300" required>
+                                    <option value="">Seleccionar tipo</option>
+                                    <option value="autolavado">Autolavado</option>
+                                    <option value="detailing">Car Detailing</option>
+                                    <option value="mecanica">Taller Mecánico</option>
+                                    <option value="estacion_servicio">Estación de Servicio</option>
+                                    <option value="otro">Otro</option>
+                                </select>
+                                <p class="text-xs text-gray-500 mt-1">Categoría del negocio</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información de contacto -->
+                    <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-6 border border-blue-200">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-address-book mr-3 text-blue-600"></i>
+                            Información de Contacto
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-envelope mr-2 text-blue-600"></i>Email Corporativo *
+                                </label>
+                                <input type="email" name="email" id="email"
+                                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" 
+                                       placeholder="contacto@empresa.com" required>
+                                <p class="text-xs text-gray-500 mt-1">Email principal para comunicaciones</p>
+                            </div>
+
+                            <div>
+                                <label for="telefono" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-phone mr-2 text-blue-600"></i>Teléfono Principal *
+                                </label>
+                                <input type="tel" name="telefono" id="telefono"
+                                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" 
+                                       placeholder="(+57) 300 123 4567" required>
+                                <p class="text-xs text-gray-500 mt-1">Número de contacto principal</p>
+                            </div>
+
+                            <div>
+                                <label for="telefono_alternativo" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-phone-alt mr-2 text-blue-600"></i>Teléfono Alternativo
+                                </label>
+                                <input type="tel" name="telefono_alternativo" id="telefono_alternativo"
+                                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" 
+                                       placeholder="(+57) 601 234 5678">
+                                <p class="text-xs text-gray-500 mt-1">Número secundario (opcional)</p>
+                            </div>
+
+                            <div>
+                                <label for="sitio_web" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-globe mr-2 text-blue-600"></i>Sitio Web
+                                </label>
+                                <input type="url" name="sitio_web" id="sitio_web"
+                                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" 
+                                       placeholder="https://www.empresa.com">
+                                <p class="text-xs text-gray-500 mt-1">Página web de la empresa (opcional)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ubicación -->
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-200">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-3 text-emerald-600"></i>
+                            Ubicación
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div>
+                                <label for="direccion" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-road mr-2 text-emerald-600"></i>Dirección Completa *
+                                </label>
+                                <input type="text" name="direccion" id="direccion"
+                                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300" 
+                                       placeholder="Calle 123 #45-67" required>
+                                <p class="text-xs text-gray-500 mt-1">Dirección física del establecimiento</p>
+                            </div>
+
+                            <div>
+                                <label for="ciudad" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-city mr-2 text-emerald-600"></i>Ciudad *
+                                </label>
+                                <input type="text" name="ciudad" id="ciudad"
+                                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300" 
+                                       placeholder="Bogotá" required>
+                                <p class="text-xs text-gray-500 mt-1">Ciudad donde opera</p>
+                            </div>
+
+                            <div>
+                                <label for="departamento" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-map mr-2 text-emerald-600"></i>Departamento *
+                                </label>
+                                <select name="departamento" id="departamento"
+                                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300" required>
+                                    <option value="">Seleccionar</option>
+                                    <option value="cundinamarca">Cundinamarca</option>
+                                    <option value="antioquia">Antioquia</option>
+                                    <option value="valle">Valle del Cauca</option>
+                                    <option value="atlantico">Atlántico</option>
+                                    <option value="santander">Santander</option>
+                                    <option value="bolivar">Bolívar</option>
+                                    <!-- Agregar más departamentos según necesidad -->
+                                </select>
+                                <p class="text-xs text-gray-500 mt-1">Departamento/Estado</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuración de acceso -->
+                    <div class="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-6 border border-orange-200">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-key mr-3 text-orange-600"></i>
+                            Configuración de Acceso
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <label for="contrasena" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-lock mr-2 text-orange-600"></i>Contraseña Temporal *
+                                </label>
+                                <input type="password" name="contrasena" id="contrasena"
+                                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-300" 
+                                       placeholder="Mínimo 8 caracteres" required minlength="8">
+                                <p class="text-xs text-gray-500 mt-1">La empresa deberá cambiarla en su primer acceso</p>
+                            </div>
+
+                            <div>
+                                <label for="confirmar_contrasena" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-lock-open mr-2 text-orange-600"></i>Confirmar Contraseña *
+                                </label>
+                                <input type="password" name="confirmar_contrasena" id="confirmar_contrasena"
+                                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-300" 
+                                       placeholder="Repetir contraseña" required minlength="8">
+                                <p class="text-xs text-gray-500 mt-1">Debe coincidir con la contraseña anterior</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información adicional -->
+                    <div class="bg-gradient-to-r from-gray-50 to-slate-50 rounded-2xl p-6 border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-clipboard-list mr-3 text-gray-600"></i>
+                            Información Adicional
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <label for="descripcion" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-align-left mr-2 text-gray-600"></i>Descripción de Servicios
+                                </label>
+                                <textarea name="descripcion" id="descripcion" rows="4"
+                                          class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 transition-all duration-300" 
+                                          placeholder="Describe brevemente los servicios que ofrece la empresa..."></textarea>
+                                <p class="text-xs text-gray-500 mt-1">Información opcional sobre los servicios</p>
+                            </div>
+
+                            <div>
+                                <label for="horario_atencion" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-clock mr-2 text-gray-600"></i>Horario de Atención
+                                </label>
+                                <input type="text" name="horario_atencion" id="horario_atencion"
+                                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-500 focus:ring-2 focus:ring-gray-200 transition-all duration-300" 
+                                       placeholder="Lun-Vie: 8:00-18:00, Sáb: 8:00-16:00">
+                                <p class="text-xs text-gray-500 mt-1">Horarios de funcionamiento</p>
+                                
+                                <div class="mt-4">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" name="verificada" value="1" 
+                                               class="rounded border-gray-300 text-emerald-600 shadow-sm focus:border-emerald-300 focus:ring focus:ring-emerald-200 focus:ring-opacity-50">
+                                        <span class="ml-2 text-sm text-gray-700">
+                                            <i class="fas fa-shield-check mr-1 text-emerald-600"></i>
+                                            Verificar empresa inmediatamente
+                                        </span>
+                                    </label>
+                                    <p class="text-xs text-gray-500 mt-1">Si está marcado, la empresa podrá operar inmediatamente</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botones de acción -->
+                    <div class="flex flex-col sm:flex-row gap-4 justify-end pt-6 border-t border-gray-200">
+                        <a href="{% url 'empresascrud' %}" 
+                           class="px-8 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-300 flex items-center justify-center">
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            Volver al Listado
+                        </a>
+                        <button type="reset" 
+                                class="px-8 py-3 bg-yellow-200 text-yellow-800 font-semibold rounded-xl hover:bg-yellow-300 transition-all duration-300 flex items-center justify-center">
+                            <i class="fas fa-undo mr-2"></i>
+                            Limpiar Formulario
+                        </button>
+                        <button type="submit" 
+                                class="px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:from-purple-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-300 flex items-center justify-center">
+                            <i class="fas fa-save mr-2"></i>
+                            Crear Empresa
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validación de contraseñas
+    const contrasena = document.getElementById('contrasena');
+    const confirmarContrasena = document.getElementById('confirmar_contrasena');
+    
+    function validarContrasenas() {
+        if (contrasena.value !== confirmarContrasena.value) {
+            confirmarContrasena.setCustomValidity('Las contraseñas no coinciden');
+            confirmarContrasena.classList.add('border-red-300', 'focus:border-red-500', 'focus:ring-red-200');
+            confirmarContrasena.classList.remove('border-gray-200', 'focus:border-orange-500', 'focus:ring-orange-200');
+        } else {
+            confirmarContrasena.setCustomValidity('');
+            confirmarContrasena.classList.remove('border-red-300', 'focus:border-red-500', 'focus:ring-red-200');
+            confirmarContrasena.classList.add('border-gray-200', 'focus:border-orange-500', 'focus:ring-orange-200');
+        }
+    }
+    
+    contrasena.addEventListener('input', validarContrasenas);
+    confirmarContrasena.addEventListener('input', validarContrasenas);
+    
+    // Formateo automático de teléfono
+    const telefonoInputs = document.querySelectorAll('input[type="tel"]');
+    telefonoInputs.forEach(input => {
+        input.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 10) {
+                value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+            }
+            e.target.value = value;
+        });
+    });
+    
+    // Validación en tiempo real del email
+    const emailInput = document.getElementById('email');
+    emailInput.addEventListener('input', function() {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(this.value) && this.value !== '') {
+            this.classList.add('border-red-300', 'focus:border-red-500', 'focus:ring-red-200');
+            this.classList.remove('border-gray-200', 'focus:border-blue-500', 'focus:ring-blue-200');
+        } else {
+            this.classList.remove('border-red-300', 'focus:border-red-500', 'focus:ring-red-200');
+            this.classList.add('border-gray-200', 'focus:border-blue-500', 'focus:ring-blue-200');
+        }
+    });
+    
+    // Auto-capitalización para nombre de empresa
+    const nombreEmpresa = document.getElementById('nombre_empresa');
+    nombreEmpresa.addEventListener('input', function() {
+        this.value = this.value.replace(/\b\w/g, l => l.toUpperCase());
+    });
+    
+    // Confirmación antes de limpiar formulario
+    const resetButton = document.querySelector('button[type="reset"]');
+    resetButton.addEventListener('click', function(e) {
+        if (!confirm('¿Estás seguro de que quieres limpiar todos los campos del formulario?')) {
+            e.preventDefault();
+        }
+    });
+    
+    // Prevenir envío si las contraseñas no coinciden
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        validarContrasenas();
+        if (contrasena.value !== confirmarContrasena.value) {
+            e.preventDefault();
+            alert('Las contraseñas no coinciden. Por favor, verifica e intenta nuevamente.');
+            confirmarContrasena.focus();
+        }
+    });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,212 @@
+{% extends 'base/base_crud.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
+            <div class="flex items-center space-x-4">
+                <a href="{% url 'planes_empresariales_crud' %}" 
+                   class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200">
+                    <i class="fas fa-arrow-left text-xl"></i>
+                </a>
+                <div class="p-3 bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl shadow-lg">
+                    <i class="fas fa-trash text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
+                        Eliminar Plan Empresarial
+                    </h1>
+                    <p class="text-gray-600 mt-1">Confirmar eliminación del plan</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información del plan a eliminar -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
+            <div class="text-center mb-8">
+                <div class="mx-auto h-20 w-20 bg-red-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-exclamation-triangle text-red-600 text-3xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">¿Estás seguro de eliminar este plan?</h2>
+                <p class="text-gray-600">Esta acción no se puede deshacer. Se eliminará permanentemente el plan y toda su configuración.</p>
+            </div>
+
+            <!-- Detalles del plan -->
+            <div class="bg-gray-50 rounded-2xl p-6 mb-6">
+                <div class="flex items-center mb-4">
+                    <div class="h-16 w-16 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center mr-4">
+                        <i class="fas fa-building text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900">{{ plan.nombre }}</h3>
+                        <p class="text-gray-600">{{ plan.get_tipo_display }}</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Precio por vehículo:</span>
+                        <span class="font-semibold">${{ plan.precio_mensual_por_vehiculo|floatformat:0 }}/mes</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Precio base:</span>
+                        <span class="font-semibold">${{ plan.precio_base_mensual|floatformat:0 }}/mes</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Vehículos mínimos:</span>
+                        <span class="font-semibold">{{ plan.vehiculos_minimos }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Vehículos máximos:</span>
+                        <span class="font-semibold">{% if plan.vehiculos_maximos %}{{ plan.vehiculos_maximos }}{% else %}Ilimitado{% endif %}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Servicios incluidos:</span>
+                        <span class="font-semibold">{{ plan.servicios_incluidos.count }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Descuento volumen:</span>
+                        <span class="font-semibold">{{ plan.descuento_volumen }}%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advertencias de suscripciones activas -->
+            {% if suscripciones_activas > 0 %}
+                <div class="bg-orange-50 border border-orange-200 rounded-2xl p-6 mb-6">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-exclamation-triangle text-orange-600 text-xl mr-3"></i>
+                        <h4 class="text-lg font-semibold text-orange-800">¡Atención! Suscripciones Activas</h4>
+                    </div>
+                    <p class="text-orange-700 mb-3">
+                        Este plan tiene <strong>{{ suscripciones_activas }} suscripción{{ suscripciones_activas|pluralize:"es" }} activa{{ suscripciones_activas|pluralize:"s" }}</strong>.
+                    </p>
+                    <div class="bg-orange-100 rounded-lg p-4">
+                        <p class="text-sm text-orange-800">
+                            <strong>Nota:</strong> No se puede eliminar completamente un plan con suscripciones activas. 
+                            En su lugar, el plan será <strong>desactivado</strong> para evitar problemas con las suscripciones existentes.
+                        </p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="bg-green-50 border border-green-200 rounded-2xl p-6 mb-6">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-check-circle text-green-600 text-xl mr-3"></i>
+                        <h4 class="text-lg font-semibold text-green-800">Listo para eliminar</h4>
+                    </div>
+                    <p class="text-green-700">
+                        Este plan no tiene suscripciones activas y puede ser eliminado completamente de forma segura.
+                    </p>
+                </div>
+            {% endif %}
+
+            <!-- Descripción del plan -->
+            {% if plan.descripcion %}
+                <div class="mb-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Descripción</h4>
+                    <p class="text-gray-600 bg-gray-50 rounded-lg p-4">{{ plan.descripcion }}</p>
+                </div>
+            {% endif %}
+
+            <!-- Características del plan -->
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold text-gray-900 mb-4">Características Incluidas</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {% if plan.incluye_lavado_asientos %}
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Lavado de asientos
+                        </div>
+                    {% endif %}
+                    {% if plan.incluye_aspirado %}
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Aspirado
+                        </div>
+                    {% endif %}
+                    {% if plan.incluye_lavado_exterior %}
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Lavado exterior
+                        </div>
+                    {% endif %}
+                    {% if plan.incluye_lavado_interior_humedo %}
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Lavado interior húmedo
+                        </div>
+                    {% endif %}
+                    {% if plan.incluye_encerado %}
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Encerado
+                        </div>
+                    {% endif %}
+                    {% if plan.incluye_detallado_completo %}
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Detallado completo
+                        </div>
+                    {% endif %}
+                    {% if plan.incluye_servicio_domicilio %}
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Servicio a domicilio
+                        </div>
+                    {% endif %}
+                    {% if plan.incluye_mantenimiento_programado %}
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Mantenimiento programado
+                        </div>
+                    {% endif %}
+                    {% if plan.incluye_reporte_mensual %}
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Reporte mensual
+                        </div>
+                    {% endif %}
+                    {% if plan.incluye_soporte_24_7 %}
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Soporte 24/7
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmación de eliminación -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="flex flex-col sm:flex-row gap-4 sm:justify-end">
+                    <a href="{% url 'planes_empresariales_crud' %}" 
+                       class="px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-2xl hover:bg-gray-300 transition-all duration-300 text-center">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancelar
+                    </a>
+                    
+                    {% if suscripciones_activas > 0 %}
+                        <button type="submit" 
+                                class="px-6 py-3 bg-gradient-to-r from-orange-600 to-red-600 text-white font-semibold rounded-2xl shadow-lg hover:from-orange-700 hover:to-red-700 transform hover:scale-105 transition-all duration-300">
+                            <i class="fas fa-ban mr-2"></i>
+                            Desactivar Plan
+                        </button>
+                    {% else %}
+                        <button type="submit" 
+                                class="px-6 py-3 bg-gradient-to-r from-red-600 to-pink-600 text-white font-semibold rounded-2xl shadow-lg hover:from-red-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-300">
+                            <i class="fas fa-trash mr-2"></i>
+                            Eliminar Definitivamente
+                        </button>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

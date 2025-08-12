@@ -1,0 +1,328 @@
+{% extends 'base/base_crud.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl shadow-lg">
+                        <i class="fas fa-calendar-plus text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                            Crear Nueva Cita
+                        </h1>
+                        <p class="text-gray-600 mt-1">Crea una nueva cita desde el panel administrativo</p>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <a href="{% url 'citascrud' %}" 
+                       class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white font-semibold rounded-2xl shadow-lg hover:from-gray-700 hover:to-gray-800 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Volver a Citas
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensajes -->
+        {% if messages %}
+            <div class="mb-6 space-y-3">
+                {% for message in messages %}
+                    <div class="p-4 rounded-2xl shadow-lg {% if message.tags == 'success' %}bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 text-green-800{% elif message.tags == 'error' %}bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 text-red-800{% elif message.tags == 'warning' %}bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 text-yellow-800{% else %}bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-blue-800{% endif %}">
+                        <div class="flex items-center">
+                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-3 text-lg"></i>
+                            <span class="font-medium">{{ message }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Formulario -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden">
+            <div class="p-6 sm:p-8 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-900">Información de la Cita</h2>
+                <p class="text-gray-600 mt-1">Completa todos los campos para crear la nueva cita</p>
+            </div>
+            
+            <form method="post" class="p-6 sm:p-8 space-y-6">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Usuario -->
+                    <div>
+                        <label for="usuario" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-user mr-2 text-blue-600"></i>Cliente
+                        </label>
+                        <select name="usuario" id="usuario" required 
+                                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+                            <option value="">Seleccionar cliente</option>
+                            {% for usuario in usuarios %}
+                                <option value="{{ usuario.id }}">{{ usuario.nombre_usuario }} - {{ usuario.correo }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Empresa -->
+                    <div>
+                        <label for="empresa" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-building mr-2 text-blue-600"></i>Punto de Lavado
+                        </label>
+                        <select name="empresa" id="empresa" required 
+                                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+                            <option value="">Seleccionar punto de lavado</option>
+                            {% for empresa in empresas %}
+                                <option value="{{ empresa.id_empresa }}">{{ empresa.nombre_empresa }} - {{ empresa.ubicacion }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Fecha -->
+                    <div>
+                        <label for="fecha" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-calendar mr-2 text-blue-600"></i>Fecha
+                        </label>
+                        <select name="fecha" id="fecha" required 
+                                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+                            <option value="">Seleccionar fecha</option>
+                            {% for fecha in fechas_disponibles %}
+                                <option value="{{ fecha|date:'Y-m-d' }}">{{ fecha|date:'l, d \d\e F \d\e Y' }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Hora -->
+                    <div>
+                        <label for="hora" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-clock mr-2 text-blue-600"></i>Hora
+                        </label>
+                        <select name="hora" id="hora" required 
+                                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+                            <option value="">Seleccionar hora</option>
+                            {% for hora in horas_disponibles %}
+                                <option value="{{ hora.valor }}">{{ hora.texto }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Servicios -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-4">
+                        <i class="fas fa-cogs mr-2 text-blue-600"></i>Servicios
+                    </label>
+                    <div id="servicios-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="text-center text-gray-500 p-8">
+                            <i class="fas fa-arrow-up mr-2"></i>
+                            Primero selecciona una empresa para ver los servicios disponibles
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                    <button type="submit" 
+                            class="flex-1 inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-2xl shadow-lg hover:from-blue-700 hover:to-cyan-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-save mr-2"></i>
+                        Crear Cita
+                    </button>
+                    
+                    <a href="{% url 'citascrud' %}" 
+                       class="flex-1 inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-gray-500 to-gray-600 text-white font-semibold rounded-2xl shadow-lg hover:from-gray-600 hover:to-gray-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fechaSelect = document.getElementById('fecha');
+    const horaSelect = document.getElementById('hora');
+    const empresaSelect = document.getElementById('empresa');
+    const serviciosContainer = document.getElementById('servicios-container');
+    const ocupadas = {{ ocupadas|safe }};
+
+    // Función para cargar servicios de una empresa específica
+    function cargarServiciosEmpresa(empresaId) {
+        console.log('🔧 cargarServiciosEmpresa llamada con ID:', empresaId);
+        
+        if (!empresaId) {
+            serviciosContainer.innerHTML = `
+                <div class="text-center text-gray-500 p-8">
+                    <i class="fas fa-arrow-up mr-2"></i>
+                    Primero selecciona una empresa para ver los servicios disponibles
+                </div>`;
+            return;
+        }
+
+        // Mostrar loading
+        serviciosContainer.innerHTML = `
+            <div class="text-center text-gray-500 p-8">
+                <i class="fas fa-spinner fa-spin mr-2"></i>
+                Cargando servicios...
+            </div>`;
+
+        // Construir URL con parámetros (usar el mismo endpoint que funciona en reservas)
+        const url = `/obtener-servicios/?empresa_id=${empresaId}`;
+        console.log('🔧 URL de petición:', url);
+
+        // Realizar petición AJAX
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json',
+            },
+            credentials: 'same-origin'  // Incluir cookies de sesión
+        })
+            .then(response => {
+                console.log('🔧 Respuesta recibida. Status:', response.status);
+                console.log('🔧 Headers:', response.headers);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('🔧 Datos recibidos:', data);
+                
+                if (data.error) {
+                    serviciosContainer.innerHTML = `
+                        <div class="text-center text-red-500 p-8">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            Error: ${data.error}
+                        </div>`;
+                    return;
+                }
+
+                if (!data.servicios || data.servicios.length === 0) {
+                    serviciosContainer.innerHTML = `
+                        <div class="text-center text-yellow-500 p-8">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            Esta empresa no tiene servicios asignados.<br>
+                            <small class="text-gray-500">Empresa: ${data.empresa ? data.empresa.nombre_empresa : 'Desconocida'}</small>
+                        </div>`;
+                    return;
+                }
+
+                // Generar HTML para los servicios
+                let serviciosHTML = '';
+                data.servicios.forEach(servicio => {
+                    serviciosHTML += `
+                        <div class="relative">
+                            <input type="checkbox" name="servicios" value="${servicio.id_servicio}" 
+                                   id="servicio_${servicio.id_servicio}" class="sr-only peer">
+                            <label for="servicio_${servicio.id_servicio}" 
+                                   class="flex flex-col p-4 bg-gray-50 rounded-xl border-2 border-gray-200 cursor-pointer hover:bg-blue-50 hover:border-blue-300 peer-checked:bg-blue-50 peer-checked:border-blue-500 peer-checked:ring-2 peer-checked:ring-blue-200 transition-all duration-300">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-semibold text-gray-900">${servicio.nombre_servicio}</span>
+                                    <span class="text-blue-600 font-bold">$${servicio.precio}</span>
+                                </div>
+                                <p class="text-sm text-gray-600">${servicio.descripcion || 'Sin descripción'}</p>
+                                <p class="text-xs text-gray-500 mt-1">Disponible en: ${data.empresa ? data.empresa.nombre_empresa : 'Empresa'}</p>
+                                <div class="mt-2 flex items-center text-xs text-gray-500">
+                                    <i class="fas fa-check-circle mr-1"></i>
+                                    Disponible
+                                </div>
+                            </label>
+                        </div>`;
+                });
+
+                serviciosContainer.innerHTML = serviciosHTML;
+                console.log('🔧 Servicios cargados exitosamente:', data.servicios.length);
+            })
+            .catch(error => {
+                console.error('❌ Error completo:', error);
+                serviciosContainer.innerHTML = `
+                    <div class="text-center text-red-500 p-8">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        Error al cargar servicios: ${error.message}<br>
+                        <small class="text-gray-500">Revisa la consola del navegador para más detalles</small>
+                    </div>`;
+            });
+    }
+
+    // Función para actualizar horas disponibles según la fecha y empresa seleccionada
+    function actualizarHoras() {
+        const fechaSeleccionada = fechaSelect.value;
+        const empresaId = empresaSelect.value;
+        
+        if (!fechaSeleccionada) {
+            horaSelect.innerHTML = '<option value="">Primero selecciona una fecha</option>';
+            return;
+        }
+
+        // Mostrar loading en horas
+        horaSelect.innerHTML = '<option value="">Cargando horas disponibles...</option>';
+
+        // Construir URL con parámetros
+        let url = `/ajax/obtener-horas-disponibles/?fecha=${fechaSeleccionada}`;
+        if (empresaId) {
+            url += `&empresa_id=${empresaId}`;
+        }
+
+        // Realizar petición AJAX para obtener horas disponibles
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    horaSelect.innerHTML = `<option value="">Error: ${data.error}</option>`;
+                    return;
+                }
+
+                // Limpiar y repoblar el select de horas
+                horaSelect.innerHTML = '<option value="">Seleccionar hora</option>';
+
+                if (data.horas_disponibles.length === 0) {
+                    horaSelect.innerHTML = '<option value="">No hay horas disponibles</option>';
+                    return;
+                }
+
+                // Agregar horas disponibles
+                data.horas_disponibles.forEach(hora => {
+                    const option = document.createElement('option');
+                    option.value = hora.valor;
+                    option.textContent = hora.texto;
+                    horaSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                horaSelect.innerHTML = '<option value="">Error al cargar horas</option>';
+            });
+    }
+
+    // Event listeners
+    empresaSelect.addEventListener('change', function() {
+        const empresaId = this.value;
+        cargarServiciosEmpresa(empresaId);
+        // También actualizar horas cuando cambie la empresa
+        if (fechaSelect.value) {
+            actualizarHoras();
+        }
+    });
+
+    fechaSelect.addEventListener('change', actualizarHoras);
+
+    // Función para convertir hora de 24h a 12h (por compatibilidad, aunque ya no se usa tanto)
+    function convertirA12h(hora24h) {
+        const [horas] = hora24h.split(':');
+        const h = parseInt(horas);
+        const periodo = h >= 12 ? 'PM' : 'AM';
+        const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+        return `${h12}:00 ${periodo}`;
+    }
+});
+</script>
+{% endblock %}

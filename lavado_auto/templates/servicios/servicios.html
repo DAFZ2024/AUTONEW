@@ -1,0 +1,1557 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Servicios con Tailwind CSS -->
+<div class="bg-white pt-20 md:pt-24">
+    <!-- Hero Section Mejorado -->
+    <section class="relative bg-gradient-to-br from-slate-50 via-white to-blue-50 min-h-screen flex items-center overflow-hidden">
+        <!-- Partículas de fondo animadas -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="hero-particles"></div>
+        </div>
+
+        <!-- Elementos decorativos de fondo mejorados -->
+        <div class="absolute inset-0 overflow-hidden">
+            <!-- Círculos principales más vibrantes -->
+            <div class="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-400/30 to-cyan-300/30 rounded-full blur-3xl opacity-70 animate-float"></div>
+            <div class="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-purple-300/30 to-blue-400/30 rounded-full blur-3xl opacity-70 animate-float-delayed"></div>
+            <div class="absolute top-1/2 left-1/4 w-64 h-64 bg-gradient-to-br from-cyan-300/30 to-teal-300/30 rounded-full blur-3xl opacity-70 animate-float-slow"></div>
+            
+            <!-- Elementos adicionales -->
+            <div class="absolute top-10 right-1/3 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-indigo-400/20 rounded-full blur-2xl opacity-60 animate-bounce-slow"></div>
+            <div class="absolute bottom-32 left-1/3 w-48 h-48 bg-gradient-to-br from-teal-400/20 to-cyan-400/20 rounded-full blur-2xl opacity-60 animate-pulse-slow"></div>
+        </div>
+
+        <!-- Formas geométricas flotantes -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute top-1/4 right-1/4 w-6 h-6 bg-blue-500/30 rounded-full animate-float-up"></div>
+            <div class="absolute top-3/4 left-1/3 w-4 h-4 bg-cyan-500/40 rounded-full animate-float-up" style="animation-delay: 2s;"></div>
+            <div class="absolute top-1/3 left-1/4 w-3 h-3 bg-indigo-500/30 rounded-full animate-float-up" style="animation-delay: 4s;"></div>
+            <div class="absolute bottom-1/4 right-1/3 w-5 h-5 bg-teal-500/35 rounded-full animate-float-up" style="animation-delay: 6s;"></div>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Contenido de texto -->
+                <div class="text-center lg:text-left">
+                    <div class="animate-fadeInUp">
+                        <span class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 text-white text-sm font-semibold rounded-full uppercase tracking-wider mb-6 shadow-lg">
+                            <i class="fas fa-star mr-2"></i>
+                            Servicios Premium
+                        </span>
+                    </div>
+                    
+                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 animate-fadeInUp" style="animation-delay: 0.2s;">
+                        <span class="bg-gradient-to-r from-slate-800 via-blue-700 to-cyan-600 bg-clip-text text-transparent block">
+                            Servicios de
+                        </span>
+                        <span class="bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent block">
+                            Lavado Premium
+                        </span>
+                    </h1>
+                    
+                    <p class="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed animate-fadeInUp max-w-2xl" style="animation-delay: 0.4s;">
+                        Transformamos tu vehículo con servicios de <span class="font-semibold text-blue-600">alta calidad</span>, 
+                        <span class="font-semibold text-cyan-600">tecnología avanzada</span> y 
+                        <span class="font-semibold text-teal-600">atención personalizada</span>
+                    </p>
+                    
+                    <!-- Estadísticas rápidas -->
+                    <div class="flex flex-wrap gap-6 justify-center lg:justify-start mb-8 animate-fadeInUp" style="animation-delay: 0.5s;">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600">1000+</div>
+                            <div class="text-sm text-gray-500">Clientes Felices</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-cyan-600">15min</div>
+                            <div class="text-sm text-gray-500">Servicio Express</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-teal-600">24/7</div>
+                            <div class="text-sm text-gray-500">Disponibilidad</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botones de acción mejorados -->
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fadeInUp" style="animation-delay: 0.6s;">
+                        <button class="group px-8 py-4 bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 text-white font-semibold rounded-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                            <span class="absolute inset-0 bg-gradient-to-r from-blue-700 via-cyan-700 to-teal-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                            <span class="relative flex items-center justify-center">
+                                <i class="fas fa-eye mr-2"></i>
+                                Ver Servicios
+                            </span>
+                        </button>
+                        {% if request.user.is_authenticated %}
+                            <a href="{% url 'reservas' %}" class="group px-8 py-4 border-2 border-slate-300 bg-white/80 backdrop-blur-sm text-slate-700 font-semibold rounded-xl hover:bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                                <span class="flex items-center justify-center">
+                                    <i class="fas fa-calendar-alt mr-2"></i>
+                                    Agendar Cita
+                                </span>
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="group px-8 py-4 border-2 border-slate-300 bg-white/80 backdrop-blur-sm text-slate-700 font-semibold rounded-xl hover:bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300" title="Inicia sesión para poder agendar tu cita">
+                                <span class="flex items-center justify-center">
+                                    <i class="fas fa-sign-in-alt mr-2"></i>
+                                    Iniciar Sesión
+                                </span>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Imagen/Visual mejorado -->
+                <div class="relative animate-fadeInUp" style="animation-delay: 0.8s;">
+                    <!-- Contenedor de imagen con efectos -->
+                    <div class="relative">
+                        <!-- Marco decorativo -->
+                        <div class="absolute -inset-4 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 rounded-3xl blur-lg opacity-30 animate-pulse-slow"></div>
+                        
+                        <!-- Imagen principal simulada -->
+                        <div class="relative bg-gradient-to-br from-slate-100 to-blue-100 rounded-2xl p-8 shadow-2xl backdrop-blur-sm border border-white/20">
+                            <div class="text-center">
+                                <!-- Icono principal grande -->
+                                <div class="w-32 h-32 bg-gradient-to-br from-blue-500 via-cyan-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl animate-float">
+                                    <i class="fas fa-car text-4xl text-white"></i>
+                                </div>
+                                
+                                <!-- Iconos de servicios flotantes -->
+                                <div class="relative">
+                                    <div class="absolute -top-8 -left-8 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg animate-bounce-slow">
+                                        <i class="fas fa-spray-can text-sm"></i>
+                                    </div>
+                                    <div class="absolute -top-8 -right-8 w-12 h-12 bg-cyan-500 rounded-full flex items-center justify-center text-white shadow-lg animate-bounce-slow" style="animation-delay: 1s;">
+                                        <i class="fas fa-magic text-sm"></i>
+                                    </div>
+                                    <div class="absolute -bottom-8 -left-8 w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-white shadow-lg animate-bounce-slow" style="animation-delay: 2s;">
+                                        <i class="fas fa-leaf text-sm"></i>
+                                    </div>
+                                    <div class="absolute -bottom-8 -right-8 w-12 h-12 bg-indigo-500 rounded-full flex items-center justify-center text-white shadow-lg animate-bounce-slow" style="animation-delay: 3s;">
+                                        <i class="fas fa-shield-alt text-sm"></i>
+                                    </div>
+                                </div>
+                                
+                                <h3 class="text-2xl font-bold text-slate-800 mb-2">Tu Auto Como Nuevo</h3>
+                                <p class="text-gray-600">Servicios profesionales que superan expectativas</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <div class="flex flex-col items-center text-gray-400">
+                <span class="text-sm mb-2">Descubre más</span>
+                <i class="fas fa-chevron-down text-2xl"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Servicios Principales -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="inline-block px-4 py-2 bg-blue-100 text-blue-600 text-sm font-semibold rounded-full uppercase tracking-wider mb-4">
+                    Nuestros Servicios
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
+                    Servicios de <span class="text-blue-600">Alta Calidad</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Ofrecemos una gama completa de servicios profesionales para mantener tu vehículo impecable
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Servicio 1: Lavado Exterior -->
+                <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-car text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Lavado Exterior Premium</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Lavado completo de la carrocería con productos premium, incluyendo llantas, ventanas y detalles cromados para un acabado perfecto.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Lavado de carrocería completa
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Limpieza de llantas y rines
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Pulido de cromados
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Secado sin rayones
+                        </li>
+                    </ul>
+                    <div class="flex items-center justify-between">
+                        <span class="text-3xl font-bold text-blue-600">$45.000</span>
+                        <button class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300">
+                            Elegir
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Servicio 2: Lavado Interior -->
+                <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200">
+                    <div class="w-16 h-16 bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-couch text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Lavado Interior Completo</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Limpieza profunda del interior incluyendo aspirado, limpieza de tapicería, tablero y todos los detalles internos.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Aspirado completo
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Limpieza de tapicería
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Limpieza de tablero
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Aromatización
+                        </li>
+                    </ul>
+                    <div class="flex items-center justify-between">
+                        <span class="text-3xl font-bold text-blue-600">$35.000</span>
+                        <button class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300">
+                            Elegir
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Servicio 3: Lavado Completo -->
+                <div class="group bg-gradient-to-br from-blue-50 to-slate-50 border-2 border-blue-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        Más Popular
+                    </div>
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-star text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Lavado Premium Completo</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Servicio completo que incluye lavado exterior e interior, más detalles adicionales para un resultado excepcional.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Todo el lavado exterior
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Todo el lavado interior
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Encerado básico
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Limpieza de motor
+                        </li>
+                    </ul>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-lg text-gray-500 line-through">$90.000</span>
+                            <span class="text-3xl font-bold text-blue-600 ml-2">$70.000</span>
+                        </div>
+                        <button class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300">
+                            Elegir
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Servicio 4: Detallado Profesional -->
+                <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-magic text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Detallado Profesional</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Servicio premium de detallado que incluye pulido, encerado profesional y protección de pintura para resultados duraderos.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Pulido profesional
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Encerado premium
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Protección de pintura
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Restauración de faros
+                        </li>
+                    </ul>
+                    <div class="flex items-center justify-between">
+                        <span class="text-3xl font-bold text-blue-600">$120.000</span>
+                        <button class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300">
+                            Elegir
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Servicio 5: Lavado Ecológico -->
+                <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200">
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-leaf text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Lavado Ecológico</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Lavado exterior utilizando productos biodegradables y técnicas que minimizan el consumo de agua, cuidando el medio ambiente.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Productos biodegradables
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Bajo consumo de agua
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Técnicas sostenibles
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Certificación eco-friendly
+                        </li>
+                    </ul>
+                    <div class="flex items-center justify-between">
+                        <span class="text-3xl font-bold text-blue-600">$50.000</span>
+                        <button class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300">
+                            Elegir
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Servicio 6: Mantenimiento Express -->
+                <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200">
+                    <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-bolt text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Mantenimiento Express</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Servicio rápido ideal para mantenimiento regular, incluye lavado básico y revisión de elementos esenciales en tiempo récord.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Lavado rápido exterior
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Aspirado básico
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Revisión de fluidos
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            30 minutos máximo
+                        </li>
+                    </ul>
+                    <div class="flex items-center justify-between">
+                        <span class="text-3xl font-bold text-blue-600">$25.000</span>
+                        <button class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300">
+                            Elegir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Características Destacadas - Infinite Scroll Carousel -->
+    <section class="py-20 bg-gradient-to-br from-slate-50 to-blue-50 relative overflow-hidden">
+        <!-- Elementos decorativos de fondo -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-20 left-20 w-64 h-64 bg-gradient-to-br from-blue-400/15 to-cyan-300/15 rounded-full blur-3xl opacity-60 animate-float"></div>
+            <div class="absolute bottom-20 right-20 w-48 h-48 bg-gradient-to-br from-purple-300/15 to-blue-400/15 rounded-full blur-2xl opacity-60 animate-float-delayed"></div>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-16">
+                <span class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 text-white text-sm font-semibold rounded-full uppercase tracking-wider mb-6 shadow-lg animate-fadeInUp">
+                    <i class="fas fa-star mr-2"></i>
+                    ¿Por qué elegirnos?
+                </span>
+                <h2 class="text-4xl md:text-6xl font-extrabold text-slate-800 mb-6 animate-fadeInUp" style="animation-delay: 0.2s;">
+                    Excelencia en <span class="bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent">Cada Detalle</span>
+                </h2>
+                <p class="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed animate-fadeInUp" style="animation-delay: 0.4s;">
+                    Combinamos <span class="font-semibold text-blue-600">experiencia</span>, 
+                    <span class="font-semibold text-cyan-600">tecnología</span> y 
+                    <span class="font-semibold text-teal-600">pasión</span> para brindar el mejor servicio de lavado automotriz
+                </p>
+            </div>
+
+            <!-- Infinite Scroll Carousel Container -->
+            <div class="relative">
+                <!-- Gradient overlays para efecto de fade -->
+                <div class="absolute left-0 top-0 w-32 h-full bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none"></div>
+                <div class="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-blue-50 to-transparent z-10 pointer-events-none"></div>
+                
+                <!-- Carousel Track -->
+                <div class="overflow-hidden relative" style="mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%); -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);">
+                    <div class="flex animate-infinite-scroll" style="animation: scroll-infinite 40s linear infinite; width: calc(320px * 12 + 48px * 12);">
+                        <!-- Primera serie de características -->
+                        <div class="flex-shrink-0" style="width: 320px; margin: 0 24px;">
+                            <div class="group bg-white/80 backdrop-blur-sm border border-white/50 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 hover:bg-white hover:border-blue-200 h-full">
+                                <div class="relative">
+                                    <!-- Círculo con efecto glow -->
+                                    <div class="absolute -inset-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full opacity-20 group-hover:opacity-40 transition-all duration-500 blur-lg"></div>
+                                    <div class="relative w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl">
+                                        <i class="fas fa-award text-2xl text-white group-hover:rotate-12 transition-transform duration-300"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-blue-600 transition-colors duration-300">Calidad Premium</h3>
+                                <p class="text-gray-600 leading-relaxed">Productos de alta gama y técnicas profesionales para resultados excepcionales que superan expectativas</p>
+                            </div>
+                        </div>
+
+                        <div class="flex-shrink-0" style="width: 320px; margin: 0 24px;">
+                            <div class="group bg-white/80 backdrop-blur-sm border border-white/50 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 hover:bg-white hover:border-green-200 h-full">
+                                <div class="relative">
+                                    <div class="absolute -inset-2 bg-gradient-to-r from-green-500 to-green-600 rounded-full opacity-20 group-hover:opacity-40 transition-all duration-500 blur-lg"></div>
+                                    <div class="relative w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl">
+                                        <i class="fas fa-leaf text-2xl text-white group-hover:rotate-12 transition-transform duration-300"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-green-600 transition-colors duration-300">Eco-Friendly</h3>
+                                <p class="text-gray-600 leading-relaxed">Comprometidos con el medio ambiente usando productos biodegradables y técnicas sostenibles</p>
+                            </div>
+                        </div>
+
+                        <div class="flex-shrink-0" style="width: 320px; margin: 0 24px;">
+                            <div class="group bg-white/80 backdrop-blur-sm border border-white/50 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 hover:bg-white hover:border-purple-200 h-full">
+                                <div class="relative">
+                                    <div class="absolute -inset-2 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full opacity-20 group-hover:opacity-40 transition-all duration-500 blur-lg"></div>
+                                    <div class="relative w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl">
+                                        <i class="fas fa-clock text-2xl text-white group-hover:rotate-12 transition-transform duration-300"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-purple-600 transition-colors duration-300">Servicio Rápido</h3>
+                                <p class="text-gray-600 leading-relaxed">Optimizamos nuestros procesos para brindarte un servicio eficiente, rápido y de máxima calidad</p>
+                            </div>
+                        </div>
+
+                        <div class="flex-shrink-0" style="width: 320px; margin: 0 24px;">
+                            <div class="group bg-white/80 backdrop-blur-sm border border-white/50 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 hover:bg-white hover:border-orange-200 h-full">
+                                <div class="relative">
+                                    <div class="absolute -inset-2 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full opacity-20 group-hover:opacity-40 transition-all duration-500 blur-lg"></div>
+                                    <div class="relative w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl">
+                                        <i class="fas fa-handshake text-2xl text-white group-hover:rotate-12 transition-transform duration-300"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-orange-600 transition-colors duration-300">Garantía Total</h3>
+                                <p class="text-gray-600 leading-relaxed">Garantizamos tu satisfacción con nuestro compromiso de excelencia y servicio al cliente</p>
+                            </div>
+                        </div>
+
+                        <div class="flex-shrink-0" style="width: 320px; margin: 0 24px;">
+                            <div class="group bg-white/80 backdrop-blur-sm border border-white/50 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 hover:bg-white hover:border-cyan-200 h-full">
+                                <div class="relative">
+                                    <div class="absolute -inset-2 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-full opacity-20 group-hover:opacity-40 transition-all duration-500 blur-lg"></div>
+                                    <div class="relative w-20 h-20 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl">
+                                        <i class="fas fa-users text-2xl text-white group-hover:rotate-12 transition-transform duration-300"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-cyan-600 transition-colors duration-300">Equipo Experto</h3>
+                                <p class="text-gray-600 leading-relaxed">Personal altamente capacitado con años de experiencia en el cuidado automotriz profesional</p>
+                            </div>
+                        </div>
+
+                        <div class="flex-shrink-0" style="width: 320px; margin: 0 24px;">
+                            <div class="group bg-white/80 backdrop-blur-sm border border-white/50 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 hover:bg-white hover:border-indigo-200 h-full">
+                                <div class="relative">
+                                    <div class="absolute -inset-2 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full opacity-20 group-hover:opacity-40 transition-all duration-500 blur-lg"></div>
+                                    <div class="relative w-20 h-20 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl">
+                                        <i class="fas fa-shield-alt text-2xl text-white group-hover:rotate-12 transition-transform duration-300"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-indigo-600 transition-colors duration-300">Seguridad Total</h3>
+                                <p class="text-gray-600 leading-relaxed">Instalaciones seguras y protocolos estrictos para el cuidado y protección de tu vehículo</p>
+                            </div>
+                        </div>
+
+                        <!-- Segunda serie (duplicada para efecto infinito) -->
+                        <div class="flex-shrink-0" style="width: 320px; margin: 0 24px;">
+                            <div class="group bg-white/80 backdrop-blur-sm border border-white/50 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 hover:bg-white hover:border-blue-200 h-full">
+                                <div class="relative">
+                                    <div class="absolute -inset-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full opacity-20 group-hover:opacity-40 transition-all duration-500 blur-lg"></div>
+                                    <div class="relative w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl">
+                                        <i class="fas fa-award text-2xl text-white group-hover:rotate-12 transition-transform duration-300"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-blue-600 transition-colors duration-300">Calidad Premium</h3>
+                                <p class="text-gray-600 leading-relaxed">Productos de alta gama y técnicas profesionales para resultados excepcionales que superan expectativas</p>
+                            </div>
+                        </div>
+
+                        <div class="flex-shrink-0" style="width: 320px; margin: 0 24px;">
+                            <div class="group bg-white/80 backdrop-blur-sm border border-white/50 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 hover:bg-white hover:border-green-200 h-full">
+                                <div class="relative">
+                                    <div class="absolute -inset-2 bg-gradient-to-r from-green-500 to-green-600 rounded-full opacity-20 group-hover:opacity-40 transition-all duration-500 blur-lg"></div>
+                                    <div class="relative w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl">
+                                        <i class="fas fa-leaf text-2xl text-white group-hover:rotate-12 transition-transform duration-300"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-green-600 transition-colors duration-300">Eco-Friendly</h3>
+                                <p class="text-gray-600 leading-relaxed">Comprometidos con el medio ambiente usando productos biodegradables y técnicas sostenibles</p>
+                            </div>
+                        </div>
+
+                        <div class="flex-shrink-0" style="width: 320px; margin: 0 24px;">
+                            <div class="group bg-white/80 backdrop-blur-sm border border-white/50 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 hover:bg-white hover:border-purple-200 h-full">
+                                <div class="relative">
+                                    <div class="absolute -inset-2 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full opacity-20 group-hover:opacity-40 transition-all duration-500 blur-lg"></div>
+                                    <div class="relative w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl">
+                                        <i class="fas fa-clock text-2xl text-white group-hover:rotate-12 transition-transform duration-300"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-purple-600 transition-colors duration-300">Servicio Rápido</h3>
+                                <p class="text-gray-600 leading-relaxed">Optimizamos nuestros procesos para brindarte un servicio eficiente, rápido y de máxima calidad</p>
+                            </div>
+                        </div>
+
+                        <div class="flex-shrink-0" style="width: 320px; margin: 0 24px;">
+                            <div class="group bg-white/80 backdrop-blur-sm border border-white/50 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 hover:bg-white hover:border-orange-200 h-full">
+                                <div class="relative">
+                                    <div class="absolute -inset-2 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full opacity-20 group-hover:opacity-40 transition-all duration-500 blur-lg"></div>
+                                    <div class="relative w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl">
+                                        <i class="fas fa-handshake text-2xl text-white group-hover:rotate-12 transition-transform duration-300"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-orange-600 transition-colors duration-300">Garantía Total</h3>
+                                <p class="text-gray-600 leading-relaxed">Garantizamos tu satisfacción con nuestro compromiso de excelencia y servicio al cliente</p>
+                            </div>
+                        </div>
+
+                        <div class="flex-shrink-0" style="width: 320px; margin: 0 24px;">
+                            <div class="group bg-white/80 backdrop-blur-sm border border-white/50 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 hover:bg-white hover:border-cyan-200 h-full">
+                                <div class="relative">
+                                    <div class="absolute -inset-2 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-full opacity-20 group-hover:opacity-40 transition-all duration-500 blur-lg"></div>
+                                    <div class="relative w-20 h-20 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl">
+                                        <i class="fas fa-users text-2xl text-white group-hover:rotate-12 transition-transform duration-300"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-cyan-600 transition-colors duration-300">Equipo Experto</h3>
+                                <p class="text-gray-600 leading-relaxed">Personal altamente capacitado con años de experiencia en el cuidado automotriz profesional</p>
+                            </div>
+                        </div>
+
+                        <div class="flex-shrink-0" style="width: 320px; margin: 0 24px;">
+                            <div class="group bg-white/80 backdrop-blur-sm border border-white/50 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 hover:bg-white hover:border-indigo-200 h-full">
+                                <div class="relative">
+                                    <div class="absolute -inset-2 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full opacity-20 group-hover:opacity-40 transition-all duration-500 blur-lg"></div>
+                                    <div class="relative w-20 h-20 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl">
+                                        <i class="fas fa-shield-alt text-2xl text-white group-hover:rotate-12 transition-transform duration-300"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-indigo-600 transition-colors duration-300">Seguridad Total</h3>
+                                <p class="text-gray-600 leading-relaxed">Instalaciones seguras y protocolos estrictos para el cuidado y protección de tu vehículo</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Indicador de scroll -->
+            <div class="flex justify-center mt-12">
+                <div class="flex items-center px-6 py-3 bg-white/60 backdrop-blur-sm rounded-full border border-white/30 shadow-lg">
+                    <div class="flex space-x-1 mr-3">
+                        <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+                        <div class="w-2 h-2 bg-cyan-500 rounded-full animate-bounce" style="animation-delay: 0.1s;"></div>
+                        <div class="w-2 h-2 bg-teal-500 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
+                    </div>
+                    <span class="text-sm text-gray-600 font-medium">Deslizando automáticamente</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Proceso de Trabajo Mejorada -->
+    <section class="py-20 bg-gradient-to-br from-slate-50 via-white to-blue-50 relative overflow-hidden">
+        <!-- Elementos decorativos de fondo -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-20 left-20 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-cyan-300/20 rounded-full blur-3xl opacity-60 animate-float"></div>
+            <div class="absolute bottom-20 right-20 w-48 h-48 bg-gradient-to-br from-purple-300/20 to-blue-400/20 rounded-full blur-2xl opacity-60 animate-float-delayed"></div>
+            <div class="absolute top-1/2 right-1/3 w-32 h-32 bg-gradient-to-br from-teal-400/15 to-cyan-400/15 rounded-full blur-xl opacity-50 animate-pulse-slow"></div>
+        </div>
+
+        <!-- Partículas flotantes -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute top-1/4 left-1/4 w-2 h-2 bg-blue-500/40 rounded-full animate-float-up"></div>
+            <div class="absolute top-3/4 right-1/3 w-3 h-3 bg-cyan-500/30 rounded-full animate-float-up" style="animation-delay: 3s;"></div>
+            <div class="absolute bottom-1/3 left-1/2 w-2 h-2 bg-teal-500/35 rounded-full animate-float-up" style="animation-delay: 6s;"></div>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-20">
+                <span class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 text-white text-sm font-semibold rounded-full uppercase tracking-wider mb-6 shadow-lg animate-fadeInUp">
+                    <i class="fas fa-cog mr-2 animate-spin"></i>
+                    Nuestro Proceso
+                </span>
+                <h2 class="text-4xl md:text-6xl font-extrabold text-slate-800 mb-6 animate-fadeInUp" style="animation-delay: 0.2s;">
+                    Cómo <span class="bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent">Trabajamos</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed animate-fadeInUp" style="animation-delay: 0.4s;">
+                    Un proceso sistemático y profesional diseñado para superar tus expectativas en cada paso
+                </p>
+                
+                <!-- Timeline central visual -->
+                <div class="mt-12 flex justify-center animate-fadeInUp" style="animation-delay: 0.6s;">
+                    <div class="bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 h-1 w-32 rounded-full shadow-lg"></div>
+                </div>
+            </div>
+
+            <!-- Proceso paso a paso con animaciones mejoradas -->
+            <div class="relative">
+                <!-- Timeline móvil (vertical) -->
+                <div class="lg:hidden absolute left-8 top-0 w-px h-full bg-gradient-to-b from-blue-200 via-blue-400 to-blue-200"></div>
+                
+                <!-- Timeline desktop (horizontal) -->
+                <div class="hidden lg:block absolute top-24 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-300 to-transparent"></div>
+                
+                <!-- Líneas conectoras animadas -->
+                <div class="hidden lg:block absolute top-24 left-1/4 w-1/2 h-px bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 timeline-progress"></div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-12 lg:gap-8">
+                    <!-- Paso 1: Recepción -->
+                    <div class="process-step relative group" data-step="1">
+                        <!-- Círculo principal mejorado -->
+                        <div class="step-circle relative">
+                            <!-- Anillo exterior hexagonal animado -->
+                            <div class="absolute -inset-4 border-2 border-blue-400/30 border-dashed rounded-none opacity-30 group-hover:opacity-60 transition-all duration-500 animate-pulse-slow transform rotate-45" style="clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);"></div>
+                            <!-- Círculo principal -->
+                            <div class="relative w-20 h-20 bg-gradient-to-br from-blue-500 via-blue-600 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl group-hover:scale-110 group-hover:shadow-blue-400/50 transition-all duration-500 z-10">
+                                <i class="fas fa-clipboard-check text-2xl text-white group-hover:scale-110 transition-transform duration-300"></i>
+                                <!-- Número de paso -->
+                                <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-white border-3 border-blue-500 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm shadow-lg">1</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Contenido mejorado -->
+                        <div class="text-center lg:text-left">
+                            <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-blue-600 transition-colors duration-300">
+                                Recepción & Evaluación
+                            </h3>
+                            <p class="text-gray-600 leading-relaxed mb-4">
+                                Recibimos tu vehículo con una inspección detallada para identificar sus necesidades específicas y recomendarte el mejor servicio.
+                            </p>
+                            <!-- Lista de características -->
+                            <ul class="text-sm text-gray-500 space-y-2">
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-blue-500 mr-2"></i>
+                                    Inspección completa
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-blue-500 mr-2"></i>
+                                    Documentación del estado
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-blue-500 mr-2"></i>
+                                    Recomendación personalizada
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Tiempo estimado -->
+                        <div class="mt-4 inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                            <i class="fas fa-clock mr-1"></i>
+                            5-10 min
+                        </div>
+                    </div>
+
+                    <!-- Paso 2: Preparación -->
+                    <div class="process-step relative group" data-step="2">
+                        <div class="step-circle relative">
+                            <!-- Anillo exterior cuadrado rotativo -->
+                            <div class="absolute -inset-3 border-2 border-cyan-400/30 border-dotted opacity-25 group-hover:opacity-55 transition-all duration-500 animate-spin-slow transform rotate-12" style="border-radius: 20%;"></div>
+                            <div class="relative w-20 h-20 bg-gradient-to-br from-cyan-500 via-cyan-600 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl group-hover:scale-110 group-hover:shadow-cyan-400/50 transition-all duration-500 z-10">
+                                <i class="fas fa-tools text-2xl text-white group-hover:scale-110 transition-transform duration-300"></i>
+                                <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-white border-3 border-cyan-500 rounded-full flex items-center justify-center text-cyan-600 font-bold text-sm shadow-lg">2</div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center lg:text-left">
+                            <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-cyan-600 transition-colors duration-300">
+                                Preparación Técnica
+                            </h3>
+                            <p class="text-gray-600 leading-relaxed mb-4">
+                                Preparamos meticulosamente todos los materiales premium y el área de trabajo siguiendo protocolos de calidad internacional.
+                            </p>
+                            <ul class="text-sm text-gray-500 space-y-2">
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-cyan-500 mr-2"></i>
+                                    Productos premium seleccionados
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-cyan-500 mr-2"></i>
+                                    Área de trabajo preparada
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-cyan-500 mr-2"></i>
+                                    Protocolos de seguridad
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mt-4 inline-flex items-center px-3 py-1 bg-cyan-100 text-cyan-700 rounded-full text-sm font-medium">
+                            <i class="fas fa-clock mr-1"></i>
+                            10-15 min
+                        </div>
+                    </div>
+
+                    <!-- Paso 3: Ejecución -->
+                    <div class="process-step relative group" data-step="3">
+                        <div class="step-circle relative">
+                            <!-- Anillo exterior triangular oscilante -->
+                            <div class="absolute -inset-4 border-2 border-teal-400/30 border-double opacity-30 group-hover:opacity-65 transition-all duration-500 animate-bounce-slow transform -rotate-12" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%); border-radius: 15%;"></div>
+                            <div class="relative w-20 h-20 bg-gradient-to-br from-teal-500 via-teal-600 to-green-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl group-hover:scale-110 group-hover:shadow-teal-400/50 transition-all duration-500 z-10">
+                                <i class="fas fa-spray-can text-2xl text-white group-hover:scale-110 transition-transform duration-300"></i>
+                                <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-white border-3 border-teal-500 rounded-full flex items-center justify-center text-teal-600 font-bold text-sm shadow-lg">3</div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center lg:text-left">
+                            <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-teal-600 transition-colors duration-300">
+                                Ejecución Profesional
+                            </h3>
+                            <p class="text-gray-600 leading-relaxed mb-4">
+                                Nuestros especialistas aplican técnicas avanzadas y productos de última generación para obtener resultados excepcionales.
+                            </p>
+                            <ul class="text-sm text-gray-500 space-y-2">
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-teal-500 mr-2"></i>
+                                    Técnicas profesionales avanzadas
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-teal-500 mr-2"></i>
+                                    Productos de última generación
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-teal-500 mr-2"></i>
+                                    Atención a cada detalle
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mt-4 inline-flex items-center px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">
+                            <i class="fas fa-clock mr-1"></i>
+                            30-60 min
+                        </div>
+                    </div>
+
+                    <!-- Paso 4: Entrega -->
+                    <div class="process-step relative group" data-step="4">
+                        <div class="step-circle relative">
+                            <!-- Anillo exterior en forma de estrella pulsante -->
+                            <div class="absolute -inset-3 border-2 border-purple-400/30 border-solid opacity-25 group-hover:opacity-70 transition-all duration-500 animate-pulse-slow transform rotate-6" style="clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); border-radius: 25%;"></div>
+                            <div class="relative w-20 h-20 bg-gradient-to-br from-purple-500 via-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl group-hover:scale-110 group-hover:shadow-purple-400/50 transition-all duration-500 z-10">
+                                <i class="fas fa-award text-2xl text-white group-hover:scale-110 transition-transform duration-300"></i>
+                                <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-white border-3 border-purple-500 rounded-full flex items-center justify-center text-purple-600 font-bold text-sm shadow-lg">4</div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center lg:text-left">
+                            <h3 class="text-2xl font-bold text-slate-800 mb-4 group-hover:text-purple-600 transition-colors duration-300">
+                                Entrega Premium
+                            </h3>
+                            <p class="text-gray-600 leading-relaxed mb-4">
+                                Realizamos una inspección final rigurosa y te entregamos tu vehículo transformado con garantía de satisfacción total.
+                            </p>
+                            <ul class="text-sm text-gray-500 space-y-2">
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-purple-500 mr-2"></i>
+                                    Inspección final de calidad
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-purple-500 mr-2"></i>
+                                    Garantía de satisfacción
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-purple-500 mr-2"></i>
+                                    Consejos de mantenimiento
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mt-4 inline-flex items-center px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
+                            <i class="fas fa-clock mr-1"></i>
+                            5-10 min
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen del proceso -->
+            <div class="mt-20 text-center">
+                <div class="bg-gradient-to-r from-blue-50 via-cyan-50 to-teal-50 rounded-3xl p-8 border border-blue-100 shadow-lg">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">
+                        Tiempo Total del Proceso
+                    </h3>
+                    <div class="flex flex-wrap justify-center items-center gap-8">
+                        <div class="text-center">
+                            <div class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">50-95</div>
+                            <div class="text-gray-600 font-medium">Minutos</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl font-bold bg-gradient-to-r from-cyan-600 to-teal-600 bg-clip-text text-transparent">100%</div>
+                            <div class="text-gray-600 font-medium">Garantía</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl font-bold bg-gradient-to-r from-teal-600 to-purple-600 bg-clip-text text-transparent">24/7</div>
+                            <div class="text-gray-600 font-medium">Disponible</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección CTA Final -->
+    <section class="py-20 bg-gradient-to-r from-blue-600 to-blue-700 relative overflow-hidden">
+        <!-- Elementos decorativos -->
+        <div class="absolute inset-0 bg-black opacity-10"></div>
+        <div class="absolute top-0 left-0 w-full h-full">
+            <div class="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+            <div class="absolute bottom-10 right-10 w-48 h-48 bg-white/10 rounded-full blur-2xl"></div>
+            <div class="absolute top-1/2 left-1/3 w-24 h-24 bg-white/10 rounded-full blur-lg"></div>
+        </div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center max-w-4xl mx-auto">
+                <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                    ¿Listo para Transformar tu Vehículo?
+                </h2>
+                <p class="text-xl text-blue-100 mb-8 leading-relaxed">
+                    Agenda tu cita ahora y experimenta la diferencia de un servicio profesional de primera clase
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'reservas' %}" class="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl hover:bg-gray-50 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                            <i class="fas fa-calendar-alt mr-2"></i>
+                            Agendar Cita
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl hover:bg-gray-50 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300" title="Inicia sesión para poder agendar tu cita">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            Iniciar Sesión para Reservar
+                        </a>
+                    {% endif %}
+                    <button class="px-8 py-4 border-2 border-white text-white font-semibold rounded-xl hover:bg-white hover:text-blue-600 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                        <i class="fas fa-phone mr-2"></i>
+                        Llamar Ahora
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Estilos adicionales y animaciones mejorados -->
+<style>
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Nuevas animaciones para el hero mejorado */
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0px) scale(1);
+        }
+        50% {
+            transform: translateY(-20px) scale(1.05);
+        }
+    }
+
+    @keyframes float-delayed {
+        0%, 100% {
+            transform: translateY(0px) scale(1) rotate(0deg);
+        }
+        50% {
+            transform: translateY(-15px) scale(1.03) rotate(5deg);
+        }
+    }
+
+    @keyframes float-slow {
+        0%, 100% {
+            transform: translateY(0px) scale(1);
+        }
+        50% {
+            transform: translateY(-10px) scale(1.02);
+        }
+    }
+
+    @keyframes bounce-slow {
+        0%, 100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    @keyframes pulse-slow {
+        0%, 100% {
+            opacity: 0.6;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.8;
+            transform: scale(1.1);
+        }
+    }
+
+    @keyframes spin-slow {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes float-up {
+        0% {
+            transform: translateY(100vh) scale(0);
+            opacity: 0;
+        }
+        10% {
+            opacity: 1;
+        }
+        90% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-100px) scale(1);
+            opacity: 0;
+        }
+    }
+
+    /* Partículas del hero */
+    @keyframes heroParticleFloat {
+        0% {
+            transform: translateY(100vh) translateX(0px) rotate(0deg) scale(0);
+            opacity: 0;
+        }
+        10% {
+            opacity: 1;
+            transform: translateY(90vh) translateX(10px) rotate(45deg) scale(1);
+        }
+        50% {
+            transform: translateY(50vh) translateX(-20px) rotate(180deg) scale(1.2);
+            opacity: 0.8;
+        }
+        90% {
+            transform: translateY(10vh) translateX(15px) rotate(315deg) scale(0.8);
+            opacity: 0.3;
+        }
+        100% {
+            transform: translateY(-10vh) translateX(0px) rotate(360deg) scale(0);
+            opacity: 0;
+        }
+    }
+
+    /* Nuevas animaciones para la sección de proceso de trabajo */
+    @keyframes processStepReveal {
+        0% {
+            opacity: 0;
+            transform: translateY(50px) scale(0.8);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes timelineProgress {
+        0% {
+            width: 0%;
+        }
+        100% {
+            width: 50%;
+        }
+    }
+
+    @keyframes stepGlow {
+        0%, 100% {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+        50% {
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
+        }
+    }
+
+    @keyframes stepPulse {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideInFromLeft {
+        0% {
+            transform: translateX(-100px);
+            opacity: 0;
+        }
+        100% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideInFromRight {
+        0% {
+            transform: translateX(100px);
+            opacity: 0;
+        }
+        100% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* Animación para el infinite scroll carousel */
+    @keyframes scroll-infinite {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    .animate-infinite-scroll {
+        animation: scroll-infinite 40s linear infinite;
+    }
+
+    /* Pausar animación al hover en todo el contenedor */
+    .overflow-hidden:hover .animate-infinite-scroll {
+        animation-play-state: paused;
+    }
+
+    /* Efectos adicionales para las cards del carousel */
+    .group:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Responsive para el carousel */
+    @media (max-width: 768px) {
+        .animate-infinite-scroll {
+            animation-duration: 50s;
+        }
+    }
+
+    /* Clases de proceso de trabajo */
+    .process-step {
+        opacity: 0;
+        animation: processStepReveal 0.8s ease-out forwards;
+    }
+
+    .process-step:nth-child(1) {
+        animation-delay: 0.2s;
+    }
+
+    .process-step:nth-child(2) {
+        animation-delay: 0.4s;
+    }
+
+    .process-step:nth-child(3) {
+        animation-delay: 0.6s;
+    }
+
+    .process-step:nth-child(4) {
+        animation-delay: 0.8s;
+    }
+
+    .timeline-progress {
+        width: 0%;
+        animation: timelineProgress 2s ease-out 1s forwards;
+    }
+
+    .step-circle:hover {
+        animation: stepGlow 2s ease-in-out infinite;
+    }
+
+    /* Efectos adicionales para mobile y desktop */
+    @media (max-width: 1024px) {
+        .process-step:nth-child(odd) {
+            animation: slideInFromLeft 0.8s ease-out forwards;
+        }
+
+        .process-step:nth-child(even) {
+            animation: slideInFromRight 0.8s ease-out forwards;
+        }
+    }
+
+    /* Efectos de hover mejorados */
+    .process-step:hover .step-circle > div:first-child {
+        animation: stepPulse 1s ease-in-out infinite;
+    }
+
+    /* Transiciones suaves para los iconos */
+    .process-step i {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .process-step:hover i {
+        transform: scale(1.2) rotate(10deg);
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+    }
+
+    /* Efectos de borde animado */
+    .process-step::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+        border-radius: 1rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+    }
+
+    .process-step:hover::before {
+        opacity: 1;
+    }
+
+    /* Animación de números de paso */
+    .process-step .step-number {
+        transition: all 0.3s ease;
+    }
+
+    .process-step:hover .step-number {
+        transform: scale(1.1);
+        background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+    }
+
+    /* Clases de animación */
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .animate-float-delayed {
+        animation: float-delayed 8s ease-in-out infinite;
+        animation-delay: 2s;
+    }
+
+    .animate-float-slow {
+        animation: float-slow 10s ease-in-out infinite;
+        animation-delay: 4s;
+    }
+
+    .animate-bounce-slow {
+        animation: bounce-slow 3s ease-in-out infinite;
+    }
+
+    .animate-pulse-slow {
+        animation: pulse-slow 4s ease-in-out infinite;
+    }
+
+    .animate-spin-slow {
+        animation: spin-slow 8s linear infinite;
+    }
+
+    .animate-float-up {
+        animation: float-up 15s linear infinite;
+    }
+
+    .animate-fadeInUp {
+        animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    /* Partículas específicas del hero */
+    .hero-particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .hero-particle {
+        position: absolute;
+        border-radius: 50%;
+        animation: heroParticleFloat 12s infinite linear;
+        opacity: 0;
+    }
+
+    .hero-particle.type-1 {
+        width: 4px;
+        height: 4px;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.8), rgba(59, 130, 246, 0.2));
+        box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+    }
+
+    .hero-particle.type-2 {
+        width: 6px;
+        height: 6px;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.7), rgba(6, 182, 212, 0.2));
+        box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+    }
+
+    .hero-particle.type-3 {
+        width: 3px;
+        height: 3px;
+        background: radial-gradient(circle, rgba(20, 184, 166, 0.9), rgba(20, 184, 166, 0.3));
+        box-shadow: 0 0 6px rgba(20, 184, 166, 0.7);
+    }
+
+    /* Efecto de scroll suave */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Mejoras en las transiciones */
+    * {
+        transition-property: transform, box-shadow, background-color, border-color, color;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Efecto hover para botones */
+    button:hover {
+        transform: translateY(-2px);
+    }
+    
+    /* Asegurar que la navbar no se mueva */
+    nav, .navbar, header {
+        transform: none !important;
+        position: fixed !important;
+        top: 0 !important;
+        z-index: 9999 !important;
+    }
+    
+    /* Prevenir efectos parallax en elementos de navegación */
+    nav *, .navbar *, header * {
+        transform: none !important;
+    }
+
+    /* Efectos especiales para el hero */
+    .hero-particles::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(20, 184, 166, 0.08) 0%, transparent 50%);
+        animation: float 20s ease-in-out infinite;
+    }
+</style>
+
+<!-- JavaScript para animaciones mejorado -->
+<script>
+    // Crear partículas para el hero
+    function createHeroParticles() {
+        const heroContainer = document.querySelector('.hero-particles');
+        if (!heroContainer) return;
+        
+        const particleCount = 50;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            
+            const types = ['type-1', 'type-2', 'type-3'];
+            const randomType = types[Math.floor(Math.random() * types.length)];
+            
+            particle.className = `hero-particle ${randomType}`;
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 12 + 's';
+            particle.style.animationDuration = (Math.random() * 6 + 10) + 's';
+            
+            heroContainer.appendChild(particle);
+        }
+    }
+
+    // Crear partículas adicionales continuamente
+    function continuousHeroParticles() {
+        setInterval(() => {
+            const heroContainer = document.querySelector('.hero-particles');
+            if (!heroContainer) return;
+
+            const particle = document.createElement('div');
+            const types = ['type-1', 'type-2', 'type-3'];
+            const randomType = types[Math.floor(Math.random() * types.length)];
+            
+            particle.className = `hero-particle ${randomType}`;
+            particle.style.left = Math.random() * 100 + '%';
+            
+            const duration = Math.random() * 4 + 8;
+            particle.style.animationDuration = duration + 's';
+            
+            heroContainer.appendChild(particle);
+            
+            // Remover partícula después de la animación
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, duration * 1000);
+            
+        }, 2000);
+    }
+
+    // Observador de intersección para animaciones al hacer scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    // Inicializar proceso de trabajo mejorado
+    function initializeProcessWorkflow() {
+        const processSteps = document.querySelectorAll('.process-step');
+        const timelineProgress = document.querySelector('.timeline-progress');
+        
+        // Observador para activar animaciones cuando los pasos sean visibles
+        const processObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    // Activar animación del paso
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0) scale(1)';
+                    
+                    // Agregar clase de animación activa
+                    entry.target.classList.add('step-active');
+                    
+                    // Animar el progreso de la línea de tiempo
+                    if (timelineProgress && index === 0) {
+                        setTimeout(() => {
+                            timelineProgress.style.animation = 'timelineProgress 2s ease-out forwards';
+                        }, 500);
+                    }
+                    
+                    // Efecto de onda en los pasos
+                    setTimeout(() => {
+                        const stepCircle = entry.target.querySelector('.step-circle > div:last-child');
+                        if (stepCircle) {
+                            stepCircle.style.animation = 'stepGlow 2s ease-in-out';
+                        }
+                    }, index * 200);
+                }
+            });
+        }, {
+            threshold: 0.3,
+            rootMargin: '0px 0px -100px 0px'
+        });
+
+        // Observar cada paso del proceso
+        processSteps.forEach(step => {
+            processObserver.observe(step);
+        });
+
+        // Agregar efectos de hover interactivos
+        processSteps.forEach((step, index) => {
+            const stepCircle = step.querySelector('.step-circle');
+            const stepIcon = step.querySelector('i');
+            const stepNumber = step.querySelector('.step-number');
+
+            step.addEventListener('mouseenter', () => {
+                // Efecto de pulsación en el círculo
+                if (stepCircle) {
+                    stepCircle.style.animation = 'stepPulse 0.6s ease-in-out';
+                }
+                
+                // Rotación del icono
+                if (stepIcon) {
+                    stepIcon.style.transform = 'scale(1.2) rotate(15deg)';
+                }
+                
+                // Efecto de brillo en otros pasos
+                processSteps.forEach((otherStep, otherIndex) => {
+                    if (otherIndex !== index) {
+                        otherStep.style.opacity = '0.7';
+                        otherStep.style.transform = 'scale(0.95)';
+                    }
+                });
+            });
+
+            step.addEventListener('mouseleave', () => {
+                // Resetear animaciones
+                if (stepCircle) {
+                    stepCircle.style.animation = '';
+                }
+                
+                if (stepIcon) {
+                    stepIcon.style.transform = '';
+                }
+                
+                // Restaurar otros pasos
+                processSteps.forEach(otherStep => {
+                    otherStep.style.opacity = '';
+                    otherStep.style.transform = '';
+                });
+            });
+
+            // Agregar click para destacar paso
+            step.addEventListener('click', () => {
+                // Remover clase activa de todos los pasos
+                processSteps.forEach(s => s.classList.remove('step-highlighted'));
+                
+                // Agregar clase activa al paso clickeado
+                step.classList.add('step-highlighted');
+                
+                // Efecto de destacado
+                step.style.animation = 'stepGlow 1s ease-in-out';
+                setTimeout(() => {
+                    step.style.animation = '';
+                }, 1000);
+            });
+        });
+    }
+
+    // Función para animar contadores del resumen
+    function animateProcessCounters() {
+        const counters = document.querySelectorAll('.process-step + div .text-4xl');
+        
+        counters.forEach(counter => {
+            const text = counter.textContent;
+            const numbers = text.match(/\d+/g);
+            
+            if (numbers && numbers.length > 0) {
+                const targetNumber = parseInt(numbers[0]);
+                let currentNumber = 0;
+                const increment = targetNumber / 60; // 60 frames para suavidad
+                
+                const timer = setInterval(() => {
+                    currentNumber += increment;
+                    if (currentNumber >= targetNumber) {
+                        counter.textContent = text;
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = text.replace(/\d+/, Math.floor(currentNumber));
+                    }
+                }, 16); // ~60 FPS
+            }
+        });
+    }
+
+    // Función para crear efectos de partículas en el proceso
+    function createProcessParticles() {
+        const processSection = document.querySelector('.process-step').closest('section');
+        if (!processSection) return;
+
+        // Crear contenedor de partículas
+        const particleContainer = document.createElement('div');
+        particleContainer.className = 'absolute inset-0 pointer-events-none overflow-hidden';
+        particleContainer.style.zIndex = '1';
+        processSection.style.position = 'relative';
+        processSection.appendChild(particleContainer);
+
+        // Crear partículas flotantes
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'absolute rounded-full opacity-20';
+            
+            const size = Math.random() * 4 + 2;
+            const colors = ['bg-blue-400', 'bg-cyan-400', 'bg-teal-400', 'bg-purple-400'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            particle.classList.add(randomColor);
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animation = `float-up ${Math.random() * 10 + 15}s linear infinite`;
+            particle.style.animationDelay = Math.random() * 5 + 's';
+            
+            particleContainer.appendChild(particle);
+        }
+    }
+
+    // Función para efectos de scroll parallax en el proceso
+    function initProcessParallax() {
+        const processSteps = document.querySelectorAll('.process-step');
+        
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const processSection = document.querySelector('.process-step').closest('section');
+            
+            if (processSection) {
+                const rect = processSection.getBoundingClientRect();
+                const sectionTop = rect.top + scrolled;
+                const sectionHeight = rect.height;
+                
+                // Solo aplicar parallax cuando la sección esté visible
+                if (scrolled + window.innerHeight > sectionTop && scrolled < sectionTop + sectionHeight) {
+                    const progress = (scrolled + window.innerHeight - sectionTop) / (sectionHeight + window.innerHeight);
+                    
+                    processSteps.forEach((step, index) => {
+                        const speed = 0.1 + (index * 0.02);
+                        const yPos = (scrolled - sectionTop) * speed;
+                        
+                        // Verificar que no sea parte de la navbar
+                        if (!step.closest('nav') && !step.closest('.navbar') && !step.closest('header')) {
+                            step.style.transform = `translateY(${yPos}px)`;
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Inicializar proceso de trabajo mejorado
+        initializeProcessWorkflow();
+        createProcessParticles();
+    });
+</script>
+{% endblock content %}

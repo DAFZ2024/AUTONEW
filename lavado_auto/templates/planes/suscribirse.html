@@ -1,0 +1,199 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        padding: 80px 0;
+    }
+
+    .subscription-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .plan-header {
+        background: linear-gradient(135deg, #3b82f6, #06b6d4);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .plan-name {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .plan-price {
+        font-size: 2.5rem;
+        font-weight: 900;
+        margin-bottom: 10px;
+    }
+
+    .plan-duration {
+        opacity: 0.9;
+        font-size: 1.1rem;
+    }
+
+    .subscription-content {
+        padding: 40px;
+    }
+
+    .feature-list {
+        list-style: none;
+        margin: 30px 0;
+    }
+
+    .feature-list li {
+        display: flex;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .feature-icon {
+        width: 24px;
+        height: 24px;
+        background: #10b981;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin-right: 15px;
+        font-size: 0.8rem;
+    }
+
+    .subscribe-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #3b82f6, #06b6d4);
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+    }
+
+    .subscribe-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .back-btn {
+        display: inline-block;
+        color: #6b7280;
+        text-decoration: none;
+        margin-bottom: 20px;
+        font-weight: 500;
+    }
+
+    .back-btn:hover {
+        color: #3b82f6;
+    }
+</style>
+
+<div class="subscription-container">
+    <div class="plan-header">
+        <h1 class="plan-name">{{ plan.nombre }}</h1>
+        <div class="plan-price">${{ plan.precio_mensual }}</div>
+        <div class="plan-duration">por mes</div>
+    </div>
+
+    <div class="subscription-content">
+        <a href="{% url 'planes' %}" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Volver a planes
+        </a>
+
+        <h3>¿Qué incluye este plan?</h3>
+        <ul class="feature-list">
+            <li>
+                <span class="feature-icon">
+                    <i class="fas fa-check"></i>
+                </span>
+                {% if plan.cantidad_servicios_mes == 0 %}
+                    Acceso ilimitado al servicio
+                {% else %}
+                    Acceso al servicio {{ plan.cantidad_servicios_mes }} veces por mes
+                {% endif %}
+            </li>
+            {% if plan.incluye_lavado_asientos %}
+            <li>
+                <span class="feature-icon">
+                    <i class="fas fa-check"></i>
+                </span>
+                Lavado completo de asientos
+            </li>
+            {% endif %}
+            {% if plan.incluye_aspirado %}
+            <li>
+                <span class="feature-icon">
+                    <i class="fas fa-check"></i>
+                </span>
+                Limpieza profunda con aspiradora
+            </li>
+            {% endif %}
+            {% if plan.incluye_lavado_exterior %}
+            <li>
+                <span class="feature-icon">
+                    <i class="fas fa-check"></i>
+                </span>
+                Lavado profesional de exteriores
+            </li>
+            {% endif %}
+            {% if plan.incluye_lavado_interior_humedo %}
+            <li>
+                <span class="feature-icon">
+                    <i class="fas fa-check"></i>
+                </span>
+                Lavado húmedo de interiores
+            </li>
+            {% endif %}
+            {% if plan.incluye_encerado %}
+            <li>
+                <span class="feature-icon">
+                    <i class="fas fa-check"></i>
+                </span>
+                Encerado y protección UV
+            </li>
+            {% endif %}
+            {% if plan.incluye_detallado_completo %}
+            <li>
+                <span class="feature-icon">
+                    <i class="fas fa-check"></i>
+                </span>
+                Detallado completo
+            </li>
+            {% endif %}
+        </ul>
+
+        <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin: 20px 0;">
+            <h4 style="color: #1e293b; margin-bottom: 10px;">Información importante:</h4>
+            <ul style="color: #64748b; margin: 0; padding-left: 20px;">
+                <li>Tu suscripción se activará inmediatamente después del pago</li>
+                <li>Puedes cancelar en cualquier momento</li>
+                <li>Se renueva automáticamente cada mes</li>
+                <li>Soporte 24/7 incluido</li>
+            </ul>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="subscribe-btn">
+                <i class="fas fa-credit-card" style="margin-right: 8px;"></i>
+                Suscribirse Ahora
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,939 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+{% block content %}
+{% load custom_tags %}
+
+<!-- CSS personalizado para citas -->
+<link rel="stylesheet" href="{% static 'css/citas.css' %}">
+
+<style>
+.modal-overlay {
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease-in-out;
+}
+
+.modal-enter {
+    animation: modalEnter 0.3s ease-out;
+}
+
+@keyframes modalEnter {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-overlay:not(.hidden) {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Mejoras para formularios en modales */
+.modal-overlay select:focus,
+.modal-overlay input:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: #3b82f6;
+}
+
+.modal-overlay select:disabled,
+.modal-overlay input:disabled {
+    background-color: #f3f4f6;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+/* Estilos para el botón de loading */
+.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid transparent;
+    border-top: 2px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+
+<!-- Token CSRF para requests AJAX -->
+{% csrf_token %}
+
+<div class="min-h-screen bg-gradient-to-br mt-20 from-blue-50 to-indigo-100 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                <i class="fas fa-calendar-alt text-blue-600 mr-3"></i>
+                Mis Citas AutoNew
+            </h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                Gestiona tus citas de lavado y cuidado de vehículos de manera fácil y rápida
+            </p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-yellow-400 stat-card cita-card">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-clock text-yellow-600 text-xl icon-bounce"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Citas Pendientes</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ reservas_pendientes.count }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-400 stat-card cita-card">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Citas Completadas</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ reservas_completadas.count }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-400 stat-card cita-card">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-chart-line text-blue-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Total de Citas</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ total_reservas.count }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-8">
+            <a href="{% url 'reservas' %}" 
+               class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 flex items-center justify-center">
+                <i class="fas fa-plus mr-2"></i>
+                Nueva Cita
+            </a>
+            <button onclick="toggleView()" 
+                    class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 flex items-center justify-center">
+                <i class="fas fa-th-list mr-2"></i>
+                Cambiar Vista
+            </button>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="bg-white rounded-lg shadow-sm mb-6">
+            <div class="border-b border-gray-200">
+                <nav class="-mb-px flex">
+                    <button onclick="showTab('pendientes')" 
+                            id="tab-pendientes"
+                            class="tab-button w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm">
+                        <i class="fas fa-clock mr-2"></i>
+                        Citas Pendientes ({{ reservas_pendientes.count }})
+                    </button>
+                    <button onclick="showTab('completadas')" 
+                            id="tab-completadas"
+                            class="tab-button w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Citas Completadas ({{ reservas_completadas.count }})
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Citas Pendientes -->
+        <div id="content-pendientes" class="tab-content">
+            {% if reservas_pendientes %}
+                <div class="grid gap-6">
+                    {% for reserva in reservas_pendientes %}
+                        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 cita-card">
+                            <div class="p-6">
+                                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                                    <!-- Info Principal -->
+                                    <div class="flex-1">
+                                        <div class="flex items-start justify-between mb-4">
+                                            <div>
+                                                <h3 class="text-xl font-bold text-gray-900 mb-2">
+                                                    <i class="fas fa-building text-blue-600 mr-2"></i>
+                                                    {{ reserva.empresa.nombre_empresa }}
+                                                </h3>
+                                                <div class="flex items-center text-gray-600 mb-2">
+                                                    <i class="fas fa-calendar mr-2"></i>
+                                                    <span class="font-medium">{{ reserva.fecha|date:"l, d \d\e F \d\e Y" }}</span>
+                                                </div>
+                                                <div class="flex items-center text-gray-600 mb-2">
+                                                    <i class="fas fa-clock mr-2"></i>
+                                                    <span class="font-medium">{{ reserva.hora|time:"g:i A" }}</span>
+                                                </div>
+                                                <div class="flex items-center text-gray-600">
+                                                    <i class="fas fa-map-marker-alt mr-2"></i>
+                                                    <span>{{ reserva.empresa.direccion }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex-shrink-0 ml-4">
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium badge-pendiente">
+                                                    <i class="fas fa-hourglass-half mr-1"></i>
+                                                    {{ reserva.estado|capfirst }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Servicios -->
+                                        <div class="mb-4">
+                                            <h4 class="text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-tools mr-1"></i>
+                                                Servicios Incluidos:
+                                            </h4>
+                                            <div class="flex flex-wrap gap-2">
+                                                {% for servicio in reserva.servicios.all %}
+                                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                        {{ servicio.nombre_servicio }}
+                                                    </span>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+
+                                        <!-- Precio -->
+                                        <div class="mb-4">
+                                            <div class="text-lg font-bold text-green-600">
+                                                <i class="fas fa-dollar-sign mr-1"></i>
+                                                ${{ reserva.servicios.all|calcular_precio_total }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Botones de Acción -->
+                                    <div class="flex flex-col sm:flex-row gap-3 lg:flex-col lg:ml-6 action-buttons">
+                                        <button onclick="verDetalles({{ reserva.id_reserva }})" 
+                                                class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center action-btn">
+                                            <i class="fas fa-eye mr-2"></i>
+                                            Ver Detalles
+                                        </button>
+                                        <button onclick="editarReserva({{ reserva.id_reserva }})" 
+                                                class="bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center action-btn">
+                                            <i class="fas fa-edit mr-2"></i>
+                                            Editar
+                                        </button>
+                                        <button onclick="cancelarReserva({{ reserva.id_reserva }})" 
+                                                class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center action-btn">
+                                            <i class="fas fa-times mr-2"></i>
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+                    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-calendar-times text-gray-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No tienes citas pendientes</h3>
+                    <p class="text-gray-600 mb-6">¡Es un buen momento para agendar una nueva cita para tu vehículo!</p>
+                    <a href="{% url 'reservas' %}" 
+                       class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-colors duration-200 inline-flex items-center">
+                        <i class="fas fa-plus mr-2"></i>
+                        Crear Nueva Cita
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Citas Completadas -->
+        <div id="content-completadas" class="tab-content hidden">
+            {% if reservas_completadas %}
+                <div class="grid gap-6">
+                    {% for reserva in reservas_completadas %}
+                        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 opacity-90 cita-card">
+                            <div class="p-6">
+                                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                                    <!-- Info Principal -->
+                                    <div class="flex-1">
+                                        <div class="flex items-start justify-between mb-4">
+                                            <div>
+                                                <h3 class="text-xl font-bold text-gray-900 mb-2">
+                                                    <i class="fas fa-building text-gray-600 mr-2"></i>
+                                                    {{ reserva.empresa.nombre_empresa }}
+                                                </h3>
+                                                <div class="flex items-center text-gray-600 mb-2">
+                                                    <i class="fas fa-calendar mr-2"></i>
+                                                    <span class="font-medium">{{ reserva.fecha|date:"l, d \d\e F \d\e Y" }}</span>
+                                                </div>
+                                                <div class="flex items-center text-gray-600 mb-2">
+                                                    <i class="fas fa-clock mr-2"></i>
+                                                    <span class="font-medium">{{ reserva.hora|time:"g:i A" }}</span>
+                                                </div>
+                                                <div class="flex items-center text-gray-600">
+                                                    <i class="fas fa-map-marker-alt mr-2"></i>
+                                                    <span>{{ reserva.empresa.direccion }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex-shrink-0 ml-4">
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium badge-completado">
+                                                    <i class="fas fa-check-circle mr-1"></i>
+                                                    {{ reserva.estado|capfirst }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Servicios -->
+                                        <div class="mb-4">
+                                            <h4 class="text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-tools mr-1"></i>
+                                                Servicios Realizados:
+                                            </h4>
+                                            <div class="flex flex-wrap gap-2">
+                                                {% for servicio in reserva.servicios.all %}
+                                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                                                        {{ servicio.nombre_servicio }}
+                                                    </span>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+
+                                        <!-- Precio -->
+                                        <div class="mb-4">
+                                            <div class="text-lg font-bold text-gray-600">
+                                                <i class="fas fa-dollar-sign mr-1"></i>
+                                                ${{ reserva.servicios.all|calcular_precio_total }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Botones de Acción -->
+                                    <div class="flex flex-col sm:flex-row gap-3 lg:flex-col lg:ml-6 action-buttons">
+                                        <button onclick="verDetalles({{ reserva.id_reserva }})" 
+                                                class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center action-btn">
+                                            <i class="fas fa-eye mr-2"></i>
+                                            Ver Detalles
+                                        </button>
+                                        <button onclick="repetirReserva({{ reserva.id_reserva }})" 
+                                                class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center action-btn">
+                                            <i class="fas fa-redo mr-2"></i>
+                                            Repetir Cita
+                                        </button>
+                                        <button onclick="calificarServicio({{ reserva.id_reserva }})" 
+                                                class="bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center action-btn">
+                                            <i class="fas fa-star mr-2"></i>
+                                            Calificar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+                    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-history text-gray-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No tienes citas completadas</h3>
+                    <p class="text-gray-600 mb-6">Aquí aparecerán todas las citas que hayas completado anteriormente.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Ver Detalles -->
+<div id="modalDetalles" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 modal-overlay">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto modal-enter">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+                        Detalles de la Cita
+                    </h2>
+                    <button onclick="cerrarModal('modalDetalles')" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div id="contenidoDetalles">
+                    <!-- Contenido dinámico -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Reserva -->
+<div id="modalEditarReserva" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 modal-overlay">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto modal-enter">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        <i class="fas fa-edit text-yellow-600 mr-2"></i>
+                        Editar Cita
+                    </h2>
+                    <button onclick="cerrarModal('modalEditarReserva')" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Información actual de la reserva -->
+                <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">
+                        <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+                        Información Actual
+                    </h3>
+                    <div id="infoActualReserva" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Contenido dinámico -->
+                    </div>
+                </div>
+
+                <!-- Formulario de edición -->
+                <form id="formEditarReserva">
+                    {% csrf_token %}
+                    <input type="hidden" id="editReservaId" name="reserva_id">
+                    
+                    <div class="space-y-4">
+                        <!-- Selección de empresa -->
+                        <div>
+                            <label for="editEmpresa" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-building mr-1"></i>
+                                Punto de Lavado
+                            </label>
+                            <select name="empresa" id="editEmpresa" 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    required>
+                                <option value="">Selecciona un punto</option>
+                                <!-- Se carga dinámicamente -->
+                            </select>
+                        </div>
+
+                        <!-- Selección de fecha -->
+                        <div>
+                            <label for="editFecha" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-calendar mr-1"></i>
+                                Nueva Fecha
+                            </label>
+                            <input type="date" 
+                                   name="fecha" 
+                                   id="editFecha" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                   required>
+                        </div>
+
+                        <!-- Selección de hora -->
+                        <div>
+                            <label for="editHora" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-clock mr-1"></i>
+                                Nueva Hora
+                            </label>
+                            <select name="hora" id="editHora" 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    required>
+                                <option value="">Selecciona una hora</option>
+                                <!-- Las horas se cargarán dinámicamente -->
+                            </select>
+                        </div>
+
+                        <!-- Servicios (solo información) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-tools mr-1"></i>
+                                Servicios Contratados
+                            </label>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div id="serviciosContratados" class="flex flex-wrap gap-2 mb-2">
+                                    <!-- Contenido dinámico -->
+                                </div>
+                                <p class="text-sm text-gray-600">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Los servicios no pueden ser modificados. Si deseas cambiar los servicios, cancela esta reserva y crea una nueva.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="flex flex-col sm:flex-row gap-4 mt-8">
+                        <button type="submit" 
+                                id="btnGuardarEdicion"
+                                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center justify-center">
+                            <i class="fas fa-save mr-2"></i>
+                            Guardar Cambios
+                        </button>
+                        <button type="button" 
+                                onclick="cerrarModal('modalEditarReserva')"
+                                class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-colors duration-200 flex items-center justify-center">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Información importante -->
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-triangle text-yellow-400 text-xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-yellow-800">
+                                Importante
+                            </h3>
+                            <div class="mt-2 text-sm text-yellow-700">
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Solo puedes editar reservas con al menos 24 horas de anticipación</li>
+                                    <li>Los servicios contratados no pueden ser modificados</li>
+                                    <li>Si la nueva fecha/hora no está disponible, se te notificará</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    // Variables globales
+    let vistaActual = 'lista'; // 'lista' o 'grid'
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+        showTab('pendientes');
+    });
+
+    // Funciones de pestañas
+    function showTab(tabName) {
+        // Ocultar todos los contenidos
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.add('hidden');
+        });
+        
+        // Remover clase activa de todos los botones
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.classList.remove('border-blue-500', 'text-blue-600');
+            button.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+        });
+        
+        // Mostrar contenido seleccionado
+        document.getElementById('content-' + tabName).classList.remove('hidden');
+        
+        // Activar botón seleccionado
+        const activeButton = document.getElementById('tab-' + tabName);
+        activeButton.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+        activeButton.classList.add('border-blue-500', 'text-blue-600');
+    }
+
+    // Función para cambiar vista
+    function toggleView() {
+        // Esta función puede expandirse para cambiar entre vista de lista y grid
+        console.log('Cambiando vista...');
+        // Implementar lógica de cambio de vista aquí
+    }
+
+    // Funciones de acciones de reserva
+    function verDetalles(reservaId) {
+        // Realizar petición AJAX para obtener detalles
+        fetch(`/obtener-detalles-reserva/${reservaId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    mostrarDetallesModal(data.reserva);
+                } else {
+                    alert('Error al cargar los detalles');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cargar los detalles');
+            });
+    }
+
+    function mostrarDetallesModal(reserva) {
+        const contenido = `
+            <div class="space-y-6">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-900 mb-3">
+                        <i class="fas fa-building text-blue-600 mr-2"></i>
+                        Información del Establecimiento
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-600">Nombre:</p>
+                            <p class="font-medium">${reserva.empresa.nombre}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Teléfono:</p>
+                            <p class="font-medium">${reserva.empresa.telefono}</p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <p class="text-sm text-gray-600">Dirección:</p>
+                            <p class="font-medium">${reserva.empresa.direccion}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-900 mb-3">
+                        <i class="fas fa-calendar-alt text-green-600 mr-2"></i>
+                        Fecha y Hora
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-600">Fecha:</p>
+                            <p class="font-medium">${reserva.fecha}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Hora:</p>
+                            <p class="font-medium">${reserva.hora}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-900 mb-3">
+                        <i class="fas fa-tools text-purple-600 mr-2"></i>
+                        Servicios Contratados
+                    </h3>
+                    <div class="space-y-2">
+                        ${reserva.servicios.map(servicio => `
+                            <div class="flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0">
+                                <span class="font-medium">${servicio.nombre}</span>
+                                <span class="text-green-600 font-semibold">$${servicio.precio}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-300">
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-semibold">Total:</span>
+                            <span class="text-xl font-bold text-green-600">$${reserva.total}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-900 mb-3">
+                        <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+                        Estado de la Reserva
+                    </h3>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                        reserva.estado === 'pendiente' ? 'badge-pendiente' :
+                        reserva.estado === 'completado' ? 'badge-completado' :
+                        'badge-cancelado'
+                    }">
+                        ${reserva.estado.charAt(0).toUpperCase() + reserva.estado.slice(1)}
+                    </span>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('contenidoDetalles').innerHTML = contenido;
+        const modal = document.getElementById('modalDetalles');
+        modal.classList.remove('hidden');
+        
+        // Agregar animación
+        setTimeout(() => {
+            modal.querySelector('.modal-enter').classList.add('modal-enter');
+        }, 10);
+    }
+
+    function cerrarModal(modalId) {
+        if (modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        } else {
+            // Compatibilidad con la función anterior
+            document.getElementById('modalDetalles').classList.add('hidden');
+        }
+    }
+
+    function editarReserva(reservaId) {
+        console.log('Editar reserva llamada con ID:', reservaId);
+        
+        // Cargar datos de la reserva para edición
+        fetch(`/obtener-detalles-reserva/${reservaId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    mostrarModalEdicion(data.reserva);
+                } else {
+                    alert('Error al cargar los datos de la reserva');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cargar los datos de la reserva');
+            });
+    }
+
+    function mostrarModalEdicion(reserva) {
+        // Llenar información actual
+        const infoActual = `
+            <div class="bg-white rounded-lg p-3">
+                <div class="text-sm text-gray-600">Empresa</div>
+                <div class="font-semibold">${reserva.empresa.nombre}</div>
+            </div>
+            <div class="bg-white rounded-lg p-3">
+                <div class="text-sm text-gray-600">Fecha</div>
+                <div class="font-semibold">${reserva.fecha}</div>
+            </div>
+            <div class="bg-white rounded-lg p-3">
+                <div class="text-sm text-gray-600">Hora</div>
+                <div class="font-semibold">${reserva.hora}</div>
+            </div>
+        `;
+        document.getElementById('infoActualReserva').innerHTML = infoActual;
+
+        // Llenar servicios contratados
+        const serviciosHtml = reserva.servicios.map(servicio => `
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                ${servicio.nombre}
+            </span>
+        `).join('');
+        document.getElementById('serviciosContratados').innerHTML = serviciosHtml;
+
+        // Establecer ID de reserva
+        document.getElementById('editReservaId').value = reserva.id;
+
+        // Cargar empresas
+        cargarEmpresasParaEdicion(reserva.empresa.id);
+
+        // Establecer fecha actual
+        document.getElementById('editFecha').value = reserva.fecha_original;
+        document.getElementById('editFecha').min = new Date().toISOString().split('T')[0];
+
+        // Mostrar modal
+        document.getElementById('modalEditarReserva').classList.remove('hidden');
+
+        // Configurar eventos de carga de horas
+        configurarEventosEdicion();
+    }
+
+    function cargarEmpresasParaEdicion(empresaActualId) {
+        // Cargar lista de empresas disponibles
+        fetch('/get-empresas-verificadas/')
+            .then(response => response.json())
+            .then(data => {
+                const selectEmpresa = document.getElementById('editEmpresa');
+                selectEmpresa.innerHTML = '<option value="">Selecciona un punto</option>';
+                
+                data.empresas.forEach(empresa => {
+                    const option = document.createElement('option');
+                    option.value = empresa.id;
+                    option.textContent = `${empresa.nombre} - ${empresa.direccion}`;
+                    if (empresa.id == empresaActualId) {
+                        option.selected = true;
+                    }
+                    selectEmpresa.appendChild(option);
+                });
+
+                // Cargar horas iniciales si hay empresa seleccionada
+                if (empresaActualId) {
+                    cargarHorasDisponiblesEdicion();
+                }
+            })
+            .catch(error => {
+                console.error('Error cargando empresas:', error);
+                alert('Error al cargar las empresas disponibles');
+            });
+    }
+
+    function configurarEventosEdicion() {
+        const empresaSelect = document.getElementById('editEmpresa');
+        const fechaInput = document.getElementById('editFecha');
+        
+        // Remover eventos anteriores
+        empresaSelect.removeEventListener('change', cargarHorasDisponiblesEdicion);
+        fechaInput.removeEventListener('change', cargarHorasDisponiblesEdicion);
+        
+        // Agregar eventos
+        empresaSelect.addEventListener('change', cargarHorasDisponiblesEdicion);
+        fechaInput.addEventListener('change', cargarHorasDisponiblesEdicion);
+    }
+
+    function cargarHorasDisponiblesEdicion() {
+        const empresaId = document.getElementById('editEmpresa').value;
+        const fecha = document.getElementById('editFecha').value;
+        const horaSelect = document.getElementById('editHora');
+
+        if (empresaId && fecha) {
+            horaSelect.innerHTML = '<option value="">Cargando horas...</option>';
+            horaSelect.disabled = true;
+
+            fetch(`/get-horas/?empresa_id=${empresaId}&fecha=${fecha}`)
+                .then(response => response.json())
+                .then(data => {
+                    horaSelect.innerHTML = '<option value="">Selecciona una hora</option>';
+                    horaSelect.disabled = false;
+                    
+                    if (data.horas && data.horas.length > 0) {
+                        data.horas.forEach(hora => {
+                            const option = document.createElement('option');
+                            option.value = hora;
+                            option.textContent = hora;
+                            horaSelect.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.value = '';
+                        option.textContent = 'No hay horas disponibles';
+                        option.disabled = true;
+                        horaSelect.appendChild(option);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    horaSelect.innerHTML = '<option value="">Error al cargar horas</option>';
+                    horaSelect.disabled = false;
+                });
+        } else {
+            horaSelect.innerHTML = '<option value="">Selecciona empresa y fecha primero</option>';
+            horaSelect.disabled = true;
+        }
+    }
+
+    // Manejar envío del formulario de edición
+    document.getElementById('formEditarReserva').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const btnGuardar = document.getElementById('btnGuardarEdicion');
+        const reservaId = document.getElementById('editReservaId').value;
+        const empresa = document.getElementById('editEmpresa').value;
+        const fecha = document.getElementById('editFecha').value;
+        const hora = document.getElementById('editHora').value;
+
+        // Validaciones
+        if (!empresa || !fecha || !hora) {
+            alert('Por favor, completa todos los campos requeridos.');
+            return;
+        }
+
+        // Mostrar loading
+        btnGuardar.disabled = true;
+        btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Guardando...';
+
+        // Enviar datos
+        const formData = new FormData();
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        formData.append('empresa', empresa);
+        formData.append('fecha', fecha);
+        formData.append('hora', hora);
+
+        fetch(`/editar-reserva/${reservaId}/`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (response.redirected) {
+                // Si Django redirige, significa que fue exitoso
+                window.location.reload();
+                return;
+            }
+            return response.text();
+        })
+        .then(result => {
+            if (typeof result === 'string') {
+                // Si recibimos HTML, revisar si hay errores
+                if (result.includes('alert') || result.includes('error')) {
+                    throw new Error('Error en la validación del servidor');
+                } else {
+                    // Éxito
+                    alert('Reserva actualizada exitosamente');
+                    window.location.reload();
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al actualizar la reserva. Por favor, inténtalo de nuevo.');
+        })
+        .finally(() => {
+            // Restaurar botón
+            btnGuardar.disabled = false;
+            btnGuardar.innerHTML = '<i class="fas fa-save mr-2"></i>Guardar Cambios';
+        });
+    });
+
+    function cancelarReserva(reservaId) {
+        if (confirm('¿Estás seguro de que quieres cancelar esta reserva? Esta acción no se puede deshacer.')) {
+            fetch(`/cancelar-reserva/${reservaId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Reserva cancelada exitosamente');
+                    location.reload();
+                } else {
+                    alert('Error al cancelar la reserva: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cancelar la reserva');
+            });
+        }
+    }
+
+    function repetirReserva(reservaId) {
+        if (confirm('¿Quieres crear una nueva cita con los mismos servicios?')) {
+            window.location.href = `/repetir-reserva/${reservaId}/`;
+        }
+    }
+
+    function calificarServicio(reservaId) {
+        window.location.href = `/calificar-servicio/${reservaId}/`;
+    }
+
+    // Cerrar modal al hacer clic fuera de él
+    document.getElementById('modalDetalles').addEventListener('click', function(e) {
+        if (e.target === this) {
+            cerrarModal('modalDetalles');
+        }
+    });
+
+    // Cerrar modal de edición al hacer clic fuera de él
+    document.getElementById('modalEditarReserva').addEventListener('click', function(e) {
+        if (e.target === this) {
+            cerrarModal('modalEditarReserva');
+        }
+    });
+</script>
+
+{% endblock %}
