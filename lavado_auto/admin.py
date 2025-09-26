@@ -30,8 +30,34 @@ class PasarelaDePagoAdmin(admin.ModelAdmin):
     list_display = ('nombre_pasarela', 'estado_transaccion')
 
 class MensajeQuejaAdmin(admin.ModelAdmin):
-    list_display = ('usuario', 'fecha_envio', 'estado')
-    search_fields = ('usuario__nombre_usuario',)
+    list_display = ('numero_radicado', 'tipo_pqrs', 'usuario', 'urgencia', 'estado', 'fecha_envio')
+    search_fields = ('numero_radicado', 'usuario__nombre_usuario', 'nombre_contacto', 'contenido')
+    list_filter = ('tipo_pqrs', 'urgencia', 'estado', 'fecha_envio', 'servicio_bd')
+    readonly_fields = ('numero_radicado', 'fecha_envio', 'fecha_actualizacion')
+    ordering = ('-fecha_envio',)
+    
+    fieldsets = (
+        ('Información General', {
+            'fields': ('numero_radicado', 'tipo_pqrs', 'urgencia', 'estado')
+        }),
+        ('Datos de Contacto', {
+            'fields': ('usuario', 'nombre_contacto', 'email_contacto')
+        }),
+        ('Detalles del PQRS', {
+            'fields': ('servicio_relacionado', 'servicio_bd', 'contenido')
+        }),
+        ('Respuesta', {
+            'fields': ('respuesta', 'fecha_respuesta')
+        }),
+        ('Fechas', {
+            'fields': ('fecha_envio', 'fecha_actualizacion'),
+            'classes': ('collapse',)
+        }),
+        ('Otros', {
+            'fields': ('acepto_terminos',),
+            'classes': ('collapse',)
+        })
+    )
 
 class ComentarioAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'fecha', 'comentario')

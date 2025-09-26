@@ -390,8 +390,10 @@
                             
                             <!-- Botón CTA -->
                             <div class="relative group/button">
-                                <a 
-                                    href="{% url 'contacto' %}" 
+                                <button 
+                                    type="button"
+                                    onclick="toggleFormularioContacto({{ plan.id_plan }})"
+                                    id="btnContacto_{{ plan.id_plan }}"
                                     class="block w-full transform rounded-2xl bg-gradient-to-r {% if plan.tipo == 'premium_flota' %}from-blue-600 via-blue-500 to-blue-700 hover:from-blue-700 hover:via-blue-600 hover:to-blue-800 focus:ring-blue-500/40 shadow-blue-500/30{% elif plan.tipo == 'corporativo' %}from-purple-600 via-purple-500 to-purple-700 hover:from-purple-700 hover:via-purple-600 hover:to-purple-800 focus:ring-purple-500/40 shadow-purple-500/30{% else %}from-slate-600 via-slate-500 to-slate-700 hover:from-slate-700 hover:via-slate-600 hover:to-slate-800 focus:ring-slate-500/40 shadow-slate-500/30{% endif %} py-4 px-6 text-center font-black text-white text-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl focus:outline-none focus:ring-4 relative overflow-hidden group shadow-xl"
                                 >
                                     <!-- Efecto de brillo animado -->
@@ -403,13 +405,13 @@
                                     <span class="relative z-10 flex items-center justify-center gap-3 group-hover:scale-105 transition-transform duration-300">
                                         <i class="fas fa-phone-alt text-xl group-hover:animate-pulse"></i> 
                                         <span class="font-black text-lg">Contactar Ahora</span>
-                                        <i class="fas fa-arrow-right text-xl transform group-hover:translate-x-2 transition-transform duration-300"></i>
+                                        <i class="fas fa-chevron-down text-xl transform transition-transform duration-300" id="chevron_{{ plan.id_plan }}"></i>
                                     </span>
                                     
                                     <!-- Indicador de acción rápida -->
                                     <div class="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-ping"></div>
                                     <div class="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full"></div>
-                                </a>
+                                </button>
                                 
                                 <!-- Texto adicional debajo del botón -->
                                 <div class="mt-3 text-center">
@@ -423,6 +425,168 @@
                                             Sin compromiso • Respuesta inmediata
                                         {% endif %}
                                     </p>
+                                </div>
+                            </div>
+                            
+                            <!-- Formulario de contacto expandible -->
+                            <div id="formularioContacto_{{ plan.id_plan }}" class="hidden mt-12 -mx-8 sm:-mx-12 lg:-mx-16 xl:-mx-24 ml-0 sm:-ml-4 lg:-ml-8 xl:-ml-12 bg-gradient-to-r {% if plan.tipo == 'premium_flota' %}from-blue-50 to-white border-blue-200{% elif plan.tipo == 'corporativo' %}from-purple-50 to-white border-purple-200{% else %}from-slate-50 to-white border-slate-200{% endif %} border-2 rounded-2xl p-6 sm:p-8 lg:p-12 xl:p-16 shadow-inner animate-fade-in-down">
+                                <div class="max-w-7xl mr-auto ml-0">
+                                <!-- Header del formulario -->
+                                <div class="mb-6 text-center">
+                                    <h4 class="text-xl font-bold {% if plan.tipo == 'premium_flota' %}text-blue-800{% elif plan.tipo == 'corporativo' %}text-purple-800{% else %}text-slate-800{% endif %}">
+                                        <i class="fas fa-envelope mr-2"></i>
+                                        Solicitar información de {{ plan.nombre }}
+                                    </h4>
+                                    <p class="text-base {% if plan.tipo == 'premium_flota' %}text-blue-600{% elif plan.tipo == 'corporativo' %}text-purple-600{% else %}text-slate-600{% endif %}">
+                                        Te responderemos en menos de 2 horas
+                                    </p>
+                                </div>
+                                
+                                <!-- Formulario -->
+                                <form id="contactForm_{{ plan.id_plan }}" class="space-y-6" onsubmit="enviarSolicitud(event, {{ plan.id_plan }})">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="plan_id" value="{{ plan.id_plan }}">
+                                    <input type="hidden" name="plan_id" value="{{ plan.id_plan }}">
+                                    
+                                    <!-- Primera fila: Nombre y Email -->
+                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                                        <div class="w-full">
+                                            <label class="block text-sm font-medium {% if plan.tipo == 'premium_flota' %}text-blue-700{% elif plan.tipo == 'corporativo' %}text-purple-700{% else %}text-slate-700{% endif %} mb-3">
+                                                Nombre completo *
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                name="nombre_completo" 
+                                                required
+                                                class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 {% if plan.tipo == 'premium_flota' %}focus:ring-blue-500 focus:border-blue-500{% elif plan.tipo == 'corporativo' %}focus:ring-purple-500 focus:border-purple-500{% else %}focus:ring-slate-500 focus:border-slate-500{% endif %} transition-colors text-lg"
+                                                placeholder="Tu nombre completo"
+                                            >
+                                        </div>
+                                        
+                                        <div class="w-full">
+                                            <label class="block text-sm font-medium {% if plan.tipo == 'premium_flota' %}text-blue-700{% elif plan.tipo == 'corporativo' %}text-purple-700{% else %}text-slate-700{% endif %} mb-3">
+                                                Email corporativo *
+                                            </label>
+                                            <input 
+                                                type="email" 
+                                                name="email" 
+                                                required
+                                                class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 {% if plan.tipo == 'premium_flota' %}focus:ring-blue-500 focus:border-blue-500{% elif plan.tipo == 'corporativo' %}focus:ring-purple-500 focus:border-purple-500{% else %}focus:ring-slate-500 focus:border-slate-500{% endif %} transition-colors text-lg"
+                                                placeholder="correo@empresa.com"
+                                            >
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Segunda fila: Teléfono y Empresa -->
+                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                                        <div class="w-full">
+                                            <label class="block text-sm font-medium {% if plan.tipo == 'premium_flota' %}text-blue-700{% elif plan.tipo == 'corporativo' %}text-purple-700{% else %}text-slate-700{% endif %} mb-3">
+                                                Teléfono *
+                                            </label>
+                                            <input 
+                                                type="tel" 
+                                                name="telefono" 
+                                                required
+                                                class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 {% if plan.tipo == 'premium_flota' %}focus:ring-blue-500 focus:border-blue-500{% elif plan.tipo == 'corporativo' %}focus:ring-purple-500 focus:border-purple-500{% else %}focus:ring-slate-500 focus:border-slate-500{% endif %} transition-colors text-lg"
+                                                placeholder="+56 9 1234 5678"
+                                            >
+                                        </div>
+                                        
+                                        <div class="w-full">
+                                            <label class="block text-sm font-medium {% if plan.tipo == 'premium_flota' %}text-blue-700{% elif plan.tipo == 'corporativo' %}text-purple-700{% else %}text-slate-700{% endif %} mb-3">
+                                                Empresa *
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                name="empresa" 
+                                                required
+                                                class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 {% if plan.tipo == 'premium_flota' %}focus:ring-blue-500 focus:border-blue-500{% elif plan.tipo == 'corporativo' %}focus:ring-purple-500 focus:border-purple-500{% else %}focus:ring-slate-500 focus:border-slate-500{% endif %} transition-colors text-lg"
+                                                placeholder="Nombre de tu empresa"
+                                            >
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Tercera fila: Cargo -->
+                                    <div class="mb-8">
+                                        <div class="w-full lg:w-1/2 mx-auto">
+                                            <label class="block text-sm font-medium {% if plan.tipo == 'premium_flota' %}text-blue-700{% elif plan.tipo == 'corporativo' %}text-purple-700{% else %}text-slate-700{% endif %} mb-3 text-center lg:text-left">
+                                                Cargo (Opcional)
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                name="cargo"
+                                                class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 {% if plan.tipo == 'premium_flota' %}focus:ring-blue-500 focus:border-blue-500{% elif plan.tipo == 'corporativo' %}focus:ring-purple-500 focus:border-purple-500{% else %}focus:ring-slate-500 focus:border-slate-500{% endif %} transition-colors text-lg"
+                                                placeholder="Gerente General, Director de Operaciones, etc."
+                                            >
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Cantidad de vehículos - centrado -->
+                                    <div class="mb-8">
+                                        <div class="w-full lg:w-1/2 mx-auto">
+                                            <label class="block text-sm font-medium {% if plan.tipo == 'premium_flota' %}text-blue-700{% elif plan.tipo == 'corporativo' %}text-purple-700{% else %}text-slate-700{% endif %} mb-3 text-center lg:text-left">
+                                                Cantidad de vehículos * 
+                                                <span class="font-semibold text-gray-600">
+                                                    (Este plan: {% if plan.vehiculos_maximos %}{{ plan.vehiculos_minimos }}-{{ plan.vehiculos_maximos }}{% else %}{{ plan.vehiculos_minimos }}+{% endif %} vehículos)
+                                                </span>
+                                            </label>
+                                            <input 
+                                                type="number" 
+                                                name="cantidad_vehiculos" 
+                                                required
+                                                min="{{ plan.vehiculos_minimos }}"
+                                                {% if plan.vehiculos_maximos %}max="{{ plan.vehiculos_maximos }}"{% endif %}
+                                                value="{{ plan.vehiculos_minimos }}"
+                                                class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 {% if plan.tipo == 'premium_flota' %}focus:ring-blue-500 focus:border-blue-500{% elif plan.tipo == 'corporativo' %}focus:ring-purple-500 focus:border-purple-500{% else %}focus:ring-slate-500 focus:border-slate-500{% endif %} transition-colors text-lg text-center"
+                                                placeholder="Ingresa la cantidad de vehículos"
+                                            >
+                                            <div class="mt-2 text-sm text-gray-600 text-center">
+                                                {% if plan.vehiculos_maximos %}
+                                                    Rango permitido: {{ plan.vehiculos_minimos }} a {{ plan.vehiculos_maximos }} vehículos
+                                                {% else %}
+                                                    Mínimo requerido: {{ plan.vehiculos_minimos }} vehículos
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Mensaje adicional - ancho completo -->
+                                    <div class="mb-8">
+                                        <label class="block text-sm font-medium {% if plan.tipo == 'premium_flota' %}text-blue-700{% elif plan.tipo == 'corporativo' %}text-purple-700{% else %}text-slate-700{% endif %} mb-3 text-center lg:text-left">
+                                            Mensaje adicional
+                                        </label>
+                                        <textarea 
+                                            name="mensaje_adicional" 
+                                            rows="5"
+                                            class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 {% if plan.tipo == 'premium_flota' %}focus:ring-blue-500 focus:border-blue-500{% elif plan.tipo == 'corporativo' %}focus:ring-purple-500 focus:border-purple-500{% else %}focus:ring-slate-500 focus:border-slate-500{% endif %} transition-colors resize-none text-lg"
+                                            placeholder="Cuéntanos sobre tus necesidades específicas, horarios preferidos para el contacto, o cualquier información adicional..."
+                                        ></textarea>
+                                    </div>
+                                    
+                                    <!-- Mensajes -->
+                                    <div id="mensaje_{{ plan.id_plan }}" class="hidden p-3 rounded-lg text-sm font-medium text-center"></div>
+                                    
+                                    <!-- Botones -->
+                                    <div class="flex gap-6 pt-6 border-t border-gray-200">
+                                        <div class="w-full lg:w-1/2 mx-auto flex gap-4">
+                                            <button 
+                                                type="button" 
+                                                onclick="toggleFormularioContacto({{ plan.id_plan }})"
+                                                class="flex-1 px-8 py-4 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors text-lg"
+                                            >
+                                                Cancelar
+                                            </button>
+                                            <button 
+                                                type="submit" 
+                                                id="btnEnviar_{{ plan.id_plan }}"
+                                                class="flex-1 px-8 py-4 bg-gradient-to-r {% if plan.tipo == 'premium_flota' %}from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800{% elif plan.tipo == 'corporativo' %}from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800{% else %}from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800{% endif %} text-white rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg"
+                                            >
+                                                <i class="fas fa-paper-plane"></i>
+                                                <span>Enviar Solicitud</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
                                 </div>
                             </div>
                         </div>
@@ -1186,5 +1350,224 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        
+        /* Animaciones para formularios expandibles */
+        .animate-fade-in-down {
+            animation: fadeInDown 0.4s ease-out forwards;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        /* Transiciones suaves para elementos del formulario */
+        [id^="chevron_"] {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Efectos de focus mejorados */
+        [id^="formularioContacto_"] input:focus, 
+        [id^="formularioContacto_"] select:focus, 
+        [id^="formularioContacto_"] textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        /* Hover effect para botones de formulario */
+        [id^="btnEnviar_"]:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Estados disabled mejorados */
+        [id^="btnEnviar_"]:disabled {
+            transform: none !important;
+            box-shadow: none !important;
+        }
     </style>
+    
+    <!-- JavaScript para formularios expandibles -->
+    <script>
+        // Función para mostrar/ocultar formulario de contacto
+        function toggleFormularioContacto(planId) {
+            const formulario = document.getElementById(`formularioContacto_${planId}`);
+            const chevron = document.getElementById(`chevron_${planId}`);
+            const btn = document.getElementById(`btnContacto_${planId}`);
+            
+            if (!formulario) {
+                console.error('Formulario no encontrado para plan:', planId);
+                return;
+            }
+            
+            if (formulario.classList.contains('hidden')) {
+                // Mostrar formulario
+                formulario.classList.remove('hidden');
+                chevron.style.transform = 'rotate(180deg)';
+                btn.querySelector('span').textContent = 'Ocultar Formulario';
+                
+                // Scroll suave hacia el formulario
+                setTimeout(() => {
+                    formulario.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                }, 100);
+                
+                // Enfocar primer campo
+                setTimeout(() => {
+                    const primerCampo = formulario.querySelector('input[name="nombre_completo"]');
+                    if (primerCampo) {
+                        primerCampo.focus();
+                    }
+                }, 300);
+            } else {
+                // Ocultar formulario
+                formulario.classList.add('hidden');
+                chevron.style.transform = 'rotate(0deg)';
+                btn.querySelector('span').textContent = 'Contactar Ahora';
+                
+                // Limpiar mensajes
+                limpiarMensaje(planId);
+            }
+        }
+        
+        // Función para limpiar mensajes
+        function limpiarMensaje(planId) {
+            const mensaje = document.getElementById(`mensaje_${planId}`);
+            if (mensaje) {
+                mensaje.classList.add('hidden');
+                mensaje.className = mensaje.className.replace(/bg-\w+-\d+/g, '').replace(/text-\w+-\d+/g, '');
+            }
+        }
+        
+        // Función para mostrar mensaje
+        function mostrarMensaje(planId, texto, tipo = 'error') {
+            const mensaje = document.getElementById(`mensaje_${planId}`);
+            if (!mensaje) return;
+            
+            // Limpiar clases previas
+            mensaje.className = 'p-3 rounded-lg text-sm font-medium text-center';
+            
+            if (tipo === 'success') {
+                mensaje.classList.add('bg-green-100', 'text-green-800', 'border', 'border-green-200');
+                mensaje.innerHTML = `<i class="fas fa-check-circle mr-2"></i>${texto}`;
+            } else {
+                mensaje.classList.add('bg-red-100', 'text-red-800', 'border', 'border-red-200');
+                mensaje.innerHTML = `<i class="fas fa-exclamation-triangle mr-2"></i>${texto}`;
+            }
+            
+            mensaje.classList.remove('hidden');
+            
+            // Scroll hacia el mensaje
+            setTimeout(() => {
+                mensaje.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+        
+        // Función para enviar solicitud
+        async function enviarSolicitud(event, planId) {
+            event.preventDefault();
+            
+            const form = document.getElementById(`contactForm_${planId}`);
+            const btnEnviar = document.getElementById(`btnEnviar_${planId}`);
+            const btnText = btnEnviar.querySelector('span');
+            const btnIcon = btnEnviar.querySelector('i');
+            
+            if (!form) {
+                console.error('Formulario no encontrado para plan:', planId);
+                return;
+            }
+            
+            // Limpiar mensajes previos
+            limpiarMensaje(planId);
+            
+            // Estado de carga
+            btnEnviar.disabled = true;
+            btnText.textContent = 'Enviando...';
+            btnIcon.className = 'fas fa-spinner fa-spin';
+            
+            const formData = new FormData(form);
+            
+            try {
+                const response = await fetch('{% url "solicitar_contacto_plan" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    mostrarMensaje(planId, data.message || '¡Solicitud enviada exitosamente! Te contactaremos pronto.', 'success');
+                    
+                    // Limpiar formulario
+                    form.reset();
+                    
+                    // Ocultar formulario después de 3 segundos
+                    setTimeout(() => {
+                        toggleFormularioContacto(planId);
+                    }, 3000);
+                } else {
+                    let mensajeError = 'Error al enviar la solicitud.';
+                    
+                    if (data.errors) {
+                        const errores = [];
+                        for (const [field, fieldErrors] of Object.entries(data.errors)) {
+                            if (Array.isArray(fieldErrors)) {
+                                errores.push(...fieldErrors);
+                            } else {
+                                errores.push(fieldErrors);
+                            }
+                        }
+                        mensajeError = errores.join('. ');
+                    } else if (data.message) {
+                        mensajeError = data.message;
+                    }
+                    
+                    mostrarMensaje(planId, mensajeError, 'error');
+                }
+            } catch (error) {
+                console.error('Error en la solicitud:', error);
+                mostrarMensaje(planId, 'Error de conexión. Por favor, intenta nuevamente.', 'error');
+            } finally {
+                // Restaurar estado del botón
+                btnEnviar.disabled = false;
+                btnText.textContent = 'Enviar Solicitud';
+                btnIcon.className = 'fas fa-paper-plane';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            // Validar email
+            document.getElementById('email').addEventListener('blur', function() {
+                const email = this.value;
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                if (email && !emailRegex.test(email)) {
+                    this.classList.add('border-red-500');
+                    this.classList.remove('border-gray-300');
+                } else {
+                    this.classList.remove('border-red-500');
+                    this.classList.add('border-gray-300');
+                }
+            });
+            
+            // Validar teléfono
+            document.getElementById('telefono').addEventListener('input', function() {
+                // Limpiar caracteres no numéricos excepto + y espacios
+                this.value = this.value.replace(/[^\d\s\+\-\(\)]/g, '');
+            });
+        });
+    </script>
+    
+
 {% endblock %}

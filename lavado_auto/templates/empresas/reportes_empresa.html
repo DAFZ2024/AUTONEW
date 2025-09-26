@@ -1,24 +1,16 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends 'base/base_crud_empresas.html' %}
+{% load static %}
+{% load math_filters %}
 
-<head>
-    {% load static %}
-    {% load math_filters %}
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Autonew - Reportes y Análisis</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-    <style>
-        /* Estilos mejorados para la página de reportes */
-        
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+{% block title %}Autonew - Reportes y Análisis{% endblock %}
+
+{% block content %}
+<!-- Scripts específicos para reportes -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+<style>
+    /* Estilos específicos para reportes */
         
         /* Animaciones personalizadas */
         @keyframes fadeInUp {
@@ -72,10 +64,10 @@
             opacity: 0;
         }
 
-        /* Glass card effect mejorado */
+        /* Ajustar estilos para trabajar con el base template */
         .glass-card {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
@@ -863,13 +855,6 @@
             visibility: visible !important;
         }
 
-        .navbar-glass {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
         @keyframes shimmer {
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
@@ -1152,11 +1137,6 @@
 
         /* Optimizaciones móviles avanzadas */
         @media (max-width: 768px) {
-            .navbar-glass {
-                padding: 0.75rem 1rem;
-                position: relative;
-            }
-
             .mobile-menu {
                 display: block !important;
             }
@@ -1694,255 +1674,146 @@
         <i class="fas fa-chart-bar floating-element text-gray-300 text-4xl" style="top: 20%; right: 15%; animation-delay: 2s;"></i>
         <i class="fas fa-chart-pie floating-element text-gray-300 text-5xl" style="bottom: 20%; left: 20%; animation-delay: 4s;"></i>
         <i class="fas fa-analytics floating-element text-gray-300 text-3xl" style="bottom: 30%; right: 25%; animation-delay: 1s;"></i>
-        <i class="fas fa-chart-area floating-element text-gray-300 text-4xl" style="top: 50%; left: 5%; animation-delay: 3s;"></i>
     </div>
 
-    <!-- Navbar -->
-    <nav class="navbar-glass shadow-lg px-4 sm:px-6 lg:px-8 py-4 fixed top-0 left-0 right-0 z-50">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <!-- Logo y marca -->
-            <div class="flex items-center space-x-2 sm:space-x-4">
-                <a href="{% url 'home_empresas' %}" class="flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity">
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                        <i class="fas fa-car text-white text-lg sm:text-xl"></i>
-                    </div>
-                    <div class="hidden xs:block">
-                        <h1 class="text-xl sm:text-2xl font-bold text-gray-800">AUTONEW</h1>
-                        <p class="text-xs sm:text-sm text-gray-600">Reportes y Análisis</p>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Navegación Desktop -->
-            <div class="hidden lg:flex items-center space-x-6">
-                <a href="{% url 'home_empresas' %}" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                    <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
-                </a>
-                <a href="{% url 'citas_empresa' %}" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                    <i class="fas fa-calendar-alt mr-2"></i>Citas
-                </a>
-                <a href="#" class="text-blue-600 font-medium">
-                    <i class="fas fa-chart-bar mr-2"></i>Reportes
-                </a>
-            </div>
-
-            <!-- Controles de exportar y período - Desktop -->
-            <div class="hidden md:flex items-center space-x-2 lg:space-x-4">
-                <select class="period-selector text-sm" id="periodSelector">
-                    <option value="12">Últimos 12 meses</option>
-                    <option value="6">Últimos 6 meses</option>
-                    <option value="3">Últimos 3 meses</option>
-                    <option value="1">Este mes</option>
-                </select>
-                <button class="export-btn text-sm hover:bg-green-600 transition-all duration-300" onclick="exportReport()">
-                    <i class="fas fa-download mr-1 lg:mr-2"></i><span class="hidden lg:inline">Exportar</span>
-                </button>
-                <a href="/logout-empresa/" onclick="return confirm('¿Estás seguro de que deseas cerrar sesión?')" class="text-gray-600 hover:text-red-500 transition-colors" title="Cerrar Sesión">
-                    <i class="fas fa-sign-out-alt text-xl"></i>
-                </a>
-            </div>
-
-            <!-- Menú hamburguesa móvil -->
-            <div class="md:hidden flex items-center space-x-2">
-                <!-- Selector de período móvil -->
-                <select class="period-selector-mobile text-xs" id="periodSelectorMobile">
-                    <option value="12">12m</option>
-                    <option value="6">6m</option>
-                    <option value="3">3m</option>
-                    <option value="1">1m</option>
-                </select>
-                
-                <!-- Botón menú hamburguesa -->
-                <button id="mobileMenuBtn" class="mobile-menu-btn p-2 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Abrir menú">
-                    <span class="hamburger-line bg-gray-600"></span>
-                    <span class="hamburger-line bg-gray-600"></span>
-                    <span class="hamburger-line bg-gray-600"></span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Menú móvil desplegable -->
-        <div id="mobileMenu" class="mobile-menu hidden">
-            <div class="mobile-menu-content">
-                <!-- Enlaces de navegación -->
-                <div class="mobile-nav-section">
-                    <h3 class="mobile-nav-title">
-                        <i class="fas fa-compass mr-2"></i>Navegación
-                    </h3>
-                    <a href="{% url 'home_empresas' %}" class="mobile-nav-link">
-                        <i class="fas fa-tachometer-alt mr-3"></i>
-                        <span>Dashboard</span>
-                        <i class="fas fa-chevron-right ml-auto text-gray-400"></i>
-                    </a>
-                    <a href="{% url 'citas_empresa' %}" class="mobile-nav-link">
-                        <i class="fas fa-calendar-alt mr-3"></i>
-                        <span>Gestión de Citas</span>
-                        <i class="fas fa-chevron-right ml-auto text-gray-400"></i>
-                    </a>
-                    <a href="#" class="mobile-nav-link active">
-                        <i class="fas fa-chart-bar mr-3"></i>
-                        <span>Reportes y Análisis</span>
-                        <i class="fas fa-check ml-auto text-blue-500"></i>
-                    </a>
-                </div>
-
-                <!-- Acciones rápidas -->
-                <div class="mobile-nav-section">
-                    <h3 class="mobile-nav-title">
-                        <i class="fas fa-bolt mr-2"></i>Acciones Rápidas
-                    </h3>
-                    <button onclick="exportReport()" class="mobile-nav-button">
-                        <i class="fas fa-download mr-3"></i>
-                        <span>Exportar Reporte</span>
-                    </button>
-                    <button onclick="printReport()" class="mobile-nav-button">
-                        <i class="fas fa-print mr-3"></i>
-                        <span>Imprimir Reporte</span>
-                    </button>
-                    <button onclick="refreshData()" class="mobile-nav-button">
-                        <i class="fas fa-sync-alt mr-3"></i>
-                        <span>Actualizar Datos</span>
-                    </button>
-                </div>
-
-                <!-- Información de usuario -->
-                <div class="mobile-nav-section">
-                    <h3 class="mobile-nav-title">
-                        <i class="fas fa-user mr-2"></i>Cuenta Empresa
-                    </h3>
-                    <div class="mobile-user-info">
-                        <div class="flex items-center space-x-3 p-3">
-                            <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                                <i class="fas fa-building text-white"></i>
-                            </div>
-                            <div>
-                                <p class="font-semibold text-gray-800 text-sm">{{ empresa.nombre_empresa|default:"Mi Empresa" }}</p>
-                                <p class="text-xs text-gray-500">Panel de Reportes</p>
-                            </div>
-                        </div>
-                    </div>
-                    <a href="/logout-empresa/" onclick="return confirm('¿Estás seguro de que deseas cerrar sesión?')" class="mobile-nav-link text-red-600">
-                        <i class="fas fa-sign-out-alt mr-3"></i>
-                        <span>Cerrar Sesión</span>
-                        <i class="fas fa-chevron-right ml-auto text-gray-400"></i>
-                    </a>
-                </div>
-
-                <!-- Botón de debug temporal -->
-                <div class="mobile-nav-section">
-                    <button onclick="debugMenu()" class="mobile-nav-button text-purple-600">
-                        <i class="fas fa-bug mr-3"></i>
-                        <span>Debug Menú</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </nav>
-
     <!-- Contenido Principal -->
-    <main class="pt-24 pb-12 px-4">
-        <div class="max-w-7xl mx-auto">
-            
-            <!-- Header del Reporte -->
-            <div class="glass-card p-8 mb-8 animate-fadeInUp">
-                <div class="text-center">
-                    <h2 class="text-4xl font-bold text-gray-800 mb-4">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        
+        <!-- Controles de filtros y exportación -->
+        <div class="glass-card p-6 mb-8 animate-fadeInUp">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <!-- Título y descripción -->
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">
                         <i class="fas fa-chart-line mr-3 text-blue-600"></i>
-                        Reportes y Análisis de Negocio
-                    </h2>
-                    <p class="text-xl text-gray-600 mb-6">{{ empresa.nombre_empresa }}</p>
-                    <div class="flex justify-center space-x-4">
-                        <span class="px-4 py-2 bg-blue-100 rounded-full text-sm font-medium text-blue-800">
-                            <i class="fas fa-calendar mr-2"></i>Período: Últimos {{ periodo }} meses
-                        </span>
-                        <span class="px-4 py-2 bg-green-100 rounded-full text-sm font-medium text-green-800">
-                            <i class="fas fa-sync mr-2"></i>Actualizado: {{ "now"|date:"d/m/Y H:i" }}
-                        </span>
-                    </div>
+                        Reportes y Análisis
+                    </h1>
+                    <p class="text-gray-600">{{ empresa.nombre_empresa }} - Período: Últimos {{ periodo }} meses</p>
+                    <p class="text-sm text-gray-500 mt-1">Actualizado: {{ "now"|date:"d/m/Y H:i" }}</p>
                 </div>
-            </div>
-
-            <!-- Métricas Principales -->
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-8">
                 
-                <!-- Total de Reservas -->
-                <div class="metric-card gradient-blue animate-fadeInUp" style="animation-delay: 0.1s;">
-                    <div class="text-4xl text-blue-600 mb-2">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <div class="metric-number">{{ total_reservas }}</div>
-                    <div class="text-gray-600 font-medium">Total Reservas</div>
-                    <div class="text-sm text-gray-500 mt-2">
-                        <i class="fas fa-arrow-{% if crecimiento_reservas >= 0 %}up text-green-500{% else %}down text-red-500{% endif %} mr-1"></i>
-                        {% if crecimiento_reservas >= 0 %}+{% endif %}{{ crecimiento_reservas }}% vs mes anterior
-                    </div>
+                <!-- Controles -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <select class="period-selector" id="periodSelector">
+                        <option value="12">Últimos 12 meses</option>
+                        <option value="6">Últimos 6 meses</option>
+                        <option value="3">Últimos 3 meses</option>
+                        <option value="1">Este mes</option>
+                    </select>
+                    <button class="export-btn" onclick="exportReport()">
+                        <i class="fas fa-download mr-2"></i>Exportar Reporte
+                    </button>
                 </div>
+            </div>
+        </div>
 
-                <!-- Reservas Completadas -->
-                <div class="metric-card gradient-green animate-fadeInUp" style="animation-delay: 0.2s;">
-                    <div class="text-4xl text-green-600 mb-2">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="metric-number">{{ reservas_completadas }}</div>
-                    <div class="text-gray-600 font-medium">Completadas</div>
-                    <div class="text-sm text-gray-500 mt-2">
-                        <i class="fas fa-arrow-up text-green-500 mr-1"></i>
-                        +8% vs mes anterior
-                    </div>
+        <!-- Métricas Principales -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
+
+            <!-- Total de Reservas -->
+            <div class="p-4 bg-white rounded-2xl shadow-md flex items-center space-x-4 animate-fadeInUp" style="animation-delay: 0.1s;">
+                <div class="w-14 h-14 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-50 text-blue-700">
+                    <i class="fas fa-calendar-alt text-2xl"></i>
                 </div>
-
-                <!-- Reservas Pendientes -->
-                <div class="metric-card gradient-orange animate-fadeInUp" style="animation-delay: 0.3s;">
-                    <div class="text-4xl text-orange-600 mb-2">
-                        <i class="fas fa-hourglass-half"></i>
-                    </div>
-                    <div class="metric-number">{{ reservas_pendientes }}</div>
-                    <div class="text-gray-600 font-medium">Pendientes</div>
-                    <div class="text-sm text-gray-500 mt-2">
-                        <i class="fas fa-arrow-down text-red-500 mr-1"></i>
-                        -3% vs mes anterior
-                    </div>
-                </div>
-
-                <!-- Tasa de Completado -->
-                <div class="metric-card gradient-purple animate-fadeInUp" style="animation-delay: 0.4s;">
-                    <div class="text-4xl text-purple-600 mb-2">
-                        <i class="fas fa-percentage"></i>
-                    </div>
-                    <div class="metric-number">{{ tasa_completado }}%</div>
-                    <div class="text-gray-600 font-medium">Tasa Éxito</div>
-                    <div class="text-sm text-gray-500 mt-2">
-                        <i class="fas fa-arrow-up text-green-500 mr-1"></i>
-                        +2% vs mes anterior
-                    </div>
-                </div>
-
-                <!-- Ingresos Totales -->
-                <div class="metric-card gradient-red animate-fadeInUp" style="animation-delay: 0.5s;">
-                    <div class="text-4xl text-red-600 mb-2">
-                        <i class="fas fa-dollar-sign"></i>
-                    </div>
-                    <div class="metric-number">${{ ingresos_totales|floatformat:0 }}</div>
-                    <div class="text-gray-600 font-medium">Ingresos Total</div>
-                    <div class="text-sm text-gray-500 mt-2">
-                        <i class="fas fa-arrow-up text-green-500 mr-1"></i>
-                        +15% vs mes anterior
-                    </div>
-                </div>
-
-                <!-- Promedio Diario -->
-                <div class="metric-card gradient-teal animate-fadeInUp" style="animation-delay: 0.6s;">
-                    <div class="text-4xl text-teal-600 mb-2">
-                        <i class="fas fa-chart-area"></i>
-                    </div>
-                    <div class="metric-number">{{ promedio_reservas_dia }}</div>
-                    <div class="text-gray-600 font-medium">Promedio/Día</div>
-                    <div class="text-sm text-gray-500 mt-2">
-                        <i class="fas fa-arrow-up text-green-500 mr-1"></i>
-                        +5% vs mes anterior
+                <div class="flex-1">
+                    <div class="text-sm text-gray-500 font-medium">Total Reservas</div>
+                    <div class="text-2xl font-extrabold text-gray-800">{{ total_reservas }}</div>
+                    <div class="mt-1 flex items-center text-sm">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-600">
+                            <i class="fas fa-arrow-{% if crecimiento_reservas >= 0 %}up{% else %}down{% endif %} mr-1"></i>
+                            {% if crecimiento_reservas >= 0 %}+{% endif %}{{ crecimiento_reservas }}%
+                        </span>
+                        <span class="ml-3 text-gray-400">vs mes anterior</span>
                     </div>
                 </div>
             </div>
+
+            <!-- Completadas -->
+            <div class="p-4 bg-white rounded-2xl shadow-md flex items-center space-x-4 animate-fadeInUp" style="animation-delay:0.2s">
+                <div class="w-14 h-14 rounded-full flex items-center justify-center bg-gradient-to-br from-green-100 to-green-50 text-green-700">
+                    <i class="fas fa-check-circle text-2xl"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="text-sm text-gray-500 font-medium">Completadas</div>
+                    <div class="text-2xl font-extrabold text-gray-800">{{ reservas_completadas }}</div>
+                    <div class="mt-1 flex items-center text-sm">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-600">
+                            <i class="fas fa-arrow-up mr-1"></i> +8%
+                        </span>
+                        <span class="ml-3 text-gray-400">vs mes anterior</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pendientes -->
+            <div class="p-4 bg-white rounded-2xl shadow-md flex items-center space-x-4 animate-fadeInUp" style="animation-delay:0.25s">
+                <div class="w-14 h-14 rounded-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-orange-50 text-orange-700">
+                    <i class="fas fa-hourglass-half text-2xl"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="text-sm text-gray-500 font-medium">Pendientes</div>
+                    <div class="text-2xl font-extrabold text-gray-800">{{ reservas_pendientes }}</div>
+                    <div class="mt-1 flex items-center text-sm">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-600">
+                            <i class="fas fa-arrow-down mr-1"></i> -3%
+                        </span>
+                        <span class="ml-3 text-gray-400">vs mes anterior</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasa Éxito -->
+            <div class="p-4 bg-white rounded-2xl shadow-md flex items-center space-x-4 animate-fadeInUp" style="animation-delay:0.3s">
+                <div class="w-14 h-14 rounded-full flex items-center justify-center bg-gradient-to-br from-purple-100 to-purple-50 text-purple-700">
+                    <i class="fas fa-percentage text-2xl"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="text-sm text-gray-500 font-medium">Tasa Éxito</div>
+                    <div class="text-2xl font-extrabold text-gray-800">{{ tasa_completado }}%</div>
+                    <div class="mt-1 flex items-center text-sm">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-600">
+                            <i class="fas fa-arrow-up mr-1"></i> +2%
+                        </span>
+                        <span class="ml-3 text-gray-400">vs mes anterior</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ingresos Total -->
+            <div class="p-4 bg-white rounded-2xl shadow-md flex items-center space-x-4 animate-fadeInUp" style="animation-delay:0.35s">
+                <div class="w-14 h-14 rounded-full flex items-center justify-center bg-gradient-to-br from-red-100 to-red-50 text-red-700">
+                    <i class="fas fa-dollar-sign text-2xl"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="text-sm text-gray-500 font-medium">Ingresos Total</div>
+                    <div class="text-2xl font-extrabold text-gray-800">${{ ingresos_totales|floatformat:0 }}</div>
+                    <div class="mt-1 flex items-center text-sm">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-600">
+                            <i class="fas fa-arrow-up mr-1"></i> +15%
+                        </span>
+                        <span class="ml-3 text-gray-400">vs mes anterior</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Promedio/Día -->
+            <div class="p-4 bg-white rounded-2xl shadow-md flex items-center space-x-4 animate-fadeInUp" style="animation-delay:0.4s">
+                <div class="w-14 h-14 rounded-full flex items-center justify-center bg-gradient-to-br from-teal-100 to-teal-50 text-teal-700">
+                    <i class="fas fa-chart-area text-2xl"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="text-sm text-gray-500 font-medium">Promedio/Día</div>
+                    <div class="text-2xl font-extrabold text-gray-800">{{ promedio_reservas_dia }}</div>
+                    <div class="mt-1 flex items-center text-sm">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-600">
+                            <i class="fas fa-arrow-up mr-1"></i> +5%
+                        </span>
+                        <span class="ml-3 text-gray-400">vs mes anterior</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
 
             <!-- Gráficos Principales -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
@@ -1994,29 +1865,39 @@
                     </div>
                 </div>
 
-                <!-- Servicios Más Populares -->
+                <!-- Servicios Más Populares (diseño modernizado) -->
                 <div class="glass-card p-6 animate-fadeInUp" style="animation-delay: 1.0s;">
                     <h3 class="text-xl font-bold text-gray-800 mb-4">
                         <i class="fas fa-star mr-2 text-yellow-600"></i>
                         Servicios Más Populares
                     </h3>
-                    <div class="space-y-4">
+
+                    <!-- Estilos locales mínimos para esta sección (no cambian la lógica) -->
+                    <style>
+                        .popular-service-card { background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(247,250,252,0.95)); border: 1px solid rgba(15,23,42,0.04); border-radius: 12px; box-shadow: 0 8px 20px rgba(2,6,23,0.06); }
+                        .service-avatar { box-shadow: 0 6px 18px rgba(99,102,241,0.12); }
+                        .progress-outer { background: #f1f5f9; border-radius: 999px; height: 10px; overflow: hidden; }
+                        .progress-inner { height: 100%; border-radius: 999px; transition: width 0.9s cubic-bezier(.2,.9,.2,1); box-shadow: inset 0 -2px 6px rgba(0,0,0,0.06); }
+                        @media (max-width: 640px) { .popular-service-grid { gap: 0.6rem; } .service-avatar { width: 44px; height: 44px; } }
+                    </style>
+
+                    <div class="grid popular-service-grid gap-3">
                         {% for servicio in servicios_populares %}
-                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-wrench text-white"></i>
+                        <div class="popular-service-card flex items-center justify-between p-3">
+                            <div class="flex items-center gap-3">
+                                <div class="service-avatar w-12 h-12 rounded-xl flex items-center justify-center text-white" style="background: linear-gradient(90deg,#667eea,#764ba2);">
+                                    <i class="fas fa-concierge-bell"></i>
                                 </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800">{{ servicio.servicio.nombre_servicio }}</h4>
-                                    <p class="text-sm text-gray-600">{{ servicio.count }} reservas</p>
+                                <div class="min-w-0">
+                                    <h4 class="font-semibold text-gray-900 truncate">{{ servicio.servicio.nombre_servicio }}</h4>
+                                    <div class="text-sm text-gray-500 truncate">{{ servicio.count }} reservas · <span class="font-medium text-gray-700">${{ servicio.ingresos|floatformat:0 }}</span></div>
                                 </div>
                             </div>
-                            <div class="text-right">
-                                <div class="text-lg font-bold text-green-600">${{ servicio.ingresos|floatformat:0 }}</div>
-                                <div class="w-24 bg-gray-200 rounded-full h-2 mt-1">
-                                    <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full progress-fill" 
-                                         style="width: {{ servicio.porcentaje }}%"></div>
+
+                            <div class="w-1/3 min-w-[140px] flex flex-col items-end">
+                                <div class="text-sm text-gray-500 mb-2" aria-hidden="true">{{ servicio.porcentaje|floatformat:0 }}%</div>
+                                <div class="progress-outer w-full" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ servicio.porcentaje }}">
+                                    <div class="progress-inner" style="width: {{ servicio.porcentaje }}%; background: linear-gradient(90deg,#06b6d4,#7c3aed);"></div>
                                 </div>
                             </div>
                         </div>
@@ -2031,7 +1912,124 @@
             </div>
 
             <!-- Análisis Detallado de los Últimos 6 Meses - MEJORADO -->
-            <div class="glass-card p-6 animate-fadeInUp" style="animation-delay: 1.1s;">
+            <div class="glass-card p-6 animate-fadeInUp detailed-analysis" style="animation-delay: 1.1s;">
+                <!-- Paleta simplificada y overrides locales para evitar el "circo" de colores -->
+                <style>
+                    /* Variables de paleta moderna y limitada */
+                    .detailed-analysis {
+                        --primary: #2563eb;    /* azul moderno */
+                        --accent: #06b6d4;     /* cian suave */
+                        --muted: #6b7280;      /* gris neutro */
+                        --success: #10b981;    /* verde para éxito */
+                        --bg-soft: rgba(15,23,42,0.03);
+                        --card-radius: 12px;
+                    }
+
+                    /* Forzar fondos más neutros en las summary-cards */
+                    .detailed-analysis .summary-card {
+                        background: var(--bg-soft) !important;
+                        border-left-color: var(--primary) !important;
+                        border-radius: var(--card-radius) !important;
+                        box-shadow: 0 6px 18px rgba(2,6,23,0.04) !important;
+                    }
+
+                    .detailed-analysis .summary-icon {
+                        background: var(--primary) !important;
+                        color: #fff !important;
+                        box-shadow: none !important;
+                    }
+
+                    .detailed-analysis .summary-label { color: var(--muted) !important; }
+                    .detailed-analysis .summary-value { color: #0f172a !important; }
+                    .detailed-analysis .summary-detail { color: var(--muted) !important; }
+
+                    /* Normalizar botones de acción dentro de esta sección a un solo color primario */
+                    .detailed-analysis .action-btn {
+                        background: var(--primary) !important;
+                        color: white !important;
+                        box-shadow: 0 6px 18px rgba(37,99,235,0.12) !important;
+                        border: none !important;
+                    }
+
+                    .detailed-analysis .action-btn:hover { transform: translateY(-2px) !important; filter: brightness(1.02); }
+
+                    /* Insights: usar palette reducida */
+                    .detailed-analysis .insight-card { background: #fff !important; border-left-width: 4px !important; }
+                    .detailed-analysis .insight-primary { border-left-color: var(--primary) !important; }
+                    .detailed-analysis .insight-success { border-left-color: var(--accent) !important; }
+                    .detailed-analysis .insight-warning { border-left-color: var(--muted) !important; }
+                    .detailed-analysis .insight-label { color: #0f172a !important; }
+                    .detailed-analysis .insight-text { color: var(--muted) !important; }
+
+                    /* Tabla y elementos: menos saturación */
+                    .detailed-analysis .table-header { background: linear-gradient(90deg, rgba(37,99,235,0.08), rgba(99,102,241,0.02)) !important; }
+                    .detailed-analysis .table-th .th-content { color: #0f172a !important; }
+
+                    /* Columnas más angostas para completadas, pendientes y canceladas */
+                    .detailed-analysis .detailed-table { table-layout: fixed; }
+                    .detailed-analysis .detailed-table th, .detailed-analysis .detailed-table td { padding: 10px 8px; }
+                    .detailed-analysis .detailed-table th:nth-child(3),
+                    .detailed-analysis .detailed-table td:nth-child(3),
+                    .detailed-analysis .detailed-table th:nth-child(4),
+                    .detailed-analysis .detailed-table td:nth-child(4),
+                    .detailed-analysis .detailed-table th:nth-child(5),
+                    .detailed-analysis .detailed-table td:nth-child(5),
+                    .detailed-analysis .detailed-table th:nth-child(8),
+                    .detailed-analysis .detailed-table td:nth-child(8) {
+                        width: 88px;
+                        max-width: 88px;
+                        white-space: nowrap;
+                        text-align: center;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+
+                    /* Asegurar que la columna 'Rendimiento' permanezca visible reduciendo padding de otras columnas si hace falta */
+                    .detailed-analysis .detailed-table th:last-child,
+                    .detailed-analysis .detailed-table td:last-child {
+                        min-width: 120px;
+                    }
+
+                    /* Progresos y badges: colores consistentes */
+                    .detailed-analysis .progress-fill { background: linear-gradient(90deg, var(--primary), var(--accent)) !important; }
+                    .detailed-analysis .status-success { background: rgba(16,185,129,0.08) !important; color: var(--success) !important; border-color: rgba(16,185,129,0.18) !important; }
+                    .detailed-analysis .status-warning { background: rgba(99,102,241,0.06) !important; color: var(--muted) !important; border-color: rgba(99,102,241,0.06) !important; }
+
+                    /* Menor contraste en iconos flotantes dentro de la sección */
+                    .detailed-analysis .insight-icon { opacity: 0.95; }
+
+                    /* Modo compacto: reducir tamaños para que la tabla y tarjetas ocupen menos espacio */
+                    .detailed-analysis.compact, .detailed-analysis {
+                        font-size: 13px; /* base ligeramente menor */
+                    }
+                    .detailed-analysis .detailed-table th, .detailed-analysis .detailed-table td {
+                        padding: 6px 6px !important;
+                        font-size: 0.875rem !important;
+                    }
+                    .detailed-analysis .th-content i { font-size: 0.95rem !important; margin-right: 6px !important; }
+                    .detailed-analysis .summary-card { padding: 0.6rem !important; }
+                    .detailed-analysis .summary-icon { width: 36px !important; height: 36px !important; }
+                    .detailed-analysis .summary-value { font-size: 0.95rem !important; }
+                    .detailed-analysis .summary-label, .detailed-analysis .summary-detail { font-size: 0.78rem !important; }
+                    .detailed-analysis .action-btn { padding: 0.35rem 0.6rem !important; font-size: 0.85rem !important; }
+                    .detailed-analysis .insight-icon { font-size: 18px !important; line-height: 1 !important; }
+                    .detailed-analysis .insight-card { padding: 0.6rem !important; }
+
+                    /* Compactar barras y badges */
+                    .detailed-analysis .metric-cell .progress-bar { height: 8px !important; }
+                    .detailed-analysis .progress-fill { height: 8px !important; }
+                    .detailed-analysis .status-badge { padding: 4px 8px !important; font-size: 0.82rem !important; }
+                    .detailed-analysis .performance-indicator .indicator-dot { width: 8px !important; height: 8px !important; }
+                    .detailed-analysis .star-rating i { font-size: 12px !important; margin-right: 2px !important; }
+
+                    /* Asegurar truncamiento y centrado adicional cuando se compacte */
+                    .detailed-analysis .detailed-table td, .detailed-analysis .detailed-table th { overflow: hidden; text-overflow: ellipsis; }
+
+                    @media (max-width: 640px) {
+                        .detailed-analysis .summary-card { padding: 0.6rem !important; }
+                        .detailed-analysis .action-btn span { display: none !important; }
+                    }
+                </style>
                 <!-- Header Mejorado -->
                 <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
                     <div class="mb-4 lg:mb-0">
@@ -2264,18 +2262,26 @@
                                     <td class="table-td">
                                         <div class="status-badge status-warning">
                                             <i class="fas fa-hourglass-half mr-2"></i>
-                                            {% if dato.pendientes is defined %}
+                                            {# Mostrar 'pendientes' si la clave existe (incluye 0). Comparar con None es fiable en Django templates. #}
+                                            {% if dato.pendientes != None %}
                                                 {{ dato.pendientes|default_if_none:"0" }}
-                                            {% elif dato.canceladas is defined %}
+                                            {% elif dato.canceladas != None %}
+                                                {# Pendientes = reservas - completadas - canceladas (fallback si no hay campo 'pendientes') #}
                                                 {{ dato.reservas|add:"-"|add:dato.completadas|add:"-"|add:dato.canceladas }}
                                             {% else %}
+                                                {# Pendientes = reservas - completadas cuando no hay 'canceladas' #}
                                                 {{ dato.reservas|add:"-"|add:dato.completadas }}
                                             {% endif %}
                                         </div>
                                     </td>
                                     <td class="table-td">
                                         <div class="status-badge status-danger">
-                                            <i class="fas fa-times mr-2"></i>0
+                                            <i class="fas fa-times mr-2"></i>
+                                            {% if dato.canceladas != None %}
+                                                {{ dato.canceladas|default_if_none:"0" }}
+                                            {% else %}
+                                                0
+                                            {% endif %}
                                         </div>
                                     </td>
                                     <td class="table-td">
@@ -2314,17 +2320,23 @@
                                     </td>
                                     <td class="table-td">
                                         <div class="growth-cell">
-                                            {% if dato.crecimiento > 0 %}
-                                                <div class="growth-badge growth-positive">
-                                                    <i class="fas fa-arrow-up mr-1"></i>+{{ dato.crecimiento }}%
-                                                </div>
-                                            {% elif dato.crecimiento < 0 %}
-                                                <div class="growth-badge growth-negative">
-                                                    <i class="fas fa-arrow-down mr-1"></i>{{ dato.crecimiento }}%
-                                                </div>
+                                            {% if dato.crecimiento_valido %}
+                                                {% if dato.crecimiento > 0 %}
+                                                    <div class="growth-badge growth-positive">
+                                                        <i class="fas fa-arrow-up mr-1"></i>+{{ dato.crecimiento }}%
+                                                    </div>
+                                                {% elif dato.crecimiento < 0 %}
+                                                    <div class="growth-badge growth-negative">
+                                                        <i class="fas fa-arrow-down mr-1"></i>{{ dato.crecimiento }}%
+                                                    </div>
+                                                {% else %}
+                                                    <div class="growth-badge growth-neutral">
+                                                        <i class="fas fa-minus mr-1"></i>0%
+                                                    </div>
+                                                {% endif %}
                                             {% else %}
                                                 <div class="growth-badge growth-neutral">
-                                                    <i class="fas fa-minus mr-1"></i>{% if forloop.last %}Base{% else %}0%{% endif %}
+                                                    <i class="fas fa-minus mr-1"></i>{% if forloop.last %}Base{% else %}N/A{% endif %}
                                                 </div>
                                             {% endif %}
                                         </div>
@@ -2429,52 +2441,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Insights y Recomendaciones -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                
-                <!-- Insight 1 -->
-                <div class="glass-card p-6 animate-fadeInUp" style="animation-delay: 1.2s;">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-lightbulb text-white text-2xl"></i>
-                        </div>
-                        <h4 class="text-lg font-bold text-gray-800 mb-2">Mejor Día</h4>
-                        <p class="text-gray-600 mb-3">Los {{ dias_semana.0 }} son tu día más productivo con mayor número de reservas.</p>
-                        <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-                            Oportunidad de crecimiento
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Insight 2 -->
-                <div class="glass-card p-6 animate-fadeInUp" style="animation-delay: 1.3s;">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-trending-up text-white text-2xl"></i>
-                        </div>
-                        <h4 class="text-lg font-bold text-gray-800 mb-2">Tendencia</h4>
-                        <p class="text-gray-600 mb-3">Tus ingresos han crecido consistentemente en los últimos meses.</p>
-                        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                            Tendencia positiva
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Insight 3 -->
-                <div class="glass-card p-6 animate-fadeInUp" style="animation-delay: 1.4s;">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-target text-white text-2xl"></i>
-                        </div>
-                        <h4 class="text-lg font-bold text-gray-800 mb-2">Objetivo</h4>
-                        <p class="text-gray-600 mb-3">Estás a solo un 15% de alcanzar tu meta mensual de ingresos.</p>
-                        <span class="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm font-medium">
-                            Casi logrado
-                        </span>
-                    </div>
-                </div>
-            </div>
         </div>
     </main>
 
@@ -2492,22 +2458,36 @@
             // Datos para los gráficos - con validación más estricta
             let reservasData, ingresosData, mesesLabels, diasData, diasLabels;
             
+            // Función auxiliar: si Django pasó JSON como string, parsearlo; si ya es array, devolverlo.
+            function parseMaybeJSON(value) {
+                try {
+                    if (typeof value === 'string') {
+                        // Intentar parsear string JSON
+                        return JSON.parse(value);
+                    }
+                    return value;
+                } catch (e) {
+                    // Si no se puede parsear, devolver valor original para fallback posterior
+                    return value;
+                }
+            }
+
             try {
-                reservasData = {{ reservas_por_mes|safe }};
-                ingresosData = {{ ingresos_por_mes|safe }};
-                mesesLabels = {{ meses|safe }};
-                diasData = {{ reservas_por_dia|safe }};
-                diasLabels = {{ dias_semana|safe }};
-                
-                console.log('Datos cargados desde Django:');
+                reservasData = parseMaybeJSON({{ reservas_por_mes|safe }});
+                ingresosData = parseMaybeJSON({{ ingresos_por_mes|safe }});
+                mesesLabels = parseMaybeJSON({{ meses|safe }});
+                diasData = parseMaybeJSON({{ reservas_por_dia|safe }});
+                diasLabels = parseMaybeJSON({{ dias_semana|safe }});
+
+                console.log('Datos cargados desde Django (post-parse):');
                 console.log('- Reservas:', reservasData);
                 console.log('- Ingresos:', ingresosData);
                 console.log('- Meses:', mesesLabels);
                 console.log('- Días:', diasData);
                 console.log('- Días labels:', diasLabels);
-                
+
             } catch (error) {
-                console.error('Error al cargar datos desde Django:', error);
+                console.error('Error al cargar datos desde Django (try/parse):', error);
                 // Datos de ejemplo para testing
                 reservasData = [5, 8, 12, 7, 15, 10, 18, 22, 14, 9, 11, 16];
                 ingresosData = [2500, 4000, 6000, 3500, 7500, 5000, 9000, 11000, 7000, 4500, 5500, 8000];
@@ -3298,7 +3278,7 @@
                         <h1>Análisis Detallado de los Últimos 6 Meses</h1>
                         <div class="print-info">
                             <p>Fecha de impresión: ${new Date().toLocaleString()}</p>
-                            <p>Empresa: {{ empresa.nombre|default:"Sin especificar" }}</p>
+                            <p>Empresa: {{ empresa.nombre_empresa|default:"Sin especificar" }}</p>
                         </div>
                     </div>
                     ${table}
@@ -3314,37 +3294,133 @@
         }
 
         function exportToExcel() {
-            const table = document.getElementById('monthlyAnalysisTable');
-            const rows = table.querySelectorAll('tr');
-            let csvContent = 'data:text/csv;charset=utf-8,';
-            
-            // Agregar encabezado del archivo
-            csvContent += 'ANÁLISIS DETALLADO - ÚLTIMOS 6 MESES\n';
-            csvContent += `Fecha de exportación: ${new Date().toLocaleString()}\n`;
-            csvContent += `Empresa: {{ empresa.nombre|default:"Sin especificar" }}\n\n`;
-            
-            rows.forEach(row => {
-                const cells = row.querySelectorAll('th, td');
-                const rowData = Array.from(cells).map(cell => {
-                    // Limpiar texto y escapar comillas
-                    const text = cell.textContent.trim().replace(/"/g, '""');
-                    return `"${text}"`;
+            // Si SheetJS (XLSX) está disponible, usarlo para generar un .xlsx con formato
+            const ensureSheetJS = () => {
+                return new Promise((resolve) => {
+                    if (window.XLSX) return resolve(window.XLSX);
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+                    script.onload = () => resolve(window.XLSX);
+                    script.onerror = () => resolve(null);
+                    document.head.appendChild(script);
                 });
-                csvContent += rowData.join(',') + '\n';
-            });
-            
-            // Crear y descargar archivo
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement('a');
-            link.setAttribute('href', encodedUri);
-            link.setAttribute('download', `analisis_detallado_${new Date().toISOString().split('T')[0]}.csv`);
-            document.body.appendChild(link);
-            
-            // Mostrar notificación de descarga
-            showNotification('Descargando archivo Excel...', 'success');
-            
-            link.click();
-            document.body.removeChild(link);
+            };
+
+            (async () => {
+                const XLSX = await ensureSheetJS();
+                const table = document.getElementById('monthlyAnalysisTable');
+                if (!table) {
+                    showNotification('Tabla no encontrada para exportar', 'error');
+                    return;
+                }
+
+                // Construir matriz de datos desde la tabla (excluir elementos decorativos)
+                const rows = Array.from(table.querySelectorAll('tr'));
+                const data = [];
+
+                // Añadir título y metadatos como filas iniciales
+                data.push([`ANÁLISIS DETALLADO - ÚLTIMOS 6 MESES`]);
+                data.push([`Fecha de exportación: ${new Date().toLocaleString()}`]);
+                data.push([`Empresa: {{ empresa.nombre_empresa|default:"Sin especificar" }}`]);
+                data.push([]);
+
+                rows.forEach((row, rowIndex) => {
+                    const cells = Array.from(row.querySelectorAll('th, td'));
+                    if (cells.length === 0) return;
+                    const rowData = cells.map(cell => cell.textContent.trim());
+                    data.push(rowData);
+                });
+
+                // Si no tenemos XLSX, caer a CSV (compatibilidad)
+                if (!XLSX) {
+                    // construir CSV
+                    let csvContent = 'data:text/csv;charset=utf-8,';
+                    data.forEach(r => {
+                        const row = r.map(c => `"${(c||'').replace(/"/g,'""')}"`).join(',');
+                        csvContent += row + '\n';
+                    });
+                    const encodedUri = encodeURI(csvContent);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', encodedUri);
+                    link.setAttribute('download', `analisis_detallado_${new Date().toISOString().split('T')[0]}.csv`);
+                    document.body.appendChild(link);
+                    showNotification('Descargando archivo CSV (fallback) ...', 'warning');
+                    link.click();
+                    document.body.removeChild(link);
+                    return;
+                }
+
+                // Usar SheetJS para crear workbook
+                const ws = XLSX.utils.aoa_to_sheet(data);
+
+                // Mejorar formato: detectar columnas numéricas (Ingresos, Totales, %)
+                const headerRowIndex = 4; // índice 0-based donde empiezan los headers dentro de 'data'
+                const header = data[headerRowIndex];
+                // Buscar índices por nombre (no estrictos, busca por fragmento)
+                const idxReservas = header.findIndex(h => /reservas/i.test(h));
+                const idxCompletadas = header.findIndex(h => /completad/i.test(h));
+                const idxPendientes = header.findIndex(h => /pendient/i.test(h));
+                const idxCanceladas = header.findIndex(h => /cancelad/i.test(h));
+                const idxTasa = header.findIndex(h => /tasa|éxito|%/i.test(h));
+                const idxIngresos = header.findIndex(h => /ingresos|dollar|\$/i.test(h));
+
+                // Aplicar formato numérico a las celdas detectadas
+                const range = XLSX.utils.decode_range(ws['!ref']);
+                for (let R = headerRowIndex + 1; R <= range.e.r; ++R) {
+                    if (idxReservas >= 0) {
+                        const cell = ws[XLSX.utils.encode_cell({r:R, c: idxReservas})];
+                        if (cell && cell.v !== undefined) cell.t = 'n', cell.v = Number(String(cell.v).replace(/[^0-9.-]+/g, '')) || 0;
+                    }
+                    if (idxCompletadas >= 0) {
+                        const cell = ws[XLSX.utils.encode_cell({r:R, c: idxCompletadas})];
+                        if (cell && cell.v !== undefined) cell.t = 'n', cell.v = Number(String(cell.v).replace(/[^0-9.-]+/g, '')) || 0;
+                    }
+                    if (idxPendientes >= 0) {
+                        const cell = ws[XLSX.utils.encode_cell({r:R, c: idxPendientes})];
+                        if (cell && cell.v !== undefined) cell.t = 'n', cell.v = Number(String(cell.v).replace(/[^0-9.-]+/g, '')) || 0;
+                    }
+                    if (idxCanceladas >= 0) {
+                        const cell = ws[XLSX.utils.encode_cell({r:R, c: idxCanceladas})];
+                        if (cell && cell.v !== undefined) cell.t = 'n', cell.v = Number(String(cell.v).replace(/[^0-9.-]+/g, '')) || 0;
+                    }
+                    if (idxIngresos >= 0) {
+                        const cell = ws[XLSX.utils.encode_cell({r:R, c: idxIngresos})];
+                        if (cell && cell.v !== undefined) {
+                            // eliminar símbolos y puntos de miles
+                            const num = Number(String(cell.v).replace(/[^0-9.-]+/g, '')) || 0;
+                            cell.t = 'n'; cell.v = num; cell.z = '#,##0';
+                        }
+                    }
+                    if (idxTasa >= 0) {
+                        const cell = ws[XLSX.utils.encode_cell({r:R, c: idxTasa})];
+                        if (cell && cell.v !== undefined) {
+                            const pct = Number(String(cell.v).replace(/[^0-9.-]+/g, '')) || 0;
+                            cell.t = 'n'; cell.v = pct/100; cell.z = '0.0%';
+                        }
+                    }
+                }
+
+                // Ajustar anchos de columnas razonables
+                const colWidths = header.map((h) => ({wch: Math.max(8, String(h||'').length + 4)}));
+                ws['!cols'] = colWidths;
+
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Analisis 6 Meses');
+
+                const wbout = XLSX.write(wb, {bookType:'xlsx', type:'array'});
+                const blob = new Blob([wbout], {type: 'application/octet-stream'});
+                const filename = `analisis_detallado_${new Date().toISOString().split('T')[0]}.xlsx`;
+                // Descargar
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                showNotification('Descargando archivo Excel (.xlsx)...', 'success');
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            })();
         }
 
         // Función para mostrar notificaciones
@@ -3429,29 +3505,7 @@
             setTimeout(() => {
                 showNotification('Datos cargados correctamente', 'success');
             }, 1000);
-        });
-                notification.classList.add('bg-blue-500', 'text-white');
-                notification.innerHTML = `<i class="fas fa-info-circle mr-2"></i>${message}`;
-            }
-
-            document.body.appendChild(notification);
-
-            // Animar entrada
-            setTimeout(() => {
-                notification.classList.remove('translate-x-full');
-            }, 100);
-
-            // Remover después de 3 segundos
-            setTimeout(() => {
-                notification.classList.add('translate-x-full');
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 300);
-            }, 3000);
-        }
-
+    });
         // JavaScript para el menú móvil
         document.addEventListener('DOMContentLoaded', function() {
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -3627,6 +3681,7 @@
         window.debugMenu = debugMenu;
         window.toggleMobileMenu = toggleMobileMenu;
     </script>
-</body>
+    
+    </div> <!-- Cierre del contenedor principal -->
 
-</html>
+{% endblock %}

@@ -326,33 +326,92 @@
             <div class="text-center max-w-4xl mx-auto">
                 <div class="mb-6">
                     <span class="inline-block px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-semibold rounded-full uppercase tracking-wider mb-6">
-                        Ponte en contacto
+                        PQRS - Atención al Cliente
                     </span>
                 </div>
                 <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6">
                     <span class="bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
-                        Contacto para
+                        Peticiones, Quejas,
                     </span>
                     <br>
                     <span class="bg-gradient-to-r from-blue-600 to-slate-800 bg-clip-text text-transparent">
-                        Consultas
+                        Reclamos & Sugerencias
                     </span>
                 </h1>
-                <p class="text-xl text-gray-600 leading-relaxed">
-                    Estamos aquí para ayudarte con cualquier consulta o queja que tengas
+                <p class="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
+                    Tu opinión es importante para nosotros. Estamos comprometidos con brindarte la mejor experiencia y resolver cualquier inquietud de manera rápida y efectiva.
                 </p>
+            </div>
+        </section>
+
+        <!-- Tipos de PQRS -->
+        <section class="mb-12 animate-fadeInUp" style="animation-delay: 0.2s;">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-slate-800 mb-4">¿Qué tipo de solicitud deseas enviar?</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Selecciona la categoría que mejor describa tu solicitud para una atención más eficiente</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <!-- Petición -->
+                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 cursor-pointer group" data-type="peticion">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-hand-paper text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Petición</h3>
+                        <p class="text-sm text-gray-600 mb-4">Solicitudes de información, servicios o procedimientos específicos</p>
+                        <div class="text-xs text-blue-600 font-medium">Tiempo de respuesta: 3-5 días hábiles</div>
+                    </div>
+                </div>
+
+                <!-- Queja -->
+                <div class="bg-gradient-to-br from-red-50 to-orange-50 border border-red-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 cursor-pointer group" data-type="queja">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Queja</h3>
+                        <p class="text-sm text-gray-600 mb-4">Manifestación de insatisfacción con nuestros servicios o atención</p>
+                        <div class="text-xs text-red-600 font-medium">Tiempo de respuesta: 24-48 horas</div>
+                    </div>
+                </div>
+
+                <!-- Reclamo -->
+                <div class="bg-gradient-to-br from-yellow-50 to-amber-50 border border-yellow-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 cursor-pointer group" data-type="reclamo">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-gavel text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Reclamo</h3>
+                        <p class="text-sm text-gray-600 mb-4">Solicitud de resarcimiento por daños o perjuicios causados</p>
+                        <div class="text-xs text-yellow-600 font-medium">Tiempo de respuesta: 24 horas</div>
+                    </div>
+                </div>
+
+                <!-- Sugerencia -->
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 cursor-pointer group" data-type="sugerencia">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-lightbulb text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Sugerencia</h3>
+                        <p class="text-sm text-gray-600 mb-4">Ideas y propuestas para mejorar nuestros servicios</p>
+                        <div class="text-xs text-green-600 font-medium">Tiempo de respuesta: 5-7 días hábiles</div>
+                    </div>
+                </div>
             </div>
         </section>
 
         <!-- Layout Principal -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
-            <!-- Información de Contacto -->
+            <!-- Información de Contacto y Canales de Atención -->
             <div class="animate-slideInLeft">
                 <div class="bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl transition-all duration-300">
                     <div class="text-center mb-8">
                         <h2 class="text-3xl font-bold text-slate-800 bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
-                            Información de contacto
+                            Canales de Atención
                         </h2>
+                        <p class="text-gray-600 mt-2">Múltiples formas de contactarnos</p>
                     </div>
                     
                     <div class="space-y-6">
@@ -362,78 +421,271 @@
                                 <i class="far fa-clock text-white text-xl"></i>
                             </div>
                             <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-slate-800">Hora de apertura</h3>
-                                <p class="text-gray-600">Lunes - Viernes, 8:00 am - 4:00 pm</p>
+                                <h3 class="text-lg font-semibold text-slate-800">Horario de Atención PQRS</h3>
+                                <p class="text-gray-600">Lunes - Viernes: 8:00 am - 6:00 pm</p>
+                                <p class="text-gray-500 text-sm">Sábados: 9:00 am - 2:00 pm</p>
                             </div>
                         </div>
 
                         <!-- Teléfono -->
-                        <div class="flex items-center p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 group">
+                        <div class="flex items-center p-4 rounded-xl border border-gray-100 hover:border-green-200 hover:bg-green-50 transition-all duration-300 group">
                             <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                 <i class="fa fa-phone-alt text-white text-xl"></i>
                             </div>
                             <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-slate-800">Llámanos</h3>
-                                <p class="text-gray-600">3114996440</p>
+                                <h3 class="text-lg font-semibold text-slate-800">Línea Directa PQRS</h3>
+                                <p class="text-gray-600 font-medium">3114996440</p>
+                                <p class="text-gray-500 text-sm">Atención inmediata para quejas urgentes</p>
                             </div>
                         </div>
 
                         <!-- Email -->
-                        <div class="flex items-center p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 group">
+                        <div class="flex items-center p-4 rounded-xl border border-gray-100 hover:border-purple-200 hover:bg-purple-50 transition-all duration-300 group">
                             <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                 <i class="fas fa-envelope text-white text-xl"></i>
                             </div>
                             <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-slate-800">Email</h3>
-                                <p class="text-gray-600">autonew@gmail.com</p>
+                                <h3 class="text-lg font-semibold text-slate-800">Email PQRS</h3>
+                                <p class="text-gray-600 font-medium">pqrs@autonew.com</p>
+                                <p class="text-gray-500 text-sm">Respuesta en 24-48 horas</p>
+                            </div>
+                        </div>
+
+                        <!-- WhatsApp -->
+                        <div class="flex items-center p-4 rounded-xl border border-gray-100 hover:border-green-200 hover:bg-green-50 transition-all duration-300 group">
+                            <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                <i class="fab fa-whatsapp text-white text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-slate-800">WhatsApp PQRS</h3>
+                                <p class="text-gray-600 font-medium">+57 311 499 6440</p>
+                                <p class="text-gray-500 text-sm">Chat en tiempo real</p>
+                            </div>
+                        </div>
+
+                        <!-- Presencial -->
+                        <div class="flex items-center p-4 rounded-xl border border-gray-100 hover:border-orange-200 hover:bg-orange-50 transition-all duration-300 group">
+                            <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-map-marker-alt text-white text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-slate-800">Atención Presencial</h3>
+                                <p class="text-gray-600 font-medium">Oficina Central AutoNew</p>
+                                <p class="text-gray-500 text-sm">Cita previa recomendada</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Proceso de atención -->
+                    <div class="mt-8 p-6 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                            <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                            Proceso de Atención PQRS
+                        </h3>
+                        <div class="space-y-3 text-sm text-gray-600">
+                            <div class="flex items-center">
+                                <span class="w-6 h-6 bg-blue-500 text-white rounded-full text-xs flex items-center justify-center mr-3">1</span>
+                                <span>Recepción y registro de tu solicitud</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-6 h-6 bg-blue-500 text-white rounded-full text-xs flex items-center justify-center mr-3">2</span>
+                                <span>Asignación a especialista según categoría</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-6 h-6 bg-blue-500 text-white rounded-full text-xs flex items-center justify-center mr-3">3</span>
+                                <span>Investigación y análisis del caso</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-6 h-6 bg-blue-500 text-white rounded-full text-xs flex items-center justify-center mr-3">4</span>
+                                <span>Respuesta y seguimiento hasta la solución</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Formulario de Contacto -->
+            <!-- Formulario de PQRS Mejorado -->
             <div class="animate-slideInRight">
                 <div class="bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl transition-all duration-300">
                     <div class="text-center mb-8">
                         <h2 class="text-3xl font-bold text-slate-800 bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
-                            Envíanos un mensaje
+                            Formulario PQRS
                         </h2>
+                        <p class="text-gray-600 mt-2">Completa todos los campos para una mejor atención</p>
                     </div>
                     
-                    <form action="{% url 'contacto' %}" method="POST" autocomplete="off" class="space-y-6">
+                    <form action="{% url 'contacto' %}" method="POST" autocomplete="off" class="space-y-6" id="pqrsForm">
                         {% csrf_token %}
+                        
+                        <!-- Tipo de PQRS -->
+                        <div>
+                            <label for="tipo_pqrs" class="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+                                <div class="w-5 h-5 flex items-center justify-center">
+                                    <i class="fas fa-list text-blue-500"></i>
+                                </div>
+                                Tipo de Solicitud *
+                            </label>
+                            <select 
+                                name="tipo_pqrs"
+                                id="tipo_pqrs"
+                                required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 transition-all duration-300"
+                            >
+                                <option value="">Selecciona el tipo de solicitud</option>
+                                <option value="peticion">📋 Petición - Solicitud de información o servicio</option>
+                                <option value="queja">⚠️ Queja - Insatisfacción con el servicio</option>
+                                <option value="reclamo">⚖️ Reclamo - Solicitud de resarcimiento</option>
+                                <option value="sugerencia">💡 Sugerencia - Propuesta de mejora</option>
+                            </select>
+                        </div>
+
+                        <!-- Servicio relacionado -->
+                        <div>
+                            <label for="servicio_relacionado" class="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+                                <div class="w-5 h-5 flex items-center justify-center">
+                                    <i class="fas fa-car text-blue-500"></i>
+                                </div>
+                                Servicio Relacionado
+                            </label>
+                            <select 
+                                name="servicio_relacionado"
+                                id="servicio_relacionado"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 transition-all duration-300"
+                            >
+                                <option value="">Selecciona el servicio (opcional)</option>
+                                
+                                <!-- Servicios dinámicos desde la base de datos -->
+                                {% if servicios %}
+                                    <optgroup label="🚗 Servicios de Lavado">
+                                        {% for servicio in servicios %}
+                                            <option value="servicio_{{ servicio.id_servicio }}">
+                                                ⭐ {{ servicio.nombre_servicio }}
+                                            </option>
+                                        {% endfor %}
+                                    </optgroup>
+                                {% endif %}
+                                
+                                <!-- Categorías fijas del sistema -->
+                                <optgroup label="📋 Otros Servicios">
+                                    <option value="atencion_cliente">👥 Atención al Cliente</option>
+                                    <option value="facturacion">💳 Facturación</option>
+                                    <option value="sistema_reservas">📅 Sistema de Reservas</option>
+                                    <option value="suscripciones">💎 Suscripciones</option>
+                                    <option value="pagos">� Pagos y Cobros</option>
+                                    <option value="tecnico">� Soporte Técnico</option>
+                                    <option value="otro">❓ Otro</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <!-- Urgencia -->
+                        <div>
+                            <label for="urgencia" class="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+                                <div class="w-5 h-5 flex items-center justify-center">
+                                    <i class="fas fa-exclamation-circle text-blue-500"></i>
+                                </div>
+                                Nivel de Urgencia *
+                            </label>
+                            <select 
+                                name="urgencia"
+                                id="urgencia"
+                                required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 transition-all duration-300"
+                            >
+                                <option value="">Selecciona la urgencia</option>
+                                <option value="baja">🟢 Baja - No requiere respuesta inmediata</option>
+                                <option value="media">🟡 Media - Respuesta en tiempo estándar</option>
+                                <option value="alta">🟠 Alta - Requiere atención prioritaria</option>
+                                <option value="critica">🔴 Crítica - Atención inmediata</option>
+                            </select>
+                        </div>
+
+                        <!-- Información de contacto -->
+                        {% if not user.is_authenticated %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="nombre_contacto" class="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+                                    <div class="w-5 h-5 flex items-center justify-center">
+                                        <i class="fas fa-user text-blue-500"></i>
+                                    </div>
+                                    Nombre Completo *
+                                </label>
+                                <input 
+                                    type="text"
+                                    name="nombre_contacto"
+                                    id="nombre_contacto"
+                                    required
+                                    placeholder="Tu nombre completo"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 transition-all duration-300"
+                                />
+                            </div>
+                            <div>
+                                <label for="email_contacto" class="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+                                    <div class="w-5 h-5 flex items-center justify-center">
+                                        <i class="fas fa-envelope text-blue-500"></i>
+                                    </div>
+                                    Email *
+                                </label>
+                                <input 
+                                    type="email"
+                                    name="email_contacto"
+                                    id="email_contacto"
+                                    required
+                                    placeholder="tu@email.com"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 transition-all duration-300"
+                                />
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-user-check text-blue-500 mr-3"></i>
+                                <div>
+                                    <p class="text-sm font-medium text-blue-800">Enviando como: {{ user.nombre_completo|default:user.username }}</p>
+                                    <p class="text-xs text-blue-600">{{ user.email }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
                         
                         <div>
                             <label for="contenido" class="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
                                 <div class="w-5 h-5 flex items-center justify-center">
-                                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-blue-500">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26c.3.16.68.16.98 0L20 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                    </svg>
+                                    <i class="fas fa-comment-alt text-blue-500"></i>
                                 </div>
-                                Tu mensaje
+                                Descripción Detallada *
                             </label>
                             <textarea 
                                 name="contenido"
                                 id="contenido"
                                 required
                                 rows="6"
-                                placeholder="Escribe tu mensaje aquí..."
+                                placeholder="Describe detalladamente tu solicitud. Incluye fechas, números de reserva, nombres del personal involucrado y cualquier información relevante que nos ayude a atenderte mejor..."
                                 class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 transition-all duration-300 resize-vertical min-h-32"
                             ></textarea>
+                            <div class="mt-2 text-xs text-gray-500">
+                                <p><strong>Tip:</strong> Entre más detalles proporciones, mejor podremos ayudarte.</p>
+                            </div>
+                        </div>
+
+                        <!-- Términos y condiciones -->
+                        <div class="flex items-start">
+                            <input type="checkbox" id="acepto_terminos" name="acepto_terminos" required class="mt-1 mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="acepto_terminos" class="text-sm text-gray-600">
+                                Acepto que mis datos sean utilizados para el procesamiento de esta solicitud PQRS y autorizo a AutoNew para contactarme por los medios proporcionados. 
+                                <a href="#" class="text-blue-600 hover:underline">Ver política de tratamiento de datos</a>.
+                            </label>
                         </div>
                         
                         <div class="pt-4">
                             <button 
                                 type="submit" 
-                                id="sendMessageButton"
+                                id="sendPQRSButton"
                                 class="w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3 text-lg uppercase tracking-wide group"
                             >
                                 <div class="w-5 h-5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                                    </svg>
+                                    <i class="fas fa-paper-plane"></i>
                                 </div>
-                                <span class="button-text">Enviar mensaje</span>
+                                <span class="button-text">Enviar Solicitud PQRS</span>
                                 <div class="hidden loading-spinner ml-2">
                                     <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -446,6 +698,244 @@
                 </div>
             </div>
         </div>
+
+        <!-- Información adicional sobre PQRS -->
+        <section class="mb-12 animate-fadeInUp" style="animation-delay: 0.4s;">
+            <!-- Derechos y Deberes -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                <!-- Tus Derechos -->
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-8">
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-shield-alt text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800">Tus Derechos como Cliente</h3>
+                    </div>
+                    <ul class="space-y-4 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                            <span>Recibir respuesta oportuna a tu solicitud</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                            <span>Obtener información clara y completa sobre el proceso</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                            <span>Solicitar seguimiento del estado de tu caso</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                            <span>Escalar tu solicitud si no hay respuesta satisfactoria</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                            <span>Protección de tus datos personales según la ley</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                            <span>Recibir un trato respetuoso y profesional</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Tus Responsabilidades -->
+                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-2xl p-8">
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-handshake text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800">Tus Responsabilidades</h3>
+                    </div>
+                    <ul class="space-y-4 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-dot-circle text-blue-500 mr-3 mt-1"></i>
+                            <span>Proporcionar información veraz y completa</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-dot-circle text-blue-500 mr-3 mt-1"></i>
+                            <span>Usar un lenguaje respetuoso y adecuado</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-dot-circle text-blue-500 mr-3 mt-1"></i>
+                            <span>Adjuntar evidencias o documentos cuando sea necesario</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-dot-circle text-blue-500 mr-3 mt-1"></i>
+                            <span>Responder a las solicitudes de información adicional</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-dot-circle text-blue-500 mr-3 mt-1"></i>
+                            <span>No usar el sistema PQRS para fines comerciales</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-dot-circle text-blue-500 mr-3 mt-1"></i>
+                            <span>Mantener actualizada tu información de contacto</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Preguntas Frecuentes sobre PQRS -->
+            <div class="bg-white border border-gray-200 rounded-2xl p-8 mb-12">
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-question-circle text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-slate-800">Preguntas Frecuentes sobre PQRS</h3>
+                    <p class="text-gray-600 mt-2">Resolvemos las dudas más comunes</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-200">
+                            <h4 class="font-bold text-slate-800 mb-3 flex items-center">
+                                <i class="fas fa-clock text-purple-500 mr-2"></i>
+                                ¿Cuánto tiempo tienen para responder?
+                            </h4>
+                            <p class="text-gray-600 text-sm">
+                                <strong>Quejas y Reclamos:</strong> 24-48 horas máximo<br>
+                                <strong>Peticiones:</strong> 3-5 días hábiles<br>
+                                <strong>Sugerencias:</strong> 5-7 días hábiles<br>
+                                <strong>Casos críticos:</strong> Respuesta inmediata
+                            </p>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+                            <h4 class="font-bold text-slate-800 mb-3 flex items-center">
+                                <i class="fas fa-file-alt text-green-500 mr-2"></i>
+                                ¿Qué información debo incluir?
+                            </h4>
+                            <p class="text-gray-600 text-sm">
+                                • Fecha y hora del incidente<br>
+                                • Número de reserva o factura<br>
+                                • Nombres del personal involucrado<br>
+                                • Descripción detallada de la situación<br>
+                                • Evidencias (fotos, videos, documentos)
+                            </p>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6 border border-blue-200">
+                            <h4 class="font-bold text-slate-800 mb-3 flex items-center">
+                                <i class="fas fa-search text-blue-500 mr-2"></i>
+                                ¿Cómo hago seguimiento a mi solicitud?
+                            </h4>
+                            <p class="text-gray-600 text-sm">
+                                Cada solicitud recibe un número de caso único que te enviaremos por email. 
+                                Con este número puedes consultar el estado llamando a nuestra línea PQRS 
+                                o enviando un email de seguimiento.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-xl p-6 border border-yellow-200">
+                            <h4 class="font-bold text-slate-800 mb-3 flex items-center">
+                                <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
+                                ¿Qué pasa si no estoy satisfecho con la respuesta?
+                            </h4>
+                            <p class="text-gray-600 text-sm">
+                                Puedes solicitar una segunda revisión de tu caso o escalarlo a la 
+                                Gerencia General. También tienes derecho a presentar tu caso ante 
+                                la Superintendencia de Industria y Comercio si consideras que 
+                                tus derechos como consumidor han sido vulnerados.
+                            </p>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-6 border border-red-200">
+                            <h4 class="font-bold text-slate-800 mb-3 flex items-center">
+                                <i class="fas fa-shield-check text-red-500 mr-2"></i>
+                                ¿Es seguro enviar mis datos?
+                            </h4>
+                            <p class="text-gray-600 text-sm">
+                                Sí, todos los datos están protegidos según la Ley 1581 de 2012 
+                                de Protección de Datos Personales. Solo utilizamos tu información 
+                                para procesar tu solicitud PQRS y no la compartimos con terceros 
+                                sin tu autorización.
+                            </p>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 border border-indigo-200">
+                            <h4 class="font-bold text-slate-800 mb-3 flex items-center">
+                                <i class="fas fa-money-bill-wave text-indigo-500 mr-2"></i>
+                                ¿Tiene algún costo usar el sistema PQRS?
+                            </h4>
+                            <p class="text-gray-600 text-sm">
+                                No, el sistema PQRS es completamente gratuito. Es un derecho 
+                                que tienes como consumidor y nosotros como empresa tenemos 
+                                la obligación de proporcionarlo sin ningún costo.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas de PQRS -->
+            <div class="bg-gradient-to-r from-slate-800 via-gray-800 to-blue-800 rounded-2xl p-8 text-white mb-12 relative overflow-hidden">
+                <!-- Elementos decorativos -->
+                <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+                <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
+                
+                <div class="relative z-10">
+                    <div class="text-center mb-8">
+                        <h3 class="text-3xl font-bold mb-4">Nuestros Resultados en Atención PQRS</h3>
+                        <p class="text-blue-200">Transparencia en nuestros indicadores de servicio</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center border border-white/20">
+                            <div class="text-3xl font-bold text-green-400 mb-2">96%</div>
+                            <div class="text-sm text-blue-200">Casos resueltos satisfactoriamente</div>
+                        </div>
+                        
+                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center border border-white/20">
+                            <div class="text-3xl font-bold text-yellow-400 mb-2">18h</div>
+                            <div class="text-sm text-blue-200">Tiempo promedio de respuesta</div>
+                        </div>
+                        
+                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center border border-white/20">
+                            <div class="text-3xl font-bold text-blue-400 mb-2">98%</div>
+                            <div class="text-sm text-blue-200">Clientes satisfechos con la atención</div>
+                        </div>
+                        
+                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center border border-white/20">
+                            <div class="text-3xl font-bold text-purple-400 mb-2">2.4h</div>
+                            <div class="text-sm text-blue-200">Tiempo respuesta casos críticos</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action Final -->
+            <div class="text-center bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-8 border border-blue-200">
+                <div class="max-w-2xl mx-auto">
+                    <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-comments text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">
+                        ¿Necesitas ayuda inmediata?
+                    </h3>
+                    <p class="text-gray-600 mb-6">
+                        Si tu situación requiere atención urgente, no dudes en contactarnos directamente
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="tel:3114996440" class="inline-flex items-center px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
+                            <i class="fas fa-phone mr-2"></i>
+                            Llamar Ahora
+                        </a>
+                        <a href="https://wa.me/573114996440" target="_blank" class="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
+                            <i class="fab fa-whatsapp mr-2"></i>
+                            WhatsApp
+                        </a>
+                        <a href="mailto:pqrs@autonew.com" class="inline-flex items-center px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
+                            <i class="fas fa-envelope mr-2"></i>
+                            Email Directo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 </div>
 

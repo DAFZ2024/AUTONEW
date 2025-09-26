@@ -12,8 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os 
+# import dj_database_url  # Comentado - No necesario para SQLite3
+# from dotenv import load_dotenv  # Comentado - No necesario para SQLite3
 
-
+# load_dotenv()  # Comentado - No necesario para SQLite3
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,7 +30,14 @@ SECRET_KEY = 'django-insecure-&!fr6jltkve_c*kad+))rbb#j++d@_jp-_8-+fsnos+!_!0_m7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Permitir conexiones desde serveo.net y otros túneles
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    '.serveo.net',  # Para serveo.net
+    '.ngrok.io',    # Para ngrok si lo usas después
+    '.loca.lt',     # Para localtunnel si lo usas después
+]
 
 
 # Application definition
@@ -56,10 +65,12 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'lavado_auto.middleware_cookies.CookieConsentMiddleware',  # Middleware de cookies
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'lavado_auto.middleware_active_user.ActiveUserMiddleware',  # Verificar usuarios activos
     'django.contrib.messages.middleware.MessageMiddleware',
     'lavado_auto.middleware.AdminCRUDMiddleware',  # Middleware reactivado
+    'lavado_auto.middleware_cookies.CookiePolicyMiddleware',   # Middleware de políticas de cookies
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_browser_reload.middleware.BrowserReloadMiddleware',
 ]
@@ -70,7 +81,9 @@ ROOT_URLCONF = 'autonew.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'lavado_auto', 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -78,6 +91,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'lavado_auto.context_processors.cookie_context',  # Context processor de cookies
             ],
         },
     },
@@ -89,6 +103,7 @@ WSGI_APPLICATION = 'autonew.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# Configuración simple de SQLite3 - Base de datos local
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -96,22 +111,35 @@ DATABASES = {
     }
 }
 
+# ============================================
+# CONFIGURACIÓN DE BASE DE DATOS EXTERNA (COMENTADA)
+# ============================================
+# Esta configuración era para conectar con base de datos externa (PostgreSQL/Supabase)
+# Se ha comentado para usar únicamente SQLite3
 
-#load_dotenv()
+# DATABASES = {}
+# if os.getenv('DATABASE_URL'):
+#     DATABASES['default'] = dj_database_url.parse(os.getenv('DATABASE_URL'))
+# else:
+#     DATABASES['default'] = {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
 
-#DATABASES = {
-   # 'default': {
-       # 'ENGINE': 'django.db.backends.postgresql',
-        #'NAME': 'postgres',
-        #'USER': os.getenv('DB_USER', 'postgres'),
-        #'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        #'HOST': os.getenv('DB_HOST', ''),
-        #'PORT': os.getenv('DB_PORT', '5432'),
-        #'OPTIONS': {
-         #   'sslmode': 'require',  # Supabase requiere SSL
-        #},
-    #}
-#}
+# Configuración PostgreSQL/Supabase (COMENTADA)
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'postgres',
+#         'USER': os.getenv('DB_USER', 'postgres'),
+#         'PASSWORD': os.getenv('DB_PASSWORD', ''),
+#         'HOST': os.getenv('DB_HOST', ''),
+#         'PORT': os.getenv('DB_PORT', '5432'),
+#         'OPTIONS': {
+#             'sslmode': 'require',  # Supabase requiere SSL
+#         },
+#     }
+# }
 
 
 # Password validation
@@ -137,7 +165,7 @@ USERNAME_FIELD = 'nombre_usuario'
 EMAIL_FIELD = 'correo'
 
 # Configuración para redirecciones de login
-LOGIN_URL = 'login'  # URL a la que se redirige cuando se requiere login
+LOGIN_URL = 'logincrud'  # URL a la que se redirige cuando se requiere login
 LOGIN_REDIRECT_URL = 'homecrud'  # URL a la que se redirige después de login exitoso
 LOGOUT_REDIRECT_URL = 'home'  # URL a la que se redirige después de logout
 
@@ -186,3 +214,130 @@ EMAIL_HOST_PASSWORD = 'ejxb aayi vydq omge'  # Usa contraseña de aplicación
 
 DEFAULT_FROM_EMAIL = 'AutoNew <noreply@autonew.com>'
 EMAIL_SUBJECT_PREFIX = '[AutoNew] '
+
+# =================================
+# CONFIGURACIÓN DE COOKIES PARA AUTONEW
+# =================================
+
+# Configuración de seguridad para cookies de sesión
+SESSION_COOKIE_SECURE = not DEBUG  # Solo HTTPS en producción
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_AGE = 14400  # 4 horas en segundos (4 * 60 * 60)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # La sesión expira según SESSION_COOKIE_AGE
+SESSION_SAVE_EVERY_REQUEST = True  # Actualiza la sesión en cada request (reinicia el timer de 4 horas)
+
+# Configuración de seguridad para cookies CSRF
+CSRF_COOKIE_SECURE = not DEBUG  # Solo HTTPS en producción
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+# Orígenes confiables para CSRF (para acceso desde internet)
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.serveo.net',  # Para serveo.net
+    'https://*.ngrok.io',    # Para ngrok
+    'https://*.loca.lt',     # Para localtunnel
+]
+
+# Configuración personalizada de cookies para AutoNew
+COOKIE_SETTINGS = {
+    'SECURE': not DEBUG,  # Solo HTTPS en producción
+    'HTTPONLY': False,    # Accesible via JavaScript para funcionalidades
+    'SAMESITE': 'Lax',   # Protección contra CSRF
+    'MAX_AGE': 365 * 24 * 60 * 60,  # 1 año para preferencias
+}
+
+# Configuración de cookies por categoría
+COOKIE_CATEGORIES = {
+    'necessary': {
+        'name': 'Cookies Necesarias',
+        'description': 'Esenciales para el funcionamiento del sitio',
+        'required': True,
+        'cookies': ['sessionid', 'csrftoken', 'cookie_consent', 'cookie_preferences']
+    },
+    'functional': {
+        'name': 'Cookies Funcionales', 
+        'description': 'Mejoran la experiencia del usuario',
+        'required': False,
+        'cookies': ['user_theme', 'user_language', 'user_preferences']
+    },
+    'analytics': {
+        'name': 'Cookies de Análisis',
+        'description': 'Nos ayudan a mejorar el sitio',
+        'required': False,
+        'cookies': ['_ga', '_gid', '_gat', 'analytics_consent']
+    },
+    'marketing': {
+        'name': 'Cookies de Marketing',
+        'description': 'Para publicidad personalizada',
+        'required': False,
+        'cookies': ['_fbp', '_fbc', 'marketing_consent', 'ad_preferences']
+    }
+}
+
+# ============================================
+# CONFIGURACIÓN DE CORREO ELECTRÓNICO
+# ============================================
+
+# Configuración para Gmail SMTP (recomendado)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'autonewcolombia@gmail.com'  # Cambia por tu email de Gmail
+EMAIL_HOST_PASSWORD = 'vmbzxlwtdrabbfiw'  # Cambia por tu contraseña de aplicación de Gmail
+DEFAULT_FROM_EMAIL = 'AutoNew <autonewcolombia@gmail.com>'  # Cambia por tu email
+
+# Configuración alternativa para desarrollo/testing (envía correos a consola)
+# Descomenta estas líneas si quieres ver los correos en la consola durante desarrollo
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# ============================================
+# CONFIGURACIÓN DE LOGGING PARA DEBUGGING
+# ============================================
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'django.log',
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'mail_handler': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'email.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django.core.mail': {
+            'handlers': ['mail_handler', 'console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'lavado_auto.views': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}

@@ -1,211 +1,23 @@
 import http.client
 import json
+import uuid
 
 from django.shortcuts import render,redirect, get_object_or_404
 from django.http import HttpResponse,JsonResponse
 from django.contrib import messages
-from django.db.models import Avg
-from .models import Usuario,Comentario,MensajeQueja,Reserva,Servicio,Empresa,EmpresaServicio, ReservaServicio, Plan, SuscripcionUsuario, HistorialPagosSuscripcion, PlanEmpresarial, SuscripcionEmpresarial, SolicitudServicioEmpresa
+from django.db.models import Avg, Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from .models import Usuario,Comentario,MensajeQueja,Reserva,Servicio,Empresa,EmpresaServicio, ReservaServicio, Plan, SuscripcionUsuario, HistorialPagosSuscripcion, PlanEmpresarial, SuscripcionEmpresarial, SolicitudServicioEmpresa, HistorialPagosSuscripcionEmpresarial, SolicitudContactoPlan
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from .forms import ComentarioForm, ReservaForm, UsuariosForm,ComentarioClienteForm,QuejaForm,ServicioForm,EmpresaForm,ProfileUserForm,EmpresaRegistroForm, EmpresaPerfilForm, AdminProfileForm
+from .forms import ComentarioForm, ReservaForm, UsuariosForm,ComentarioClienteForm,QuejaForm,ServicioForm,EmpresaForm,ProfileUserForm,EmpresaRegistroForm, EmpresaPerfilForm, AdminProfileForm, SolicitudContactoPlanForm
 from datetime import datetime,timedelta
 from django.utils import timezone
 from functools import wraps
 from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 from django.conf import settings
-import uuid
 
-# Decorador personalizado para verificar autenticación y rol de admin
-def admin_required(function):
-    @wraps(function)
-    def wrap(request, *args, **kwargs):
-        print(f"🔍 @admin_required verificando acceso a {function.__name__}")
-        
-        # Verificar si el usuario está autenticado
-        if not request.user.is_authenticated:
-            print(f"❌ Usuario no autenticado")
-            messages.error(request, 'Debes iniciar sesión como administrador para acceder a esta sección.')
-            return redirect('logincrud')
-        
-        print(f"👤 Usuario autenticado: {request.user.nombre_usuario}")
-        print(f"🎭 Rol del usuario: {getattr(request.user, 'rol', 'NO_ROL')}")
-        
-        # Verificar si el usuario es administrador
-        if not hasattr(request.user, 'rol'):
-            print(f"❌ Usuario no tiene atributo 'rol'")
-            messages.error(request, 'Error: El usuario no tiene un rol asignado.')
-            return redirect('logincrud')
-            
-        if request.user.rol != 'admin':
-            print(f"❌ Rol incorrecto: {request.user.rol}")
-            messages.error(request, f'Acceso denegado. Tu rol actual es "{request.user.rol}". Solo los administradores pueden acceder a esta sección.')
-            return redirect('logincrud')
-        
-        print(f"✅ Acceso permitido para {request.user.nombre_usuario} a {function.__name__}")
-        return function(request, *args, **kwargs)
-    return wrap
-
-def enviar_correo_confirmacion_reserva(usuario, empresa, servicios, fecha, hora, precio_total):
-    """
-    Envía un correo de confirmación de reserva al usuario
-    """
-    try:
-        # Formatear la fecha en español
-        dias_semana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
-        meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-        fecha_obj = datetime.strptime(str(fecha), '%Y-%m-%d')
-        fecha_formateada = f"{dias_semana[fecha_obj.weekday()]}, {fecha_obj.day} de {meses[fecha_obj.month - 1]} de {fecha_obj.year}"
-        
-        # Preparar lista de servicios
-        servicios_lista = []
-        for servicio in servicios:
-            servicios_lista.append({
-                'nombre': servicio.nombre_servicio,
-                'precio': servicio.precio
-            })
-        
-        # Contexto para el template del correo
-        context = {
-            'usuario': usuario,
-            'empresa': empresa,
-            'servicios': servicios_lista,
-            'fecha': fecha_formateada,
-            'hora': hora,
-            'precio_total': precio_total,
-            'fecha_original': fecha
-        }
-        
-        # Generar el contenido HTML del correo
-        html_message = f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <title>Confirmación de Reserva - AutoNew</title>
-            <style>
-                body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
-                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
-                .header {{ background-color: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }}
-                .content {{ background-color: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }}
-                .info-card {{ background-color: white; padding: 15px; margin: 15px 0; border-radius: 8px; border-left: 4px solid #2563eb; }}
-                .service-item {{ padding: 10px; margin: 5px 0; background-color: #e5f3ff; border-radius: 5px; }}
-                .total {{ font-size: 18px; font-weight: bold; color: #16a34a; text-align: right; margin-top: 20px; }}
-                .footer {{ text-align: center; margin-top: 30px; color: #666; font-size: 14px; }}
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <h1>¡Reserva Confirmada!</h1>
-                    <p>Tu cita ha sido reservada exitosamente</p>
-                </div>
-                
-                <div class="content">
-                    <p>Hola <strong>{usuario.nombre_completo}</strong>,</p>
-                    <p>Tu reserva ha sido confirmada. Aquí tienes los detalles:</p>
-                    
-                    <div class="info-card">
-                        <h3>📍 Punto de Lavado</h3>
-                        <p><strong>{empresa.nombre_empresa}</strong></p>
-                        <p>{empresa.direccion}</p>
-                        <p>Teléfono: {empresa.telefono}</p>
-                    </div>
-                    
-                    <div class="info-card">
-                        <h3>✂️ Servicios Reservados</h3>
-        """
-        
-        for servicio in servicios_lista:
-            html_message += f"""
-                        <div class="service-item">
-                            <strong>{servicio['nombre']}</strong> - ${servicio['precio']}
-                        </div>
-            """
-        
-        html_message += f"""
-                    </div>
-                    
-                    <div class="info-card">
-                        <h3>📅 Fecha y Hora</h3>
-                        <p><strong>{fecha_formateada}</strong></p>
-                        <p><strong>Hora:</strong> {hora}</p>
-                    </div>
-                    
-                    <div class="total">
-                        Total a Pagar: ${precio_total}
-                    </div>
-                    
-                    <div style="background-color: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px;">
-                        <p><strong>Importante:</strong></p>
-                        <ul>
-                            <li>Por favor, llega 10 minutos antes de tu cita</li>
-                            <li>Si necesitas cancelar o reprogramar, hazlo con al menos 24 horas de anticipación</li>
-                            <li>Trae una identificación válida</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="footer">
-                        <p>Gracias por elegir AutoNew</p>
-                        <p>Si tienes alguna pregunta, contáctanos.</p>
-                    </div>
-                </div>
-            </div>
-        </body>
-        </html>
-        """
-        
-        # Versión en texto plano
-        plain_message = f"""
-        ¡Reserva Confirmada!
-        
-        Hola {usuario.nombre_completo},
-        
-        Tu reserva ha sido confirmada. Aquí tienes los detalles:
-        
-        Punto de Lavado: {empresa.nombre_empresa}
-        Dirección: {empresa.direccion}
-        Teléfono: {empresa.telefono}
-        
-        Servicios Reservados:
-        """
-        
-        for servicio in servicios_lista:
-            plain_message += f"- {servicio['nombre']} - ${servicio['precio']}\n"
-        
-        plain_message += f"""
-        
-        Fecha: {fecha_formateada}
-        Hora: {hora}
-        
-        Total a Pagar: ${precio_total}
-        
-        Importante:
-        - Por favor, llega 10 minutos antes de tu cita
-        - Si necesitas cancelar o reprogramar, hazlo con al menos 24 horas de anticipación
-        - Trae una identificación válida
-        
-        Gracias por elegir AutoNew
-        """
-        
-        # Enviar el correo
-        send_mail(
-            subject='Confirmación de Reserva - AutoNew',
-            message=plain_message,
-            from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@autonew.com'),
-            recipient_list=[usuario.correo],
-            html_message=html_message,
-            fail_silently=False,
-        )
-        
-        return True
-        
-    except Exception as e:
-        print(f"Error enviando correo: {e}")
-        return False
 
 # Decorador personalizado para verificar autenticación de empresa
 def empresa_required(function):
@@ -235,13 +47,395 @@ def empresa_required(function):
             return redirect('logincrud')
     return wrap
 
+
+# Decorador personalizado para verificar autenticación de usuario regular
+def usuario_required(function):
+    @wraps(function)
+    def wrap(request, *args, **kwargs):
+        print(f"🔍 @usuario_required verificando acceso a {function.__name__}")
+        
+        # Verificar si el usuario está autenticado
+        if not request.user.is_authenticated:
+            print(f"❌ Usuario no autenticado")
+            messages.error(request, 'Debes iniciar sesión para acceder a esta sección.')
+            return redirect('logincrud')
+        
+        # Verificar que no sea una empresa autenticada
+        if request.session.get('es_empresa', False):
+            print(f"❌ Intento de acceso de empresa a sección de usuario")
+            messages.error(request, 'Esta sección es solo para usuarios. Por favor, cambia a tu cuenta de usuario.')
+            return redirect('logincrud')
+        
+        print(f"✅ Usuario autenticado: {request.user.username}")
+        return function(request, *args, **kwargs)
+    return wrap
+
+
+# Decorador simple para vistas de administrador (evita errores si no existía)
+def admin_required(function):
+    @wraps(function)
+    def wrap(request, *args, **kwargs):
+        # Intentar verificar sesión o usuario staff
+        if request.session.get('es_admin') or getattr(request.user, 'is_staff', False):
+            return function(request, *args, **kwargs)
+        messages.error(request, 'Debes ser administrador para acceder a esta sección.')
+        return redirect('logincrud')
+    return wrap
+
+
+# Función auxiliar para enviar correo de confirmación de reserva profesional
+def enviar_correo_confirmacion_reserva(usuario, empresa, servicios, fecha, hora, precio_total):
+    import logging
+    from django.conf import settings  # Importar al inicio para evitar UnboundLocalError
+    logger = logging.getLogger('lavado_auto.views')
+    
+    try:
+        import uuid
+        from datetime import datetime
+        
+        logger.info(f"🔄 Iniciando envío de correo de confirmación de reserva")
+        
+        nombre_usuario = getattr(usuario, 'nombre_completo', getattr(usuario, 'nombre_usuario', 'Cliente'))
+        correo_destino = getattr(usuario, 'correo', getattr(usuario, 'email', None))
+        
+        logger.info(f"📧 Usuario: {nombre_usuario}, Email: {correo_destino}")
+        
+        if not correo_destino:
+            logger.error(f"❌ No se encontró email para el usuario {nombre_usuario}")
+            print(f"❌ No se encontró email para el usuario {nombre_usuario}")
+            return False
+
+        # Generar número de reserva único
+        numero_reserva = f"ANW-{str(uuid.uuid4())[:8].upper()}"
+        fecha_actual = datetime.now().strftime("%d de %B de %Y")
+        
+        # Obtener información de la empresa
+        nombre_empresa = getattr(empresa, 'nombre', 'AutoNew')
+        direccion_empresa = getattr(empresa, 'direccion', '')
+        telefono_empresa = getattr(empresa, 'telefono', '')
+        
+        # Construir lista de servicios profesional
+        servicios_html = ""
+        servicios_text = ""
+        for i, servicio in enumerate(servicios, 1):
+            nombre_servicio = servicio.nombre_servicio if hasattr(servicio, 'nombre_servicio') else getattr(servicio, 'nombre', 'Servicio')
+            precio_servicio = getattr(servicio, 'precio', '0')
+            
+            servicios_html += f"""
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; color: #374151; font-weight: 500;">{i}. {nombre_servicio}</td>
+                <td style="padding: 12px 0; text-align: right; color: #374151; font-weight: 600;">${precio_servicio}</td>
+            </tr>"""
+            
+            servicios_text += f"{i}. {nombre_servicio} - ${precio_servicio}\n"
+
+        # HTML profesional con diseño responsive
+        html_message = f"""
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Confirmación de Reserva - AutoNew</title>
+        </head>
+        <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; line-height: 1.6;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                
+                <!-- Header -->
+                <div style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); padding: 30px 20px; text-align: center;">
+                    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">
+                        🚗 AutoNew
+                    </h1>
+                    <p style="color: #bfdbfe; margin: 8px 0 0 0; font-size: 16px;">
+                        Cuidamos tu vehículo con profesionalismo
+                    </p>
+                </div>
+
+                <!-- Confirmación -->
+                <div style="padding: 30px 20px; text-align: center; background-color: #f0fdf4; border-bottom: 3px solid #22c55e;">
+                    <div style="display: inline-block; background-color: #22c55e; color: white; padding: 12px 24px; border-radius: 50px; font-weight: 600; margin-bottom: 15px;">
+                        ✓ RESERVA CONFIRMADA
+                    </div>
+                    <h2 style="color: #15803d; margin: 10px 0 5px 0; font-size: 24px;">
+                        ¡Hola {nombre_usuario}!
+                    </h2>
+                    <p style="color: #166534; margin: 0; font-size: 16px;">
+                        Tu reserva ha sido procesada exitosamente
+                    </p>
+                </div>
+
+                <!-- Información de la Reserva -->
+                <div style="padding: 30px 20px;">
+                    <div style="background-color: #f1f5f9; border-left: 4px solid #3b82f6; padding: 20px; border-radius: 0 8px 8px 0; margin-bottom: 25px;">
+                        <h3 style="color: #1e40af; margin: 0 0 15px 0; font-size: 18px;">
+                            📋 Detalles de tu Cita
+                        </h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 8px 0; color: #64748b; font-weight: 500; width: 40%;">Número de Reserva:</td>
+                                <td style="padding: 8px 0; color: #1e293b; font-weight: 700; font-size: 16px;">{numero_reserva}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0; color: #64748b; font-weight: 500;">Fecha:</td>
+                                <td style="padding: 8px 0; color: #1e293b; font-weight: 600;">{fecha}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0; color: #64748b; font-weight: 500;">Hora:</td>
+                                <td style="padding: 8px 0; color: #1e293b; font-weight: 600;">{hora}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0; color: #64748b; font-weight: 500;">Empresa:</td>
+                                <td style="padding: 8px 0; color: #1e293b; font-weight: 600;">{nombre_empresa}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Servicios Contratados -->
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: #1e40af; margin: 0 0 15px 0; font-size: 18px;">
+                            🛠️ Servicios Contratados
+                        </h3>
+                        <table style="width: 100%; border-collapse: collapse; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+                            {servicios_html}
+                            <tr style="background-color: #f8fafc; border-top: 2px solid #3b82f6;">
+                                <td style="padding: 15px 0; color: #1e40af; font-weight: 700; font-size: 16px;">TOTAL A PAGAR:</td>
+                                <td style="padding: 15px 0; text-align: right; color: #1e40af; font-weight: 700; font-size: 18px;">${precio_total}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Información Importante -->
+                    <div style="background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+                        <h3 style="color: #92400e; margin: 0 0 15px 0; font-size: 16px;">
+                            ⚠️ Información Importante
+                        </h3>
+                        <ul style="color: #78350f; margin: 0; padding-left: 20px; font-size: 14px;">
+                            <li style="margin-bottom: 8px;">Llega <strong>10 minutos antes</strong> de tu cita programada</li>
+                            <li style="margin-bottom: 8px;">Trae tu vehículo <strong>preparado</strong> (retira objetos personales)</li>
+                            <li style="margin-bottom: 8px;">Presenta este correo o el <strong>número de reserva</strong></li>
+                            <li style="margin-bottom: 8px;">En caso de cancelación, hazlo con <strong>24 horas de anticipación</strong></li>
+                        </ul>
+                    </div>
+
+                    <!-- Ubicación -->
+                    {f'''<div style="background-color: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+                        <h3 style="color: #0c4a6e; margin: 0 0 10px 0; font-size: 16px;">
+                            📍 Ubicación
+                        </h3>
+                        <p style="color: #075985; margin: 0; font-weight: 500;">{direccion_empresa}</p>
+                        {f'<p style="color: #075985; margin: 5px 0 0 0;">📞 {telefono_empresa}</p>' if telefono_empresa else ''}
+                    </div>''' if direccion_empresa else ''}
+
+                    <!-- Botones de Acción -->
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="#" style="display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 0 10px 10px 0; font-size: 16px;">
+                            Ver Mis Reservas
+                        </a>
+                        <a href="#" style="display: inline-block; background-color: #f8fafc; color: #374151; border: 2px solid #d1d5db; padding: 13px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 0 10px 10px 0; font-size: 16px;">
+                            Contactar Soporte
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div style="background-color: #1e293b; padding: 25px 20px; text-align: center;">
+                    <p style="color: #94a3b8; margin: 0 0 10px 0; font-size: 14px;">
+                        Gracias por confiar en AutoNew para el cuidado de tu vehículo
+                    </p>
+                    <p style="color: #64748b; margin: 0; font-size: 12px;">
+                        © {datetime.now().year} AutoNew. Todos los derechos reservados.
+                    </p>
+                    <div style="margin-top: 15px;">
+                        <span style="color: #64748b; font-size: 12px;">
+                            Este correo fue enviado el {fecha_actual}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+
+        # Versión texto plano profesional
+        plain_message = f"""
+========================================
+     CONFIRMACIÓN DE RESERVA - AUTONEW
+========================================
+
+¡Hola {nombre_usuario}!
+
+Tu reserva ha sido confirmada exitosamente.
+
+DETALLES DE LA CITA:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Número de Reserva: {numero_reserva}
+• Fecha: {fecha}
+• Hora: {hora}
+• Empresa: {nombre_empresa}
+
+SERVICIOS CONTRATADOS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{servicios_text}
+TOTAL A PAGAR: ${precio_total}
+
+INFORMACIÓN IMPORTANTE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Llega 10 minutos antes de tu cita
+• Trae tu vehículo preparado (sin objetos personales)
+• Presenta este correo o el número de reserva
+• Para cancelaciones, hazlo con 24 horas de anticipación
+
+{f'UBICACIÓN: {direccion_empresa}' if direccion_empresa else ''}
+{f'TELÉFONO: {telefono_empresa}' if telefono_empresa else ''}
+
+Gracias por confiar en AutoNew para el cuidado de tu vehículo.
+
+© {datetime.now().year} AutoNew - Enviado el {fecha_actual}
+        """
+
+        # Registrar intento de envío
+        subject = f'✅ Reserva Confirmada #{numero_reserva} - AutoNew'
+        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@autonew.com')
+        
+        logger.info(f"📤 Enviando correo:")
+        logger.info(f"   - Asunto: {subject}")
+        logger.info(f"   - Desde: {from_email}")
+        logger.info(f"   - Para: {correo_destino}")
+        logger.info(f"   - Número de reserva: {numero_reserva}")
+        
+        print(f"📤 Enviando correo de confirmación:")
+        print(f"   - Usuario: {nombre_usuario}")
+        print(f"   - Email: {correo_destino}")
+        print(f"   - Asunto: {subject}")
+        print(f"   - Desde: {from_email}")
+        
+        # Verificar configuración de correo
+        if not hasattr(settings, 'EMAIL_HOST_USER') or not settings.EMAIL_HOST_USER:
+            logger.error("❌ EMAIL_HOST_USER no está configurado en settings.py")
+            print("❌ ERROR: EMAIL_HOST_USER no está configurado en settings.py")
+            print("   Por favor configura tu email y contraseña de aplicación de Gmail")
+            return False
+        
+        if settings.EMAIL_HOST_USER == 'tu-email@gmail.com':
+            logger.error("❌ EMAIL_HOST_USER tiene el valor por defecto. Debe configurarse con un email real")
+            print("❌ ERROR: Debes cambiar 'tu-email@gmail.com' por tu email real en settings.py")
+            return False
+
+        send_mail(
+            subject=subject,
+            message=plain_message,
+            from_email=from_email,
+            recipient_list=[correo_destino],
+            html_message=html_message,
+            fail_silently=False,  # Cambiado a False para ver errores
+        )
+        
+        logger.info(f"✅ Correo enviado exitosamente a {correo_destino}")
+        print(f"✅ Correo enviado exitosamente a {correo_destino}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"❌ Error enviando correo: {str(e)}")
+        print(f"❌ Error enviar_correo_confirmacion_reserva: {e}")
+        print(f"   Tipo de error: {type(e).__name__}")
+        
+        # Información adicional para debugging
+        if 'authentication' in str(e).lower():
+            print("💡 Posible problema de autenticación Gmail:")
+            print("   1. Verifica que el email y contraseña sean correctos")
+            print("   2. Usa una 'Contraseña de Aplicación' de Gmail, no tu contraseña normal")
+            print("   3. Asegúrate de tener habilitada la autenticación en 2 pasos")
+        elif 'connection' in str(e).lower():
+            print("💡 Posible problema de conexión:")
+            print("   1. Verifica tu conexión a internet")
+            print("   2. Comprueba la configuración del servidor SMTP")
+        
+        return False
+
 # Create your views here.
 
 
 
 def home(request):
     comentarios = Comentario.objects.all().order_by('-fecha')  # Recupera todos los comentarios
-    return render(request, 'home.html', {'comentarios': comentarios})
+    servicios_list = Servicio.objects.all().order_by('nombre_servicio')  # Recupera todos los servicios ordenados
+    empresas_list = Empresa.objects.filter(verificada=True).order_by('nombre_empresa')  # Recupera solo empresas verificadas ordenadas
+    
+    # Paginación para servicios - 8 por página
+    servicios_paginator = Paginator(servicios_list, 8)  # Mostrar 8 servicios por página
+    servicios_page = request.GET.get('servicios_page')
+    
+    try:
+        servicios = servicios_paginator.page(servicios_page)
+    except PageNotAnInteger:
+        # Si page no es un entero, mostrar la primera página
+        servicios = servicios_paginator.page(1)
+    except EmptyPage:
+        # Si page está fuera del rango, mostrar la última página
+        servicios = servicios_paginator.page(servicios_paginator.num_pages)
+    
+    # Paginación para empresas - 4 por página
+    empresas_paginator = Paginator(empresas_list, 4)  # Mostrar 4 empresas por página
+    empresas_page = request.GET.get('empresas_page')
+    
+    try:
+        empresas = empresas_paginator.page(empresas_page)
+    except PageNotAnInteger:
+        # Si page no es un entero, mostrar la primera página
+        empresas = empresas_paginator.page(1)
+    except EmptyPage:
+        # Si page está fuera del rango, mostrar la última página
+        empresas = empresas_paginator.page(empresas_paginator.num_pages)
+    
+    return render(request, 'home.html', {
+        'comentarios': comentarios, 
+        'servicios': servicios,
+        'empresas': empresas
+    })
+
+def servicios_ajax(request):
+    """Vista AJAX para cargar servicios paginados sin recargar la página"""
+    servicios_list = Servicio.objects.all().order_by('nombre_servicio')
+    
+    # Paginación para servicios - 8 por página
+    paginator = Paginator(servicios_list, 8)
+    page = request.GET.get('page')
+    
+    try:
+        servicios = paginator.page(page)
+    except PageNotAnInteger:
+        servicios = paginator.page(1)
+    except EmptyPage:
+        servicios = paginator.page(paginator.num_pages)
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # Respuesta AJAX - solo renderizar la sección de servicios
+        return render(request, 'servicios_partial.html', {'servicios': servicios})
+    else:
+        # Fallback - redireccionar a home si no es AJAX
+        return redirect('home')
+
+def empresas_ajax(request):
+    """Vista AJAX para cargar empresas paginadas sin recargar la página"""
+    empresas_list = Empresa.objects.filter(verificada=True).order_by('nombre_empresa')
+    
+    # Paginación para empresas - 4 por página
+    paginator = Paginator(empresas_list, 4)
+    page = request.GET.get('page')
+    
+    try:
+        empresas = paginator.page(page)
+    except PageNotAnInteger:
+        empresas = paginator.page(1)
+    except EmptyPage:
+        empresas = paginator.page(paginator.num_pages)
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # Respuesta AJAX - solo renderizar la sección de empresas
+        return render(request, 'empresas_partial.html', {'empresas': empresas})
+    else:
+        # Fallback - redireccionar a home si no es AJAX
+        return redirect('home')
 
 def empresas(request):
     if request.method == 'POST':
@@ -257,9 +451,11 @@ def empresas(request):
             empresa = form.save(commit=False)
             # Encriptar la contraseña
             empresa.contrasena = make_password(form.cleaned_data['contrasena'])
+            # Establecer explícitamente verificada como False (aunque es el default)
+            empresa.verificada = False
             empresa.save()
             
-            messages.success(request, f'¡Empresa "{empresa.nombre_empresa}" registrada exitosamente! Bienvenido a AutoNew.')
+            messages.success(request, f'¡Empresa "{empresa.nombre_empresa}" registrada exitosamente! Tu cuenta está pendiente de verificación por nuestro equipo. Bienvenido a AutoNew.')
             # Crear un nuevo formulario vacío después del registro exitoso
             form = EmpresaRegistroForm()
         else:
@@ -339,19 +535,37 @@ def login(request):
             nombre_usuario = request.POST['nombre_usuario']
             contrasena = request.POST['contrasena']
             
-            # Verificar si el usuario existe y está activo
+            # Verificar si el usuario existe
             try:
                 usuario_check = Usuario.objects.get(nombre_usuario=nombre_usuario)
+                
+                # Verificar si el usuario está activo
                 if not usuario_check.is_active:
                     messages.error(request, 'Tu cuenta ha sido desactivada. Contacta al administrador para más información.')
                     return redirect('login')
+                
+                # Verificar si puede intentar hacer login (no está bloqueado)
+                if not usuario_check.can_attempt_login():
+                    if usuario_check.lockout_time:
+                        time_since_lockout = timezone.now() - usuario_check.lockout_time
+                        remaining_minutes = max(0, 30 - int(time_since_lockout.total_seconds() / 60))
+                        messages.error(request, f'Tu cuenta está temporalmente bloqueada por seguridad debido a múltiples intentos fallidos. Intenta nuevamente en {remaining_minutes} minutos.')
+                    else:
+                        messages.error(request, 'Tu cuenta está temporalmente bloqueada por seguridad. Contacta al administrador.')
+                    return redirect('login')
+                
             except Usuario.DoesNotExist:
-                pass  # El usuario no existe, se manejará en la autenticación
+                # Si el usuario no existe, mostrar mensaje genérico
+                messages.error(request, 'Usuario o contraseña incorrectos.')
+                return redirect('login')
             
             # Autenticar usuario
             usuario = authenticate(request, username=nombre_usuario, password=contrasena)
             
             if usuario is not None:
+                # Login exitoso - resetear intentos fallidos
+                usuario.reset_failed_attempts()
+                
                 # Verificar nuevamente que el usuario esté activo (por seguridad)
                 if usuario.is_active:
                     auth_login(request, usuario)
@@ -363,7 +577,25 @@ def login(request):
                     messages.error(request, 'Tu cuenta ha sido desactivada. Contacta al administrador para más información.')
                     return redirect('login')
             else:
-                messages.error(request, 'Usuario o contraseña incorrectos.')
+                # Login fallido - incrementar intentos fallidos
+                try:
+                    usuario_fallido = Usuario.objects.get(nombre_usuario=nombre_usuario)
+                    usuario_fallido.increment_failed_attempts()
+                    
+                    # Mostrar mensaje específico según los intentos restantes
+                    remaining_attempts = usuario_fallido.get_remaining_attempts()
+                    
+                    if usuario_fallido.is_locked_out:
+                        messages.error(request, 'Has excedido el número máximo de intentos de login (6). Tu cuenta ha sido bloqueada temporalmente por 30 minutos por seguridad.')
+                    elif remaining_attempts <= 3 and remaining_attempts > 0:
+                        messages.warning(request, f'Usuario o contraseña incorrectos. Te quedan {remaining_attempts} intentos antes de que tu cuenta sea bloqueada temporalmente.')
+                    else:
+                        messages.error(request, 'Usuario o contraseña incorrectos.')
+                        
+                except Usuario.DoesNotExist:
+                    # Si el usuario no existe, mostrar mensaje genérico
+                    messages.error(request, 'Usuario o contraseña incorrectos.')
+                
                 return redirect('login')
     
     # GET: Mostrar la página de login/registro
@@ -433,15 +665,63 @@ def nosotros(request):
 
 def servicios(request):
     comentarios = Comentario.objects.all().order_by('-fecha')  # Recupera todos los comentarios
-    return render(request, 'servicios/servicios.html', {'comentarios': comentarios})
+    servicios_list = Servicio.objects.all().order_by('nombre_servicio')  # Obtener todos los servicios disponibles
+    
+    # Paginación para servicios - 6 por página
+    servicios_paginator = Paginator(servicios_list, 6)  # Mostrar 6 servicios por página
+    servicios_page = request.GET.get('page')
+    
+    try:
+        servicios = servicios_paginator.page(servicios_page)
+    except PageNotAnInteger:
+        # Si page no es un entero, mostrar la primera página
+        servicios = servicios_paginator.page(1)
+    except EmptyPage:
+        # Si page está fuera del rango, mostrar la última página
+        servicios = servicios_paginator.page(servicios_paginator.num_pages)
+    
+    return render(request, 'servicios/servicios.html', {'comentarios': comentarios, 'servicios': servicios})
 
+def servicios_page_ajax(request):
+    """Vista AJAX para cargar servicios paginados en la página de servicios sin recargar la página"""
+    servicios_list = Servicio.objects.all().order_by('nombre_servicio')
+    
+    # Paginación para servicios - 6 por página
+    paginator = Paginator(servicios_list, 6)
+    page = request.GET.get('page')
+    
+    try:
+        servicios = paginator.page(page)
+    except PageNotAnInteger:
+        servicios = paginator.page(1)
+    except EmptyPage:
+        servicios = paginator.page(paginator.num_pages)
+    
+    # Siempre renderizar el template parcial para AJAX
+    return render(request, 'servicios/servicios_partial.html', {'servicios': servicios})
 
+@usuario_required
 def reservas(request):
     ahora = timezone.now()
     hoy = ahora.date()
-    servicios = Servicio.objects.all()  # Obtener todos los servicios disponibles
-    empresas = Empresa.objects.filter(verificada=True)    # Obtener solo las empresas verificadas
+    servicios = Servicio.objects.all().order_by('nombre_servicio')  # Obtener todos los servicios disponibles
+    empresas = Empresa.objects.filter(verificada=True).order_by('nombre_empresa')    # Obtener solo las empresas verificadas
     empresaservicio = EmpresaServicio.objects.all()
+    
+    # Crear un diccionario con el conteo de empresas por servicio
+    conteo_empresas_por_servicio = {}
+    for servicio in servicios:
+        conteo = EmpresaServicio.objects.filter(
+            servicio=servicio,
+            empresa__verificada=True
+        ).count()
+        conteo_empresas_por_servicio[servicio.id_servicio] = conteo
+    
+    # Debug: Verificar que las empresas existen
+    print(f"🔍 Empresas encontradas: {empresas.count()}")
+    print(f"🔍 Total servicios: {servicios.count()}")
+    print(f"🔍 Total relaciones empresa-servicio: {empresaservicio.count()}")
+    print(f"🔍 Conteo de empresas por servicio: {conteo_empresas_por_servicio}")
     
     # Obtener el usuario actual (si está autenticado)
     usuario = request.user if request.user.is_authenticated else None
@@ -466,18 +746,24 @@ def reservas(request):
         print(f"🔍 POST request recibido para reservas")
         print(f"📝 POST data: {dict(request.POST)}")
         
-        opcion_empresa_id = request.POST.get('empresa')
+        # Obtener datos del formulario paso a paso
+        servicios_ids_str = request.POST.get('servicios_ids', '')  # IDs separados por coma
+        empresa_id = request.POST.get('empresa_id')
         fecha_seleccionada = request.POST.get('fecha')
-        hora_12h = request.POST.get('hora')  # Hora en formato 12h con AM/PM
-        servicios_ids = request.POST.getlist('servicios')  # Cambio: obtener lista de servicios
+        hora_seleccionada = request.POST.get('hora')  # Ya viene en formato 24h desde el frontend
         
-        print(f"🏢 Empresa ID: {opcion_empresa_id}")
+        print(f"🏢 Empresa ID: {empresa_id}")
         print(f"📅 Fecha: {fecha_seleccionada}")
-        print(f"🕐 Hora: {hora_12h}")
-        print(f"🛠️ Servicios IDs: {servicios_ids}")
+        print(f"🕐 Hora: {hora_seleccionada}")
+        print(f"🛠️ Servicios IDs string: {servicios_ids_str}")
         
-        # Convertir hora de 12h a 24h para procesamiento interno
-        hora = convertir_hora_24h(hora_12h)
+        # Convertir string de IDs a lista
+        try:
+            servicios_ids = [int(id.strip()) for id in servicios_ids_str.split(',') if id.strip()]
+        except (ValueError, AttributeError):
+            servicios_ids = []
+        
+        print(f"🛠️ Servicios IDs list: {servicios_ids}")
         
         # Verificar si es una petición AJAX
         is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
@@ -485,6 +771,24 @@ def reservas(request):
         # Validar que se hayan seleccionado servicios
         if not servicios_ids:
             error_msg = "Debes seleccionar al menos un servicio."
+            if is_ajax:
+                response = JsonResponse({'success': False, 'message': error_msg})
+                response['Content-Type'] = 'application/json'
+                return response
+            messages.error(request, error_msg)
+            return redirect('reservas')
+        
+        # Validar que se haya seleccionado empresa
+        if not empresa_id:
+            error_msg = "Debes seleccionar una empresa."
+            if is_ajax:
+                return JsonResponse({'success': False, 'message': error_msg})
+            messages.error(request, error_msg)
+            return redirect('reservas')
+        
+        # Validar que se haya seleccionado fecha y hora
+        if not fecha_seleccionada or not hora_seleccionada:
+            error_msg = "Debes seleccionar fecha y hora para la reserva."
             if is_ajax:
                 return JsonResponse({'success': False, 'message': error_msg})
             messages.error(request, error_msg)
@@ -502,176 +806,196 @@ def reservas(request):
             messages.error(request, error_msg)
             return redirect('reservas')
         
-        if opcion_empresa_id:
-            try:
-                empresa = Empresa.objects.get(id_empresa=opcion_empresa_id)
-            except Empresa.DoesNotExist:
-                error_msg = "El punto seleccionado no existe."
-                if is_ajax:
-                    return JsonResponse({'success': False, 'message': error_msg})
-                messages.error(request, error_msg)
-                return redirect('reservas')
-            
-            # Filtrar los servicios disponibles para la empresa seleccionada
-            servicios_filtrados = Servicio.objects.filter(
-                id_servicio__in=EmpresaServicio.objects.filter(empresa=empresa).values('servicio')
-            )
-            
-            if not servicios_filtrados:
-                error_msg = "No hay servicios disponibles para la empresa seleccionada."
-                if is_ajax:
-                    return JsonResponse({'success': False, 'message': error_msg})
-                messages.error(request, error_msg)
-                return redirect('reservas')
-            
-            # Verificar que todos los servicios seleccionados estén disponibles para esta empresa
-            servicios_no_disponibles = []
-            for servicio in servicios_seleccionados:
-                if servicio not in servicios_filtrados:
-                    servicios_no_disponibles.append(servicio.nombre_servicio)
-            
-            if servicios_no_disponibles:
-                error_msg = f"Los siguientes servicios no están disponibles para esta empresa: {', '.join(servicios_no_disponibles)}"
-                if is_ajax:
-                    return JsonResponse({'success': False, 'message': error_msg})
-                messages.error(request, error_msg)
-                return redirect('reservas')
-            
-            # Verificar si la fecha y hora están ocupadas para esta empresa específica
-            fecha_obj = datetime.strptime(fecha_seleccionada, '%Y-%m-%d').date()
-            
-            # Verificación más específica: buscar reservas existentes para esta empresa y fecha/hora
-            reserva_existente = Reserva.objects.filter(
-                empresa=empresa,
-                fecha=fecha_obj,
-                hora=hora
-            ).exists()
-            
-            print(f"🔍 Verificando disponibilidad:")
-            print(f"   - Empresa: {empresa.nombre_empresa}")
-            print(f"   - Fecha: {fecha_obj}")
-            print(f"   - Hora: {hora} (convertida de {hora_12h})")
-            print(f"   - ¿Existe reserva?: {reserva_existente}")
-            
-            if reserva_existente:
-                error_msg = f"Lo siento, la fecha {fecha_seleccionada} a las {hora_12h} ya está ocupada en {empresa.nombre_empresa}."
-                print(f"❌ {error_msg}")
-                if is_ajax:
-                    return JsonResponse({'success': False, 'message': error_msg})
-                messages.error(request, error_msg)
-                return redirect('reservas')
-            
-            # Verificar si el usuario tiene una suscripción activa
-            suscripcion_activa = None
-            tiene_suscripcion = False
-            usar_suscripcion = False
-            
-            try:
-                from .models import SuscripcionUsuario
-                suscripcion_activa = SuscripcionUsuario.objects.filter(
-                    usuario=usuario,
-                    estado='activa'
-                ).first()
-                
-                if suscripcion_activa and suscripcion_activa.esta_activa():
-                    tiene_suscripcion = True
-                    # Verificar si puede usar servicios de la suscripción
-                    if suscripcion_activa.puede_usar_servicio():
-                        usar_suscripcion = True
-                    else:
-                        print(f"⚠️ Usuario {usuario.nombre_usuario} ha agotado sus servicios del mes. Servicios restantes: {suscripcion_activa.servicios_restantes()}")
-                        # No bloquear, solo usar pago individual
-                        usar_suscripcion = False
-            except Exception as e:
-                print(f"Error verificando suscripción: {e}")
-            
-            # Crear la reserva
-            reserva = Reserva(
-                empresa=empresa,
-                fecha=fecha_seleccionada,
-                hora=hora,
-                usuario=usuario,
-                suscripcion_utilizada=suscripcion_activa if usar_suscripcion else None,
-                es_pago_individual=not usar_suscripcion
-            )
-            reserva.save()
-            
-            # Crear las relaciones entre reserva y servicios (múltiples)
-            precio_total = 0
-            servicios_nombres = []
-            for servicio in servicios_seleccionados:
-                ReservaServicio.objects.create(reserva=reserva, servicio=servicio)
-                precio_total += servicio.precio
-                servicios_nombres.append(servicio.nombre_servicio)
-            
-            # Si usa suscripción, incrementar el contador de servicios utilizados
-            if usar_suscripcion and suscripcion_activa:
-                suscripcion_activa.servicios_utilizados_mes += len(servicios_seleccionados)
-                suscripcion_activa.save()
-                print(f"✅ Servicios utilizados actualizados: {suscripcion_activa.servicios_utilizados_mes}/{suscripcion_activa.plan.cantidad_servicios_mes if suscripcion_activa.plan.cantidad_servicios_mes > 0 else 'Ilimitado'}")
-            else:
-                print(f"💰 Reserva creada con pago individual. Precio total: ${precio_total}")
-            
-            # Enviar correo de confirmación
-            try:
-                correo_enviado = enviar_correo_confirmacion_reserva(
-                    usuario=usuario,
-                    empresa=empresa,
-                    servicios=servicios_seleccionados,
-                    fecha=fecha_seleccionada,
-                    hora=hora_12h,
-                    precio_total=precio_total
-                )
-                if correo_enviado:
-                    print(f"✅ Correo de confirmación enviado a {usuario.correo}")
-                else:
-                    print(f"❌ Error enviando correo a {usuario.correo}")
-            except Exception as e:
-                print(f"❌ Excepción enviando correo: {e}")
-            
-            # Crear mensaje de éxito personalizado
-            if len(servicios_nombres) == 1:
-                base_msg = f"Tu cita para {servicios_nombres[0]} ha sido reservada para el {fecha_seleccionada} a las {hora_12h}."
-            else:
-                base_msg = f"Tu cita para {len(servicios_nombres)} servicios ha sido reservada para el {fecha_seleccionada} a las {hora_12h}."
-            
-            # Agregar información sobre el tipo de pago
-            if usar_suscripcion:
-                servicios_restantes = suscripcion_activa.servicios_restantes()
-                success_msg = f"{base_msg} ✅ Pagado con tu suscripción. Te quedan {servicios_restantes} servicios este mes."
-            else:
-                if tiene_suscripcion:
-                    success_msg = f"{base_msg} 💰 Has agotado tus servicios del mes, por lo que esta reserva se cobrará individualmente (${precio_total})."
-                else:
-                    success_msg = f"{base_msg} 💰 Total a pagar: ${precio_total}."
-            
-            if is_ajax:
-                return JsonResponse({
-                    'success': True, 
-                    'message': success_msg,
-                    'reserva': {
-                        'empresa': empresa.nombre_empresa,
-                        'servicios': servicios_nombres,
-                        'precio_total': str(precio_total),
-                        'fecha': fecha_seleccionada,
-                        'hora': hora_12h,
-                        'servicios_detalle': [
-                            {
-                                'nombre': servicio.nombre_servicio,
-                                'precio': str(servicio.precio)
-                            } for servicio in servicios_seleccionados
-                        ]
-                    }
-                })
-            
-            messages.success(request, success_msg)
-            return redirect('reservas')
-        else:
-            error_msg = "No se ha seleccionado un punto."
+        # Verificar que la empresa exista
+        try:
+            empresa = Empresa.objects.get(id_empresa=empresa_id, verificada=True)
+        except Empresa.DoesNotExist:
+            error_msg = "La empresa seleccionada no existe o no está verificada."
             if is_ajax:
                 return JsonResponse({'success': False, 'message': error_msg})
             messages.error(request, error_msg)
             return redirect('reservas')
+        
+        # Verificar que la empresa ofrezca todos los servicios seleccionados
+        servicios_empresa = Servicio.objects.filter(
+            id_servicio__in=EmpresaServicio.objects.filter(empresa=empresa).values('servicio')
+        )
+        
+        servicios_no_disponibles = []
+        for servicio in servicios_seleccionados:
+            if servicio not in servicios_empresa:
+                servicios_no_disponibles.append(servicio.nombre_servicio)
+        
+        if servicios_no_disponibles:
+            error_msg = f"Los siguientes servicios no están disponibles en {empresa.nombre_empresa}: {', '.join(servicios_no_disponibles)}"
+            if is_ajax:
+                return JsonResponse({'success': False, 'message': error_msg})
+            messages.error(request, error_msg)
+            return redirect('reservas')
+        
+        # Validar formato de fecha
+        try:
+            fecha_obj = datetime.strptime(fecha_seleccionada, '%Y-%m-%d').date()
+        except ValueError:
+            error_msg = "Formato de fecha inválido."
+            if is_ajax:
+                return JsonResponse({'success': False, 'message': error_msg})
+            messages.error(request, error_msg)
+            return redirect('reservas')
+        
+        # Validar que la fecha no sea en el pasado
+        if fecha_obj < hoy:
+            error_msg = "No puedes reservar una fecha en el pasado."
+            if is_ajax:
+                return JsonResponse({'success': False, 'message': error_msg})
+            messages.error(request, error_msg)
+            return redirect('reservas')
+        
+        # Validar formato de hora
+        try:
+            hora_obj = datetime.strptime(hora_seleccionada, '%H:%M').time()
+        except ValueError:
+            error_msg = "Formato de hora inválido."
+            if is_ajax:
+                return JsonResponse({'success': False, 'message': error_msg})
+            messages.error(request, error_msg)
+            return redirect('reservas')
+        
+        # Verificar si la fecha y hora están ocupadas para esta empresa específica
+        reserva_existente = Reserva.objects.filter(
+            empresa=empresa,
+            fecha=fecha_obj,
+            hora=hora_obj
+        ).exists()
+        
+        print(f"🔍 Verificando disponibilidad:")
+        print(f"   - Empresa: {empresa.nombre_empresa}")
+        print(f"   - Fecha: {fecha_obj}")
+        print(f"   - Hora: {hora_obj}")
+        print(f"   - ¿Existe reserva?: {reserva_existente}")
+        
+        if reserva_existente:
+            error_msg = f"Lo siento, la fecha {fecha_seleccionada} a las {hora_seleccionada} ya está ocupada en {empresa.nombre_empresa}."
+            print(f"❌ {error_msg}")
+            if is_ajax:
+                return JsonResponse({'success': False, 'message': error_msg})
+            messages.error(request, error_msg)
+            return redirect('reservas')
+            
+        # Verificar si el usuario tiene una suscripción activa
+        suscripcion_activa = None
+        tiene_suscripcion = False
+        usar_suscripcion = False
+        
+        try:
+            from .models import SuscripcionUsuario
+            suscripcion_activa = SuscripcionUsuario.objects.filter(
+                usuario=usuario,
+                estado='activa'
+            ).first()
+            
+            if suscripcion_activa and suscripcion_activa.esta_activa():
+                tiene_suscripcion = True
+                # Verificar si puede usar servicios de la suscripción
+                if suscripcion_activa.puede_usar_servicio():
+                    usar_suscripcion = True
+                else:
+                    print(f"⚠️ Usuario {usuario.nombre_usuario} ha agotado sus servicios del mes. Servicios restantes: {suscripcion_activa.servicios_restantes()}")
+                    # No bloquear, solo usar pago individual
+                    usar_suscripcion = False
+        except Exception as e:
+            print(f"Error verificando suscripción: {e}")
+        
+        # Crear la reserva
+        reserva = Reserva(
+            empresa=empresa,
+            fecha=fecha_obj,
+            hora=hora_obj,
+            usuario=usuario,
+            suscripcion_utilizada=suscripcion_activa if usar_suscripcion else None,
+            es_pago_individual=not usar_suscripcion
+        )
+        reserva.save()
+        
+        # Crear las relaciones entre reserva y servicios (múltiples)
+        precio_total = 0
+        servicios_nombres = []
+        for servicio in servicios_seleccionados:
+            ReservaServicio.objects.create(reserva=reserva, servicio=servicio)
+            precio_total += servicio.precio
+            servicios_nombres.append(servicio.nombre_servicio)
+        
+        # Si usa suscripción, incrementar el contador de servicios utilizados
+        if usar_suscripcion and suscripcion_activa:
+            suscripcion_activa.servicios_utilizados_mes += len(servicios_seleccionados)
+            suscripcion_activa.save()
+            print(f"✅ Servicios utilizados actualizados: {suscripcion_activa.servicios_utilizados_mes}/{suscripcion_activa.plan.cantidad_servicios_mes if suscripcion_activa.plan.cantidad_servicios_mes > 0 else 'Ilimitado'}")
+        else:
+            print(f"💰 Reserva creada con pago individual. Precio total: ${precio_total}")
+        
+        # Enviar correo de confirmación
+        numero_reserva = None
+        try:
+            correo_enviado = enviar_correo_confirmacion_reserva(
+                usuario=usuario,
+                empresa=empresa,
+                servicios=servicios_seleccionados,
+                fecha=fecha_seleccionada,
+                hora=hora_seleccionada,
+                precio_total=precio_total
+            )
+            if correo_enviado:
+                # El número de reserva se genera dentro de la función de correo
+                import uuid
+                numero_reserva = f"ANW-{str(uuid.uuid4())[:8].upper()}"
+                print(f"✅ Correo de confirmación enviado a {usuario.correo}")
+            else:
+                print(f"❌ Error enviando correo a {usuario.correo}")
+        except Exception as e:
+            print(f"❌ Excepción enviando correo: {e}")
+        
+        # Crear mensaje de éxito personalizado
+        if len(servicios_nombres) == 1:
+            base_msg = f"Tu cita para {servicios_nombres[0]} ha sido reservada para el {fecha_seleccionada} a las {hora_seleccionada}."
+        else:
+            base_msg = f"Tu cita para {len(servicios_nombres)} servicios ha sido reservada para el {fecha_seleccionada} a las {hora_seleccionada}."
+        
+        # Agregar información sobre el tipo de pago
+        if usar_suscripcion:
+            servicios_restantes = suscripcion_activa.servicios_restantes()
+            success_msg = f"{base_msg} ✅ Pagado con tu suscripción. Te quedan {servicios_restantes} servicios este mes."
+        else:
+            if tiene_suscripcion:
+                success_msg = f"{base_msg} 💰 Has agotado tus servicios del mes, por lo que esta reserva se cobrará individualmente (${precio_total})."
+            else:
+                success_msg = f"{base_msg} 💰 Total a pagar: ${precio_total}."
+        
+        if is_ajax:
+            response = JsonResponse({
+                'success': True, 
+                'message': success_msg,
+                'reserva': {
+                    'id': reserva.id_reserva,
+                    'numero_reserva': numero_reserva or f"ANW-{reserva.id_reserva:08d}",
+                    'empresa': empresa.nombre_empresa,
+                    'servicios': servicios_nombres,
+                    'precio_total': str(precio_total),
+                    'fecha': fecha_seleccionada,
+                    'hora': hora_seleccionada,
+                    'servicios_detalle': [
+                        {
+                            'nombre': servicio.nombre_servicio,
+                            'precio': str(servicio.precio)
+                        } for servicio in servicios_seleccionados
+                    ]
+                }
+            })
+            # Asegurar que el Content-Type sea correcto
+            response['Content-Type'] = 'application/json'
+            return response
+        
+        messages.success(request, success_msg)
+        return redirect('citas')  # Redirigir a la página de citas del usuario
     
     # Generar horas disponibles
     horas_disponibles = {}
@@ -728,10 +1052,12 @@ def reservas(request):
         'empresas': empresas,
         'servicios': servicios,
         'empresaservicio': empresaservicio,
+        'conteo_empresas_por_servicio': conteo_empresas_por_servicio,
         'suscripcion_info': suscripcion_info
     })
 
 # Vista para obtener servicios por empresa (AJAX)
+@usuario_required
 def obtener_servicios(request):
     empresa_id = request.GET.get('empresa_id')
     if empresa_id:
@@ -758,7 +1084,65 @@ def obtener_servicios(request):
             return JsonResponse({'servicios': [], 'empresa': None})
     return JsonResponse({'servicios': [], 'empresa': None})
 
+# Nueva vista para obtener empresas filtradas por servicios (AJAX)
+@usuario_required
+def obtener_empresas_por_servicios(request):
+    """
+    Obtiene las empresas que ofrecen todos los servicios seleccionados
+    """
+    servicios_ids = request.GET.getlist('servicios[]')  # Lista de IDs de servicios
+    
+    print(f"🔍 Buscando empresas para servicios: {servicios_ids}")
+    
+    if not servicios_ids:
+        return JsonResponse({'empresas': [], 'message': 'No se han seleccionado servicios'})
+    
+    try:
+        # Convertir a enteros
+        servicios_ids = [int(sid) for sid in servicios_ids]
+        
+        # Verificar que todos los servicios existan
+        servicios_validos = Servicio.objects.filter(id_servicio__in=servicios_ids)
+        if len(servicios_validos) != len(servicios_ids):
+            return JsonResponse({'empresas': [], 'error': 'Algunos servicios no existen'})
+        
+        # Obtener empresas que tienen TODOS los servicios seleccionados
+        empresas = Empresa.objects.filter(verificada=True)
+        
+        # Filtrar empresas que ofrecen todos los servicios
+        for servicio_id in servicios_ids:
+            empresas = empresas.filter(
+                id_empresa__in=EmpresaServicio.objects.filter(
+                    servicio_id=servicio_id
+                ).values('empresa_id')
+            )
+        
+        print(f"✅ Empresas encontradas que ofrecen todos los servicios: {empresas.count()}")
+        
+    except (ValueError, TypeError) as e:
+        print(f"❌ Error procesando servicios_ids: {e}")
+        return JsonResponse({'empresas': [], 'error': 'IDs de servicios inválidos'})
+    
+    # Preparar datos de respuesta con información completa
+    empresas_data = []
+    for empresa in empresas:
+        empresas_data.append({
+            'id': empresa.id_empresa,
+            'nombre': empresa.nombre_empresa,
+            'direccion': empresa.direccion,
+            'telefono': empresa.telefono,
+            'email': empresa.email,
+            'verificada': empresa.verificada
+        })
+    
+    return JsonResponse({
+        'empresas': empresas_data,
+        'total': len(empresas_data),
+        'servicios_solicitados': servicios_ids
+    })
+
 # Vista para obtener información de la empresa (AJAX)
+@usuario_required
 def obtener_info_empresa(request):
     empresa_id = request.GET.get('empresa_id')
     if empresa_id:
@@ -824,71 +1208,85 @@ def convertir_hora_24h(hora_12h):
         return hora_12h  # Retorna la hora original si hay error
 
 # Vista para obtener horas disponibles (AJAX)
+@usuario_required
 def get_horas(request):
     empresa_id = request.GET.get('empresa_id')
-    servicio_id = request.GET.get('servicio_id')
     fecha_str = request.GET.get('fecha')
     
-    print(f"🕐 get_horas llamado con empresa_id={empresa_id}, servicio_id={servicio_id}, fecha={fecha_str}")
+    print(f"🕐 get_horas llamado con empresa_id={empresa_id}, fecha={fecha_str}")
     
-    if empresa_id and servicio_id and fecha_str:
-        try:
-            fecha_obj = datetime.strptime(fecha_str, '%Y-%m-%d').date()
-            print(f"📅 Fecha objeto: {fecha_obj}")
+    if not empresa_id or not fecha_str:
+        print(f"❌ Parámetros faltantes: empresa_id={empresa_id}, fecha={fecha_str}")
+        return JsonResponse({'success': False, 'horas_disponibles': [], 'error': 'Parámetros faltantes'})
+    
+    try:
+        # Verificar que la empresa existe
+        empresa = Empresa.objects.get(id_empresa=empresa_id, verificada=True)
+        fecha_obj = datetime.strptime(fecha_str, '%Y-%m-%d').date()
+        print(f"📅 Fecha objeto: {fecha_obj}")
+        
+        # Verificar que la fecha no esté en el pasado
+        if fecha_obj < timezone.now().date():
+            print(f"❌ Fecha en el pasado")
+            return JsonResponse({'success': False, 'horas_disponibles': [], 'message': 'No se pueden reservar fechas pasadas'})
+
+        # Obtener TODAS las reservas para esta empresa y fecha
+        reservas_existentes = Reserva.objects.filter(
+            empresa=empresa,
+            fecha=fecha_obj
+        )
+        
+        print(f"🔍 Reservas existentes para empresa {empresa.nombre_empresa} en fecha {fecha_obj}: {reservas_existentes.count()}")
+        
+        # Obtener todas las horas ocupadas
+        horas_ocupadas = set()
+        for reserva in reservas_existentes:
+            hora_str = reserva.hora.strftime('%H:%M')
+            horas_ocupadas.add(hora_str)
+            print(f"⏰ Hora ocupada: {hora_str}")
+
+        print(f"🚫 Total horas ocupadas: {horas_ocupadas}")
+
+        horas_disponibles = []
+        ahora = timezone.now()
+        
+        # Generar horas de 8:00 AM a 6:00 PM (horario comercial)
+        for h in range(8, 19):  # 8:00 a 18:00 (6:00 PM)
+            hora_formateada_24h = f"{h:02}:00"
             
-            if fecha_obj < timezone.now().date():
-                print(f"❌ Fecha en el pasado")
-                return JsonResponse({'horas': []})
-
-            # Obtener TODAS las reservas para esta empresa y fecha (no solo del servicio específico)
-            reservas_existentes = Reserva.objects.filter(
-                empresa_id=empresa_id,
-                fecha=fecha_obj
-            )
+            # Si es hoy, no mostrar horas que ya pasaron
+            if fecha_obj == ahora.date() and h <= ahora.hour:
+                print(f"⏳ Hora {hora_formateada_24h} ya pasó")
+                continue
             
-            print(f"🔍 Reservas existentes para empresa {empresa_id} en fecha {fecha_obj}: {reservas_existentes.count()}")
-            
-            # Obtener todas las horas ocupadas (independientemente del servicio)
-            horas_ocupadas = set()
-            for reserva in reservas_existentes:
-                hora_str = reserva.hora.strftime('%H:%M')
-                horas_ocupadas.add(hora_str)
-                print(f"⏰ Hora ocupada: {hora_str}")
+            # Si la hora no está ocupada, agregarla
+            if hora_formateada_24h not in horas_ocupadas:
+                # Crear formato para el frontend con display y value
+                horas_disponibles.append({
+                    'value': hora_formateada_24h,
+                    'display': hora_formateada_24h
+                })
+                print(f"✅ Hora disponible: {hora_formateada_24h}")
+            else:
+                print(f"❌ Hora ocupada: {hora_formateada_24h}")
 
-            print(f"🚫 Total horas ocupadas: {horas_ocupadas}")
+        print(f"📋 Horas disponibles finales: {[h['value'] for h in horas_disponibles]}")
+        return JsonResponse({
+            'success': True,
+            'horas_disponibles': horas_disponibles,
+            'fecha': fecha_str,
+            'empresa': empresa.nombre_empresa
+        })
 
-            horas_disponibles = []
-            ahora = timezone.now()
-            
-            for h in range(8, 21):  # 8:00 a 20:00
-                hora_formateada_24h = f"{h:02}:00"
-                
-                # Si es hoy, no mostrar horas que ya pasaron
-                if fecha_obj == ahora.date() and h <= ahora.hour:
-                    print(f"⏳ Hora {hora_formateada_24h} ya pasó")
-                    continue
-                
-                # Si la hora no está ocupada, agregarla
-                if hora_formateada_24h not in horas_ocupadas:
-                    # Convertir a formato 12h con AM/PM para mostrar al usuario
-                    hora_12h = convertir_hora_12h(hora_formateada_24h)
-                    horas_disponibles.append(hora_12h)
-                    print(f"✅ Hora disponible: {hora_12h} ({hora_formateada_24h})")
-                else:
-                    print(f"❌ Hora ocupada: {hora_formateada_24h}")
-
-            print(f"📋 Horas disponibles finales: {horas_disponibles}")
-            return JsonResponse({'horas': horas_disponibles})
-
-        except ValueError as e:
-            print(f"❌ Error de valor: {e}")
-            return JsonResponse({'horas': []})
-        except Exception as e:
-            print(f"❌ Error inesperado: {e}")
-            return JsonResponse({'horas': []})
-
-    print(f"❌ Parámetros faltantes")
-    return JsonResponse({'horas': []})
+    except Empresa.DoesNotExist:
+        print(f"❌ Empresa no encontrada: {empresa_id}")
+        return JsonResponse({'success': False, 'horas_disponibles': [], 'error': 'Empresa no encontrada'})
+    except ValueError as e:
+        print(f"❌ Error de formato de fecha: {e}")
+        return JsonResponse({'success': False, 'horas_disponibles': [], 'error': 'Formato de fecha inválido'})
+    except Exception as e:
+        print(f"❌ Error inesperado: {e}")
+        return JsonResponse({'success': False, 'horas_disponibles': [], 'error': 'Error interno del servidor'})
 
 
 
@@ -909,6 +1307,116 @@ def planes_empresariales(request):
     }
     
     return render(request, 'planes/planes_empresariales.html', context)
+
+
+def solicitar_contacto_plan(request):
+    """Vista AJAX para procesar solicitudes de contacto de planes empresariales"""
+    if request.method == 'POST':
+        try:
+            plan_id = request.POST.get('plan_id')
+            
+            # Verificar que el plan existe
+            plan = get_object_or_404(PlanEmpresarial, id_plan=plan_id, activo=True)
+            
+            # Debug: Imprimir datos recibidos
+            print("Datos POST recibidos:", request.POST)
+            
+            # Crear el formulario con los datos recibidos
+            form = SolicitudContactoPlanForm(request.POST)
+            
+            if form.is_valid():
+                # Crear la solicitud
+                solicitud = form.save(commit=False)
+                solicitud.plan = plan
+                solicitud.estado = 'pendiente'
+                
+                # Capturar IP del solicitante
+                def get_client_ip(request):
+                    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+                    if x_forwarded_for:
+                        ip = x_forwarded_for.split(',')[0]
+                    else:
+                        ip = request.META.get('REMOTE_ADDR')
+                    return ip
+                
+                solicitud.ip_solicitante = get_client_ip(request)
+                
+                # Capturar User Agent
+                solicitud.user_agent = request.META.get('HTTP_USER_AGENT', '')
+                
+                # Si quieres que fecha_contacto se llene automáticamente (aunque conceptualmente debería llenarse cuando se contacte al cliente)
+                # solicitud.fecha_contacto = timezone.now()
+                
+                solicitud.save()
+                
+                # Debug: Verificar datos guardados
+                print(f"Solicitud guardada - ID: {solicitud.id_solicitud}")
+                print(f"Cargo guardado: '{solicitud.cargo}'")
+                print(f"IP guardada: '{solicitud.ip_solicitante}'")
+                print(f"User Agent guardado: '{solicitud.user_agent[:100]}...'")
+                
+                # Intentar enviar email de notificación
+                try:
+                    from django.core.mail import send_mail
+                    from django.conf import settings
+                    
+                    asunto = f"Nueva solicitud de contacto - Plan {plan.nombre}"
+                    mensaje = f"""
+                    Nueva solicitud de contacto para el plan empresarial: {plan.nombre}
+                    
+                    Datos del solicitante:
+                    - Nombre: {solicitud.nombre_completo}
+                    - Email: {solicitud.email}
+                    - Teléfono: {solicitud.telefono}
+                    - Empresa: {solicitud.empresa}
+                    - Cargo: {solicitud.cargo}
+                    - Cantidad de vehículos: {solicitud.cantidad_vehiculos}
+                    
+                    Mensaje adicional:
+                    {solicitud.mensaje_adicional}
+                    
+                    Fecha de solicitud: {solicitud.fecha_solicitud.strftime('%d/%m/%Y %H:%M')}
+                    """
+                    
+                    send_mail(
+                        asunto,
+                        mensaje,
+                        settings.DEFAULT_FROM_EMAIL,
+                        [settings.DEFAULT_FROM_EMAIL],
+                        fail_silently=True,
+                    )
+                except Exception as e:
+                    # Log del error pero no fallar la respuesta
+                    print(f"Error enviando email: {e}")
+                
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Su solicitud de contacto ha sido enviada exitosamente. Nos pondremos en contacto con usted a la brevedad.',
+                    'solicitud_id': solicitud.id_solicitud
+                })
+            else:
+                # Devolver errores del formulario
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Por favor, corrija los errores en el formulario.',
+                    'errors': form.errors
+                })
+                
+        except PlanEmpresarial.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'El plan seleccionado no existe o no está disponible.'
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'Error interno del servidor: {str(e)}'
+            })
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Método no permitido.'
+    })
 
 
 @login_required
@@ -1384,19 +1892,61 @@ def get_empresas_verificadas(request):
 
 @login_required
 def contacto(request):
+    # Obtener todos los servicios para el dropdown
+    servicios = Servicio.objects.all().order_by('nombre_servicio')
+    
     if request.method == 'POST':
+        # Obtener todos los datos del formulario PQRS
+        tipo_pqrs = request.POST.get('tipo_pqrs')
+        urgencia = request.POST.get('urgencia')
+        nombre_contacto = request.POST.get('nombre_contacto')
+        email_contacto = request.POST.get('email_contacto')
+        servicio_relacionado = request.POST.get('servicio_relacionado')
         contenido = request.POST.get('contenido')
+        acepto_terminos = request.POST.get('acepto_terminos') == 'on'
 
-        if contenido:
-            mensaje = MensajeQueja(contenido=contenido, usuario=request.user)
-            mensaje.save()
-            messages.success(request, "Tu mensaje ha sido enviado exitosamente y sera respondido en el menor tiempo posible.")
-            return redirect('contacto')  
-        else:
-            messages.error(request, "Por favor, ingresa un mensaje.")
-            return redirect('contacto') 
+        # Validar campos requeridos
+        if not all([tipo_pqrs, contenido, acepto_terminos]):
+            messages.error(request, "Por favor, completa todos los campos requeridos y acepta los términos.")
+            return redirect('contacto')
 
-    return render(request, 'pages_informativas/contacto.html') 
+        # Crear el mensaje PQRS
+        mensaje = MensajeQueja(
+            tipo_pqrs=tipo_pqrs,
+            urgencia=urgencia or 'media',
+            nombre_contacto=nombre_contacto,
+            email_contacto=email_contacto,
+            servicio_relacionado=servicio_relacionado,
+            contenido=contenido,
+            acepto_terminos=acepto_terminos,
+            usuario=request.user
+        )
+        
+        # Si se seleccionó un servicio de la base de datos, asociarlo
+        if servicio_relacionado and servicio_relacionado.startswith('servicio_'):
+            try:
+                servicio_id = servicio_relacionado.replace('servicio_', '')
+                servicio = Servicio.objects.get(id_servicio=servicio_id)
+                mensaje.servicio_bd = servicio
+            except Servicio.DoesNotExist:
+                pass
+        
+        mensaje.save()
+        
+        # Mensaje de éxito personalizado según el tipo de PQRS
+        tipo_display = dict(MensajeQueja.TIPOS_PQRS).get(tipo_pqrs, 'solicitud')
+        messages.success(
+            request, 
+            f"Tu {tipo_display.lower()} ha sido enviada exitosamente. "
+            f"Número de radicado: {mensaje.numero_radicado}. "
+            f"Será respondida en el menor tiempo posible."
+        )
+        return redirect('contacto')
+
+    context = {
+        'servicios': servicios,
+    }
+    return render(request, 'pages_informativas/contacto.html', context) 
 
 def resetCorreo(request):
     return render(request, 'auth/reset_correo.html')
@@ -1461,19 +2011,37 @@ def login_crud(request):
         print(f"🔍 Intento de login - Tipo: {tipo_usuario}, Usuario: {nombre_usuario}")
         
         if tipo_usuario == 'admin':
-            # Verificar si el usuario existe y está activo
+            # Verificar si el usuario existe
             try:
                 usuario_check = Usuario.objects.get(nombre_usuario=nombre_usuario)
+                
+                # Verificar si el usuario está activo
                 if not usuario_check.is_active:
                     messages.error(request, 'Tu cuenta de administrador ha sido desactivada. Contacta al superadministrador.')
                     return redirect('logincrud')
+                
+                # Verificar si puede intentar hacer login (no está bloqueado)
+                if not usuario_check.can_attempt_login():
+                    if usuario_check.lockout_time:
+                        time_since_lockout = timezone.now() - usuario_check.lockout_time
+                        remaining_minutes = max(0, 30 - int(time_since_lockout.total_seconds() / 60))
+                        messages.error(request, f'Tu cuenta de administrador está temporalmente bloqueada por seguridad debido a múltiples intentos fallidos. Intenta nuevamente en {remaining_minutes} minutos.')
+                    else:
+                        messages.error(request, 'Tu cuenta de administrador está temporalmente bloqueada por seguridad. Contacta al superadministrador.')
+                    return redirect('logincrud')
+                
             except Usuario.DoesNotExist:
-                pass  # El usuario no existe, se manejará en la autenticación
+                # Si el usuario no existe, mostrar mensaje genérico
+                messages.error(request, 'Usuario o contraseña de administrador incorrectos.')
+                return redirect('logincrud')
             
             # Autenticación del administrador
             usuario = authenticate(request, username=nombre_usuario, password=contrasena)
             
             if usuario is not None:
+                # Login exitoso - resetear intentos fallidos
+                usuario.reset_failed_attempts()
+                
                 # Verificar si el usuario tiene rol de admin y está activo
                 if hasattr(usuario, 'rol') and usuario.rol == 'admin' and usuario.is_active:
                     auth_login(request, usuario)  # Iniciar sesión con el usuario autenticado
@@ -1486,7 +2054,25 @@ def login_crud(request):
                     messages.error(request, 'Acceso denegado. Solo los administradores pueden acceder.')
                     return redirect('logincrud')
             else:
-                messages.error(request, 'Usuario o contraseña de administrador incorrectos.')
+                # Login fallido - incrementar intentos fallidos
+                try:
+                    usuario_fallido = Usuario.objects.get(nombre_usuario=nombre_usuario)
+                    usuario_fallido.increment_failed_attempts()
+                    
+                    # Mostrar mensaje específico según los intentos restantes
+                    remaining_attempts = usuario_fallido.get_remaining_attempts()
+                    
+                    if usuario_fallido.is_locked_out:
+                        messages.error(request, 'Has excedido el número máximo de intentos de login de administrador (6). Tu cuenta ha sido bloqueada temporalmente por 30 minutos por seguridad.')
+                    elif remaining_attempts <= 3 and remaining_attempts > 0:
+                        messages.warning(request, f'Usuario o contraseña de administrador incorrectos. Te quedan {remaining_attempts} intentos antes de que tu cuenta sea bloqueada temporalmente.')
+                    else:
+                        messages.error(request, 'Usuario o contraseña de administrador incorrectos.')
+                        
+                except Usuario.DoesNotExist:
+                    # Si el usuario no existe, mostrar mensaje genérico
+                    messages.error(request, 'Usuario o contraseña de administrador incorrectos.')
+                
                 return redirect('logincrud')
                 
         elif tipo_usuario == 'empresa':
@@ -1508,7 +2094,15 @@ def login_crud(request):
                         messages.success(request, f'Bienvenida empresa {empresa.nombre_empresa}!')
                         return redirect('home_empresas')  # Redirigir al home de empresas
                     else:
-                        messages.warning(request, 'Su empresa aún no ha sido verificada. Por favor, espere la verificación de un administrador.')
+                        mensaje_verificacion = (
+                            f'¡Hola {empresa.nombre_empresa}! Su cuenta empresarial fue creada exitosamente el {empresa.fecha_registro.strftime("%d/%m/%Y a las %H:%M")}. '
+                            'Sin embargo, aún no ha sido verificada por nuestro equipo administrativo. '
+                            'Para garantizar la seguridad y calidad de nuestros servicios, todas las empresas deben pasar por un proceso de verificación antes de poder acceder al sistema. '
+                            'Nuestros administradores revisarán su información y aprobarán su cuenta en un plazo máximo de 24-48 horas hábiles. '
+                            'Una vez verificada, podrá acceder completamente a todas las funcionalidades del sistema. '
+                            f'Si tiene alguna pregunta, puede contactarnos. Email de contacto: {empresa.email}'
+                        )
+                        messages.warning(request, mensaje_verificacion)
                         return redirect('logincrud')
                 else:
                     messages.error(request, 'Contraseña de empresa incorrecta.')
@@ -1567,15 +2161,31 @@ def comentarios_crud(request):
 
 @admin_required
 def quejas_crud(request):
-    quejas =MensajeQueja.objects.all()
+    quejas = MensajeQueja.objects.all().order_by('-fecha_envio')
+    
+    # Calcular estadísticas
+    from django.db.models import Count
+    total_count = quejas.count()
+    resueltas_count = quejas.filter(estado__in=['resuelto', 'cerrado']).count()
+    efectividad = round((resueltas_count / total_count * 100), 1) if total_count > 0 else 0
+    
+    estadisticas = {
+        'total': total_count,
+        'por_tipo': quejas.values('tipo_pqrs').annotate(count=Count('tipo_pqrs')),
+        'por_estado': quejas.values('estado').annotate(count=Count('estado')),
+        'por_urgencia': quejas.values('urgencia').annotate(count=Count('urgencia')),
+        'pendientes': quejas.filter(estado__in=['recibido', 'en_proceso']).count(),
+        'resueltas': resueltas_count,
+        'efectividad': efectividad,
+    }
 
     if request.method == "POST":
-        # Manejar la eliminación de comenatrios
+        # Manejar la eliminación de quejas/PQRS
         if 'eliminar' in request.POST:
             queja_id = request.POST.get('eliminar')
             queja = get_object_or_404(MensajeQueja, id_mensaje=queja_id)
             queja.delete()
-            messages.error(request, 'La queja se a eliminado.')
+            messages.error(request, 'La solicitud PQRS ha sido eliminada.')
             return redirect('quejascrud')
 
     if request.method == "POST":
@@ -1585,63 +2195,79 @@ def quejas_crud(request):
             queja_id = request.POST.get('id_reserva')
             queja = get_object_or_404(MensajeQueja, id_mensaje=queja_id)
 
-            # Obtener el usuario asociado a la queja (ajusta según tu modelo)
-            usuario = get_object_or_404(Usuario, id_usuario=queja.usuario_id)  # Asumiendo que hay un campo id_usuario en MensajeQueja
+            # Obtener el usuario asociado a la queja
+            if queja.usuario:
+                usuario = queja.usuario
+                
+                # Guardar la respuesta
+                queja.respuesta = respuesta
+                queja.estado = 'resuelto'
+                queja.fecha_respuesta = timezone.now()
+                queja.save()
 
-            # Aquí puedes guardar la respuesta en tu modelo si es necesario
-            queja.respuesta = respuesta
-            queja.save()
+                messages.success(request, 'La respuesta se ha enviado.')
 
-            messages.success(request, 'La respuesta se ha enviado.')
-
-            # Enviar mensaje de WhatsApp
-            try:
-                conn = http.client.HTTPSConnection("kqqk31.api.infobip.com")
-                payload = json.dumps({
-                    "messages": [
-                        {
-                            "from": "447860099299",  # Tu número de WhatsApp
-                            "to": usuario.telefono,  # Número del destinatario desde la tabla Usuario
-                            "messageId": "c2dbb13f-2a4a-48d7-97c2-085d5d3d6108",
-                            "content": {
-                                "templateName": "message_test",
-                                "templateData": {
-                                    "body": {
-                                        "placeholders": [respuesta]  # Usar la respuesta como contenido
-                                    }
-                                },
-                                "language": "es"
+                # Enviar mensaje de WhatsApp (código existente)
+                try:
+                    conn = http.client.HTTPSConnection("kqqk31.api.infobip.com")
+                    payload = json.dumps({
+                        "messages": [
+                            {
+                                "from": "447860099299",
+                                "to": usuario.telefono,
+                                "messageId": "c2dbb13f-2a4a-48d7-97c2-085d5d3d6108",
+                                "content": {
+                                    "templateName": "message_test",
+                                    "templateData": {
+                                        "body": {
+                                            "placeholders": [respuesta]
+                                        }
+                                    },
+                                    "language": "es"
+                                }
                             }
-                        }
-                    ]
-                })
-                headers = {
-                    'Authorization': 'App e5eb011e80db665606dd35c15e897846-c8cf84ba-fd3f-401e-a267-7e95cc6bce48',
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-                conn.request("POST", "/whatsapp/1/message/template", payload, headers)
-                res = conn.getresponse()
-                data = res.read()
-                print(data.decode("utf-8"))  # Puedes usar logging en lugar de print
-            except Exception as e:
-                print("Error al enviar mensaje:", e)
-                messages.error(request, 'Error al enviar el mensaje de WhatsApp.')
+                        ]
+                    })
+                    headers = {
+                        'Authorization': 'App e5eb011e80db665606dd35c15e897846-c8cf84ba-fd3f-401e-a267-7e95cc6bce48',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                    conn.request("POST", "/whatsapp/1/message/template", payload, headers)
+                    res = conn.getresponse()
+                    data = res.read()
+                    print(data.decode("utf-8"))
+                except Exception as e:
+                    print("Error al enviar mensaje:", e)
+                    messages.error(request, 'Error al enviar el mensaje de WhatsApp.')
+            else:
+                messages.error(request, 'No se puede enviar respuesta: solicitud sin usuario asociado.')
 
             return redirect('quejascrud')
     else:
         form = QuejaForm()
-    return render(request, 'comentarios/quejas_crud.html', {'quejas': quejas, 'form': form})
+    
+    context = {
+        'quejas': quejas, 
+        'form': form,
+        'estadisticas': estadisticas
+    }
+    return render(request, 'comentarios/quejas_crud.html', context)
 
 
 
 @admin_required
 def usuarios_crud(request):
-    # Obtener el tipo de usuarios a mostrar (activos o inactivos)
+    from django.core.paginator import Paginator
+    from django.http import JsonResponse
+    
+    # Obtener el tipo de usuarios a mostrar (activos, inactivos o bloqueados)
     tab = request.GET.get('tab', 'activos')
     
     if tab == 'inactivos':
         usuarios = Usuario.objects.filter(is_active=False)
+    elif tab == 'bloqueados':
+        usuarios = Usuario.objects.filter(is_locked_out=True)
     else:
         usuarios = Usuario.objects.filter(is_active=True)
     
@@ -1653,6 +2279,8 @@ def usuarios_crud(request):
     total_usuarios_inactivos = todos_usuarios.filter(is_active=False).count()
     total_admins = todos_usuarios.filter(rol='admin', is_active=True).count()
     total_clientes = todos_usuarios.filter(rol='cliente', is_active=True).count()
+    total_usuarios_bloqueados = todos_usuarios.filter(is_locked_out=True).count()
+    usuarios_con_intentos_fallidos = todos_usuarios.filter(failed_login_attempts__gt=0).count()
 
     # Filtrar según los parámetros de búsqueda
     nombre_usuario = request.GET.get('nombre_usuario', '')
@@ -1668,6 +2296,34 @@ def usuarios_crud(request):
         usuarios = usuarios.filter(telefono__icontains=telefono)
     if rol:
         usuarios = usuarios.filter(rol=rol)
+
+    # Implementar paginación
+    page_number = request.GET.get('page', 1)
+    paginator = Paginator(usuarios, 50)  # 50 usuarios por página
+    usuarios_paginated = paginator.get_page(page_number)
+
+    # Si es una petición AJAX para cargar más usuarios
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        usuarios_data = []
+        for usuario in usuarios_paginated:
+            usuarios_data.append({
+                'id_usuario': usuario.id_usuario,
+                'nombre_completo': usuario.nombre_completo,
+                'nombre_usuario': usuario.nombre_usuario,
+                'correo': usuario.correo,
+                'telefono': usuario.telefono,
+                'direccion': usuario.direccion,
+                'rol': usuario.rol,
+                'is_active': usuario.is_active,
+            })
+        
+        return JsonResponse({
+            'usuarios': usuarios_data,
+            'has_next': usuarios_paginated.has_next(),
+            'has_previous': usuarios_paginated.has_previous(),
+            'total_pages': paginator.num_pages,
+            'current_page': usuarios_paginated.number,
+        })
 
     if request.method == "POST":
         # Manejar la inactivación de los usuarios
@@ -1754,13 +2410,18 @@ def usuarios_crud(request):
 
     # Contexto con estadísticas calculadas
     context = {
-        'usuarios': usuarios, 
+        'usuarios': usuarios_paginated, 
         'form': form,
         'total_usuarios': total_usuarios,
         'total_usuarios_inactivos': total_usuarios_inactivos,
+        'total_usuarios_bloqueados': total_usuarios_bloqueados,
+        'usuarios_con_intentos_fallidos': usuarios_con_intentos_fallidos,
         'total_admins': total_admins,
         'total_clientes': total_clientes,
         'tab_actual': tab,
+        'paginator': paginator,
+        'page_obj': usuarios_paginated,
+        'total_filtered': paginator.count,
     }
 
     return render(request, 'usuarios/usuarios_crud.html', context)
@@ -1808,6 +2469,18 @@ def editar_usuario(request, usuario_id):
         form = UsuariosForm(initial=initial_data)
     
     return render(request, 'usuarios/editar_usuario.html', {'form': form, 'usuario': usuario})
+
+@admin_required
+def desbloquear_usuario(request, usuario_id):
+    """Vista para que un administrador pueda desbloquear a un usuario"""
+    usuario = get_object_or_404(Usuario, id_usuario=usuario_id)
+    
+    if request.method == 'POST':
+        usuario.reset_failed_attempts()
+        messages.success(request, f'El usuario {usuario.nombre_usuario} ha sido desbloqueado exitosamente.')
+        return redirect('usuarioscrud')
+    
+    return redirect('usuarioscrud')
 
 @admin_required
 def citas_crud(request):
@@ -2065,9 +2738,67 @@ def citas_crud(request):
     # Para las estadísticas, necesitamos todas las reservas sin filtrar (ordenadas por más recientes primero)
     todas_las_reservas = Reserva.objects.select_related('empresa', 'usuario').prefetch_related('reservaservicio_set__servicio').order_by('-fecha', '-hora')
 
+    # Implementar paginación
+    from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+    from django.http import JsonResponse
+    
+    paginator = Paginator(reservas, 50)  # 50 reservas por página
+    page_number = request.GET.get('page', 1)
+    
+    # Validar el número de página
+    try:
+        if page_number is None or page_number == '':
+            page_number = 1
+        else:
+            page_number = int(page_number)
+            if page_number < 1:
+                page_number = 1
+    except (ValueError, TypeError):
+        page_number = 1
+    
+    page_obj = paginator.get_page(page_number)
+    
+    # Si es una petición AJAX para cargar más reservas
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        reservas_data = []
+        for reserva in page_obj:
+            # Formatear los datos de la reserva para JSON
+            servicios_lista = []
+            for rs in reserva.reservaservicio_set.all():
+                servicios_lista.append({
+                    'nombre': rs.servicio.nombre_servicio,
+                    'precio': float(rs.servicio.precio),
+                })
+            
+            reservas_data.append({
+                'id_reserva': reserva.id_reserva,
+                'usuario_nombre': reserva.usuario.nombre_completo,
+                'usuario_username': reserva.usuario.nombre_usuario,
+                'empresa_nombre': reserva.empresa.nombre_empresa if reserva.empresa else 'Sin empresa',
+                'fecha': reserva.fecha.strftime('%d/%m/%Y'),
+                'hora': reserva.hora.strftime('%H:%M'),
+                'estado': reserva.estado,
+                'es_pago_individual': reserva.es_pago_individual,
+                'es_reserva_empresarial': reserva.es_reserva_empresarial,
+                'tipo_vehiculo': reserva.tipo_vehiculo or '',
+                'placa_vehiculo': reserva.placa_vehiculo or '',
+                'conductor_asignado': reserva.conductor_asignado or '',
+                'descuento_empresarial': float(reserva.descuento_empresarial) if reserva.descuento_empresarial else 0,
+                'servicios': servicios_lista,
+                'total_precio': sum(float(rs.servicio.precio) for rs in reserva.reservaservicio_set.all()),
+            })
+        
+        return JsonResponse({
+            'reservas': reservas_data,
+            'has_next': page_obj.has_next(),
+            'page_number': page_obj.number,
+            'total_pages': paginator.num_pages,
+        })
+
     # Renderiza la vista con los datos necesarios
     return render(request, 'reservas/citas_crud.html', {
-        'reservas': reservas,
+        'page_obj': page_obj,
+        'reservas': page_obj,  # Mantener compatibilidad
         'todas_las_reservas': todas_las_reservas,  # Para las estadísticas
         'form': form,
         'servicios': servicios,
@@ -2250,20 +2981,55 @@ def cambiar_estado_reserva(request, reserva_id):
 
 @admin_required
 def servicios_crud(request):
-    servicios = Servicio.objects.all()
-    form = ServicioForm()
+    from django.core.paginator import Paginator
+    from django.db.models import Q
     
-    # Obtener solicitudes de servicios pendientes
-    solicitudes_servicios = SolicitudServicioEmpresa.objects.filter(estado='pendiente').select_related('empresa', 'servicio_solicitado')
+    # Filtros de búsqueda
+    busqueda = request.GET.get('busqueda', '').strip()
+    estado_filtro = request.GET.get('estado', '').strip()
+    
+    # Base queryset con optimización
+    servicios_qs = Servicio.objects.all().prefetch_related('empresaservicio_set__empresa')
+    
+    # Aplicar filtros
+    if busqueda:
+        servicios_qs = servicios_qs.filter(
+            Q(nombre_servicio__icontains=busqueda) |
+            Q(descripcion__icontains=busqueda) |
+            Q(precio__icontains=busqueda)
+        )
+    
+    # Paginación
+    paginator = Paginator(servicios_qs, 25)  # 25 servicios por página
+    page_number = request.GET.get('page', 1)
+    
+    try:
+        servicios = paginator.get_page(page_number)
+    except:
+        servicios = paginator.get_page(1)
+    
+    # Obtener solicitudes pendientes con limit para no sobrecargar
+    solicitudes_servicios = SolicitudServicioEmpresa.objects.filter(
+        estado='pendiente'
+    ).select_related('empresa', 'servicio_solicitado')[:10]  # Solo las primeras 10
 
-    # Calcular estadísticas
+    # Calcular estadísticas de manera más eficiente
+    total_servicios = servicios_qs.count()
     total_asignaciones = EmpresaServicio.objects.count()
-    total_solicitudes_pendientes = solicitudes_servicios.count()
+    total_solicitudes_pendientes = SolicitudServicioEmpresa.objects.filter(estado='pendiente').count()
+    
+    # Filtros activos para el template
+    filtros_activos = {
+        'busqueda': busqueda,
+        'estado': estado_filtro,
+    }
+    
+    form = ServicioForm()
 
-    # Filtrar según los parámetros de búsqueda
+    # Filtrar según los parámetros de búsqueda (para compatibilidad con código existente)
     nombre_servicio = request.GET.get('nombre_servicio', '')
-    if nombre_servicio:
-        servicios = servicios.filter(nombre_servicio__icontains=nombre_servicio)
+    if nombre_servicio and not busqueda:  # Solo si no hay búsqueda general
+        servicios_qs = servicios_qs.filter(nombre_servicio__icontains=nombre_servicio)
 
     if request.method == "POST":
         # Manejar aprobación/rechazo de solicitudes
@@ -2365,15 +3131,18 @@ def servicios_crud(request):
     else:
         form = ServicioForm()
 
-    # Obtener la lista de empresas disponibles
-    empresas = Empresa.objects.all()
+    # Obtener la lista de empresas disponibles (solo las activas para optimizar)
+    empresas = Empresa.objects.filter(verificada=True)
 
-    # Obtener las empresas asociadas a cada servicio
+    # Obtener las empresas asociadas a cada servicio (solo para los servicios de la página actual)
     for servicio in servicios:
         servicio.empresas_asociadas = EmpresaServicio.objects.filter(servicio=servicio).values_list('empresa', flat=True)
 
     context = {
-        'servicios': servicios, 
+        'servicios': servicios,
+        'paginator': paginator,
+        'total_servicios': total_servicios,
+        'filtros_activos': filtros_activos,
         'form': form, 
         'empresas': empresas,
         'total_asignaciones': total_asignaciones,
@@ -2560,20 +3329,34 @@ def detalle_servicio(request, servicio_id):
 
 @admin_required
 def empresas_crud(request):
-    empresas = Empresa.objects.all()
+    # Obtener todas las empresas para estadísticas
+    todas_empresas = Empresa.objects.all()
     form = EmpresaForm()  # Si estás usando un formulario de Django para crear y actualizar empresas
 
     # Filtrar según los parámetros de búsqueda
     nombre_empresa = request.GET.get('nombre_empresa', '')
     verificacion = request.GET.get('verificacion', '')
+    busqueda = request.GET.get('busqueda', '')
+
+    # Aplicar filtros
+    empresas_filtradas = todas_empresas
 
     if nombre_empresa:
-        empresas = empresas.filter(nombre_empresa__icontains=nombre_empresa)
+        empresas_filtradas = empresas_filtradas.filter(nombre_empresa__icontains=nombre_empresa)
     
     if verificacion == 'verificada':
-        empresas = empresas.filter(verificada=True)
+        empresas_filtradas = empresas_filtradas.filter(verificada=True)
     elif verificacion == 'sin_verificar':
-        empresas = empresas.filter(verificada=False)
+        empresas_filtradas = empresas_filtradas.filter(verificada=False)
+
+    # Filtro de búsqueda general
+    if busqueda:
+        empresas_filtradas = empresas_filtradas.filter(
+            Q(nombre_empresa__icontains=busqueda) |
+            Q(email__icontains=busqueda) |
+            Q(telefono__icontains=busqueda) |
+            Q(direccion__icontains=busqueda)
+        )
 
     if request.method == "POST":
         # Manejar la eliminación de empresas
@@ -2665,24 +3448,58 @@ def empresas_crud(request):
             messages.success(request, 'La empresa ha sido actualizada exitosamente.')
             return redirect('empresascrud')
 
-    # Calcular estadísticas basadas en el filtro actual
-    total_empresas = Empresa.objects.all()
-    empresas_verificadas_total = total_empresas.filter(verificada=True).count()
-    empresas_sin_verificar_total = total_empresas.filter(verificada=False).count()
+    # Verificar si hay empresas registradas en las últimas 24 horas
+    from datetime import timedelta
+    hace_24_horas = timezone.now() - timedelta(hours=24)
+    empresas_nuevas_24h = todas_empresas.filter(fecha_registro__gte=hace_24_horas).count()
+    
+    # Determinar el ordenamiento según el filtro aplicado
+    if verificacion == 'sin_verificar':
+        # Para empresas sin verificar, mostrar las más viejas primero
+        empresas_ordenadas = empresas_filtradas.order_by('fecha_registro')
+    else:
+        # Para el resto, ordenar por nombre de empresa
+        empresas_ordenadas = empresas_filtradas.order_by('nombre_empresa')
+    
+    # Implementar paginación
+    from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+    
+    paginator = Paginator(empresas_ordenadas, 25)  # 25 empresas por página
+    page = request.GET.get('page')
+    
+    try:
+        empresas = paginator.page(page)
+    except PageNotAnInteger:
+        # Si la página no es un entero, mostrar la primera página
+        empresas = paginator.page(1)
+    except EmptyPage:
+        # Si la página está fuera del rango, mostrar la última página
+        empresas = paginator.page(paginator.num_pages)
+
+    # Calcular estadísticas basadas en todas las empresas
+    empresas_verificadas_total = todas_empresas.filter(verificada=True).count()
+    empresas_sin_verificar_total = todas_empresas.filter(verificada=False).count()
     
     # Calcular empresas con servicios asignados
-    empresas_con_servicios_total = total_empresas.filter(
+    empresas_con_servicios_total = todas_empresas.filter(
         empresaservicio__isnull=False
     ).distinct().count()
     
     return render(request, 'empresas/empresas_crud.html', {
         'empresas': empresas, 
+        'paginator': paginator,
         'form': form,
         'empresas_verificadas': empresas_verificadas_total,
         'empresas_sin_verificar': empresas_sin_verificar_total,
         'empresas_pendientes': empresas_sin_verificar_total,  # Las pendientes son las sin verificar
         'empresas_con_servicios': empresas_con_servicios_total,
-        'total_empresas': total_empresas.count()
+        'total_empresas': todas_empresas.count(),
+        'empresas_nuevas_24h': empresas_nuevas_24h,  # Nuevas empresas en últimas 24 horas
+        'filtros_activos': {
+            'nombre_empresa': nombre_empresa,
+            'verificacion': verificacion,
+            'busqueda': busqueda,
+        }
     })
 
 
@@ -2697,8 +3514,10 @@ def editar_empresa(request, empresa_id):
         direccion = request.POST.get('direccion')
         telefono = request.POST.get('telefono')
         email = request.POST.get('email')
-        contrasena = request.POST.get('contrasena')
-        
+        # La plantilla usa 'nueva_contrasena' y 'confirmar_contrasena'
+        nueva_contrasena = request.POST.get('nueva_contrasena')
+        confirmar_contrasena = request.POST.get('confirmar_contrasena')
+
         # Actualizar los campos de la empresa
         if nombre_empresa:
             empresa.nombre_empresa = nombre_empresa
@@ -2708,9 +3527,21 @@ def editar_empresa(request, empresa_id):
             empresa.telefono = telefono
         if email:
             empresa.email = email
-        if contrasena:
-            empresa.contrasena = make_password(contrasena)
-        
+
+        # Si se quiere cambiar la contraseña, validar y guardar
+        if nueva_contrasena or confirmar_contrasena:
+            if not nueva_contrasena or not confirmar_contrasena:
+                messages.error(request, 'Para cambiar la contraseña debe completar ambos campos.')
+                return redirect('empresascrud')
+            if nueva_contrasena != confirmar_contrasena:
+                messages.error(request, 'Las nuevas contraseñas no coinciden.')
+                return redirect('empresascrud')
+            if len(nueva_contrasena) < 6:
+                messages.error(request, 'La nueva contraseña debe tener al menos 6 caracteres.')
+                return redirect('empresascrud')
+
+            empresa.contrasena = make_password(nueva_contrasena)
+
         empresa.save()
         messages.success(request, f'La empresa "{empresa.nombre_empresa}" ha sido actualizada exitosamente.')
         return redirect('empresascrud')
@@ -2993,8 +3824,10 @@ def logout_empresa(request):
 
 @empresa_required
 def citas_empresa(request):
-    """Vista para mostrar todas las citas de la empresa"""
+    """Vista para mostrar todas las citas de la empresa con paginación"""
     try:
+        from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+        
         empresa_id = request.session.get('empresa_id')
         empresa = Empresa.objects.get(id_empresa=empresa_id)
         
@@ -3012,6 +3845,20 @@ def citas_empresa(request):
                 'precio_total': sum(servicio.precio for servicio in servicios)
             })
         
+        # Configurar paginación
+        items_per_page = int(request.GET.get('per_page', 10))  # Por defecto 10 items por página
+        paginator = Paginator(reservas_con_servicios, items_per_page)
+        
+        page = request.GET.get('page')
+        try:
+            reservas_paginadas = paginator.page(page)
+        except PageNotAnInteger:
+            # Si la página no es un entero, mostrar la primera página
+            reservas_paginadas = paginator.page(1)
+        except EmptyPage:
+            # Si la página está fuera de rango, mostrar la última página
+            reservas_paginadas = paginator.page(paginator.num_pages)
+        
         # Estadísticas
         total_reservas = reservas.count()
         reservas_completadas = reservas.filter(estado='completado').count()
@@ -3023,15 +3870,23 @@ def citas_empresa(request):
             fecha__gte=timezone.now().date(),
             fecha__lte=timezone.now().date() + timedelta(days=7)
         )
+        
+        # Obtener servicios de la empresa para filtros
+        servicios_empresa = empresa.servicios.all()
+        
         context = {
             'empresa': empresa,
-            'reservas_con_servicios': reservas_con_servicios,
+            'reservas_con_servicios': reservas_paginadas,  # Ahora es paginado
             'total_reservas': total_reservas,
             'reservas_completadas': reservas_completadas,
             'reservas_pendientes': reservas_pendientes,
             'reservas_canceladas': reservas_canceladas,
             'reservas_hoy': reservas_hoy.count(),
             'reservas_semana': reservas_semana.count(),
+            'servicios_empresa': servicios_empresa,
+            'paginator': paginator,
+            'page_obj': reservas_paginadas,
+            'items_per_page': items_per_page,
         }
 
         return render(request, 'empresas/citas_empresa.html', context)
@@ -3078,6 +3933,147 @@ def actualizar_estado_cita(request):
             messages.error(request, 'Error al actualizar el estado de la cita.')
     
     return redirect('citas_empresa')
+
+@empresa_required
+def detalle_reserva_empresa(request, reserva_id):
+    """Vista para ver los detalles de una reserva desde la perspectiva de la empresa"""
+    try:
+        empresa_id = request.session.get('empresa_id')
+        empresa = Empresa.objects.get(id_empresa=empresa_id)
+        
+        # Verificar que la reserva pertenece a la empresa
+        reserva = get_object_or_404(Reserva, id_reserva=reserva_id, empresa=empresa)
+        
+        # Obtener servicios de la reserva
+        servicios = reserva.servicios.all()
+        precio_total = sum(servicio.precio for servicio in servicios)
+        
+        context = {
+            'reserva': reserva,
+            'servicios': servicios,
+            'precio_total': precio_total,
+            'empresa': empresa,
+        }
+        
+        # Devolver JSON para AJAX
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            data = {
+                'id_reserva': reserva.id_reserva,
+                'cliente': {
+                    'nombre': reserva.usuario.nombre_completo,
+                    'correo': reserva.usuario.correo,
+                    'telefono': getattr(reserva.usuario, 'telefono', 'No disponible'),
+                    'id': reserva.usuario.id_usuario,
+                },
+                'fecha': reserva.fecha.strftime('%d/%m/%Y'),
+                'hora': reserva.hora.strftime('%H:%M'),
+                'estado': reserva.estado,
+                'servicios': [
+                    {
+                        'nombre': servicio.nombre_servicio,
+                        'precio': float(servicio.precio),
+                        'descripcion': getattr(servicio, 'descripcion', '')
+                    }
+                    for servicio in servicios
+                ],
+                'precio_total': float(precio_total),
+                'fecha_creacion': reserva.fecha_registro.strftime('%d/%m/%Y %H:%M') if hasattr(reserva, 'fecha_registro') else 'No disponible',
+            }
+            return JsonResponse(data)
+        
+        return render(request, 'empresas/detalle_reserva.html', context)
+        
+    except Reserva.DoesNotExist:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'Reserva no encontrada'}, status=404)
+        messages.error(request, 'Reserva no encontrada.')
+        return redirect('citas_empresa')
+    except Exception as e:
+        print(f"❌ Error en detalle_reserva_empresa: {str(e)}")
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'Error interno'}, status=500)
+        messages.error(request, 'Error al cargar los detalles de la reserva.')
+        return redirect('citas_empresa')
+
+@empresa_required  
+def editar_reserva_empresa(request, reserva_id):
+    """Vista para editar una reserva desde la perspectiva de la empresa"""
+    try:
+        empresa_id = request.session.get('empresa_id')
+        empresa = Empresa.objects.get(id_empresa=empresa_id)
+        
+        # Verificar que la reserva pertenece a la empresa
+        reserva = get_object_or_404(Reserva, id_reserva=reserva_id, empresa=empresa)
+        
+        # Verificar que la reserva se puede editar (no completada ni cancelada)
+        if reserva.estado in ['completado', 'cancelada']:
+            messages.error(request, f'No se pueden editar reservas en estado "{reserva.estado}".')
+            return redirect('citas_empresa')
+        
+        if request.method == 'POST':
+            nueva_fecha = request.POST.get('fecha')
+            nueva_hora = request.POST.get('hora')
+            nuevo_estado = request.POST.get('estado')
+            
+            # Validaciones
+            if not nueva_fecha or not nueva_hora:
+                messages.error(request, 'Fecha y hora son obligatorias.')
+                return redirect('editar_reserva_empresa', reserva_id=reserva_id)
+            
+            try:
+                # Convertir fecha
+                fecha_obj = datetime.strptime(nueva_fecha, '%Y-%m-%d').date()
+                
+                # Convertir hora (asumiendo formato 24h)
+                hora_obj = datetime.strptime(nueva_hora, '%H:%M').time()
+                
+                # Verificar que no haya conflicto con otra reserva
+                conflicto = Reserva.objects.filter(
+                    empresa=empresa,
+                    fecha=fecha_obj,
+                    hora=hora_obj
+                ).exclude(id_reserva=reserva_id).exists()
+                
+                if conflicto:
+                    messages.error(request, 'Ya existe una cita en esa fecha y hora.')
+                    return redirect('editar_reserva_empresa', reserva_id=reserva_id)
+                
+                # Actualizar reserva
+                reserva.fecha = fecha_obj
+                reserva.hora = hora_obj
+                
+                if nuevo_estado and nuevo_estado in ['pendiente', 'completado', 'cancelada']:
+                    reserva.estado = nuevo_estado
+                
+                reserva.save()
+                
+                messages.success(request, 'Cita actualizada exitosamente.')
+                return redirect('citas_empresa')
+                
+            except ValueError as e:
+                messages.error(request, 'Formato de fecha u hora inválido.')
+                return redirect('editar_reserva_empresa', reserva_id=reserva_id)
+        
+        # GET: Mostrar formulario de edición
+        servicios = reserva.servicios.all()
+        precio_total = sum(servicio.precio for servicio in servicios)
+        
+        context = {
+            'reserva': reserva,
+            'servicios': servicios,
+            'precio_total': precio_total,
+            'empresa': empresa,
+        }
+        
+        return render(request, 'empresas/editar_reserva.html', context)
+        
+    except Reserva.DoesNotExist:
+        messages.error(request, 'Reserva no encontrada.')
+        return redirect('citas_empresa')
+    except Exception as e:
+        print(f"❌ Error en editar_reserva_empresa: {str(e)}")
+        messages.error(request, 'Error al cargar la reserva.')
+        return redirect('citas_empresa')
 
 @empresa_required
 def reportes_empresa(request):
@@ -3330,7 +4326,9 @@ def reportes_empresa(request):
                 max_reservas_tabla = reservas_temp
         porcentaje_progreso = (reservas_mes / max_reservas_tabla * 100) if max_reservas_tabla > 0 else 0
         # Calcular crecimiento comparando con el mes anterior
+        # Calcular crecimiento comparando con el mes anterior
         crecimiento_mes = 0
+        crecimiento_valido = False
         if i < len(meses_tabla) - 1:  # Si no es el último mes (más antiguo)
             mes_anterior_info = meses_tabla[i + 1]
             reservas_mes_anterior = Reserva.objects.filter(
@@ -3340,6 +4338,16 @@ def reportes_empresa(request):
             ).count()
             if reservas_mes_anterior > 0:
                 crecimiento_mes = ((reservas_mes - reservas_mes_anterior) / reservas_mes_anterior) * 100
+                crecimiento_valido = True
+            else:
+                # Cuando el mes anterior tiene 0 reservas no es posible calcular un % de cambio
+                crecimiento_mes = 0
+                crecimiento_valido = False
+        else:
+            # Mes más antiguo: base de comparación
+            crecimiento_mes = 0
+            crecimiento_valido = False
+
         datos_tabla.append({
             'mes': mes_info['nombre'],
             'reservas': reservas_mes,
@@ -3348,7 +4356,8 @@ def reportes_empresa(request):
             'canceladas': canceladas_mes,
             'porcentaje_progreso': round(porcentaje_progreso, 1),
             'ingresos': round(ingresos_mes, 2),
-            'crecimiento': round(crecimiento_mes, 1) if crecimiento_mes != 0 else 0
+            'crecimiento': round(crecimiento_mes, 1) if crecimiento_valido else 0,
+            'crecimiento_valido': crecimiento_valido
         })
         print(f"    → Tabla {mes_info['nombre']}: Reservas: {reservas_mes}, Completadas: {completadas_mes}, Pendientes: {pendientes_mes}, Canceladas: {canceladas_mes}, Ingresos: {round(ingresos_mes, 2)}")
     
@@ -3389,7 +4398,20 @@ def reportes_empresa(request):
 
 def planes_view(request):
     """Vista para mostrar todos los planes disponibles"""
-    planes = Plan.objects.filter(activo=True).order_by('precio_mensual')
+    planes_list = Plan.objects.filter(activo=True).order_by('precio_mensual')
+    
+    # Paginación para planes - 4 por página
+    planes_paginator = Paginator(planes_list, 4)  # Mostrar 4 planes por página
+    planes_page = request.GET.get('page')
+    
+    try:
+        planes = planes_paginator.page(planes_page)
+    except PageNotAnInteger:
+        # Si page no es un entero, mostrar la primera página
+        planes = planes_paginator.page(1)
+    except EmptyPage:
+        # Si page está fuera del rango, mostrar la última página
+        planes = planes_paginator.page(planes_paginator.num_pages)
     
     # Si el usuario está logueado, obtener su suscripción actual
     suscripcion_actual = None
@@ -3404,6 +4426,39 @@ def planes_view(request):
         'suscripcion_actual': suscripcion_actual,
     }
     return render(request, 'planes/planes.html', context)
+
+def planes_ajax(request):
+    """Vista AJAX para cargar planes paginados sin recargar la página"""
+    planes_list = Plan.objects.filter(activo=True).order_by('precio_mensual')
+    
+    # Paginación para planes - 4 por página
+    paginator = Paginator(planes_list, 4)
+    page = request.GET.get('page')
+    
+    try:
+        planes = paginator.page(page)
+    except PageNotAnInteger:
+        planes = paginator.page(1)
+    except EmptyPage:
+        planes = paginator.page(paginator.num_pages)
+    
+    # Si el usuario está logueado, obtener su suscripción actual
+    suscripcion_actual = None
+    if request.user.is_authenticated:
+        suscripcion_actual = SuscripcionUsuario.objects.filter(
+            usuario=request.user,
+            estado='activa'
+        ).first()
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # Respuesta AJAX - solo renderizar la sección de planes
+        return render(request, 'planes/planes_partial.html', {
+            'planes': planes,
+            'suscripcion_actual': suscripcion_actual
+        })
+    else:
+        # Fallback - redireccionar a planes si no es AJAX
+        return redirect('planes')
 
 @login_required
 def suscribirse_plan(request, plan_id):
@@ -3625,7 +4680,7 @@ def editar_plan(request, plan_id):
         'plan': plan,
         'servicios': servicios,
     }
-    return render(request, 'palnes/editar_plan.html', context)
+    return render(request, 'planes/editar_plan.html', context)
 
 @admin_required
 def eliminar_plan(request, plan_id):
@@ -4040,8 +5095,13 @@ def exportar_reporte_empresa(request):
 def planes_empresariales_crud(request):
     """Vista CRUD para gestionar planes empresariales (solo admin)"""
     planes = PlanEmpresarial.objects.all().order_by('precio_mensual_por_vehiculo')
+    
+    # Obtener las solicitudes de contacto de planes empresariales más recientes
+    solicitudes_contacto = SolicitudContactoPlan.objects.select_related('plan').order_by('-fecha_solicitud')[:10]
+    
     context = {
         'planes': planes,
+        'solicitudes_contacto': solicitudes_contacto,
     }
     return render(request, 'planes/planes_empresariales_crud.html', context)
 
@@ -4195,14 +5255,79 @@ def detalle_plan_empresarial(request, plan_id):
         'total_suscripciones': total_suscripciones,
         'suscripciones_activas': suscripciones_activas,
     }
-    return render(request, 'detalle_plan_empresarial.html', context)
+    return render(request, 'planes/detalle_plan_empresarial.html', context)
 
 @admin_required
 def suscripciones_empresariales_crud(request):
     """Vista para gestionar suscripciones empresariales (solo admin)"""
-    suscripciones = SuscripcionEmpresarial.objects.all().order_by('-fecha_inicio')
+    # Obtener todas las suscripciones para estadísticas
+    todas_suscripciones = SuscripcionEmpresarial.objects.select_related('empresa', 'plan').all()
+    
+    # Calcular estadísticas
+    suscripciones_activas = todas_suscripciones.filter(estado='activa').count()
+    suscripciones_vencidas = todas_suscripciones.filter(estado='vencida').count()
+    total_vehiculos = sum(suscripcion.cantidad_vehiculos for suscripcion in todas_suscripciones)
+    
+    # Calcular ingresos mensuales
+    ingresos_mensuales = sum(
+        suscripcion.precio_mensual_actual 
+        for suscripcion in todas_suscripciones.filter(estado='activa')
+    )
+    
+    # Obtener planes disponibles para el filtro
+    planes_disponibles = PlanEmpresarial.objects.filter(activo=True)
+    
+    # Aplicar filtros de búsqueda si existen
+    suscripciones_filtradas = todas_suscripciones.order_by('-fecha_inicio')
+    
+    # Filtro por estado
+    estado_filtro = request.GET.get('estado')
+    if estado_filtro:
+        suscripciones_filtradas = suscripciones_filtradas.filter(estado=estado_filtro)
+    
+    # Filtro por plan
+    plan_filtro = request.GET.get('plan')
+    if plan_filtro:
+        suscripciones_filtradas = suscripciones_filtradas.filter(plan__id_plan=plan_filtro)
+    
+    # Filtro por búsqueda de texto
+    busqueda = request.GET.get('busqueda')
+    if busqueda:
+        suscripciones_filtradas = suscripciones_filtradas.filter(
+            Q(empresa__nombre_empresa__icontains=busqueda) |
+            Q(contacto_responsable__icontains=busqueda) |
+            Q(plan__nombre__icontains=busqueda)
+        )
+    
+    # Implementar paginación
+    from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+    
+    paginator = Paginator(suscripciones_filtradas, 25)  # 25 suscripciones por página
+    page = request.GET.get('page')
+    
+    try:
+        suscripciones = paginator.page(page)
+    except PageNotAnInteger:
+        # Si la página no es un entero, mostrar la primera página
+        suscripciones = paginator.page(1)
+    except EmptyPage:
+        # Si la página está fuera del rango, mostrar la última página
+        suscripciones = paginator.page(paginator.num_pages)
+    
     context = {
         'suscripciones': suscripciones,
+        'paginator': paginator,
+        'suscripciones_activas': suscripciones_activas,
+        'suscripciones_vencidas': suscripciones_vencidas,
+        'total_vehiculos': total_vehiculos,
+        'ingresos_mensuales': ingresos_mensuales,
+        'planes_disponibles': planes_disponibles,
+        'total_suscripciones': todas_suscripciones.count(),
+        'filtros_activos': {
+            'estado': estado_filtro,
+            'plan': plan_filtro,
+            'busqueda': busqueda,
+        }
     }
     return render(request, 'planes/suscripciones_empresariales_crud.html', context)
 
@@ -4212,27 +5337,72 @@ def suscripciones_empresariales_crud(request):
 @admin_required
 def suscripciones_individuales_crud(request):
     """Vista para gestionar suscripciones de usuarios individuales (solo admin)"""
-    suscripciones = SuscripcionUsuario.objects.select_related('usuario', 'plan').all().order_by('-fecha_inicio')
+    # Obtener todas las suscripciones para estadísticas
+    todas_suscripciones = SuscripcionUsuario.objects.select_related('usuario', 'plan').all()
     
     # Calcular estadísticas
-    suscripciones_activas = suscripciones.filter(estado='activa').count()
-    suscripciones_vencidas = suscripciones.filter(estado='vencida').count()
+    suscripciones_activas = todas_suscripciones.filter(estado='activa').count()
+    suscripciones_vencidas = todas_suscripciones.filter(estado='vencida').count()
     
     # Calcular ingresos mensuales estimados
     ingresos_mensuales = sum(
         suscripcion.plan.precio_mensual 
-        for suscripcion in suscripciones.filter(estado='activa')
+        for suscripcion in todas_suscripciones.filter(estado='activa')
     )
     
     # Obtener planes disponibles para el filtro
     planes_disponibles = Plan.objects.filter(activo=True)
     
+    # Aplicar filtros de búsqueda si existen
+    suscripciones_filtradas = todas_suscripciones.order_by('-fecha_inicio')
+    
+    # Filtro por estado
+    estado_filtro = request.GET.get('estado')
+    if estado_filtro:
+        suscripciones_filtradas = suscripciones_filtradas.filter(estado=estado_filtro)
+    
+    # Filtro por plan
+    plan_filtro = request.GET.get('plan')
+    if plan_filtro:
+        suscripciones_filtradas = suscripciones_filtradas.filter(plan__id_plan=plan_filtro)
+    
+    # Filtro por búsqueda de texto
+    busqueda = request.GET.get('busqueda')
+    if busqueda:
+        suscripciones_filtradas = suscripciones_filtradas.filter(
+            Q(usuario__nombre_completo__icontains=busqueda) |
+            Q(usuario__correo__icontains=busqueda) |
+            Q(plan__nombre__icontains=busqueda)
+        )
+    
+    # Implementar paginación
+    from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+    
+    paginator = Paginator(suscripciones_filtradas, 25)  # 25 suscripciones por página
+    page = request.GET.get('page')
+    
+    try:
+        suscripciones = paginator.page(page)
+    except PageNotAnInteger:
+        # Si la página no es un entero, mostrar la primera página
+        suscripciones = paginator.page(1)
+    except EmptyPage:
+        # Si la página está fuera del rango, mostrar la última página
+        suscripciones = paginator.page(paginator.num_pages)
+    
     context = {
         'suscripciones': suscripciones,
+        'paginator': paginator,
         'suscripciones_activas': suscripciones_activas,
         'suscripciones_vencidas': suscripciones_vencidas,
         'ingresos_mensuales': ingresos_mensuales,
         'planes_disponibles': planes_disponibles,
+        'total_suscripciones': todas_suscripciones.count(),
+        'filtros_activos': {
+            'estado': estado_filtro,
+            'plan': plan_filtro,
+            'busqueda': busqueda,
+        }
     }
     return render(request, 'planes/suscripciones_individuales_crud.html', context)
 
@@ -4549,4 +5719,39 @@ def obtener_horas_disponibles(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+@admin_required
+def detalle_suscripcion_empresarial(request, suscripcion_id):
+    """Vista para ver detalles de una suscripción empresarial"""
+    suscripcion = get_object_or_404(SuscripcionEmpresarial, id_suscripcion=suscripcion_id)
+    
+    # Obtener historial de pagos
+    pagos = HistorialPagosSuscripcionEmpresarial.objects.filter(suscripcion=suscripcion).order_by('-fecha_pago')[:10]
+    
+    context = {
+        'suscripcion': suscripcion,
+        'pagos': pagos,
+    }
+    return render(request, 'planes/detalle_suscripcion_empresarial.html', context)
 
+@admin_required
+def editar_suscripcion_empresarial(request, suscripcion_id):
+    """Vista para editar una suscripción empresarial"""
+    suscripcion = get_object_or_404(SuscripcionEmpresarial, id_suscripcion=suscripcion_id)
+    
+    if request.method == 'POST':
+        # Actualizar campos de la suscripción
+        suscripcion.estado = request.POST.get('estado')
+        suscripcion.cantidad_vehiculos = request.POST.get('cantidad_vehiculos', 1)
+        
+        # Calcular nuevo precio si cambió la cantidad de vehículos
+        if suscripcion.plan:
+            suscripcion.precio_mensual_actual = suscripcion.plan.precio_por_vehiculo * int(suscripcion.cantidad_vehiculos)
+        
+        suscripcion.save()
+        messages.success(request, f'Suscripción actualizada exitosamente.')
+        return redirect('suscripciones_empresariales_crud')
+    
+    context = {
+        'suscripcion': suscripcion,
+    }
+    return render(request, 'planes/editar_suscripcion_empresarial.html', context)

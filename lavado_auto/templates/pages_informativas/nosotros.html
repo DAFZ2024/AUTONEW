@@ -528,50 +528,182 @@
                 </div>
 
                 <!-- Enhanced CTA & CEO Section -->
-                <div class="glass-effect rounded-2xl p-6 hover-lift group">
-                    <div class="flex flex-col lg:flex-row items-center gap-6">
-                        <!-- CEO Profile -->
-                        <div class="flex items-center space-x-4 group/ceo">
-                            <div class="relative">
-                                <img src="{% static 'img/ceo.png' %}" 
-                                     class="w-20 h-20 rounded-full border-4 border-[var(--electric-blue)] group-hover/ceo:border-[var(--navy)] transition-colors duration-300 shadow-lg" 
-                                     alt="CEO">
-                                <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
+                <div class="relative glass-effect rounded-3xl p-8 hover-lift group overflow-hidden">
+                    <!-- Animated Background Gradient -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-[var(--navy)]/5 via-[var(--electric-blue)]/3 to-[var(--silver)]/5 opacity-0 group-hover:opacity-100 transition-all duration-700 rounded-3xl"></div>
+                    
+                    <!-- Floating Decorative Elements -->
+                    <div class="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-[var(--electric-blue)]/10 to-[var(--navy)]/10 rounded-full blur-xl animate-pulse opacity-50"></div>
+                    <div class="absolute bottom-4 left-4 w-12 h-12 bg-gradient-to-br from-[var(--silver)]/20 to-[var(--electric-blue)]/20 rounded-full blur-lg animate-pulse opacity-30" style="animation-delay: 1s;"></div>
+                    
+                    <!-- Main Content Container -->
+                    <div class="relative z-10">
+                        <!-- Section Header -->
+                        <div class="text-center mb-8">
+                            <div class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[var(--electric-blue)]/10 to-[var(--navy)]/10 rounded-full border border-[var(--electric-blue)]/20 backdrop-blur-sm mb-3">
+                                <div class="w-2 h-2 bg-gradient-to-r from-[var(--electric-blue)] to-[var(--navy)] rounded-full animate-pulse"></div>
+                                <span class="text-[var(--electric-blue)] font-semibold text-sm uppercase tracking-wider">Liderazgo & Contacto</span>
                             </div>
-                            <div>
-                                <h4 class="text-xl font-bold text-gray-800 group-hover/ceo:text-[var(--electric-blue)] transition-colors duration-200">Andrés Forero</h4>
-                                <p class="text-[var(--electric-blue)] font-semibold">CEO & Fundador</p>
-                                <div class="flex items-center mt-1">
-                                    <div class="flex text-yellow-400 text-xs">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
+                            <h3 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                                Conecta con Nuestro <span class="gradient-text">Liderazgo</span>
+                            </h3>
+                            <p class="text-gray-600 text-sm">Estamos aquí para llevar tu experiencia automovilística al siguiente nivel</p>
+                        </div>
+
+                        <!-- CEO Profile Card Enhanced -->
+                        <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-white/20 shadow-lg group/ceo hover:bg-white/80 transition-all duration-500">
+                            <div class="flex flex-col lg:flex-row items-center gap-6">
+                                <!-- CEO Avatar Section -->
+                                <div class="relative group/avatar">
+                                    <!-- Animated Ring -->
+                                    <div class="absolute inset-0 rounded-full border-2 border-[var(--electric-blue)]/30 animate-spin" style="animation-duration: 10s;"></div>
+                                    <div class="absolute inset-0 rounded-full border border-[var(--navy)]/20 animate-spin" style="animation-duration: 15s; animation-direction: reverse;"></div>
+                                    
+                                    <!-- CEO Image -->
+                                    <div class="relative">
+                                        <img src="{% static 'img/ceo.png' %}" 
+                                             class="w-24 h-24 lg:w-28 lg:h-28 rounded-full border-4 border-white shadow-2xl group-hover/avatar:border-[var(--electric-blue)] transition-all duration-500 group-hover/avatar:scale-105" 
+                                             alt="CEO Andrés Forero">
+                                        
+                                        <!-- Status Indicator -->
+                                        <div class="absolute -bottom-1 -right-1 w-8 h-8 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center">
+                                            <i class="fas fa-check text-white text-xs animate-pulse"></i>
+                                        </div>
+                                        
+                                        <!-- Floating Achievement Badges -->
+                                        <div class="absolute -top-2 -left-2 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-bounce" style="animation-delay: 0.5s;">
+                                            <i class="fas fa-crown text-white text-xs"></i>
+                                        </div>
                                     </div>
-                                    <span class="text-xs text-gray-500 ml-2">Liderazgo Visionario</span>
+                                </div>
+
+                                <!-- CEO Information -->
+                                <div class="flex-1 text-center lg:text-left">
+                                    <div class="mb-4">
+                                        <h4 class="text-2xl lg:text-3xl font-bold text-gray-800 group-hover/ceo:text-[var(--electric-blue)] transition-colors duration-300 mb-1">
+                                            Andrés Forero
+                                        </h4>
+                                        <div class="flex items-center justify-center lg:justify-start gap-2 mb-2">
+                                            <span class="text-[var(--electric-blue)] font-bold text-lg">CEO & Fundador</span>
+                                            <div class="w-1 h-1 bg-[var(--electric-blue)] rounded-full"></div>
+                                            <span class="text-[var(--navy)] font-semibold text-sm">Autonew Corp</span>
+                                        </div>
+                                        
+                                        <!-- Enhanced Rating System -->
+                                        <div class="flex items-center justify-center lg:justify-start gap-3 mb-3">
+                                            <div class="flex text-yellow-400 text-sm">
+                                                <i class="fas fa-star animate-pulse" style="animation-delay: 0.1s;"></i>
+                                                <i class="fas fa-star animate-pulse" style="animation-delay: 0.2s;"></i>
+                                                <i class="fas fa-star animate-pulse" style="animation-delay: 0.3s;"></i>
+                                                <i class="fas fa-star animate-pulse" style="animation-delay: 0.4s;"></i>
+                                                <i class="fas fa-star animate-pulse" style="animation-delay: 0.5s;"></i>
+                                            </div>
+                                            <span class="text-xs text-gray-600 font-medium px-2 py-1 bg-yellow-50 rounded-full">Liderazgo Visionario</span>
+                                        </div>
+                                        
+                                        <!-- CEO Stats -->
+                                        <div class="grid grid-cols-3 gap-4 text-center">
+                                            <div class="group/stat">
+                                                <div class="text-lg font-bold text-[var(--navy)] group-hover/stat:text-[var(--electric-blue)] transition-colors duration-200">15+</div>
+                                                <div class="text-xs text-gray-500 font-medium">Años Exp.</div>
+                                            </div>
+                                            <div class="group/stat">
+                                                <div class="text-lg font-bold text-[var(--navy)] group-hover/stat:text-[var(--electric-blue)] transition-colors duration-200">50+</div>
+                                                <div class="text-xs text-gray-500 font-medium">Ubicaciones</div>
+                                            </div>
+                                            <div class="group/stat">
+                                                <div class="text-lg font-bold text-[var(--navy)] group-hover/stat:text-[var(--electric-blue)] transition-colors duration-200">1K+</div>
+                                                <div class="text-xs text-gray-500 font-medium">Clientes</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- CEO Quote -->
+                                    <div class="relative bg-gradient-to-r from-[var(--electric-blue)]/5 to-[var(--navy)]/5 rounded-xl p-4 border-l-4 border-[var(--electric-blue)]">
+                                        <div class="absolute top-2 left-2 text-2xl text-[var(--electric-blue)]/30 font-serif">"</div>
+                                        <p class="text-sm text-gray-700 italic leading-relaxed pl-4">
+                                            "Nuestro compromiso es transformar cada lavado en una experiencia excepcional que supere tus expectativas."
+                                        </p>
+                                        <div class="absolute bottom-2 right-2 text-2xl text-[var(--electric-blue)]/30 font-serif rotate-180">"</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- CTA Buttons -->
-                        <div class="flex flex-col sm:flex-row gap-4 ml-auto">
-                            <a href="{% url 'contacto' %}" class="group/btn px-6 py-3 bg-gradient-to-r from-[var(--navy)] to-[var(--electric-blue)] text-white font-bold rounded-full hover:shadow-2xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden">
-                                <span class="relative z-10 flex items-center gap-2">
-                                    <i class="fas fa-arrow-right group-hover/btn:translate-x-1 transition-transform duration-200"></i>
-                                    Contáctanos
-                                </span>
-                                <div class="absolute inset-0 bg-gradient-to-r from-[var(--electric-blue)] to-[var(--navy)] opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
-                            </a>
-                            
-                            <a href="{% url 'servicios' %}" class="group/btn px-6 py-3 border-2 border-[var(--electric-blue)] text-[var(--electric-blue)] font-bold rounded-full hover:bg-[var(--electric-blue)] hover:text-white transition-all duration-300 relative overflow-hidden">
-                                <span class="relative z-10 flex items-center gap-2">
-                                    <i class="fas fa-concierge-bell group-hover/btn:scale-110 transition-transform duration-200"></i>
-                                    Ver Servicios
-                                </span>
-                            </a>
+
+                        <!-- Enhanced CTA Buttons Section -->
+                        <div class="space-y-6">
+                            <!-- Primary Action -->
+                            <div class="text-center">
+                                <p class="text-gray-600 mb-4 font-medium">¿Listo para experimentar la excelencia Autonew?</p>
+                                
+                                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                                    <!-- Contact Button -->
+                                    <a href="{% url 'contacto' %}" class="group/contact relative px-8 py-4 bg-gradient-to-r from-[var(--navy)] to-[var(--electric-blue)] text-white font-bold rounded-2xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 overflow-hidden min-w-[200px]">
+                                        <!-- Animated Background -->
+                                        <div class="absolute inset-0 bg-gradient-to-r from-[var(--electric-blue)] to-[var(--navy)] opacity-0 group-hover/contact:opacity-100 transition-opacity duration-500"></div>
+                                        
+                                        <!-- Button Content -->
+                                        <span class="relative z-10 flex items-center justify-center gap-3">
+                                            <div class="w-5 h-5 rounded-full border-2 border-white flex items-center justify-center group-hover/contact:rotate-180 transition-transform duration-500">
+                                                <i class="fas fa-phone text-xs"></i>
+                                            </div>
+                                            <span>Contáctanos Ahora</span>
+                                            <i class="fas fa-arrow-right group-hover/contact:translate-x-2 transition-transform duration-300"></i>
+                                        </span>
+                                        
+                                        <!-- Shine Effect -->
+                                        <div class="absolute inset-0 -translate-x-full group-hover/contact:translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000"></div>
+                                    </a>
+                                    
+                                    <!-- Services Button -->
+                                    <a href="{% url 'servicios' %}" class="group/services relative px-8 py-4 border-2 border-[var(--electric-blue)] text-[var(--electric-blue)] font-bold rounded-2xl hover:bg-[var(--electric-blue)] hover:text-white transition-all duration-500 hover:shadow-xl hover:-translate-y-1 overflow-hidden backdrop-blur-sm min-w-[200px]">
+                                        <!-- Background Fill Animation -->
+                                        <div class="absolute inset-0 bg-gradient-to-r from-[var(--electric-blue)] to-[var(--navy)] transform scale-x-0 group-hover/services:scale-x-100 transition-transform duration-500 origin-left"></div>
+                                        
+                                        <!-- Button Content -->
+                                        <span class="relative z-10 flex items-center justify-center gap-3">
+                                            <div class="w-5 h-5 rounded-full border-2 border-current flex items-center justify-center group-hover/services:rotate-45 transition-transform duration-500">
+                                                <i class="fas fa-concierge-bell text-xs"></i>
+                                            </div>
+                                            <span>Explorar Servicios</span>
+                                            <i class="fas fa-external-link-alt group-hover/services:scale-110 transition-transform duration-300"></i>
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Additional Quick Actions -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-200/50">
+                                <!-- WhatsApp -->
+                                <div class="group/whatsapp flex items-center justify-center gap-2 p-3 rounded-xl bg-green-50 hover:bg-green-100 transition-all duration-300 cursor-pointer">
+                                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center group-hover/whatsapp:scale-110 transition-transform duration-300">
+                                        <i class="fab fa-whatsapp text-white"></i>
+                                    </div>
+                                    <span class="text-green-700 font-semibold text-sm">WhatsApp Directo</span>
+                                </div>
+                                
+                                <!-- Schedule -->
+                                <div class="group/schedule flex items-center justify-center gap-2 p-3 rounded-xl bg-blue-50 hover:bg-blue-100 transition-all duration-300 cursor-pointer">
+                                    <div class="w-8 h-8 bg-[var(--electric-blue)] rounded-full flex items-center justify-center group-hover/schedule:scale-110 transition-transform duration-300">
+                                        <i class="fas fa-calendar-alt text-white"></i>
+                                    </div>
+                                    <span class="text-[var(--electric-blue)] font-semibold text-sm">Agendar Cita</span>
+                                </div>
+                                
+                                <!-- Location -->
+                                <div class="group/location flex items-center justify-center gap-2 p-3 rounded-xl bg-purple-50 hover:bg-purple-100 transition-all duration-300 cursor-pointer">
+                                    <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center group-hover/location:scale-110 transition-transform duration-300">
+                                        <i class="fas fa-map-marker-alt text-white"></i>
+                                    </div>
+                                    <span class="text-purple-700 font-semibold text-sm">Ubicaciones</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Corner Decorative Elements -->
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-[var(--electric-blue)]/10 to-transparent rounded-tl-3xl"></div>
+                    <div class="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-[var(--navy)]/10 to-transparent rounded-br-3xl"></div>
                 </div>
             </div>
 

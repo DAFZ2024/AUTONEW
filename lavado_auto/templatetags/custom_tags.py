@@ -173,3 +173,20 @@ def precio_formateado(precio):
         return "{:.2f}".format(float(precio))
     except Exception as e:
         return "0.00"
+
+@register.filter
+def es_nueva_24h(fecha):
+    """Verificar si una fecha está dentro de las últimas 24 horas"""
+    try:
+        from django.utils import timezone
+        from datetime import timedelta
+        
+        if not fecha:
+            return False
+            
+        ahora = timezone.now()
+        hace_24_horas = ahora - timedelta(hours=24)
+        
+        return fecha >= hace_24_horas
+    except Exception:
+        return False

@@ -56,6 +56,12 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     fecha_registro = models.DateTimeField(default=timezone.now)  # Fecha de registro del usuario
+    
+    # Campos para control de intentos fallidos de login
+    failed_login_attempts = models.IntegerField(default=0)  # Contador de intentos fallidos
+    last_failed_login = models.DateTimeField(null=True, blank=True)  # Última vez que falló el login
+    is_locked_out = models.BooleanField(default=False)  # Si está bloqueado por intentos fallidos
+    lockout_time = models.DateTimeField(null=True, blank=True)  # Tiempo de bloqueo
 
     objects = UsuarioManager()
 
@@ -64,6 +70,50 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     
     def __str__(self):
         return self.nombre_usuario
+    
+    @property
+    def username(self):
+        """Propiedad para compatibilidad con Django auth"""
+        return self.nombre_usuario
+    
+    def increment_failed_attempts(self):
+        """Incrementa el contador de intentos fallidos"""
+        self.failed_login_attempts += 1
+        self.last_failed_login = timezone.now()
+        
+        # Si llega a 6 intentos, bloquear el usuario
+        if self.failed_login_attempts >= 6:
+            self.is_locked_out = True
+            self.lockout_time = timezone.now()
+        
+        self.save()
+    
+    def reset_failed_attempts(self):
+        """Resetea el contador de intentos fallidos después de login exitoso"""
+        self.failed_login_attempts = 0
+        self.last_failed_login = None
+        self.is_locked_out = False
+        self.lockout_time = None
+        self.save()
+    
+    def can_attempt_login(self):
+        """Verifica si el usuario puede intentar hacer login"""
+        if not self.is_locked_out:
+            return True
+        
+        # Si está bloqueado, verificar si han pasado 30 minutos
+        if self.lockout_time:
+            time_since_lockout = timezone.now() - self.lockout_time
+            if time_since_lockout.total_seconds() > 1800:  # 30 minutos = 1800 segundos
+                # Resetear el bloqueo después de 30 minutos
+                self.reset_failed_attempts()
+                return True
+        
+        return False
+    
+    def get_remaining_attempts(self):
+        """Obtiene el número de intentos restantes antes del bloqueo"""
+        return max(0, 6 - self.failed_login_attempts)
     
     class Meta:
         verbose_name = 'Usuario'
@@ -92,6 +142,9 @@ class Empresa(models.Model):
     contrasena = models.CharField(max_length=255, default='temp_password')  # Campo para la contraseña con default temporal
     fecha_registro = models.DateTimeField(default=timezone.now)  # Fecha de registro con default
     verificada = models.BooleanField(default=False)  # Campo para verificación de empresa
+    # Coordenadas para el mapa
+    latitud = models.DecimalField(max_digits=10, decimal_places=8, null=True, blank=True)
+    longitud = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
     servicios = models.ManyToManyField(Servicio, through=EmpresaServicio)
 
     def __str__(self):
@@ -179,14 +232,93 @@ class PasarelaDePago(models.Model):
 
 
 
-# Modelo Mensaje o Queja
+# Modelo Mensaje o Queja (PQRS)
 class MensajeQueja(models.Model):
+    TIPOS_PQRS = [
+        ('peticion', 'Petición'),
+        ('queja', 'Queja'),
+        ('reclamo', 'Reclamo'),
+        ('sugerencia', 'Sugerencia'),
+    ]
+    
+    NIVELES_URGENCIA = [
+        ('baja', 'Baja'),
+        ('media', 'Media'),
+        ('alta', 'Alta'),
+        ('critica', 'Crítica'),
+    ]
+    
+    ESTADOS_PQRS = [
+        ('recibido', 'Recibido'),
+        ('en_proceso', 'En Proceso'),
+        ('resuelto', 'Resuelto'),
+        ('cerrado', 'Cerrado'),
+    ]
+
     id_mensaje = models.AutoField(primary_key=True)
+    
+    # Campos del formulario PQRS
+    tipo_pqrs = models.CharField(max_length=20, choices=TIPOS_PQRS)
+    urgencia = models.CharField(max_length=20, choices=NIVELES_URGENCIA, default='media')
+    nombre_contacto = models.CharField(max_length=255, blank=True, null=True)
+    email_contacto = models.EmailField(blank=True, null=True)
+    
+    # Servicio relacionado (puede ser de la BD o categorías fijas)
+    servicio_relacionado = models.CharField(max_length=100, blank=True, null=True)
+    servicio_bd = models.ForeignKey(Servicio, on_delete=models.SET_NULL, null=True, blank=True, 
+                                   help_text="Servicio seleccionado de la base de datos")
+    
+    # Contenido principal
     contenido = models.TextField()
-    fecha_envio = models.DateField(auto_now_add=True)
-    estado = models.CharField(max_length=50, default='no respondido')
+    
+    # Campos de seguimiento
+    fecha_envio = models.DateTimeField(auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
+    estado = models.CharField(max_length=20, choices=ESTADOS_PQRS, default='recibido')
     respuesta = models.TextField(blank=True)
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)   
+    fecha_respuesta = models.DateTimeField(null=True, blank=True)
+    
+    # Usuario (puede ser null para PQRS anónimas)
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=True, blank=True)
+    
+    # Campos adicionales para seguimiento
+    numero_radicado = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    acepto_terminos = models.BooleanField(default=False)
+    
+    def save(self, *args, **kwargs):
+        # Generar número de radicado automáticamente
+        if not self.numero_radicado:
+            from django.utils import timezone
+            from datetime import datetime, date
+            
+            fecha = timezone.now().strftime('%Y%m%d')
+            
+            # Obtener el inicio y fin del día actual para evitar problemas con SQLite
+            hoy = date.today()
+            inicio_dia = datetime.combine(hoy, datetime.min.time())
+            fin_dia = datetime.combine(hoy, datetime.max.time())
+            
+            # Hacer timezone-aware
+            if timezone.is_aware(timezone.now()):
+                inicio_dia = timezone.make_aware(inicio_dia)
+                fin_dia = timezone.make_aware(fin_dia)
+            
+            # Contar registros del día usando rango en lugar de __date
+            count = MensajeQueja.objects.filter(
+                fecha_envio__gte=inicio_dia,
+                fecha_envio__lte=fin_dia
+            ).count() + 1
+            
+            self.numero_radicado = f"PQRS-{fecha}-{count:04d}"
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return f"{self.get_tipo_pqrs_display()} - {self.numero_radicado}"
+    
+    class Meta:
+        verbose_name = 'PQRS'
+        verbose_name_plural = 'PQRS'
+        ordering = ['-fecha_envio']   
 
 class Comentario(models.Model):
     id_comentario = models.AutoField(primary_key=True)
@@ -529,3 +661,52 @@ class SolicitudServicioEmpresa(models.Model):
         verbose_name = 'Solicitud de Servicio Empresa'
         verbose_name_plural = 'Solicitudes de Servicios Empresas'
         unique_together = [['empresa', 'servicio_solicitado', 'estado']]  # Evita duplicados pendientes
+
+
+class SolicitudContactoPlan(models.Model):
+    """Modelo para almacenar solicitudes de contacto de planes empresariales"""
+    ESTADOS_SOLICITUD = [
+        ('pendiente', 'Pendiente'),
+        ('contactado', 'Contactado'),
+        ('cerrado', 'Cerrado'),
+    ]
+    
+    id_solicitud = models.AutoField(primary_key=True)
+    plan = models.ForeignKey(PlanEmpresarial, on_delete=models.CASCADE, related_name='solicitudes_contacto')
+    
+    # Datos del solicitante
+    nombre_completo = models.CharField(max_length=200)
+    email = models.EmailField()
+    telefono = models.CharField(max_length=20)
+    empresa = models.CharField(max_length=200)
+    cargo = models.CharField(max_length=100, blank=True)
+    
+    # Información adicional
+    cantidad_vehiculos = models.IntegerField(help_text="Cantidad aproximada de vehículos en la flota")
+    mensaje_adicional = models.TextField(blank=True, help_text="Información adicional o requerimientos específicos")
+    
+    # Metadatos
+    fecha_solicitud = models.DateTimeField(auto_now_add=True)
+    estado = models.CharField(max_length=20, choices=ESTADOS_SOLICITUD, default='pendiente')
+    ip_solicitante = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.TextField(blank=True)
+    
+    # Información de seguimiento
+    fecha_contacto = models.DateTimeField(null=True, blank=True)
+    notas_seguimiento = models.TextField(blank=True)
+    
+    def __str__(self):
+        return f"Solicitud de {self.nombre_completo} - {self.plan.nombre}"
+    
+    def marcar_como_contactado(self, notas=""):
+        """Marca la solicitud como contactada"""
+        self.estado = 'contactado'
+        self.fecha_contacto = timezone.now()
+        if notas:
+            self.notas_seguimiento = notas
+        self.save()
+    
+    class Meta:
+        verbose_name = 'Solicitud de Contacto de Plan'
+        verbose_name_plural = 'Solicitudes de Contacto de Planes'
+        ordering = ['-fecha_solicitud']

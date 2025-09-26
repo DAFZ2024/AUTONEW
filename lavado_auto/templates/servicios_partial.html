@@ -1,0 +1,289 @@
+{% load static %}
+<!-- Grid de servicios con diseño ultra moderno y uniforme - Dinámico desde BD -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" id="servicios-grid">
+    {% for servicio in servicios %}
+    {% cycle 'blue' 'purple' 'emerald' 'amber' 'cyan' 'rose' 'violet' 'slate' as colors silent %}
+    <div class="group relative h-full">
+        {% if colors == 'blue' %}
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-3xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
+            <div class="relative bg-white rounded-3xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-blue-300 transform hover:-translate-y-3 group-hover:-rotate-1">
+        {% elif colors == 'purple' %}
+            <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
+            <div class="relative bg-white rounded-3xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-purple-300 transform hover:-translate-y-3 group-hover:-rotate-1">
+        {% elif colors == 'emerald' %}
+            <div class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
+            <div class="relative bg-white rounded-3xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-emerald-300 transform hover:-translate-y-3 group-hover:-rotate-1">
+        {% elif colors == 'amber' %}
+            <div class="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
+            <div class="relative bg-white rounded-3xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-amber-300 transform hover:-translate-y-3 group-hover:-rotate-1">
+        {% elif colors == 'cyan' %}
+            <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-3xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
+            <div class="relative bg-white rounded-3xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-cyan-300 transform hover:-translate-y-3 group-hover:-rotate-1">
+        {% elif colors == 'rose' %}
+            <div class="absolute inset-0 bg-gradient-to-r from-rose-500 to-pink-500 rounded-3xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
+            <div class="relative bg-white rounded-3xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-rose-300 transform hover:-translate-y-3 group-hover:-rotate-1">
+        {% elif colors == 'violet' %}
+            <div class="absolute inset-0 bg-gradient-to-r from-violet-500 to-purple-500 rounded-3xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
+            <div class="relative bg-white rounded-3xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-violet-300 transform hover:-translate-y-3 group-hover:-rotate-1">
+        {% else %}
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-500 to-gray-600 rounded-3xl opacity-0 group-hover:opacity-15 transition-all duration-700 transform group-hover:scale-105 group-hover:rotate-1"></div>
+            <div class="relative bg-white rounded-3xl p-6 h-full flex flex-col shadow-xl hover:shadow-2xl transition-all duration-700 border border-gray-100 group-hover:border-slate-300 transform hover:-translate-y-3 group-hover:-rotate-1">
+        {% endif %}
+        
+            <!-- Imagen ilustrativa del servicio con overlay -->
+            <div class="relative mb-6 overflow-hidden rounded-2xl">
+                {% if colors == 'blue' %}
+                    <div class="w-full h-48 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center overflow-hidden group-hover:shadow-lg transition-all duration-700">
+                {% elif colors == 'purple' %}
+                    <div class="w-full h-48 bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center overflow-hidden group-hover:shadow-lg transition-all duration-700">
+                {% elif colors == 'emerald' %}
+                    <div class="w-full h-48 bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center overflow-hidden group-hover:shadow-lg transition-all duration-700">
+                {% elif colors == 'amber' %}
+                    <div class="w-full h-48 bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center overflow-hidden group-hover:shadow-lg transition-all duration-700">
+                {% elif colors == 'cyan' %}
+                    <div class="w-full h-48 bg-gradient-to-br from-cyan-100 to-blue-100 flex items-center justify-center overflow-hidden group-hover:shadow-lg transition-all duration-700">
+                {% elif colors == 'rose' %}
+                    <div class="w-full h-48 bg-gradient-to-br from-rose-100 to-pink-100 flex items-center justify-center overflow-hidden group-hover:shadow-lg transition-all duration-700">
+                {% elif colors == 'violet' %}
+                    <div class="w-full h-48 bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center overflow-hidden group-hover:shadow-lg transition-all duration-700">
+                {% else %}
+                    <div class="w-full h-48 bg-gradient-to-br from-slate-100 to-gray-100 flex items-center justify-center overflow-hidden group-hover:shadow-lg transition-all duration-700">
+                {% endif %}
+                    <!-- Imagen por defecto para servicios -->
+                    <img src="{% static 'img/servicios/lavado_exterior.jpg' %}" 
+                         alt="{{ servicio.nombre_servicio }}" 
+                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                         onerror="this.src='{% static 'img/default-service.jpg' %}'">
+                    {% if colors == 'blue' %}
+                        <div class="absolute inset-0 bg-gradient-to-t from-blue-900/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                    {% elif colors == 'purple' %}
+                        <div class="absolute inset-0 bg-gradient-to-t from-purple-900/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                    {% elif colors == 'emerald' %}
+                        <div class="absolute inset-0 bg-gradient-to-t from-emerald-900/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                    {% elif colors == 'amber' %}
+                        <div class="absolute inset-0 bg-gradient-to-t from-amber-900/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                    {% elif colors == 'cyan' %}
+                        <div class="absolute inset-0 bg-gradient-to-t from-cyan-900/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                    {% elif colors == 'rose' %}
+                        <div class="absolute inset-0 bg-gradient-to-t from-rose-900/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                    {% elif colors == 'violet' %}
+                        <div class="absolute inset-0 bg-gradient-to-t from-violet-900/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                    {% else %}
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                    {% endif %}
+                </div>
+                
+                <!-- Badge de servicio premium -->
+                {% if colors == 'blue' %}
+                    <div class="absolute top-3 left-3 bg-blue-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                {% elif colors == 'purple' %}
+                    <div class="absolute top-3 left-3 bg-purple-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                {% elif colors == 'emerald' %}
+                    <div class="absolute top-3 left-3 bg-emerald-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                {% elif colors == 'amber' %}
+                    <div class="absolute top-3 left-3 bg-amber-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                {% elif colors == 'cyan' %}
+                    <div class="absolute top-3 left-3 bg-cyan-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                {% elif colors == 'rose' %}
+                    <div class="absolute top-3 left-3 bg-rose-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                {% elif colors == 'violet' %}
+                    <div class="absolute top-3 left-3 bg-violet-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                {% else %}
+                    <div class="absolute top-3 left-3 bg-slate-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                {% endif %}
+                    Premium
+                </div>
+                
+                <!-- Ícono flotante -->
+                {% if colors == 'blue' %}
+                    <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-700 transform group-hover:scale-125 group-hover:rotate-12">
+                {% elif colors == 'purple' %}
+                    <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-700 transform group-hover:scale-125 group-hover:rotate-12">
+                {% elif colors == 'emerald' %}
+                    <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-700 transform group-hover:scale-125 group-hover:rotate-12">
+                {% elif colors == 'amber' %}
+                    <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-700 transform group-hover:scale-125 group-hover:rotate-12">
+                {% elif colors == 'cyan' %}
+                    <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-700 transform group-hover:scale-125 group-hover:rotate-12">
+                {% elif colors == 'rose' %}
+                    <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-r from-rose-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-700 transform group-hover:scale-125 group-hover:rotate-12">
+                {% elif colors == 'violet' %}
+                    <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-r from-violet-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-700 transform group-hover:scale-125 group-hover:rotate-12">
+                {% else %}
+                    <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-r from-slate-500 to-gray-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-700 transform group-hover:scale-125 group-hover:rotate-12">
+                {% endif %}
+                    <i class="fas fa-car text-white text-lg"></i>
+                </div>
+            </div>
+            
+            <!-- Contenido de la card -->
+            <div class="flex-1 flex flex-col">
+                {% if colors == 'blue' %}
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-500">
+                        {{ servicio.nombre_servicio }}
+                    </h3>
+                {% elif colors == 'purple' %}
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors duration-500">
+                        {{ servicio.nombre_servicio }}
+                    </h3>
+                {% elif colors == 'emerald' %}
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-emerald-600 transition-colors duration-500">
+                        {{ servicio.nombre_servicio }}
+                    </h3>
+                {% elif colors == 'amber' %}
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-amber-600 transition-colors duration-500">
+                        {{ servicio.nombre_servicio }}
+                    </h3>
+                {% elif colors == 'cyan' %}
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-cyan-600 transition-colors duration-500">
+                        {{ servicio.nombre_servicio }}
+                    </h3>
+                {% elif colors == 'rose' %}
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-rose-600 transition-colors duration-500">
+                        {{ servicio.nombre_servicio }}
+                    </h3>
+                {% elif colors == 'violet' %}
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-violet-600 transition-colors duration-500">
+                        {{ servicio.nombre_servicio }}
+                    </h3>
+                {% else %}
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-slate-600 transition-colors duration-500">
+                        {{ servicio.nombre_servicio }}
+                    </h3>
+                {% endif %}
+                <p class="text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-500 flex-1 mb-4">
+                    {{ servicio.descripcion|truncatewords:15 }}
+                </p>
+                
+                <!-- Rating y precio -->
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <div class="flex items-center space-x-1">
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star text-sm"></i>
+                            <i class="fas fa-star text-sm"></i>
+                            <i class="fas fa-star text-sm"></i>
+                            <i class="fas fa-star text-sm"></i>
+                            <i class="fas fa-star text-sm"></i>
+                        </div>
+                        <span class="text-sm text-gray-500 ml-1">5.0</span>
+                    </div>
+                    {% if colors == 'blue' %}
+                        <span class="text-blue-600 font-bold text-lg">${{ servicio.precio|floatformat:0 }}</span>
+                    {% elif colors == 'purple' %}
+                        <span class="text-purple-600 font-bold text-lg">${{ servicio.precio|floatformat:0 }}</span>
+                    {% elif colors == 'emerald' %}
+                        <span class="text-emerald-600 font-bold text-lg">${{ servicio.precio|floatformat:0 }}</span>
+                    {% elif colors == 'amber' %}
+                        <span class="text-amber-600 font-bold text-lg">${{ servicio.precio|floatformat:0 }}</span>
+                    {% elif colors == 'cyan' %}
+                        <span class="text-cyan-600 font-bold text-lg">${{ servicio.precio|floatformat:0 }}</span>
+                    {% elif colors == 'rose' %}
+                        <span class="text-rose-600 font-bold text-lg">${{ servicio.precio|floatformat:0 }}</span>
+                    {% elif colors == 'violet' %}
+                        <span class="text-violet-600 font-bold text-lg">${{ servicio.precio|floatformat:0 }}</span>
+                    {% else %}
+                        <span class="text-slate-600 font-bold text-lg">${{ servicio.precio|floatformat:0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Línea decorativa animada -->
+            {% if colors == 'blue' %}
+                <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 group-hover:w-full transition-all duration-700 rounded-bl-3xl"></div>
+            {% elif colors == 'purple' %}
+                <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500 group-hover:w-full transition-all duration-700 rounded-bl-3xl"></div>
+            {% elif colors == 'emerald' %}
+                <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 group-hover:w-full transition-all duration-700 rounded-bl-3xl"></div>
+            {% elif colors == 'amber' %}
+                <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500 group-hover:w-full transition-all duration-700 rounded-bl-3xl"></div>
+            {% elif colors == 'cyan' %}
+                <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 group-hover:w-full transition-all duration-700 rounded-bl-3xl"></div>
+            {% elif colors == 'rose' %}
+                <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-rose-500 to-pink-500 group-hover:w-full transition-all duration-700 rounded-bl-3xl"></div>
+            {% elif colors == 'violet' %}
+                <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-violet-500 to-purple-500 group-hover:w-full transition-all duration-700 rounded-bl-3xl"></div>
+            {% else %}
+                <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-slate-500 to-gray-600 group-hover:w-full transition-all duration-700 rounded-bl-3xl"></div>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <!-- Mensaje cuando no hay servicios -->
+    <div class="col-span-full text-center py-16">
+        <div class="bg-gray-100 rounded-3xl p-12 max-w-md mx-auto">
+            <div class="w-20 h-20 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full mx-auto mb-6 flex items-center justify-center">
+                <i class="fas fa-car text-white text-2xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">No hay servicios disponibles</h3>
+            <p class="text-gray-600">Próximamente tendremos servicios increíbles para tu vehículo.</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Controles de paginación -->
+{% if servicios.has_other_pages %}
+<div class="flex justify-center items-center mt-16 mb-8">
+    <nav class="flex items-center space-x-2">
+        <!-- Botón anterior -->
+        {% if servicios.has_previous %}
+            <a href="#" data-page="{{ servicios.previous_page_number }}" 
+               class="home-servicios-pagination-link group relative inline-flex items-center px-4 py-3 bg-white border border-gray-300 text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Anterior
+            </a>
+        {% else %}
+            <span class="inline-flex items-center px-4 py-3 bg-gray-100 border border-gray-200 text-gray-400 rounded-xl font-medium cursor-not-allowed">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Anterior
+            </span>
+        {% endif %}
+
+        <!-- Números de página -->
+        <div class="flex items-center space-x-1">
+            {% for num in servicios.paginator.page_range %}
+                {% if servicios.number == num %}
+                    <span class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl shadow-lg">
+                        {{ num }}
+                    </span>
+                {% elif num > servicios.number|add:'-3' and num < servicios.number|add:'3' %}
+                    <a href="#" data-page="{{ num }}" 
+                       class="home-servicios-pagination-link inline-flex items-center justify-center w-12 h-12 bg-white border border-gray-300 text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                        {{ num }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Botón siguiente -->
+        {% if servicios.has_next %}
+            <a href="#" data-page="{{ servicios.next_page_number }}" 
+               class="home-servicios-pagination-link group relative inline-flex items-center px-4 py-3 bg-white border border-gray-300 text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                Siguiente
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
+        {% else %}
+            <span class="inline-flex items-center px-4 py-3 bg-gray-100 border border-gray-200 text-gray-400 rounded-xl font-medium cursor-not-allowed">
+                Siguiente
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </span>
+        {% endif %}
+    </nav>
+</div>
+
+<!-- Información de paginación -->
+<div class="text-center mb-8">
+    <p class="text-gray-600">
+        Mostrando página {{ servicios.number }} de {{ servicios.paginator.num_pages }} 
+        ({{ servicios.paginator.count }} servicios en total)
+    </p>
+</div>
+{% endif %}

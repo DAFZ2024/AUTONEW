@@ -875,9 +875,20 @@
                 }, 600);
             }
 
-            // Auto-cerrar mensajes después de 6 segundos con animación mejorada
+            // Auto-cerrar mensajes con tiempos diferentes según el tipo
             const notifications = document.querySelectorAll('.notification');
             notifications.forEach(notification => {
+                // Determinar el tiempo de duración según el tipo de mensaje
+                let duration = 6000; // Default: 6 segundos
+                
+                if (notification.classList.contains('is-warning')) {
+                    duration = 15000; // Mensajes de advertencia: 15 segundos (para verificación de empresas)
+                } else if (notification.classList.contains('is-success')) {
+                    duration = 8000; // Mensajes de éxito: 8 segundos
+                } else if (notification.classList.contains('is-danger')) {
+                    duration = 10000; // Mensajes de error: 10 segundos
+                }
+                
                 setTimeout(() => {
                     if (notification.parentElement) {
                         notification.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
@@ -887,7 +898,7 @@
                             notification.remove();
                         }, 500);
                     }
-                }, 6000);
+                }, duration);
             });
 
             // Añadir efectos de hover mejorados a los inputs

@@ -1,52 +1,12 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends 'base/base_crud_empresas.html' %}
+{% load static %}
 
+{% block title %}Gestión de Citas - {{ empresa.nombre_empresa }}{% endblock %}
+
+{% block content %}
 <head>
-    {% load static %}
-    {% load custom_tags %}
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Autonew - Gestión de Citas</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            background: #ffffff;
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .navbar-glass {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .logo-container {
-            position: relative;
-        }
-
-        .logo-container::before {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
-            border-radius: 50%;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .logo-container:hover::before {
-            opacity: 1;
-        }
-
-        .logo-img {
-            position: relative;
-            z-index: 2;
-            border-radius: 50%;
-            border: 2px solid white;
-        }
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -157,85 +117,6 @@
 </head>
 
 <body class="bg-white min-h-screen">
-    <!-- Navbar - Igual que home_empresas -->
-    <nav class="navbar-glass shadow-lg px-4 sm:px-6 lg:px-8 py-3 sm:py-4 fixed top-0 left-0 right-0 z-50">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <!-- Logo y marca -->
-            <div class="flex items-center space-x-2 sm:space-x-3">
-                <div class="logo-container">
-                    <i class="fas fa-car logo-img w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-lg sm:text-2xl text-white bg-gradient-to-r from-blue-500 to-purple-600"></i>
-                </div>
-                <div>
-                    <h1 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800">AUTONEW</h1>
-                    <p class="text-xs sm:text-sm text-gray-600 hidden sm:block">Gestión de Citas</p>
-                </div>
-            </div>
-
-            <!-- Navegación Desktop -->
-            <div class="hidden lg:flex items-center space-x-6">
-                <a href="{% url 'home_empresas' %}" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                    <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
-                </a>
-                <a href="{% url 'citas_empresa' %}" class="text-blue-600 font-semibold border-b-2 border-blue-600">
-                    <i class="fas fa-calendar-alt mr-2"></i>Citas
-                </a>
-                <a href="{% url 'reportes_empresa' %}" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                    <i class="fas fa-chart-bar mr-2"></i>Reportes
-                </a>
-                <a href="{% url 'perfil_empresa' %}" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                    <i class="fas fa-user-cog mr-2"></i>Perfil
-                </a>
-            </div>
-
-            <!-- Usuario y opciones -->
-            <div class="flex items-center space-x-2 sm:space-x-4">
-                <div class="hidden md:block text-right">
-                    <p class="text-gray-800 font-semibold text-sm lg:text-base truncate max-w-32 lg:max-w-none">{{ empresa.nombre_empresa }}</p>
-                    <p class="text-gray-600 text-xs lg:text-sm">Administrador</p>
-                </div>
-                <div class="relative">
-                    <button class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-lg hover:shadow-xl transition-all">
-                        <i class="fas fa-building text-sm sm:text-base"></i>
-                    </button>
-                </div>
-                <!-- Menú hamburguesa para móvil -->
-                <button onclick="toggleMobileMenu()" class="lg:hidden text-gray-600 hover:text-blue-500 transition-colors p-2" title="Menú">
-                    <i class="fas fa-bars text-lg"></i>
-                </button>
-                <button onclick="logout()" class="hidden sm:block text-gray-600 hover:text-red-500 transition-colors p-2" title="Cerrar Sesión">
-                    <i class="fas fa-sign-out-alt text-lg sm:text-xl"></i>
-                </button>
-            </div>
-        </div>
-        
-        <!-- Menú móvil -->
-        <div id="mobile-menu" class="hidden lg:hidden bg-white/95 backdrop-blur-sm border-t border-gray-200 mt-3 -mx-4 px-4 py-4">
-            <div class="space-y-3">
-                <a href="{% url 'home_empresas' %}" class="flex items-center text-gray-700 hover:text-blue-600 font-medium transition-colors py-2">
-                    <i class="fas fa-tachometer-alt mr-3 w-5"></i>Dashboard
-                </a>
-                <a href="{% url 'citas_empresa' %}" class="flex items-center text-blue-600 font-semibold py-2">
-                    <i class="fas fa-calendar-alt mr-3 w-5"></i>Citas
-                </a>
-                <a href="{% url 'reportes_empresa' %}" class="flex items-center text-gray-700 hover:text-blue-600 font-medium transition-colors py-2">
-                    <i class="fas fa-chart-bar mr-3 w-5"></i>Reportes
-                </a>
-                <a href="{% url 'perfil_empresa' %}" class="flex items-center text-gray-700 hover:text-blue-600 font-medium transition-colors py-2">
-                    <i class="fas fa-user-cog mr-3 w-5"></i>Perfil
-                </a>
-                <div class="border-t border-gray-200 pt-3 mt-3">
-                    <div class="md:hidden mb-3">
-                        <p class="text-gray-800 font-semibold text-sm">{{ empresa.nombre_empresa }}</p>
-                        <p class="text-gray-600 text-xs">Administrador</p>
-                    </div>
-                    <button onclick="logout()" class="flex items-center text-red-600 hover:text-red-800 font-medium transition-colors py-2 w-full text-left">
-                        <i class="fas fa-sign-out-alt mr-3 w-5"></i>Cerrar Sesión
-                    </button>
-                </div>
-            </div>
-        </div>
-    </nav>
-
     <!-- Elementos decorativos de fondo -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
         <div class="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-200/30 to-slate-200/30 rounded-full blur-3xl opacity-60"></div>
@@ -243,355 +124,389 @@
     </div>
 
     <!-- Contenido principal -->
-    <main class="relative z-10 pt-24">
+    <main class="relative z-10 pt-8">
         <div class="max-w-[1800px] mx-auto px-6">
-            <!-- Mensajes de estado -->
-            {% if messages %}
-                <div class="mb-6 space-y-3">
-                    {% for message in messages %}
-                        <div class="p-4 rounded-2xl shadow-lg animate-slideInDown {% if message.tags == 'success' %}bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 text-green-800{% elif message.tags == 'error' %}bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 text-red-800{% elif message.tags == 'warning' %}bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 text-yellow-800{% else %}bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-blue-800{% endif %}">
-                            <div class="flex items-center">
-                                <i class="fas fa-info-circle mr-3"></i>
-                                {{ message }}
-                            </div>
-                        </div>
-                    {% endfor %}
+    <!-- Mensajes de estado -->
+    {% if messages %}
+        <div class="mb-6 space-y-3">
+            {% for message in messages %}
+                <div class="p-4 rounded-2xl shadow-lg animate-slideInDown {% if message.tags == 'success' %}bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 text-green-800{% elif message.tags == 'error' %}bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 text-red-800{% elif message.tags == 'warning' %}bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 text-yellow-800{% else %}bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-blue-800{% endif %}">
+                    <div class="flex items-center">
+                        <i class="fas fa-info-circle mr-3"></i>
+                        {{ message }}
+                    </div>
                 </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Header mejorado -->
+    <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8 animate-fadeInUp">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div class="flex items-center space-x-4">
+                <div class="p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl shadow-lg">
+                    <i class="fas fa-calendar-check text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-slate-800">Gestión de Citas</h1>
+                    <p class="text-slate-600">{{ empresa.nombre_empresa }}</p>
+                </div>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-3">
+                <a href="{% url 'home_empresas' %}" 
+                   class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-slate-600 to-slate-700 text-white font-semibold rounded-xl hover:from-slate-700 hover:to-slate-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Volver al Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas rápidas -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8 animate-fadeInUp" style="animation-delay: 0.2s;">
+        <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-calendar text-white"></i>
+                </div>
+                <span class="text-2xl font-bold text-blue-600">{{ total_reservas }}</span>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800">Total Citas</h3>
+            <p class="text-gray-600 text-sm">Todas las citas</p>
+        </div>
+        
+        <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-clock text-white"></i>
+                </div>
+                <span class="text-2xl font-bold text-yellow-600">{{ reservas_pendientes }}</span>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800">Pendientes</h3>
+            <p class="text-gray-600 text-sm">Por completar</p>
+        </div>
+        
+        <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-check-circle text-white"></i>
+                </div>
+                <span class="text-2xl font-bold text-green-600">{{ reservas_completadas }}</span>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800">Completadas</h3>
+            <p class="text-gray-600 text-sm">Finalizadas</p>
+        </div>
+        
+        <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-ban text-white"></i>
+                </div>
+                <span class="text-2xl font-bold text-red-600">{{ reservas_canceladas|default:0 }}</span>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800">Canceladas</h3>
+            <p class="text-gray-600 text-sm">Anuladas</p>
+        </div>
+        
+        <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-calendar-day text-white"></i>
+                </div>
+                <span class="text-2xl font-bold text-purple-600">{{ reservas_hoy }}</span>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800">Hoy</h3>
+            <p class="text-gray-600 text-sm">Citas de hoy</p>
+        </div>
+    </div>
+
+    <!-- Tabs de Estado -->
+    <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 mb-6 animate-fadeInUp" style="animation-delay: 0.3s;">
+        <div class="flex items-center mb-4">
+            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
+                <i class="fas fa-tasks text-white"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800">Estado de las Citas</h3>
+        </div>
+        
+        <!-- Tabs de estado -->
+        <div class="flex flex-wrap gap-2 mb-4">
+            <button onclick="filtrarCitas('todas')" id="tab-all" class="tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg no-underline">
+                <i class="fas fa-list mr-2"></i>Todas ({{ total_reservas }})
+            </button>
+            <button onclick="filtrarCitas('pendientes')" id="tab-pendiente" class="tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gray-100 text-gray-700 hover:bg-gray-200 no-underline">
+                <i class="fas fa-clock mr-2"></i>Pendientes ({{ reservas_pendientes }})
+            </button>
+            <button onclick="filtrarCitas('completadas')" id="tab-completado" class="tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gray-100 text-gray-700 hover:bg-gray-200 no-underline">
+                <i class="fas fa-check-circle mr-2"></i>Completadas ({{ reservas_completadas }})
+            </button>
+            {% if reservas_canceladas %}
+            <button onclick="filtrarCitas('canceladas')" id="tab-cancelada" class="tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gray-100 text-gray-700 hover:bg-gray-200 no-underline">
+                <i class="fas fa-ban mr-2"></i>Canceladas ({{ reservas_canceladas }})
+            </button>
             {% endif %}
+        </div>
+        
+        <!-- Leyenda de colores -->
+        <div class="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-3 mb-4 border border-gray-200">
+            <div class="flex items-center space-x-1 text-xs">
+                <i class="fas fa-palette text-gray-600 mr-2"></i>
+                <span class="text-gray-700 font-semibold mr-3">Leyenda:</span>
+                <div class="flex items-center space-x-1">
+                    <div class="w-3 h-3 bg-yellow-200 rounded-full"></div>
+                    <span class="text-gray-600">Pendiente</span>
+                </div>
+                <div class="flex items-center space-x-1 ml-4">
+                    <div class="w-3 h-3 bg-green-200 rounded-full"></div>
+                    <span class="text-gray-600">Completada</span>
+                </div>
+                <div class="flex items-center space-x-1 ml-4">
+                    <div class="w-3 h-3 bg-red-200 rounded-full"></div>
+                    <span class="text-gray-600">Cancelada</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            <!-- Header mejorado -->
-            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8 animate-fadeInUp">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div class="flex items-center space-x-4">
-                        <div class="p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl shadow-lg">
-                            <i class="fas fa-calendar-check text-white text-2xl"></i>
-                        </div>
-                        <div>
-                            <h1 class="text-3xl font-bold text-slate-800">Gestión de Citas</h1>
-                            <p class="text-slate-600">{{ empresa.nombre_empresa }}</p>
-                        </div>
+    <!-- Sección de filtros avanzados -->
+    <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 mb-6 animate-fadeInUp" style="animation-delay: 0.4s;">
+        <div class="flex items-center mb-6">
+            <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
+                <i class="fas fa-filter text-white"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800">Filtros Avanzados</h3>
+            <div class="ml-auto">
+                <div class="flex items-center space-x-3">
+                    <!-- Indicador de filtros activos -->
+                    <div id="filtros-activos" class="hidden bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                        <i class="fas fa-filter mr-1"></i>
+                        <span id="contador-filtros">0</span> filtro(s) activo(s)
                     </div>
-                    
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <a href="{% url 'home_empresas' %}" 
-                           class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-slate-600 to-slate-700 text-white font-semibold rounded-xl hover:from-slate-700 hover:to-slate-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-                            <i class="fas fa-arrow-left mr-2"></i>
-                            Volver al Dashboard
-                        </a>
-                    </div>
+                    <button id="clearFilters" class="px-4 py-2 bg-gradient-to-r from-gray-500 to-gray-600 text-white text-sm font-medium rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-300">
+                        <i class="fas fa-times mr-2"></i>Limpiar
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="space-y-6">
+            <!-- Primera fila de filtros -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Filtro por Fecha -->
+                <div class="group">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-calendar mr-2 text-gray-500"></i>Fecha
+                    </label>
+                    <input type="date" 
+                           id="filtro-fecha" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:border-blue-400">
+                </div>
+
+                <!-- Filtro por Cliente -->
+                <div class="group">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-user mr-2 text-gray-500"></i>Cliente
+                    </label>
+                    <input type="text" 
+                           id="buscar-cliente" 
+                           placeholder="Buscar por nombre de cliente"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:border-blue-400">
+                </div>
+
+                <!-- Filtro por Estado -->
+                <div class="group">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-info-circle mr-2 text-gray-500"></i>Estado
+                    </label>
+                    <select id="filtro-estado" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:border-blue-400">
+                        <option value="">Todos los estados</option>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="completado">Completada</option>
+                        <option value="cancelada">Cancelada</option>
+                    </select>
+                </div>
+
+                <!-- Filtro por Servicio -->
+                <div class="group">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-wrench mr-2 text-gray-500"></i>Servicio
+                    </label>
+                    <select id="filtro-servicio" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:border-blue-400">
+                        <option value="">Todos los servicios</option>
+                        {% for servicio in servicios_empresa %}
+                        <option value="{{ servicio.nombre_servicio }}">{{ servicio.nombre_servicio }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
 
-            <!-- Estadísticas rápidas -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8 animate-fadeInUp" style="animation-delay: 0.2s;">
-                <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-calendar text-white"></i>
-                        </div>
-                        <span class="text-2xl font-bold text-blue-600">{{ total_reservas }}</span>
-                    </div>
-                    <h3 class="text-lg font-semibold text-slate-800">Total Citas</h3>
-                    <p class="text-gray-600 text-sm">Todas las citas</p>
+            <!-- Filtros rápidos predefinidos -->
+            <div class="border-t border-gray-200 pt-4">
+                <div class="flex items-center mb-3">
+                    <i class="fas fa-bolt text-indigo-500 mr-2"></i>
+                    <span class="text-sm font-medium text-gray-700">Filtros Rápidos:</span>
                 </div>
-                
-                <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-clock text-white"></i>
-                        </div>
-                        <span class="text-2xl font-bold text-yellow-600">{{ reservas_pendientes }}</span>
-                    </div>
-                    <h3 class="text-lg font-semibold text-slate-800">Pendientes</h3>
-                    <p class="text-gray-600 text-sm">Por completar</p>
-                </div>
-                
-                <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-check-circle text-white"></i>
-                        </div>
-                        <span class="text-2xl font-bold text-green-600">{{ reservas_completadas }}</span>
-                    </div>
-                    <h3 class="text-lg font-semibold text-slate-800">Completadas</h3>
-                    <p class="text-gray-600 text-sm">Finalizadas</p>
-                </div>
-                
-                <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-ban text-white"></i>
-                        </div>
-                        <span class="text-2xl font-bold text-red-600">{{ reservas_canceladas|default:0 }}</span>
-                    </div>
-                    <h3 class="text-lg font-semibold text-slate-800">Canceladas</h3>
-                    <p class="text-gray-600 text-sm">Anuladas</p>
-                </div>
-                
-                <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-calendar-day text-white"></i>
-                        </div>
-                        <span class="text-2xl font-bold text-purple-600">{{ reservas_hoy }}</span>
-                    </div>
-                    <h3 class="text-lg font-semibold text-slate-800">Hoy</h3>
-                    <p class="text-gray-600 text-sm">Citas de hoy</p>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="applyQuickFilter('hoy')" class="px-3 py-2 bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 text-sm font-medium rounded-lg hover:from-blue-200 hover:to-blue-300 transition-all duration-300">
+                        <i class="fas fa-calendar-day mr-1"></i>Hoy
+                    </button>
+                    <button onclick="applyQuickFilter('semana')" class="px-3 py-2 bg-gradient-to-r from-green-100 to-green-200 text-green-800 text-sm font-medium rounded-lg hover:from-green-200 hover:to-green-300 transition-all duration-300">
+                        <i class="fas fa-calendar-week mr-1"></i>Esta Semana
+                    </button>
+                    <button onclick="applyQuickFilter('pendientes')" class="px-3 py-2 bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 text-sm font-medium rounded-lg hover:from-yellow-200 hover:to-yellow-300 transition-all duration-300">
+                        <i class="fas fa-clock mr-1"></i>Solo Pendientes
+                    </button>
+                    <button onclick="applyQuickFilter('completadas')" class="px-3 py-2 bg-gradient-to-r from-emerald-100 to-emerald-200 text-emerald-800 text-sm font-medium rounded-lg hover:from-emerald-200 hover:to-emerald-300 transition-all duration-300">
+                        <i class="fas fa-check-circle mr-1"></i>Solo Completadas
+                    </button>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- Tabs de Estado -->
-            <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 mb-6 animate-fadeInUp" style="animation-delay: 0.3s;">
-                <div class="flex items-center mb-4">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
-                        <i class="fas fa-tasks text-white"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-slate-800">Estado de las Citas</h3>
+    <!-- Contenido principal -->
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden mb-8 animate-fadeInUp" style="animation-delay: 0.5s;">
+        <!-- Header de la sección -->
+        <div class="px-6 py-4 bg-gradient-to-r from-slate-50 to-blue-50 border-b border-gray-200">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">
+                        <i class="fas fa-list mr-2 text-blue-600"></i>
+                        Lista de Citas
+                    </h3>
+                    <p class="text-slate-600 text-sm">Gestiona todas las citas de tu empresa</p>
                 </div>
                 
-                <!-- Tabs de estado -->
-                <div class="flex flex-wrap gap-2 mb-4">
-                    <button onclick="filtrarCitas('todas')" id="tab-all" class="tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg no-underline">
-                        <i class="fas fa-list mr-2"></i>Todas ({{ total_reservas }})
+                <!-- Toggle de vista -->
+                <div class="flex items-center space-x-2 mt-3 sm:mt-0">
+                    <button id="table-view-btn" onclick="toggleView('table')" 
+                            class="flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                        <i class="fas fa-table mr-2"></i>
+                        <span class="hidden sm:inline">Tabla</span>
                     </button>
-                    <button onclick="filtrarCitas('pendientes')" id="tab-pendiente" class="tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gray-100 text-gray-700 hover:bg-gray-200 no-underline">
-                        <i class="fas fa-clock mr-2"></i>Pendientes ({{ reservas_pendientes }})
+                    <button id="card-view-btn" onclick="toggleView('cards')" 
+                            class="flex items-center px-3 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200">
+                        <i class="fas fa-th-large mr-2"></i>
+                        <span class="hidden sm:inline">Tarjetas</span>
                     </button>
-                    <button onclick="filtrarCitas('completadas')" id="tab-completado" class="tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gray-100 text-gray-700 hover:bg-gray-200 no-underline">
-                        <i class="fas fa-check-circle mr-2"></i>Completadas ({{ reservas_completadas }})
-                    </button>
-                    {% if reservas_canceladas %}
-                    <button onclick="filtrarCitas('canceladas')" id="tab-cancelada" class="tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gray-100 text-gray-700 hover:bg-gray-200 no-underline">
-                        <i class="fas fa-ban mr-2"></i>Canceladas ({{ reservas_canceladas }})
-                    </button>
-                    {% endif %}
-                </div>
-                
-                <!-- Leyenda de colores -->
-                <div class="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-3 mb-4 border border-gray-200">
-                    <div class="flex items-center space-x-1 text-xs">
-                        <i class="fas fa-palette text-gray-600 mr-2"></i>
-                        <span class="text-gray-700 font-semibold mr-3">Leyenda:</span>
-                        <div class="flex items-center space-x-1">
-                            <div class="w-3 h-3 bg-yellow-200 rounded-full"></div>
-                            <span class="text-gray-600">Pendiente</span>
-                        </div>
-                        <div class="flex items-center space-x-1 ml-4">
-                            <div class="w-3 h-3 bg-green-200 rounded-full"></div>
-                            <span class="text-gray-600">Completada</span>
-                        </div>
-                        <div class="flex items-center space-x-1 ml-4">
-                            <div class="w-3 h-3 bg-red-200 rounded-full"></div>
-                            <span class="text-gray-600">Cancelada</span>
-                        </div>
-                    </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Sección de filtros avanzados -->
-            <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 mb-6 animate-fadeInUp" style="animation-delay: 0.4s;">
-                <div class="flex items-center mb-6">
-                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
-                        <i class="fas fa-filter text-white"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-slate-800">Filtros Avanzados</h3>
-                    <div class="ml-auto">
-                        <button id="clearFilters" class="px-4 py-2 bg-gradient-to-r from-gray-500 to-gray-600 text-white text-sm font-medium rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-300">
-                            <i class="fas fa-times mr-2"></i>Limpiar
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="space-y-6">
-                    <!-- Primera fila de filtros -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <!-- Filtro por Fecha -->
-                        <div class="group">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                <i class="fas fa-calendar mr-2 text-gray-500"></i>Fecha
-                            </label>
-                            <input type="date" 
-                                   id="filtro-fecha" 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:border-blue-400"
-                                   onchange="filtrarPorFecha()">
-                        </div>
-
-                        <!-- Filtro por Cliente -->
-                        <div class="group">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                <i class="fas fa-user mr-2 text-gray-500"></i>Cliente
-                            </label>
-                            <input type="text" 
-                                   id="buscar-cliente" 
-                                   placeholder="Buscar por nombre de cliente"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:border-blue-400"
-                                   oninput="buscarCliente()">
-                        </div>
-
-                        <!-- Filtro por Estado -->
-                        <div class="group">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                <i class="fas fa-info-circle mr-2 text-gray-500"></i>Estado
-                            </label>
-                            <select id="filtro-estado" 
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:border-blue-400"
-                                    onchange="filtrarPorEstado()">
-                                <option value="">Todos los estados</option>
-                                <option value="pendiente">Pendiente</option>
-                                <option value="completado">Completada</option>
-                                <option value="cancelada">Cancelada</option>
-                            </select>
-                        </div>
-
-                        <!-- Filtro por Servicio -->
-                        <div class="group">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                <i class="fas fa-wrench mr-2 text-gray-500"></i>Servicio
-                            </label>
-                            <select id="filtro-servicio" 
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:border-blue-400"
-                                    onchange="filtrarPorServicio()">
-                                <option value="">Todos los servicios</option>
-                                {% for servicio in servicios_empresa %}
-                                <option value="{{ servicio.nombre_servicio }}">{{ servicio.nombre_servicio }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Filtros rápidos predefinidos -->
-                    <div class="border-t border-gray-200 pt-4">
-                        <div class="flex items-center mb-3">
-                            <i class="fas fa-bolt text-indigo-500 mr-2"></i>
-                            <span class="text-sm font-medium text-gray-700">Filtros Rápidos:</span>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            <button onclick="applyQuickFilter('hoy')" class="px-3 py-2 bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 text-sm font-medium rounded-lg hover:from-blue-200 hover:to-blue-300 transition-all duration-300">
-                                <i class="fas fa-calendar-day mr-1"></i>Hoy
-                            </button>
-                            <button onclick="applyQuickFilter('semana')" class="px-3 py-2 bg-gradient-to-r from-green-100 to-green-200 text-green-800 text-sm font-medium rounded-lg hover:from-green-200 hover:to-green-300 transition-all duration-300">
-                                <i class="fas fa-calendar-week mr-1"></i>Esta Semana
-                            </button>
-                            <button onclick="applyQuickFilter('pendientes')" class="px-3 py-2 bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 text-sm font-medium rounded-lg hover:from-yellow-200 hover:to-yellow-300 transition-all duration-300">
-                                <i class="fas fa-clock mr-1"></i>Solo Pendientes
-                            </button>
-                            <button onclick="applyQuickFilter('completadas')" class="px-3 py-2 bg-gradient-to-r from-emerald-100 to-emerald-200 text-emerald-800 text-sm font-medium rounded-lg hover:from-emerald-200 hover:to-emerald-300 transition-all duration-300">
-                                <i class="fas fa-check-circle mr-1"></i>Solo Completadas
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Contenido principal -->
-            <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden mb-8 animate-fadeInUp" style="animation-delay: 0.5s;">
-                <!-- Header de la sección -->
-                <div class="px-6 py-4 bg-gradient-to-r from-slate-50 to-blue-50 border-b border-gray-200">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                        <div>
-                            <h3 class="text-xl font-bold text-slate-800">
-                                <i class="fas fa-list mr-2 text-blue-600"></i>
-                                Lista de Citas
-                            </h3>
-                            <p class="text-slate-600 text-sm">Gestiona todas las citas de tu empresa</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Vista de tarjetas (adaptada de móvil pero mejorada) -->
-                <div class="space-y-4 p-4" id="lista-citas">
+        <!-- Vista de tabla para desktop -->
+        <div id="reservas-table-container" class="block overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gradient-to-r from-gray-50 to-blue-50">
+                    <tr>
+                        <th class="px-3 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                            <i class="fas fa-hashtag mr-1"></i>ID
+                        </th>
+                        <th class="px-3 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                            <i class="fas fa-user mr-1"></i>Cliente
+                        </th>
+                        <th class="px-3 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                            <i class="fas fa-calendar mr-1"></i>Fecha
+                        </th>
+                        <th class="px-3 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                            <i class="fas fa-clock mr-1"></i>Hora
+                        </th>
+                        <th class="px-3 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                            <i class="fas fa-wrench mr-1"></i>Servicios
+                        </th>
+                        <th class="px-3 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                            <i class="fas fa-dollar-sign mr-1"></i>Total
+                        </th>
+                        <th class="px-3 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                            <i class="fas fa-info-circle mr-1"></i>Estado
+                        </th>
+                        <th class="px-3 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                            <i class="fas fa-cogs mr-1"></i>Acciones
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
                     {% for item in reservas_con_servicios %}
-                        <div class="rounded-2xl border shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cita-card
-                             {% if item.reserva.estado == 'pendiente' %}bg-gradient-to-r from-yellow-25 to-yellow-50 border-yellow-200 shadow-yellow-100{% elif item.reserva.estado == 'completado' %}bg-gradient-to-r from-green-25 to-green-50 border-green-200 shadow-green-100{% elif item.reserva.estado == 'cancelada' %}bg-gradient-to-r from-red-25 to-red-50 border-red-200 shadow-red-100{% else %}bg-gradient-to-r from-white to-slate-50 border-gray-200{% endif %}"
-                             data-estado="{{ item.reserva.estado }}" 
-                             data-fecha="{{ item.reserva.fecha|date:'Y-m-d' }}"
-                             data-cliente="{{ item.reserva.usuario.nombre_completo|lower }}"
-                             data-servicio="{% for servicio in item.servicios %}{{ servicio.nombre_servicio|lower }}{% if not forloop.last %} {% endif %}{% endfor %}">
+                        <tr class="tabla-row hover:bg-slate-50 transition-colors border-b border-gray-100
+                                 {% if item.reserva.estado == 'pendiente' %}bg-yellow-25 hover:bg-yellow-50{% elif item.reserva.estado == 'completado' %}bg-green-25 hover:bg-green-50{% elif item.reserva.estado == 'cancelada' %}bg-red-25 hover:bg-red-50{% endif %}"
+                            data-estado="{{ item.reserva.estado }}" 
+                            data-fecha="{{ item.reserva.fecha|date:'Y-m-d' }}"
+                            data-cliente="{{ item.reserva.usuario.nombre_completo|lower }}"
+                            data-servicio="{% for servicio in item.servicios %}{{ servicio.nombre_servicio|lower }}{% if not forloop.last %} {% endif %}{% endfor %}"
+                            data-reserva-id="{{ item.reserva.id_reserva }}">
                             
-                            <div class="p-6">
-                                <!-- Header con información del cliente -->
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                                            {{ item.reserva.usuario.nombre_completo|first|upper }}
-                                        </div>
-                                        <div>
-                                            <h4 class="text-lg font-bold text-slate-800">{{ item.reserva.usuario.nombre_completo }}</h4>
-                                            <p class="text-slate-600">{{ item.reserva.usuario.correo }}</p>
-                                            <p class="text-slate-500 text-sm">{{ item.reserva.usuario.telefono|default:"No disponible" }}</p>
-                                        </div>
+                            <!-- ID -->
+                            <td class="px-3 py-4 text-sm font-medium text-gray-900">
+                                #{{ item.reserva.id_reserva }}
+                            </td>
+                            
+                            <!-- Cliente -->
+                            <td class="px-3 py-4 text-sm text-gray-700">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                                        {{ item.reserva.usuario.nombre_completo|first|upper }}
                                     </div>
-                                    <div class="text-right">
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                                              {% if item.reserva.estado == 'pendiente' %}bg-yellow-100 text-yellow-800{% elif item.reserva.estado == 'completado' %}bg-green-100 text-green-800{% elif item.reserva.estado == 'cancelada' %}bg-red-100 text-red-800{% endif %}">
-                                            {% if item.reserva.estado == 'pendiente' %}
-                                                <i class="fas fa-clock mr-1"></i>Pendiente
-                                            {% elif item.reserva.estado == 'completado' %}
-                                                <i class="fas fa-check-circle mr-1"></i>Completada
-                                            {% elif item.reserva.estado == 'cancelada' %}
-                                                <i class="fas fa-ban mr-1"></i>Cancelada
-                                            {% endif %}
-                                        </span>
-                                        <p class="text-sm text-slate-500 mt-1">ID: #{{ item.reserva.id_reserva }}</p>
+                                    <div>
+                                        <div class="font-medium text-gray-900">{{ item.reserva.usuario.nombre_completo }}</div>
+                                        <div class="text-xs text-gray-500">{{ item.reserva.usuario.correo }}</div>
                                     </div>
                                 </div>
-
-                                <!-- Información de la cita -->
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                    <div class="flex items-center space-x-3 p-3 bg-white/70 rounded-xl">
-                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                            <i class="fas fa-calendar text-blue-600"></i>
-                                        </div>
-                                        <div>
-                                            <p class="text-sm text-slate-500">Fecha</p>
-                                            <p class="font-semibold text-slate-800">{{ item.reserva.fecha|date:"d/m/Y" }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-3 p-3 bg-white/70 rounded-xl">
-                                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                            <i class="fas fa-clock text-green-600"></i>
-                                        </div>
-                                        <div>
-                                            <p class="text-sm text-slate-500">Hora</p>
-                                            <p class="font-semibold text-slate-800">{{ item.reserva.hora|time:"g:i A" }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-3 p-3 bg-white/70 rounded-xl">
-                                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                            <i class="fas fa-dollar-sign text-purple-600"></i>
-                                        </div>
-                                        <div>
-                                            <p class="text-sm text-slate-500">Total</p>
-                                            <p class="font-bold text-slate-800">${{ item.precio_total|floatformat:0 }}</p>
-                                        </div>
-                                    </div>
+                            </td>
+                            
+                            <!-- Fecha -->
+                            <td class="px-3 py-4 text-sm text-gray-700">
+                                {{ item.reserva.fecha|date:"d/m/Y" }}
+                            </td>
+                            
+                            <!-- Hora -->
+                            <td class="px-3 py-4 text-sm text-gray-700">
+                                {{ item.reserva.hora|time:"g:i A" }}
+                            </td>
+                            
+                            <!-- Servicios -->
+                            <td class="px-3 py-4 text-sm">
+                                <div class="max-w-xs">
+                                    {% for servicio in item.servicios %}
+                                    <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-1 mb-1">
+                                        {{ servicio.nombre_servicio }}
+                                    </span>
+                                    {% empty %}
+                                    <span class="text-gray-500 text-xs italic">Sin servicios</span>
+                                    {% endfor %}
                                 </div>
-
-                                <!-- Servicios -->
-                                <div class="mb-4">
-                                    <h5 class="font-semibold text-slate-800 mb-2">
-                                        <i class="fas fa-wrench mr-2"></i>Servicios ({{ item.total_servicios }}):
-                                    </h5>
-                                    <div class="flex flex-wrap gap-2">
-                                        {% for servicio in item.servicios %}
-                                        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                                            {{ servicio.nombre_servicio }} - ${{ servicio.precio|floatformat:0 }}
-                                        </span>
-                                        {% empty %}
-                                        <span class="text-slate-500 text-sm italic">No hay servicios asignados</span>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-
-                                <!-- Acciones -->
-                                <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                            </td>
+                            
+                            <!-- Total -->
+                            <td class="px-3 py-4 text-sm text-gray-700 font-semibold">
+                                ${{ item.precio_total|floatformat:0 }}
+                            </td>
+                            
+                            <!-- Estado -->
+                            <td class="px-3 py-4 text-sm">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
+                                      {% if item.reserva.estado == 'pendiente' %}bg-yellow-100 text-yellow-800 border border-yellow-200{% elif item.reserva.estado == 'completado' %}bg-green-100 text-green-800 border border-green-200{% elif item.reserva.estado == 'cancelada' %}bg-red-100 text-red-800 border border-red-200{% endif %}">
+                                    {% if item.reserva.estado == 'pendiente' %}
+                                        <i class="fas fa-clock mr-1"></i>Pendiente
+                                    {% elif item.reserva.estado == 'completado' %}
+                                        <i class="fas fa-check-circle mr-1"></i>Completada
+                                    {% elif item.reserva.estado == 'cancelada' %}
+                                        <i class="fas fa-ban mr-1"></i>Cancelada
+                                    {% endif %}
+                                </span>
+                            </td>
+                            
+                            <!-- Acciones -->
+                            <td class="px-3 py-4 text-sm">
+                                <div class="flex items-center space-x-2">
                                     {% if item.reserva.estado == 'pendiente' %}
                                     <form method="post" action="{% url 'actualizar_estado_cita' %}" class="inline-block">
                                         {% csrf_token %}
                                         <input type="hidden" name="reserva_id" value="{{ item.reserva.id_reserva }}">
                                         <input type="hidden" name="nuevo_estado" value="completado">
-                                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-xl hover:from-green-700 hover:to-green-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-                                            <i class="fas fa-check mr-2"></i>Marcar Completada
+                                        <button type="submit" class="inline-flex items-center px-2 py-1 bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 transition-colors duration-200" title="Marcar como completada">
+                                            <i class="fas fa-check"></i>
                                         </button>
                                     </form>
                                     {% elif item.reserva.estado == 'completado' %}
@@ -599,44 +514,724 @@
                                         {% csrf_token %}
                                         <input type="hidden" name="reserva_id" value="{{ item.reserva.id_reserva }}">
                                         <input type="hidden" name="nuevo_estado" value="pendiente">
-                                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-600 to-yellow-700 text-white font-semibold rounded-xl hover:from-yellow-700 hover:to-yellow-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-                                            <i class="fas fa-undo mr-2"></i>Marcar Pendiente
+                                        <button type="submit" class="inline-flex items-center px-2 py-1 bg-yellow-600 text-white text-xs font-medium rounded-lg hover:bg-yellow-700 transition-colors duration-200" title="Marcar como pendiente">
+                                            <i class="fas fa-undo"></i>
                                         </button>
                                     </form>
                                     {% endif %}
                                     
-                                    <button onclick="verDetalles({{ item.reserva.id_reserva }})" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-                                        <i class="fas fa-eye mr-2"></i>Ver Detalles
+                                    <button onclick="verDetalles({{ item.reserva.id_reserva }})" class="inline-flex items-center px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200" title="Ver detalles">
+                                        <i class="fas fa-eye"></i>
                                     </button>
                                     
-                                    {% if item.reserva.estado != 'completado' %}
-                                    <button onclick="editarCita({{ item.reserva.id_reserva }})" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-indigo-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-                                        <i class="fas fa-edit mr-2"></i>Editar
+                                    {% if item.reserva.estado != 'completado' and item.reserva.estado != 'cancelada' %}
+                                    <button onclick="editarCita({{ item.reserva.id_reserva }})" class="inline-flex items-center px-2 py-1 bg-indigo-600 text-white text-xs font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-200" title="Editar cita">
+                                        <i class="fas fa-edit"></i>
                                     </button>
                                     {% endif %}
                                 </div>
-                            </div>
-                        </div>
+                            </td>
+                        </tr>
                     {% empty %}
-                        <!-- Estado vacío mejorado -->
-                        <div class="text-center py-20 px-6">
-                            <div class="max-w-md mx-auto">
-                                <div class="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-6">
-                                    <i class="fas fa-calendar-times text-4xl text-blue-500"></i>
+                        <tr>
+                            <td colspan="8" class="px-6 py-20 text-center">
+                                <div class="max-w-md mx-auto">
+                                    <div class="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                                        <i class="fas fa-calendar-times text-4xl text-blue-500"></i>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-slate-800 mb-3">No hay citas registradas</h3>
+                                    <p class="text-slate-600 mb-6">Cuando los clientes hagan reservas, aparecerán aquí.</p>
                                 </div>
-                                <h3 class="text-2xl font-bold text-slate-800 mb-3">No hay citas registradas</h3>
-                                <p class="text-slate-600 mb-6">Cuando los clientes hagan reservas, aparecerán aquí.</p>
-                                <div class="space-y-2 text-sm text-slate-500">
-                                    <p><i class="fas fa-info-circle mr-2"></i>Las citas aparecerán automáticamente cuando los clientes las realicen</p>
-                                    <p><i class="fas fa-filter mr-2"></i>Usa los filtros para buscar citas específicas</p>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Vista de tarjetas para móviles -->
+        <div id="reservas-cards-container" class="hidden space-y-4 p-4">
+            {% for item in reservas_con_servicios %}
+                <div class="rounded-2xl border shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cita-card-mobile
+                     {% if item.reserva.estado == 'pendiente' %}bg-gradient-to-r from-yellow-25 to-yellow-50 border-yellow-200 shadow-yellow-100{% elif item.reserva.estado == 'completado' %}bg-gradient-to-r from-green-25 to-green-50 border-green-200 shadow-green-100{% elif item.reserva.estado == 'cancelada' %}bg-gradient-to-r from-red-25 to-red-50 border-red-200 shadow-red-100{% else %}bg-gradient-to-r from-white to-slate-50 border-gray-200{% endif %}"
+                     data-estado="{{ item.reserva.estado }}" 
+                     data-fecha="{{ item.reserva.fecha|date:'Y-m-d' }}"
+                     data-cliente="{{ item.reserva.usuario.nombre_completo|lower }}"
+                     data-servicio="{% for servicio in item.servicios %}{{ servicio.nombre_servicio|lower }}{% if not forloop.last %} {% endif %}{% endfor %}"
+                     data-reserva-id="{{ item.reserva.id_reserva }}">
+                    
+                    <div class="p-6">
+                        <!-- Header con información del cliente -->
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                    {{ item.reserva.usuario.nombre_completo|first|upper }}
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-bold text-slate-800">{{ item.reserva.usuario.nombre_completo }}</h4>
+                                    <p class="text-slate-600">{{ item.reserva.usuario.correo }}</p>
+                                    <p class="text-slate-500 text-sm">{{ item.reserva.usuario.telefono|default:"No disponible" }}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                                      {% if item.reserva.estado == 'pendiente' %}bg-yellow-100 text-yellow-800{% elif item.reserva.estado == 'completado' %}bg-green-100 text-green-800{% elif item.reserva.estado == 'cancelada' %}bg-red-100 text-red-800{% endif %}">
+                                    {% if item.reserva.estado == 'pendiente' %}
+                                        <i class="fas fa-clock mr-1"></i>Pendiente
+                                    {% elif item.reserva.estado == 'completado' %}
+                                        <i class="fas fa-check-circle mr-1"></i>Completada
+                                    {% elif item.reserva.estado == 'cancelada' %}
+                                        <i class="fas fa-ban mr-1"></i>Cancelada
+                                    {% endif %}
+                                </span>
+                                <p class="text-sm text-slate-500 mt-1">ID: #{{ item.reserva.id_reserva }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Información de la cita -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div class="flex items-center space-x-3 p-3 bg-white/70 rounded-xl">
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-calendar text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-slate-500">Fecha</p>
+                                    <p class="font-semibold text-slate-800">{{ item.reserva.fecha|date:"d/m/Y" }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3 p-3 bg-white/70 rounded-xl">
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-clock text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-slate-500">Hora</p>
+                                    <p class="font-semibold text-slate-800">{{ item.reserva.hora|time:"g:i A" }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3 p-3 bg-white/70 rounded-xl">
+                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-dollar-sign text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-slate-500">Total</p>
+                                    <p class="font-bold text-slate-800">${{ item.precio_total|floatformat:0 }}</p>
                                 </div>
                             </div>
                         </div>
-                    {% endfor %}
+
+                        <!-- Servicios -->
+                        <div class="mb-4">
+                            <h5 class="font-semibold text-slate-800 mb-2">
+                                <i class="fas fa-wrench mr-2"></i>Servicios ({{ item.total_servicios }}):
+                            </h5>
+                            <div class="flex flex-wrap gap-2">
+                                {% for servicio in item.servicios %}
+                                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                                    {{ servicio.nombre_servicio }} - ${{ servicio.precio|floatformat:0 }}
+                                </span>
+                                {% empty %}
+                                <span class="text-slate-500 text-sm italic">No hay servicios asignados</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Acciones -->
+                        <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                            {% if item.reserva.estado == 'pendiente' %}
+                            <form method="post" action="{% url 'actualizar_estado_cita' %}" class="inline-block">
+                                {% csrf_token %}
+                                <input type="hidden" name="reserva_id" value="{{ item.reserva.id_reserva }}">
+                                <input type="hidden" name="nuevo_estado" value="completado">
+                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-xl hover:from-green-700 hover:to-green-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                                    <i class="fas fa-check mr-2"></i>Marcar Completada
+                                </button>
+                            </form>
+                            {% elif item.reserva.estado == 'completado' %}
+                            <form method="post" action="{% url 'actualizar_estado_cita' %}" class="inline-block">
+                                {% csrf_token %}
+                                <input type="hidden" name="reserva_id" value="{{ item.reserva.id_reserva }}">
+                                <input type="hidden" name="nuevo_estado" value="pendiente">
+                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-600 to-yellow-700 text-white font-semibold rounded-xl hover:from-yellow-700 hover:to-yellow-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                                    <i class="fas fa-undo mr-2"></i>Marcar Pendiente
+                                </button>
+                            </form>
+                            {% endif %}
+                            
+                            <button onclick="verDetalles({{ item.reserva.id_reserva }})" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                                <i class="fas fa-eye mr-2"></i>Ver Detalles
+                            </button>
+                            
+                            {% if item.reserva.estado != 'completado' and item.reserva.estado != 'cancelada' %}
+                            <button onclick="editarCita({{ item.reserva.id_reserva }})" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-indigo-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                                <i class="fas fa-edit mr-2"></i>Editar
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <!-- Estado vacío mejorado -->
+                <div class="text-center py-20 px-6">
+                    <div class="max-w-md mx-auto">
+                        <div class="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-calendar-times text-4xl text-blue-500"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800 mb-3">No hay citas registradas</h3>
+                        <p class="text-slate-600 mb-6">Cuando los clientes hagan reservas, aparecerán aquí.</p>
+                        <div class="space-y-2 text-sm text-slate-500">
+                            <p><i class="fas fa-info-circle mr-2"></i>Las citas aparecerán automáticamente cuando los clientes las realicen</p>
+                            <p><i class="fas fa-filter mr-2"></i>Usa los filtros para buscar citas específicas</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Controles de Paginación -->
+    {% if page_obj.has_other_pages %}
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 mt-6 animate-fadeInUp" style="animation-delay: 0.6s;">
+        <div class="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+            
+            <!-- Información de resultados -->
+            <div class="flex items-center space-x-4">
+                <div class="text-sm text-gray-700">
+                    <span class="font-medium">Mostrando</span>
+                    <span class="font-bold text-blue-600">{{ page_obj.start_index }}</span>
+                    <span>-</span>
+                    <span class="font-bold text-blue-600">{{ page_obj.end_index }}</span>
+                    <span>de</span>
+                    <span class="font-bold text-blue-600">{{ page_obj.paginator.count }}</span>
+                    <span>citas</span>
+                </div>
+                
+                <!-- Selector de elementos por página -->
+                <div class="flex items-center space-x-2">
+                    <label for="per-page-select" class="text-sm text-gray-600">Por página:</label>
+                    <select id="per-page-select" 
+                            class="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            onchange="changePerPage(this.value)">
+                        <option value="5" {% if items_per_page == 5 %}selected{% endif %}>5</option>
+                        <option value="10" {% if items_per_page == 10 %}selected{% endif %}>10</option>
+                        <option value="20" {% if items_per_page == 20 %}selected{% endif %}>20</option>
+                        <option value="50" {% if items_per_page == 50 %}selected{% endif %}>50</option>
+                    </select>
                 </div>
             </div>
+            
+            <!-- Controles de navegación -->
+            <div class="flex items-center space-x-2">
+                <!-- Botón Primera Página -->
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{% if request.GET.per_page %}&per_page={{ request.GET.per_page }}{% endif %}" 
+                       class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+                        <i class="fas fa-angle-double-left mr-1"></i>Primera
+                    </a>
+                    
+                    <!-- Botón Página Anterior -->
+                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.per_page %}&per_page={{ request.GET.per_page }}{% endif %}" 
+                       class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+                        <i class="fas fa-chevron-left mr-1"></i>Anterior
+                    </a>
+                {% else %}
+                    <span class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed">
+                        <i class="fas fa-angle-double-left mr-1"></i>Primera
+                    </span>
+                    <span class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed">
+                        <i class="fas fa-chevron-left mr-1"></i>Anterior
+                    </span>
+                {% endif %}
+                
+                <!-- Números de página -->
+                <div class="flex items-center space-x-1">
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <!-- Página actual -->
+                            <span class="inline-flex items-center px-4 py-2 border border-blue-500 bg-blue-600 text-white text-sm font-bold rounded-lg">
+                                {{ num }}
+                            </span>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <!-- Páginas cercanas -->
+                            <a href="?page={{ num }}{% if request.GET.per_page %}&per_page={{ request.GET.per_page }}{% endif %}"
+                               class="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+                                {{ num }}
+                            </a>
+                        {% elif num == page_obj.number|add:'-3' or num == page_obj.number|add:'3' %}
+                            <!-- Puntos suspensivos -->
+                            <span class="inline-flex items-center px-2 py-2 text-gray-500">...</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                
+                {% if page_obj.has_next %}
+                    <!-- Botón Página Siguiente -->
+                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.per_page %}&per_page={{ request.GET.per_page }}{% endif %}" 
+                       class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+                        Siguiente<i class="fas fa-chevron-right ml-1"></i>
+                    </a>
+                    
+                    <!-- Botón Última Página -->
+                    <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.per_page %}&per_page={{ request.GET.per_page }}{% endif %}" 
+                       class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+                        Última<i class="fas fa-angle-double-right ml-1"></i>
+                    </a>
+                {% else %}
+                    <span class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed">
+                        Siguiente<i class="fas fa-chevron-right ml-1"></i>
+                    </span>
+                    <span class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed">
+                        Última<i class="fas fa-angle-double-right ml-1"></i>
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Información adicional en móviles -->
+        <div class="sm:hidden mt-4 pt-4 border-t border-gray-200">
+            <div class="flex justify-between items-center text-sm text-gray-600">
+                <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                <span>{{ page_obj.paginator.count }} total</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
         </div>
     </main>
+</body>
+
+<!-- JavaScript para funcionalidad responsive de vistas -->
+<script>
+    // Función para manejar la visibilidad de vistas según el tamaño de pantalla
+    function handleResponsiveViews() {
+        const tableContainer = document.getElementById('reservas-table-container');
+        const cardsContainer = document.getElementById('reservas-cards-container');
+        
+        function updateViewVisibility() {
+            const isLargeScreen = window.innerWidth >= 1024; // lg breakpoint
+            
+            if (isLargeScreen) {
+                tableContainer.classList.remove('hidden');
+                tableContainer.classList.add('block');
+                cardsContainer.classList.add('hidden');
+                cardsContainer.classList.remove('block');
+            } else {
+                tableContainer.classList.add('hidden');
+                tableContainer.classList.remove('block');
+                cardsContainer.classList.remove('hidden');
+                cardsContainer.classList.add('block');
+            }
+        }
+        
+        // Ejecutar al cargar y al redimensionar
+        updateViewVisibility();
+        window.addEventListener('resize', updateViewVisibility);
+    }
+
+    // Función para filtrar citas por estado
+    function filtrarCitas(estado) {
+        const citasTabla = document.querySelectorAll('.tabla-row');
+        const citasTarjetas = document.querySelectorAll('.cita-card-mobile');
+        let citasVisibles = 0;
+        
+        // Filtrar filas de tabla
+        citasTabla.forEach(cita => {
+            const estadoCita = cita.getAttribute('data-estado');
+            let mostrar = false;
+            
+            if (estado === 'todas') {
+                mostrar = true;
+            } else if (estado === 'pendientes' && estadoCita === 'pendiente') {
+                mostrar = true;
+            } else if (estado === 'completadas' && estadoCita === 'completado') {
+                mostrar = true;
+            } else if (estado === 'canceladas' && estadoCita === 'cancelada') {
+                mostrar = true;
+            }
+            
+            if (mostrar) {
+                cita.style.display = 'table-row';
+                citasVisibles++;
+            } else {
+                cita.style.display = 'none';
+            }
+        });
+        
+        // Filtrar tarjetas móviles
+        citasTarjetas.forEach(cita => {
+            const estadoCita = cita.getAttribute('data-estado');
+            let mostrar = false;
+            
+            if (estado === 'todas') {
+                mostrar = true;
+            } else if (estado === 'pendientes' && estadoCita === 'pendiente') {
+                mostrar = true;
+            } else if (estado === 'completadas' && estadoCita === 'completado') {
+                mostrar = true;
+            } else if (estado === 'canceladas' && estadoCita === 'cancelada') {
+                mostrar = true;
+            }
+            
+            if (mostrar) {
+                cita.style.display = 'block';
+            } else {
+                cita.style.display = 'none';
+            }
+        });
+        
+        // Actualizar apariencia de tabs
+        actualizarTabsApariencia(estado);
+        
+        console.log(`Filtrado por ${estado}: ${citasVisibles} citas visibles`);
+    }
+
+    // Función para actualizar la apariencia de los tabs
+    function actualizarTabsApariencia(estadoActivo) {
+        // Resetear todos los tabs
+        document.querySelectorAll('.tab-button').forEach(tab => {
+            tab.className = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gray-100 text-gray-700 hover:bg-gray-200 no-underline';
+        });
+        
+        // Activar el tab correspondiente
+        let activeTab;
+        if (estadoActivo === 'todas') {
+            activeTab = document.getElementById('tab-all');
+            if (activeTab) activeTab.className = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg no-underline';
+        } else if (estadoActivo === 'pendientes') {
+            activeTab = document.getElementById('tab-pendiente');
+            if (activeTab) activeTab.className = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg no-underline';
+        } else if (estadoActivo === 'completadas') {
+            activeTab = document.getElementById('tab-completado');
+            if (activeTab) activeTab.className = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg no-underline';
+        } else if (estadoActivo === 'canceladas') {
+            activeTab = document.getElementById('tab-cancelada');
+            if (activeTab) activeTab.className = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg no-underline';
+        }
+    }
+
+    // Inicializar cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+        handleResponsiveViews();
+        
+        // Inicializar filtros
+        filtrarCitas('todas');
+        
+        console.log('Vista responsive de citas inicializada');
+    });
+    
+    // Funciones de filtros avanzados
+    function filtrarPorFecha() {
+        const fechaSeleccionada = document.getElementById('filtro-fecha').value;
+        aplicarFiltros();
+    }
+    
+    function buscarCliente() {
+        aplicarFiltros();
+    }
+    
+    function filtrarPorEstado() {
+        aplicarFiltros();
+    }
+    
+    function filtrarPorServicio() {
+        aplicarFiltros();
+    }
+    
+    function aplicarFiltros() {
+        const fechaSeleccionada = document.getElementById('filtro-fecha').value;
+        const clienteBusqueda = document.getElementById('buscar-cliente').value.toLowerCase();
+        const estadoSeleccionado = document.getElementById('filtro-estado').value;
+        const servicioSeleccionado = document.getElementById('filtro-servicio').value.toLowerCase();
+        
+        const citasTabla = document.querySelectorAll('.tabla-row');
+        const citasTarjetas = document.querySelectorAll('.cita-card-mobile');
+        
+        let citasVisibles = 0;
+        
+        // Filtrar filas de tabla
+        citasTabla.forEach(cita => {
+            let mostrar = true;
+            
+            // Filtro por fecha
+            if (fechaSeleccionada) {
+                const fechaCita = cita.getAttribute('data-fecha');
+                if (fechaCita !== fechaSeleccionada) {
+                    mostrar = false;
+                }
+            }
+            
+            // Filtro por cliente
+            if (clienteBusqueda) {
+                const cliente = cita.getAttribute('data-cliente');
+                if (!cliente.includes(clienteBusqueda)) {
+                    mostrar = false;
+                }
+            }
+            
+            // Filtro por estado
+            if (estadoSeleccionado) {
+                const estado = cita.getAttribute('data-estado');
+                if (estado !== estadoSeleccionado) {
+                    mostrar = false;
+                }
+            }
+            
+            // Filtro por servicio
+            if (servicioSeleccionado) {
+                const servicios = cita.getAttribute('data-servicio');
+                if (!servicios.includes(servicioSeleccionado)) {
+                    mostrar = false;
+                }
+            }
+            
+            if (mostrar) {
+                cita.style.display = 'table-row';
+                citasVisibles++;
+            } else {
+                cita.style.display = 'none';
+            }
+        });
+        
+        // Filtrar tarjetas móviles
+        citasTarjetas.forEach(cita => {
+            let mostrar = true;
+            
+            // Filtro por fecha
+            if (fechaSeleccionada) {
+                const fechaCita = cita.getAttribute('data-fecha');
+                if (fechaCita !== fechaSeleccionada) {
+                    mostrar = false;
+                }
+            }
+            
+            // Filtro por cliente
+            if (clienteBusqueda) {
+                const cliente = cita.getAttribute('data-cliente');
+                if (!cliente.includes(clienteBusqueda)) {
+                    mostrar = false;
+                }
+            }
+            
+            // Filtro por estado
+            if (estadoSeleccionado) {
+                const estado = cita.getAttribute('data-estado');
+                if (estado !== estadoSeleccionado) {
+                    mostrar = false;
+                }
+            }
+            
+            // Filtro por servicio
+            if (servicioSeleccionado) {
+                const servicios = cita.getAttribute('data-servicio');
+                if (!servicios.includes(servicioSeleccionado)) {
+                    mostrar = false;
+                }
+            }
+            
+            if (mostrar) {
+                cita.style.display = 'block';
+            } else {
+                cita.style.display = 'none';
+            }
+        });
+        
+        actualizarContadorFiltros();
+        console.log(`Filtros aplicados: ${citasVisibles} citas visibles`);
+    }
+    
+    function applyQuickFilter(tipo) {
+        // Limpiar filtros existentes primero
+        document.getElementById('filtro-fecha').value = '';
+        document.getElementById('buscar-cliente').value = '';
+        document.getElementById('filtro-estado').value = '';
+        document.getElementById('filtro-servicio').value = '';
+        
+        const hoy = new Date().toISOString().split('T')[0];
+        
+        switch(tipo) {
+            case 'hoy':
+                document.getElementById('filtro-fecha').value = hoy;
+                break;
+            case 'semana':
+                // Para esta semana, filtramos por hoy por simplicidad
+                document.getElementById('filtro-fecha').value = hoy;
+                break;
+            case 'pendientes':
+                document.getElementById('filtro-estado').value = 'pendiente';
+                break;
+            case 'completadas':
+                document.getElementById('filtro-estado').value = 'completado';
+                break;
+        }
+        
+        // Aplicar los filtros
+        aplicarFiltros();
+    }
+    
+    function actualizarContadorFiltros() {
+        const filtros = [
+            document.getElementById('filtro-fecha').value,
+            document.getElementById('buscar-cliente').value,
+            document.getElementById('filtro-estado').value,
+            document.getElementById('filtro-servicio').value
+        ];
+        
+        const filtrosActivos = filtros.filter(filtro => filtro && filtro.trim() !== '').length;
+        const indicador = document.getElementById('filtros-activos');
+        const contador = document.getElementById('contador-filtros');
+        
+        if (filtrosActivos > 0) {
+            indicador.classList.remove('hidden');
+            contador.textContent = filtrosActivos;
+        } else {
+            indicador.classList.add('hidden');
+        }
+    }
+    
+    // Event listener para limpiar filtros
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('clearFilters').addEventListener('click', function() {
+            document.getElementById('filtro-fecha').value = '';
+            document.getElementById('buscar-cliente').value = '';
+            document.getElementById('filtro-estado').value = '';
+            document.getElementById('filtro-servicio').value = '';
+            
+            // Mostrar todas las citas
+            document.querySelectorAll('.tabla-row').forEach(cita => cita.style.display = 'table-row');
+            document.querySelectorAll('.cita-card-mobile').forEach(cita => cita.style.display = 'block');
+            
+            actualizarContadorFiltros();
+        });
+        
+        // Agregar event listeners para filtros en tiempo real
+        document.getElementById('filtro-fecha').addEventListener('change', filtrarPorFecha);
+        document.getElementById('buscar-cliente').addEventListener('input', buscarCliente);
+        document.getElementById('filtro-estado').addEventListener('change', filtrarPorEstado);
+        document.getElementById('filtro-servicio').addEventListener('change', filtrarPorServicio);
+    });
+    
+    // Funciones para modal de detalles
+    function verDetalles(reservaId) {
+        console.log('Cargando detalles de la reserva:', reservaId);
+        
+        // Hacer petición AJAX para obtener los detalles
+        fetch(`/detalle-reserva-empresa/${reservaId}/`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Error: ' + data.error);
+                return;
+            }
+            
+            // Llenar el modal con los datos
+            document.getElementById('modal-cliente-avatar').textContent = data.cliente.nombre.charAt(0).toUpperCase();
+            document.getElementById('modal-cliente-nombre').textContent = data.cliente.nombre;
+            document.getElementById('modal-cliente-correo').textContent = data.cliente.correo;
+            document.getElementById('modal-cliente-telefono').textContent = data.cliente.telefono;
+            document.getElementById('modal-cliente-id').textContent = data.cliente.id;
+            
+            document.getElementById('modal-reserva-id').textContent = '#' + data.id_reserva;
+            document.getElementById('modal-fecha').textContent = data.fecha;
+            document.getElementById('modal-hora').textContent = data.hora;
+            document.getElementById('modal-cita-subtitle').textContent = `Reserva #${data.id_reserva}`;
+            
+            // Actualizar badge de estado
+            const estadoBadge = document.getElementById('modal-estado-badge');
+            estadoBadge.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium';
+            
+            if (data.estado === 'pendiente') {
+                estadoBadge.classList.add('bg-yellow-100', 'text-yellow-800');
+                estadoBadge.innerHTML = '<i class="fas fa-clock mr-1"></i>Pendiente';
+            } else if (data.estado === 'completado') {
+                estadoBadge.classList.add('bg-green-100', 'text-green-800');
+                estadoBadge.innerHTML = '<i class="fas fa-check-circle mr-1"></i>Completada';
+            } else if (data.estado === 'cancelada') {
+                estadoBadge.classList.add('bg-red-100', 'text-red-800');
+                estadoBadge.innerHTML = '<i class="fas fa-ban mr-1"></i>Cancelada';
+            }
+            
+            // Llenar servicios
+            const serviciosLista = document.getElementById('modal-servicios-lista');
+            const totalServicios = document.getElementById('modal-total-servicios');
+            
+            serviciosLista.innerHTML = '';
+            totalServicios.textContent = `${data.servicios.length} servicio${data.servicios.length !== 1 ? 's' : ''}`;
+            
+            data.servicios.forEach(servicio => {
+                const servicioDiv = document.createElement('div');
+                servicioDiv.className = 'bg-white/70 rounded-xl p-4 border border-purple-200';
+                servicioDiv.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h5 class="font-bold text-slate-800">${servicio.nombre}</h5>
+                            <p class="text-sm text-slate-600">${servicio.descripcion || 'Sin descripción'}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-lg font-bold text-purple-600">$${servicio.precio}</p>
+                        </div>
+                    </div>
+                `;
+                serviciosLista.appendChild(servicioDiv);
+            });
+            
+            // Actualizar totales
+            document.getElementById('modal-subtotal').textContent = `$${data.precio_total}`;
+            const totalFinal = document.getElementById('modal-total-final');
+            if (totalFinal) {
+                totalFinal.textContent = `$${data.precio_total}`;
+            }
+            
+            // Guardar datos para usar en edición
+            window.citaActualModal = data;
+            
+            // Mostrar/ocultar botón de editar según el estado
+            const btnEditarModal = document.getElementById('btnEditarModal');
+            if (data.estado === 'completado' || data.estado === 'cancelada') {
+                btnEditarModal.style.display = 'none';
+            } else {
+                btnEditarModal.style.display = 'inline-flex';
+            }
+            
+            // Mostrar el modal
+            const modal = document.getElementById('detallesModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100');
+            modal.querySelector('.transform').classList.remove('scale-95');
+            modal.querySelector('.transform').classList.add('scale-100');
+        })
+        .catch(error => {
+            console.error('Error al cargar detalles:', error);
+            alert('Error al cargar los detalles de la reserva');
+        });
+    }
+    
+    function editarCita(reservaId) {
+        console.log('Redirigiendo a editar cita:', reservaId);
+        window.location.href = `/editar-reserva-empresa/${reservaId}/`;
+    }
+    
+    function editarDesdeModal() {
+        if (window.citaActualModal) {
+            editarCita(window.citaActualModal.id_reserva);
+        }
+    }
+    
+    function cerrarModalDetalles() {
+        const modal = document.getElementById('detallesModal');
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modal.classList.remove('opacity-100');
+        modal.querySelector('.transform').classList.add('scale-95');
+        modal.querySelector('.transform').classList.remove('scale-100');
+        
+        // Limpiar datos
+        window.citaActualModal = null;
+    }
+</script>
 
     <!-- Modal de Detalles de Cita -->
     <div id="detallesModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
@@ -810,12 +1405,14 @@
             </div>
         </div>
     </div>
+{% endblock %}
 
-    <!-- JavaScript mejorado -->
+{% block extra_js %}
+    <!-- JavaScript específico para gestión de citas -->
     <script>
         // Variables globales
         let filtroActivo = 'todas';
-        let citasOriginales = document.querySelectorAll('.cita-card');
+        let citasOriginales = null; // Se inicializará en DOMContentLoaded
         let citaActualModal = null; // Para almacenar la información de la cita actual
 
         // Datos de las citas (esto se poblará desde Django)
@@ -846,103 +1443,396 @@
             }{% if not forloop.last %},{% endif %}
             {% endfor %}
         };
+        
+        // Función para filtrar citas por estado
+        function filtrarCitas(tipo) {
+            console.log('Filtrando citas por:', tipo);
+            filtroActivo = tipo;
+            const citas = document.querySelectorAll('.cita-card');
+            
+            // Actualizar apariencia de los tabs
+            actualizarTabsApariencia(tipo);
+            
+            // Limpiar otros filtros cuando se usa filtro de estado
+            if (tipo !== 'todas') {
+                const estadoSelect = document.getElementById('filtro-estado');
+                if (estadoSelect) {
+                    estadoSelect.value = tipo === 'pendientes' ? 'pendiente' : tipo === 'completadas' ? 'completado' : 'cancelada';
+                }
+            } else {
+                const estadoSelect = document.getElementById('filtro-estado');
+                if (estadoSelect) {
+                    estadoSelect.value = '';
+                }
+            }
+            
+            // Aplicar filtros combinados
+            aplicarFiltrosCombinados();
+        }
+        
+        // Función para actualizar la apariencia de los tabs
+        function actualizarTabsApariencia(tipoActivo) {
+            // Resetear todos los tabs
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.className = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gray-100 text-gray-700 hover:bg-gray-200 no-underline';
+            });
+            
+            // Activar el tab correspondiente
+            let activeTabClass = '';
+            let activeTabId = '';
+            
+            switch(tipoActivo) {
+                case 'todas':
+                    activeTabClass = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg no-underline';
+                    activeTabId = 'tab-all';
+                    break;
+                case 'pendientes':
+                    activeTabClass = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg no-underline';
+                    activeTabId = 'tab-pendiente';
+                    break;
+                case 'completadas':
+                    activeTabClass = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg no-underline';
+                    activeTabId = 'tab-completado';
+                    break;
+                case 'canceladas':
+                    activeTabClass = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg no-underline';
+                    activeTabId = 'tab-cancelada';
+                    break;
+            }
+            
+            const activeTab = document.getElementById(activeTabId);
+            if (activeTab) {
+                activeTab.className = activeTabClass;
+            }
+        }
+
+        // ===== FUNCIONES PRINCIPALES (GLOBALES) =====
+
+        // Funciones de filtros avanzados
+        function aplicarFiltrosCombinados() {
+            const fechaFiltro = document.getElementById('filtro-fecha')?.value || '';
+            const clienteFiltro = document.getElementById('buscar-cliente')?.value.toLowerCase().trim() || '';
+            const estadoFiltro = document.getElementById('filtro-estado')?.value || '';
+            const servicioFiltro = document.getElementById('filtro-servicio')?.value.toLowerCase().trim() || '';
+            const citas = document.querySelectorAll('.cita-card');
+            
+            let citasVisibles = 0;
+            
+            // Actualizar indicador de filtros activos
+            actualizarIndicadorFiltros();
+            
+            citas.forEach((cita, index) => {
+                const fechaCita = cita.dataset.fecha;
+                const clienteCita = cita.dataset.cliente;
+                const servicioCita = cita.dataset.servicio;
+                const estadoCita = cita.dataset.estado;
+                
+                let mostrar = true;
+                
+                // Filtro por fecha
+                if (fechaFiltro && fechaCita !== fechaFiltro) {
+                    mostrar = false;
+                }
+                
+                // Filtro por cliente
+                if (clienteFiltro && !clienteCita.includes(clienteFiltro)) {
+                    mostrar = false;
+                }
+                
+                // Filtro por estado
+                if (estadoFiltro) {
+                    if (estadoFiltro === 'pendiente' && estadoCita !== 'pendiente') mostrar = false;
+                    if (estadoFiltro === 'completado' && estadoCita !== 'completado') mostrar = false;
+                    if (estadoFiltro === 'cancelada' && estadoCita !== 'cancelada') mostrar = false;
+                }
+                
+                // Filtro por servicio
+                if (servicioFiltro && !servicioCita.includes(servicioFiltro)) {
+                    mostrar = false;
+                }
+                
+                // Aplicar visibilidad con animación
+                if (mostrar) {
+                    citasVisibles++;
+                    cita.style.display = 'block';
+                    setTimeout(() => {
+                        cita.style.opacity = '1';
+                        cita.style.transform = 'translateY(0)';
+                    }, index * 30);
+                } else {
+                    cita.style.opacity = '0';
+                    cita.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        cita.style.display = 'none';
+                    }, 150);
+                }
+            });
+            
+            // Mostrar mensaje si no hay resultados
+            mostrarMensajeNoResultados(citasVisibles);
+        }
+
+        function actualizarIndicadorFiltros() {
+            const fechaFiltro = document.getElementById('filtro-fecha')?.value || '';
+            const clienteFiltro = document.getElementById('buscar-cliente')?.value.trim() || '';
+            const estadoFiltro = document.getElementById('filtro-estado')?.value || '';
+            const servicioFiltro = document.getElementById('filtro-servicio')?.value || '';
+            
+            let filtrosActivos = 0;
+            
+            if (fechaFiltro) filtrosActivos++;
+            if (clienteFiltro) filtrosActivos++;
+            if (estadoFiltro) filtrosActivos++;
+            if (servicioFiltro) filtrosActivos++;
+            
+            const indicador = document.getElementById('filtros-activos');
+            const contador = document.getElementById('contador-filtros');
+            
+            if (indicador && contador) {
+                if (filtrosActivos > 0) {
+                    indicador.classList.remove('hidden');
+                    contador.textContent = filtrosActivos;
+                } else {
+                    indicador.classList.add('hidden');
+                }
+            }
+        }
+
+        function mostrarMensajeNoResultados(citasVisibles) {
+            let mensajeContainer = document.getElementById('no-results-message');
+            
+            if (citasVisibles === 0) {
+                if (!mensajeContainer) {
+                    const listaCitas = document.getElementById('lista-citas');
+                    if (listaCitas) {
+                        mensajeContainer = document.createElement('div');
+                        mensajeContainer.id = 'no-results-message';
+                        mensajeContainer.className = 'text-center py-12 px-6';
+                        mensajeContainer.innerHTML = `
+                            <div class="max-w-md mx-auto">
+                                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-search text-3xl text-gray-400"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-700 mb-2">No se encontraron citas</h3>
+                                <p class="text-gray-500 mb-4">No hay citas que coincidan con los filtros aplicados.</p>
+                                <button onclick="clearAllFilters()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300">
+                                    <i class="fas fa-times mr-2"></i>Limpiar Filtros
+                                </button>
+                            </div>
+                        `;
+                        listaCitas.appendChild(mensajeContainer);
+                    }
+                }
+                if (mensajeContainer) {
+                    mensajeContainer.style.display = 'block';
+                }
+            } else {
+                if (mensajeContainer) {
+                    mensajeContainer.style.display = 'none';
+                }
+            }
+        }
+
+        // Funciones auxiliares
+        function filtrarPorFecha() {
+            aplicarFiltrosCombinados();
+        }
+
+        function filtrarPorEstado() {
+            const estadoFiltro = document.getElementById('filtro-estado')?.value || '';
+            if (estadoFiltro) {
+                filtroActivo = estadoFiltro === 'pendiente' ? 'pendientes' : estadoFiltro === 'completado' ? 'completadas' : 'canceladas';
+                actualizarTabsApariencia(filtroActivo);
+            } else {
+                filtroActivo = 'todas';
+                actualizarTabsApariencia('todas');
+            }
+            aplicarFiltrosCombinados();
+        }
+
+        function filtrarPorServicio() {
+            aplicarFiltrosCombinados();
+        }
+
+        function buscarCliente() {
+            aplicarFiltrosCombinados();
+        }
+
+        function clearAllFilters() {
+            // Limpiar todos los campos de filtro
+            const campos = ['filtro-fecha', 'buscar-cliente', 'filtro-estado', 'filtro-servicio'];
+            campos.forEach(id => {
+                const elemento = document.getElementById(id);
+                if (elemento) elemento.value = '';
+            });
+            
+            // Resetear estado y mostrar todas las citas
+            filtroActivo = 'todas';
+            actualizarTabsApariencia('todas');
+            
+            // Ocultar indicador de filtros activos
+            const indicador = document.getElementById('filtros-activos');
+            if (indicador) indicador.classList.add('hidden');
+            
+            // Ocultar mensaje de no resultados si existe
+            const mensajeContainer = document.getElementById('no-results-message');
+            if (mensajeContainer) mensajeContainer.style.display = 'none';
+            
+            // Mostrar todas las citas con animación
+            const citas = document.querySelectorAll('.cita-card');
+            citas.forEach((cita, index) => {
+                cita.style.display = 'block';
+                setTimeout(() => {
+                    cita.style.opacity = '1';
+                    cita.style.transform = 'translateY(0)';
+                }, index * 20);
+            });
+        }
+
+        // ===== RESTO DEL CÓDIGO ORIGINAL =====
 
         // Función para mostrar detalles en modal
         function verDetalles(reservaId) {
+            console.log('Intentando mostrar detalles para reserva ID:', reservaId);
+            console.log('Datos disponibles:', citasData);
+            
             const cita = citasData[reservaId];
             if (!cita) {
                 console.error('No se encontró la cita con ID:', reservaId);
+                alert(`Error: No se encontraron los datos para la cita #${reservaId}. Por favor, recarga la página.`);
                 return;
             }
 
+            console.log('Datos de la cita encontrada:', cita);
             citaActualModal = cita;
 
-            // Llenar información del cliente
-            document.getElementById('modal-cliente-avatar').textContent = cita.cliente.nombre.charAt(0).toUpperCase();
-            document.getElementById('modal-cliente-nombre').textContent = cita.cliente.nombre;
-            document.getElementById('modal-cliente-correo').textContent = cita.cliente.correo;
-            document.getElementById('modal-cliente-telefono').textContent = cita.cliente.telefono;
-            document.getElementById('modal-cliente-id').textContent = cita.cliente.id;
+            try {
+                // Verificar que todos los elementos del modal existen
+                const elementos = [
+                    'modal-cliente-avatar',
+                    'modal-cliente-nombre',
+                    'modal-cliente-correo',
+                    'modal-cliente-telefono',
+                    'modal-cliente-id',
+                    'modal-reserva-id',
+                    'modal-fecha',
+                    'modal-hora',
+                    'modal-estado-badge',
+                    'modal-servicios-lista',
+                    'modal-total-servicios',
+                    'modal-subtotal',
+                    'modal-descuentos',
+                    'modal-total-final',
+                    'modal-cita-subtitle'
+                ];
 
-            // Llenar información de la cita
-            document.getElementById('modal-reserva-id').textContent = '#' + cita.id;
-            document.getElementById('modal-fecha').textContent = cita.fecha;
-            document.getElementById('modal-hora').textContent = cita.hora;
+                const elementosFaltantes = [];
+                elementos.forEach(id => {
+                    if (!document.getElementById(id)) {
+                        elementosFaltantes.push(id);
+                    }
+                });
 
-            // Actualizar badge de estado
-            const estadoBadge = document.getElementById('modal-estado-badge');
-            estadoBadge.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium';
-            
-            if (cita.estado === 'pendiente') {
-                estadoBadge.className += ' bg-yellow-100 text-yellow-800';
-                estadoBadge.innerHTML = '<i class="fas fa-clock mr-1"></i>Pendiente';
-            } else if (cita.estado === 'completado') {
-                estadoBadge.className += ' bg-green-100 text-green-800';
-                estadoBadge.innerHTML = '<i class="fas fa-check-circle mr-1"></i>Completada';
-            } else if (cita.estado === 'cancelada') {
-                estadoBadge.className += ' bg-red-100 text-red-800';
-                estadoBadge.innerHTML = '<i class="fas fa-ban mr-1"></i>Cancelada';
-            }
+                if (elementosFaltantes.length > 0) {
+                    console.error('Elementos del modal faltantes:', elementosFaltantes);
+                    alert('Error: El modal no está completamente configurado. Contacta al administrador.');
+                    return;
+                }
 
-            // Llenar servicios
-            const serviciosLista = document.getElementById('modal-servicios-lista');
-            serviciosLista.innerHTML = '';
-            
-            if (cita.servicios.length > 0) {
-                cita.servicios.forEach((servicio, index) => {
-                    const servicioHTML = `
-                        <div class="bg-white/70 rounded-xl p-4 border border-purple-200">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                                        <span class="text-purple-600 font-bold text-sm">${index + 1}</span>
+                // Llenar información del cliente
+                document.getElementById('modal-cliente-avatar').textContent = cita.cliente.nombre.charAt(0).toUpperCase();
+                document.getElementById('modal-cliente-nombre').textContent = cita.cliente.nombre;
+                document.getElementById('modal-cliente-correo').textContent = cita.cliente.correo;
+                document.getElementById('modal-cliente-telefono').textContent = cita.cliente.telefono;
+                document.getElementById('modal-cliente-id').textContent = cita.cliente.id;
+
+                // Llenar información de la cita
+                document.getElementById('modal-reserva-id').textContent = '#' + cita.id;
+                document.getElementById('modal-fecha').textContent = cita.fecha;
+                document.getElementById('modal-hora').textContent = cita.hora;
+
+                // Actualizar badge de estado
+                const estadoBadge = document.getElementById('modal-estado-badge');
+                estadoBadge.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium';
+                
+                if (cita.estado === 'pendiente') {
+                    estadoBadge.className += ' bg-yellow-100 text-yellow-800';
+                    estadoBadge.innerHTML = '<i class="fas fa-clock mr-1"></i>Pendiente';
+                } else if (cita.estado === 'completado') {
+                    estadoBadge.className += ' bg-green-100 text-green-800';
+                    estadoBadge.innerHTML = '<i class="fas fa-check-circle mr-1"></i>Completada';
+                } else if (cita.estado === 'cancelada') {
+                    estadoBadge.className += ' bg-red-100 text-red-800';
+                    estadoBadge.innerHTML = '<i class="fas fa-ban mr-1"></i>Cancelada';
+                }
+                // Llenar servicios
+                const serviciosLista = document.getElementById('modal-servicios-lista');
+                serviciosLista.innerHTML = '';
+                
+                if (cita.servicios && cita.servicios.length > 0) {
+                    cita.servicios.forEach((servicio, index) => {
+                        const servicioHTML = `
+                            <div class="bg-white/70 rounded-xl p-4 border border-purple-200">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                            <span class="text-purple-600 font-bold text-sm">${index + 1}</span>
+                                        </div>
+                                        <div>
+                                            <h6 class="font-semibold text-slate-800">${servicio.nombre}</h6>
+                                            <p class="text-sm text-slate-600">${servicio.descripcion || 'Sin descripción'}</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h6 class="font-semibold text-slate-800">${servicio.nombre}</h6>
-                                        <p class="text-sm text-slate-600">${servicio.descripcion}</p>
+                                    <div class="text-right">
+                                        <p class="font-bold text-purple-600">$${Number(servicio.precio).toLocaleString()}</p>
                                     </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-bold text-purple-600">$${servicio.precio.toLocaleString()}</p>
                                 </div>
                             </div>
+                        `;
+                        serviciosLista.innerHTML += servicioHTML;
+                    });
+                } else {
+                    serviciosLista.innerHTML = `
+                        <div class="text-center py-8 text-slate-500">
+                            <i class="fas fa-info-circle text-2xl mb-2"></i>
+                            <p>No hay servicios asignados a esta cita</p>
                         </div>
                     `;
-                    serviciosLista.innerHTML += servicioHTML;
-                });
-            } else {
-                serviciosLista.innerHTML = `
-                    <div class="text-center py-8 text-slate-500">
-                        <i class="fas fa-info-circle text-2xl mb-2"></i>
-                        <p>No hay servicios asignados a esta cita</p>
-                    </div>
-                `;
+                }
+
+                // Actualizar contador de servicios
+                const totalServicios = cita.servicios ? cita.servicios.length : 0;
+                document.getElementById('modal-total-servicios').textContent = `${totalServicios} servicios`;
+
+                // Calcular y mostrar resumen financiero
+                const subtotal = cita.servicios ? cita.servicios.reduce((sum, servicio) => sum + Number(servicio.precio), 0) : 0;
+                const precioTotal = Number(cita.precioTotal) || 0;
+                const descuentos = subtotal > precioTotal ? subtotal - precioTotal : 0; // Calcular descuentos si los hay
+                
+                document.getElementById('modal-subtotal').textContent = `$${subtotal.toLocaleString()}`;
+                document.getElementById('modal-descuentos').textContent = descuentos > 0 ? `-$${descuentos.toLocaleString()}` : '$0';
+                document.getElementById('modal-total-final').textContent = `$${precioTotal.toLocaleString()}`;
+
+                // Actualizar subtítulo del modal
+                document.getElementById('modal-cita-subtitle').textContent = `Cita #${cita.id} - ${cita.fecha}`;
+
+                // Mostrar u ocultar el botón de editar según el estado
+                const btnEditarModal = document.getElementById('btnEditarModal');
+                if (btnEditarModal) {
+                    if (cita.estado === 'completado') {
+                        btnEditarModal.style.display = 'none';
+                    } else {
+                        btnEditarModal.style.display = 'block';
+                    }
+                }
+
+                // Mostrar el modal
+                abrirModalDetalles();
+                
+            } catch (error) {
+                console.error('Error al mostrar detalles de la cita:', error);
+                alert('Error al cargar los detalles de la cita. Por favor, intenta de nuevo.');
             }
-
-            // Actualizar contador de servicios
-            document.getElementById('modal-total-servicios').textContent = `${cita.totalServicios} servicios`;
-
-            // Calcular y mostrar resumen financiero
-            const subtotal = cita.servicios.reduce((sum, servicio) => sum + servicio.precio, 0);
-            const descuentos = subtotal - cita.precioTotal; // Calcular descuentos si los hay
-            
-            document.getElementById('modal-subtotal').textContent = `$${subtotal.toLocaleString()}`;
-            document.getElementById('modal-descuentos').textContent = descuentos > 0 ? `-$${descuentos.toLocaleString()}` : '$0';
-            document.getElementById('modal-total-final').textContent = `$${cita.precioTotal.toLocaleString()}`;
-
-            // Actualizar subtítulo del modal
-            document.getElementById('modal-cita-subtitle').textContent = `Cita #${cita.id} - ${cita.fecha}`;
-
-            // Mostrar u ocultar el botón de editar según el estado
-            const btnEditarModal = document.getElementById('btnEditarModal');
-            if (cita.estado === 'completado') {
-                btnEditarModal.style.display = 'none';
-            } else {
-                btnEditarModal.style.display = 'block';
-            }
-
-            // Mostrar el modal
-            abrirModalDetalles();
         }
 
         // Función para abrir el modal
@@ -982,211 +1872,334 @@
             }
         }
 
-        // Función para filtrar citas por estado
-        function filtrarCitas(tipo) {
-            filtroActivo = tipo;
-            const citas = document.querySelectorAll('.cita-card');
-            
-            // Actualizar apariencia de los tabs
-            actualizarTabsApariencia(tipo);
-            
-            // Mostrar/ocultar citas con animación
-            citas.forEach((cita, index) => {
-                const estado = cita.dataset.estado;
-                let mostrar = false;
-                
-                switch(tipo) {
-                    case 'todas':
-                        mostrar = true;
-                        break;
-                    case 'pendientes':
-                        mostrar = estado === 'pendiente';
-                        break;
-                    case 'completadas':
-                        mostrar = estado === 'completado';
-                        break;
-                    case 'canceladas':
-                        mostrar = estado === 'cancelada';
-                        break;
-                }
-                
-                if (mostrar) {
-                    cita.style.display = 'block';
-                    setTimeout(() => {
-                        cita.style.opacity = '1';
-                        cita.style.transform = 'translateY(0)';
-                    }, index * 50);
-                } else {
-                    cita.style.opacity = '0';
-                    cita.style.transform = 'translateY(-10px)';
-                    setTimeout(() => {
-                        cita.style.display = 'none';
-                    }, 200);
-                }
-            });
-        }
-
-        // Función para actualizar la apariencia de los tabs
-        function actualizarTabsApariencia(tipoActivo) {
-            // Resetear todos los tabs
-            document.querySelectorAll('.tab-button').forEach(tab => {
-                tab.className = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gray-100 text-gray-700 hover:bg-gray-200 no-underline';
-            });
-            
-            // Activar el tab correspondiente
-            let activeTabClass = '';
-            let activeTabId = '';
-            
-            switch(tipoActivo) {
-                case 'todas':
-                    activeTabClass = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg no-underline';
-                    activeTabId = 'tab-all';
-                    break;
-                case 'pendientes':
-                    activeTabClass = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg no-underline';
-                    activeTabId = 'tab-pendiente';
-                    break;
-                case 'completadas':
-                    activeTabClass = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg no-underline';
-                    activeTabId = 'tab-completado';
-                    break;
-                case 'canceladas':
-                    activeTabClass = 'tab-button px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg no-underline';
-                    activeTabId = 'tab-cancelada';
-                    break;
-            }
-            
-            const activeTab = document.getElementById(activeTabId);
-            if (activeTab) {
-                activeTab.className = activeTabClass;
-            }
-        }
-
         // Función para filtrar por fecha
         function filtrarPorFecha() {
-            const fechaFiltro = document.getElementById('filtro-fecha').value;
-            aplicarFiltros();
+            aplicarFiltrosCombinados();
         }
 
         // Función para filtrar por estado (desde select)
         function filtrarPorEstado() {
             const estadoFiltro = document.getElementById('filtro-estado').value;
             if (estadoFiltro) {
-                filtrarCitas(estadoFiltro === 'pendiente' ? 'pendientes' : estadoFiltro === 'completado' ? 'completadas' : 'canceladas');
+                filtroActivo = estadoFiltro === 'pendiente' ? 'pendientes' : estadoFiltro === 'completado' ? 'completadas' : 'canceladas';
+                actualizarTabsApariencia(filtroActivo);
             } else {
-                filtrarCitas('todas');
+                filtroActivo = 'todas';
+                actualizarTabsApariencia('todas');
             }
+            aplicarFiltrosCombinados();
         }
 
         // Función para filtrar por servicio
         function filtrarPorServicio() {
-            aplicarFiltros();
+            aplicarFiltrosCombinados();
         }
 
         // Función para buscar cliente
         function buscarCliente() {
-            aplicarFiltros();
+            aplicarFiltrosCombinados();
         }
 
-        // Función para aplicar todos los filtros
-        function aplicarFiltros() {
-            const fechaFiltro = document.getElementById('filtro-fecha').value;
-            const clienteFiltro = document.getElementById('buscar-cliente').value.toLowerCase();
-            const servicioFiltro = document.getElementById('filtro-servicio').value.toLowerCase();
-            const citas = document.querySelectorAll('.cita-card');
+        // Función para mostrar mensaje cuando no hay resultados
+        function mostrarMensajeNoResultados(citasVisibles) {
+            let mensajeContainer = document.getElementById('no-results-message');
             
-            citas.forEach(cita => {
-                const fechaCita = cita.dataset.fecha;
-                const clienteCita = cita.dataset.cliente;
-                const servicioCita = cita.dataset.servicio;
-                
-                let mostrar = true;
-                
-                // Filtro por fecha
-                if (fechaFiltro && fechaCita !== fechaFiltro) {
-                    mostrar = false;
+            if (citasVisibles === 0) {
+                if (!mensajeContainer) {
+                    const listaCitas = document.getElementById('lista-citas');
+                    mensajeContainer = document.createElement('div');
+                    mensajeContainer.id = 'no-results-message';
+                    mensajeContainer.className = 'text-center py-12 px-6';
+                    mensajeContainer.innerHTML = `
+                        <div class="max-w-md mx-auto">
+                            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-search text-3xl text-gray-400"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-2">No se encontraron citas</h3>
+                            <p class="text-gray-500 mb-4">No hay citas que coincidan con los filtros aplicados.</p>
+                            <button onclick="clearAllFilters()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300">
+                                <i class="fas fa-times mr-2"></i>Limpiar Filtros
+                            </button>
+                        </div>
+                    `;
+                    listaCitas.appendChild(mensajeContainer);
                 }
-                
-                // Filtro por cliente
-                if (clienteFiltro && !clienteCita.includes(clienteFiltro)) {
-                    mostrar = false;
+                mensajeContainer.style.display = 'block';
+            } else {
+                if (mensajeContainer) {
+                    mensajeContainer.style.display = 'none';
                 }
-                
-                // Filtro por servicio
-                if (servicioFiltro && !servicioCita.includes(servicioFiltro)) {
-                    mostrar = false;
-                }
-                
-                cita.style.display = mostrar ? 'block' : 'none';
-            });
+            }
+        }
+
+        // Función para aplicar todos los filtros (mantener compatibilidad)
+        function aplicarFiltros() {
+            aplicarFiltrosCombinados();
         }
 
         // Función para aplicar filtros rápidos
         function applyQuickFilter(filterType) {
-            // Limpiar filtros
-            document.getElementById('filtro-fecha').value = '';
-            document.getElementById('buscar-cliente').value = '';
-            document.getElementById('filtro-estado').value = '';
-            document.getElementById('filtro-servicio').value = '';
+            // Limpiar filtros primero
+            clearAllFilters();
             
             // Aplicar filtro específico
             switch(filterType) {
                 case 'hoy':
                     const today = new Date().toISOString().split('T')[0];
                     document.getElementById('filtro-fecha').value = today;
+                    filtrarPorFecha();
                     break;
                 case 'semana':
-                    const today2 = new Date();
-                    const firstDay = new Date(today2.setDate(today2.getDate() - today2.getDay()));
-                    document.getElementById('filtro-fecha').value = firstDay.toISOString().split('T')[0];
+                    // Filtrar por esta semana (desde lunes hasta domingo)
+                    const now = new Date();
+                    const dayOfWeek = now.getDay();
+                    const diff = now.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Ajustar para que lunes sea el primer día
+                    const monday = new Date(now.setDate(diff));
+                    document.getElementById('filtro-fecha').value = monday.toISOString().split('T')[0];
+                    
+                    // Para el filtro de semana, necesitamos una lógica especial
+                    filtrarPorSemana();
                     break;
                 case 'pendientes':
+                    document.getElementById('filtro-estado').value = 'pendiente';
                     filtrarCitas('pendientes');
-                    return;
+                    break;
                 case 'completadas':
+                    document.getElementById('filtro-estado').value = 'completado';
                     filtrarCitas('completadas');
-                    return;
+                    break;
             }
+        }
+
+        // Función para filtrar por semana
+        function filtrarPorSemana() {
+            const now = new Date();
+            const dayOfWeek = now.getDay();
+            const diff = now.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+            const monday = new Date(now.setDate(diff));
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
             
-            aplicarFiltros();
+            const mondayStr = monday.toISOString().split('T')[0];
+            const sundayStr = sunday.toISOString().split('T')[0];
+            
+            const citas = document.querySelectorAll('.cita-card');
+            let citasVisibles = 0;
+            
+            citas.forEach((cita, index) => {
+                const fechaCita = cita.dataset.fecha;
+                const mostrar = fechaCita >= mondayStr && fechaCita <= sundayStr;
+                
+                if (mostrar) {
+                    citasVisibles++;
+                    cita.style.display = 'block';
+                    setTimeout(() => {
+                        cita.style.opacity = '1';
+                        cita.style.transform = 'translateY(0)';
+                    }, index * 30);
+                } else {
+                    cita.style.opacity = '0';
+                    cita.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        cita.style.display = 'none';
+                    }, 150);
+                }
+            });
+            
+            mostrarMensajeNoResultados(citasVisibles);
         }
 
         // Función para limpiar filtros
         function clearAllFilters() {
+            // Limpiar todos los campos de filtro
             document.getElementById('filtro-fecha').value = '';
             document.getElementById('buscar-cliente').value = '';
             document.getElementById('filtro-estado').value = '';
             document.getElementById('filtro-servicio').value = '';
-            filtrarCitas('todas');
+            
+            // Resetear estado y mostrar todas las citas
+            filtroActivo = 'todas';
+            actualizarTabsApariencia('todas');
+            
+            // Ocultar indicador de filtros activos
+            document.getElementById('filtros-activos').classList.add('hidden');
+            
+            // Ocultar mensaje de no resultados si existe
+            const mensajeContainer = document.getElementById('no-results-message');
+            if (mensajeContainer) {
+                mensajeContainer.style.display = 'none';
+            }
+            
+            // Mostrar todas las citas con animación
+            const citas = document.querySelectorAll('.cita-card');
+            citas.forEach((cita, index) => {
+                cita.style.display = 'block';
+                setTimeout(() => {
+                    cita.style.opacity = '1';
+                    cita.style.transform = 'translateY(0)';
+                }, index * 20);
+            });
         }
 
         // Función para editar cita
         function editarCita(reservaId) {
-            // Aquí puedes implementar la lógica para editar
-            alert(`Editar reserva ${reservaId} - Funcionalidad por implementar`);
+            console.log('Intentando editar reserva ID:', reservaId);
+            
+            // Verificar que la cita existe en nuestros datos
+            const cita = citasData[reservaId];
+            if (!cita) {
+                console.error('No se encontró la cita con ID:', reservaId);
+                alert(`Error: No se encontraron los datos para la cita #${reservaId}.`);
+                return;
+            }
+
+            // Por ahora, mostrar opciones disponibles
+            const opciones = [
+                'Cambiar estado a Completado',
+                'Cambiar estado a Cancelado',
+                'Ver detalles completos'
+            ];
+
+            let mensaje = `Opciones para la Cita #${reservaId}:\n\n`;
+            opciones.forEach((opcion, index) => {
+                mensaje += `${index + 1}. ${opcion}\n`;
+            });
+            mensaje += '\nSelecciona una opción (1-3):';
+
+            const seleccion = prompt(mensaje);
+            
+            if (seleccion) {
+                const opcion = parseInt(seleccion);
+                switch(opcion) {
+                    case 1:
+                        if (cita.estado !== 'completado') {
+                            cambiarEstadoCita(reservaId, 'completado');
+                        } else {
+                            alert('Esta cita ya está completada.');
+                        }
+                        break;
+                    case 2:
+                        if (cita.estado !== 'cancelada') {
+                            cambiarEstadoCita(reservaId, 'cancelada');
+                        } else {
+                            alert('Esta cita ya está cancelada.');
+                        }
+                        break;
+                    case 3:
+                        verDetalles(reservaId);
+                        break;
+                    default:
+                        alert('Opción no válida.');
+                }
+            }
+        }
+
+        // Función para cambiar estado de cita
+        function cambiarEstadoCita(reservaId, nuevoEstado) {
+            const confirmacion = confirm(`¿Estás seguro de cambiar el estado de la cita #${reservaId} a "${nuevoEstado}"?`);
+            
+            if (confirmacion) {
+                // Aquí implementarías la llamada al servidor para cambiar el estado
+                // Por ahora, simulamos el cambio localmente
+                console.log(`Cambiando estado de cita ${reservaId} a ${nuevoEstado}`);
+                
+                // Actualizar datos locales
+                if (citasData[reservaId]) {
+                    citasData[reservaId].estado = nuevoEstado;
+                    
+                    // Actualizar la interfaz
+                    actualizarTarjetaCita(reservaId, nuevoEstado);
+                    
+                    alert(`El estado de la cita #${reservaId} se ha cambiado a "${nuevoEstado}" exitosamente.`);
+                }
+                
+                // TODO: Implementar llamada AJAX para persistir el cambio en el servidor
+                // fetch('/cambiar-estado-cita/', { ... })
+            }
+        }
+
+        // Función para actualizar la apariencia de la tarjeta después del cambio de estado
+        function actualizarTarjetaCita(reservaId, nuevoEstado) {
+            const tarjeta = document.querySelector(`[data-estado][data-reserva-id="${reservaId}"]`);
+            if (!tarjeta) {
+                // Buscar por otro método si no se encuentra
+                const todasLasTarjetas = document.querySelectorAll('.cita-card');
+                for (let tarjeta of todasLasTarjetas) {
+                    const botonDetalles = tarjeta.querySelector(`[onclick*="${reservaId}"]`);
+                    if (botonDetalles) {
+                        tarjeta.dataset.estado = nuevoEstado;
+                        break;
+                    }
+                }
+            } else {
+                tarjeta.dataset.estado = nuevoEstado;
+            }
+            
+            // Refrescar filtros para aplicar el nuevo estado
+            aplicarFiltrosCombinados();
         }
 
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
             // Agregar event listener al botón de limpiar filtros
-            document.getElementById('clearFilters').addEventListener('click', clearAllFilters);
+            const clearButton = document.getElementById('clearFilters');
+            if (clearButton) {
+                clearButton.addEventListener('click', clearAllFilters);
+            }
             
-            // Inicializar filtros
-            filtrarCitas('todas');
+            // Inicializar filtros y mostrar todas las citas
+            filtroActivo = 'todas';
+            actualizarTabsApariencia('todas');
+            
+            // Asegurar que todas las citas sean visibles al cargar
+            const citas = document.querySelectorAll('.cita-card');
+            citas.forEach((cita, index) => {
+                cita.style.display = 'block';
+                cita.style.opacity = '1';
+                cita.style.transform = 'translateY(0)';
+                // Agregar animación de entrada suave
+                cita.style.animation = `fadeInUp 0.6s ease forwards ${index * 0.1}s`;
+            });
             
             // Event listener para cerrar modal al hacer clic fuera
-            document.getElementById('detallesModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    cerrarModalDetalles();
-                }
-            });
+            const modalDetalles = document.getElementById('detallesModal');
+            if (modalDetalles) {
+                modalDetalles.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        cerrarModalDetalles();
+                    }
+                });
+            }
             
             // Event listener para cerrar modal con tecla Escape
             document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && citaActualModal) {
+                if (e.key === 'Escape' && typeof citaActualModal !== 'undefined' && citaActualModal) {
                     cerrarModalDetalles();
                 }
             });
+            
+            // Agregar animación CSS si no existe
+            if (!document.getElementById('filter-animations')) {
+                const style = document.createElement('style');
+                style.id = 'filter-animations';
+                style.textContent = `
+                    @keyframes fadeInUp {
+                        from {
+                            opacity: 0;
+                            transform: translateY(20px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
+                    }
+                    
+                    .cita-card {
+                        transition: all 0.3s ease;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
             
             // Desvanecer alertas después de 5 segundos
             setTimeout(() => {
@@ -1204,17 +2217,98 @@
             }, 5000);
         });
 
-        // Funciones para el navbar
-        function toggleMobileMenu() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
-        }
+        // ===== INICIALIZACIÓN =====
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página cargada, inicializando funciones...');
+            console.log('Datos de citas disponibles:', Object.keys(citasData).length);
+            
+            // Inicializar variables globales
+            citasOriginales = document.querySelectorAll('.cita-card');
+            
+            // Configurar event listeners
+            const clearButton = document.getElementById('clearFilters');
+            if (clearButton) {
+                clearButton.addEventListener('click', clearAllFilters);
+            }
+            
+            // Inicializar filtros
+            filtroActivo = 'todas';
+            actualizarTabsApariencia('todas');
+            
+            // Asegurar que todas las citas sean visibles al cargar
+            const citas = document.querySelectorAll('.cita-card');
+            citas.forEach((cita, index) => {
+                cita.style.display = 'block';
+                cita.style.opacity = '1';
+                cita.style.transform = 'translateY(0)';
+            });
+            
+            // Agregar animación CSS si no existe
+            if (!document.getElementById('filter-animations')) {
+                const style = document.createElement('style');
+                style.id = 'filter-animations';
+                style.textContent = `
+                    @keyframes fadeInUp {
+                        from {
+                            opacity: 0;
+                            transform: translateY(20px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
+                    }
+                    
+                    .cita-card {
+                        transition: all 0.3s ease;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            console.log('Inicialización completada');
+        });
 
-        function logout() {
-            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-                window.location.href = '{% url "logout" %}';
+        // ===== TOGGLE DE VISTAS =====
+        function toggleView(viewType) {
+            const tableContainer = document.getElementById('reservas-table-container');
+            const cardsContainer = document.getElementById('reservas-cards-container');
+            const tableBtn = document.getElementById('table-view-btn');
+            const cardBtn = document.getElementById('card-view-btn');
+            
+            if (viewType === 'table') {
+                // Mostrar tabla, ocultar tarjetas
+                tableContainer.classList.remove('hidden');
+                tableContainer.classList.add('block');
+                cardsContainer.classList.add('hidden');
+                cardsContainer.classList.remove('block');
+                
+                // Actualizar botones
+                tableBtn.classList.remove('bg-gray-300', 'text-gray-700');
+                tableBtn.classList.add('bg-blue-600', 'text-white');
+                cardBtn.classList.remove('bg-blue-600', 'text-white');
+                cardBtn.classList.add('bg-gray-300', 'text-gray-700');
+            } else {
+                // Mostrar tarjetas, ocultar tabla
+                cardsContainer.classList.remove('hidden');
+                cardsContainer.classList.add('block');
+                tableContainer.classList.add('hidden');
+                tableContainer.classList.remove('block');
+                
+                // Actualizar botones
+                cardBtn.classList.remove('bg-gray-300', 'text-gray-700');
+                cardBtn.classList.add('bg-blue-600', 'text-white');
+                tableBtn.classList.remove('bg-blue-600', 'text-white');
+                tableBtn.classList.add('bg-gray-300', 'text-gray-700');
             }
         }
+        
+        // Función para cambiar elementos por página
+        function changePerPage(value) {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('per_page', value);
+            currentUrl.searchParams.set('page', 1); // Resetear a la primera página
+            window.location.href = currentUrl.toString();
+        }
     </script>
-</body>
-</html>
+{% endblock %}

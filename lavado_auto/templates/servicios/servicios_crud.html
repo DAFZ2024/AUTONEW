@@ -88,7 +88,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-600">Total Servicios</p>
-                        <p class="text-3xl font-bold text-blue-600">{{ servicios|length }}</p>
+                        <p class="text-3xl font-bold text-blue-600">{{ total_servicios }}</p>
                     </div>
                     <div class="p-3 bg-blue-100 rounded-xl">
                         <i class="fas fa-concierge-bell text-blue-600 text-xl"></i>
@@ -226,6 +226,36 @@
                 </div>
             </div>
             {% endif %}
+
+        <!-- Filtros y Búsqueda -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6 mb-8">
+            <form method="GET" id="filter-form" class="space-y-4">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <!-- Búsqueda -->
+                    <div class="flex-1">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </div>
+                            <input type="text" 
+                                   name="busqueda" 
+                                   id="search-servicios"
+                                   value="{{ filtros_activos.busqueda }}"
+                                   placeholder="Buscar por nombre, descripción o precio..." 
+                                   class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+                        </div>
+                    </div>
+
+                    <!-- Información de resultados -->
+                    <div class="flex items-center space-x-4 text-sm text-gray-600">
+                        <span>
+                            <i class="fas fa-list mr-1"></i>
+                            Mostrando {{ servicios.start_index }}-{{ servicios.end_index }} de {{ total_servicios }} servicios
+                        </span>
+                    </div>
+                </div>
+            </form>
+        </div>
 
         
         <!-- Formulario de creación -->
@@ -509,6 +539,99 @@
                         </div>
                     {% endfor %}
                 </div>
+
+                <!-- Paginación -->
+                {% if paginator.num_pages > 1 %}
+                    <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6 mt-8">
+                        <div class="flex items-center justify-between">
+                            <!-- Información de página -->
+                            <div class="flex items-center space-x-2 text-sm text-gray-600">
+                                <span>Página {{ servicios.number }} de {{ paginator.num_pages }}</span>
+                                <span class="text-gray-400">|</span>
+                                <span>{{ total_servicios }} resultado{{ total_servicios|pluralize:"s" }} total{{ total_servicios|pluralize:"es" }}</span>
+                            </div>
+
+                            <!-- Controles de paginación -->
+                            <div class="flex items-center space-x-2">
+                                <!-- Primera página -->
+                                {% if servicios.has_previous %}
+                                    <a href="?page=1{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}" 
+                                       class="px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
+                                        <i class="fas fa-angle-double-left"></i>
+                                    </a>
+                                {% else %}
+                                    <span class="px-3 py-2 text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+                                        <i class="fas fa-angle-double-left"></i>
+                                    </span>
+                                {% endif %}
+
+                                <!-- Página anterior -->
+                                {% if servicios.has_previous %}
+                                    <a href="?page={{ servicios.previous_page_number }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}" 
+                                       class="px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
+                                        <i class="fas fa-angle-left"></i>
+                                    </a>
+                                {% else %}
+                                    <span class="px-3 py-2 text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+                                        <i class="fas fa-angle-left"></i>
+                                    </span>
+                                {% endif %}
+
+                                <!-- Números de página -->
+                                {% for num in paginator.page_range %}
+                                    {% if num == servicios.number %}
+                                        <span class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-lg">
+                                            {{ num }}
+                                        </span>
+                                    {% elif num > servicios.number|add:'-3' and num < servicios.number|add:'3' %}
+                                        <a href="?page={{ num }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}" 
+                                           class="px-4 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
+                                            {{ num }}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+
+                                <!-- Página siguiente -->
+                                {% if servicios.has_next %}
+                                    <a href="?page={{ servicios.next_page_number }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}" 
+                                       class="px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
+                                        <i class="fas fa-angle-right"></i>
+                                    </a>
+                                {% else %}
+                                    <span class="px-3 py-2 text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+                                        <i class="fas fa-angle-right"></i>
+                                    </span>
+                                {% endif %}
+
+                                <!-- Última página -->
+                                {% if servicios.has_next %}
+                                    <a href="?page={{ paginator.num_pages }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}" 
+                                       class="px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
+                                        <i class="fas fa-angle-double-right"></i>
+                                    </a>
+                                {% else %}
+                                    <span class="px-3 py-2 text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+                                        <i class="fas fa-angle-double-right"></i>
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Salto rápido a página -->
+                        <div class="mt-4 flex items-center justify-center space-x-2 text-sm">
+                            <span class="text-gray-600">Ir a página:</span>
+                            <form method="GET" class="inline-flex items-center space-x-2">
+                                {% if filtros_activos.busqueda %}<input type="hidden" name="busqueda" value="{{ filtros_activos.busqueda }}">{% endif %}
+                                <input type="number" name="page" min="1" max="{{ paginator.num_pages }}" 
+                                       value="{{ servicios.number }}"
+                                       class="w-16 px-2 py-1 text-center border border-gray-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-200">
+                                <button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
 
                 <!-- Modales siguen igual pero fuera del loop -->
                 {% for servicio in servicios %}
@@ -1566,6 +1689,22 @@ document.addEventListener('click', function(e) {
             modal.classList.remove('flex');
         });
         document.body.style.overflow = 'auto';
+    }
+});
+
+// Funcionalidad de filtros del lado del servidor
+document.addEventListener('DOMContentLoaded', function() {
+    // Detectar cambios en el filtro de búsqueda
+    const searchInput = document.getElementById('search-servicios');
+    if (searchInput) {
+        let timeoutId;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(function() {
+                // Enviar formulario automáticamente después de una pausa en la escritura
+                document.getElementById('filter-form').submit();
+            }, 500); // Esperar 500ms después de que el usuario deje de escribir
+        });
     }
 });
 </script>

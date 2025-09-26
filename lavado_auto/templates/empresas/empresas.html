@@ -398,105 +398,211 @@
     </section>
 
     <!-- Características modernas -->
-    <section id="features" class="py-20 bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16">
-                <span class="inline-block px-4 py-2 bg-blue-100 text-blue-600 text-sm font-semibold rounded-full uppercase tracking-wider mb-4">
-                    Ventajas Exclusivas
-                </span>
-                <h2 class="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
-                    ¿Por qué elegir <span class="text-blue-600">AutoNew?</span>
-                </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Te ofrecemos las mejores herramientas para hacer crecer tu negocio de autolavado
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200">
-                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-rocket text-2xl text-white"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Visibilidad Máxima</h3>
-                    <p class="text-gray-600 leading-relaxed">
-                        Tu autolavado aparecerá en los primeros resultados de búsqueda, llegando a miles de clientes potenciales cada día.
-                    </p>
-                </div>
-
-                <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200">
-                    <div class="w-16 h-16 bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-users text-2xl text-white"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Más Clientes</h3>
-                    <p class="text-gray-600 leading-relaxed">
-                        Sistema de reservas online que facilita a los clientes encontrar y reservar tus servicios las 24 horas del día.
-                    </p>
-                </div>
-
-                <div class="group bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:border-blue-200">
-                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-chart-line text-2xl text-white"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Crecimiento Garantizado</h3>
-                    <p class="text-gray-600 leading-relaxed">
-                        Herramientas analíticas que te ayudan a entender a tus clientes y optimizar tu negocio para máxima rentabilidad.
-                    </p>
-                </div>
-            </div>
+    <section id="features" class="py-20 bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 relative overflow-hidden">
+        <!-- Elementos decorativos de fondo -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-20 left-20 w-72 h-72 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl opacity-60 animate-pulse"></div>
+            <div class="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-br from-purple-200/30 to-blue-200/30 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 4s;"></div>
+            <div class="absolute top-1/2 left-1/4 w-64 h-64 bg-gradient-to-br from-green-200/20 to-blue-200/20 rounded-full blur-2xl opacity-50 animate-pulse" style="animation-delay: 8s;"></div>
         </div>
-    </section>
 
-    <!-- Servicios en grid moderno -->
-    <section class="py-20 bg-white">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16">
-                <span class="inline-block px-4 py-2 bg-blue-100 text-blue-600 text-sm font-semibold rounded-full uppercase tracking-wider mb-4">
-                    Lo que Ofrecemos
-                </span>
-                <h2 class="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
-                    Nuestros <span class="text-blue-600">Servicios</span>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-20 animate-fadeInUp">
+                <div class="relative inline-block">
+                    <span class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold rounded-full uppercase tracking-wider mb-6 shadow-lg hover:shadow-xl transition-all duration-300">
+                        <i class="fas fa-star mr-2 animate-pulse"></i>
+                        Ventajas Exclusivas
+                        <i class="fas fa-sparkles ml-2 animate-pulse" style="animation-delay: 0.5s;"></i>
+                    </span>
+                    <!-- Efecto de brillo -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 hover:opacity-100 hover:translate-x-full transition-all duration-1000 transform -translate-x-full rounded-full"></div>
+                </div>
+                <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-800 mb-6 leading-tight animate-fadeInUp" style="animation-delay: 0.2s;">
+                    ¿Por qué elegir 
+                    <span class="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent animate-pulse">
+                        AutoNew?
+                    </span>
                 </h2>
+                <p class="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed animate-fadeInUp" style="animation-delay: 0.4s;">
+                    Te ofrecemos las mejores herramientas para hacer crecer tu negocio de autolavado con tecnología de vanguardia
+                </p>
+                
+                <!-- Indicadores de confianza -->
+                <div class="flex flex-wrap justify-center items-center gap-6 mt-8 animate-fadeInUp" style="animation-delay: 0.6s;">
+                    <div class="flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+                        <i class="fas fa-check-circle text-green-500"></i>
+                        <span class="text-sm font-semibold text-gray-700">100% Confiable</span>
+                    </div>
+                    <div class="flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+                        <i class="fas fa-lightning-bolt text-yellow-500"></i>
+                        <span class="text-sm font-semibold text-gray-700">Resultados Inmediatos</span>
+                    </div>
+                    <div class="flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+                        <i class="fas fa-crown text-purple-500"></i>
+                        <span class="text-sm font-semibold text-gray-700">Calidad Premium</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-bolt text-white"></i>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+                <!-- Característica 1: Visibilidad Máxima -->
+                <div class="group relative animate-fadeInUp" style="animation-delay: 0.8s;">
+                    <div class="relative bg-gradient-to-br from-white via-blue-50/50 to-white rounded-3xl p-8 lg:p-10 hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 border border-blue-100 hover:border-blue-300 overflow-hidden">
+                        <!-- Efecto de brillo en hover -->
+                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-blue-200/20 to-transparent opacity-0 group-hover:opacity-100 group-hover:translate-x-full transition-all duration-1000 transform -translate-x-full"></div>
+                        
+                        <!-- Elemento decorativo flotante -->
+                        <div class="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-xl animate-pulse"></div>
+                        
+                        <div class="relative z-10">
+                            <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg group-hover:shadow-xl">
+                                <i class="fas fa-rocket text-3xl text-white group-hover:animate-bounce"></i>
+                                <!-- Efecto de partículas -->
+                                <div class="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping opacity-75"></div>
+                            </div>
+                            
+                            <h3 class="text-2xl lg:text-3xl font-bold text-slate-800 mb-6 group-hover:text-blue-600 transition-colors duration-300">
+                                Visibilidad Máxima
+                            </h3>
+                            
+                            <p class="text-gray-600 leading-relaxed mb-6 text-lg">
+                                Tu autolavado aparecerá en los primeros resultados de búsqueda, llegando a miles de clientes potenciales cada día.
+                            </p>
+                            
+                            <!-- Métrica destacada -->
+                            <div class="flex items-center justify-between bg-blue-50 rounded-xl p-4 border border-blue-100">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-eye text-white text-sm"></i>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Hasta</span>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-blue-600">10x</div>
+                                    <div class="text-xs text-gray-500">Más visibilidad</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <h4 class="text-lg font-bold text-slate-800 mb-2">Velocidad</h4>
-                    <p class="text-gray-600 text-sm">Registro instantáneo y publicidad inmediata</p>
                 </div>
 
-                <div class="bg-gradient-to-br from-slate-50 to-gray-50 rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                    <div class="w-12 h-12 bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-hand-paper text-white"></i>
+                <!-- Característica 2: Más Clientes -->
+                <div class="group relative animate-fadeInUp" style="animation-delay: 1s;">
+                    <div class="relative bg-gradient-to-br from-white via-slate-50/50 to-white rounded-3xl p-8 lg:p-10 hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 border border-slate-200 hover:border-slate-300 overflow-hidden">
+                        <!-- Efecto de brillo en hover -->
+                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-slate-200/20 to-transparent opacity-0 group-hover:opacity-100 group-hover:translate-x-full transition-all duration-1000 transform -translate-x-full"></div>
+                        
+                        <!-- Elemento decorativo flotante -->
+                        <div class="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-slate-400/20 to-gray-400/20 rounded-full blur-xl animate-pulse" style="animation-delay: 2s;"></div>
+                        
+                        <div class="relative z-10">
+                            <div class="w-20 h-20 bg-gradient-to-br from-slate-500 to-slate-600 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg group-hover:shadow-xl">
+                                <i class="fas fa-users text-3xl text-white group-hover:animate-pulse"></i>
+                                <!-- Indicador de actividad -->
+                                <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full animate-pulse">
+                                    <div class="w-2 h-2 bg-green-600 rounded-full mx-auto mt-1"></div>
+                                </div>
+                            </div>
+                            
+                            <h3 class="text-2xl lg:text-3xl font-bold text-slate-800 mb-6 group-hover:text-slate-600 transition-colors duration-300">
+                                Más Clientes
+                            </h3>
+                            
+                            <p class="text-gray-600 leading-relaxed mb-6 text-lg">
+                                Sistema de reservas online que facilita a los clientes encontrar y reservar tus servicios las 24 horas del día.
+                            </p>
+                            
+                            <!-- Métrica destacada -->
+                            <div class="flex items-center justify-between bg-slate-50 rounded-xl p-4 border border-slate-200">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-slate-500 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-calendar-check text-white text-sm"></i>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Reservas</span>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-slate-600">24/7</div>
+                                    <div class="text-xs text-gray-500">Disponible</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <h4 class="text-lg font-bold text-slate-800 mb-2">Libertad Total</h4>
-                    <p class="text-gray-600 text-sm">Controla qué servicios ofrecer y cuándo</p>
                 </div>
 
-                <div class="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-star text-white"></i>
+                <!-- Característica 3: Crecimiento Garantizado -->
+                <div class="group relative animate-fadeInUp" style="animation-delay: 1.2s;">
+                    <div class="relative bg-gradient-to-br from-white via-purple-50/50 to-white rounded-3xl p-8 lg:p-10 hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 border border-purple-100 hover:border-purple-300 overflow-hidden">
+                        <!-- Efecto de brillo en hover -->
+                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-purple-200/20 to-transparent opacity-0 group-hover:opacity-100 group-hover:translate-x-full transition-all duration-1000 transform -translate-x-full"></div>
+                        
+                        <!-- Elemento decorativo flotante -->
+                        <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-xl animate-pulse" style="animation-delay: 4s;"></div>
+                        
+                        <div class="relative z-10">
+                            <div class="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg group-hover:shadow-xl">
+                                <i class="fas fa-chart-line text-3xl text-white group-hover:animate-bounce"></i>
+                                <!-- Efecto de crecimiento -->
+                                <div class="absolute -top-2 -right-2 flex space-x-1">
+                                    <div class="w-1 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                                    <div class="w-1 h-4 bg-green-400 rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+                                    <div class="w-1 h-5 bg-green-400 rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
+                                </div>
+                            </div>
+                            
+                            <h3 class="text-2xl lg:text-3xl font-bold text-slate-800 mb-6 group-hover:text-purple-600 transition-colors duration-300">
+                                Crecimiento Garantizado
+                            </h3>
+                            
+                            <p class="text-gray-600 leading-relaxed mb-6 text-lg">
+                                Herramientas analíticas que te ayudan a entender a tus clientes y optimizar tu negocio para máxima rentabilidad.
+                            </p>
+                            
+                            <!-- Métrica destacada -->
+                            <div class="flex items-center justify-between bg-purple-50 rounded-xl p-4 border border-purple-100">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-trending-up text-white text-sm"></i>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Aumento</span>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-purple-600">+300%</div>
+                                    <div class="text-xs text-gray-500">En ventas</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <h4 class="text-lg font-bold text-slate-800 mb-2">Calidad Premium</h4>
-                    <p class="text-gray-600 text-sm">Solo los mejores</p>
                 </div>
+            </div>
 
-                <div class="bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-headset text-white"></i>
+            <!-- Sección adicional de beneficios -->
+            <div class="mt-20 animate-fadeInUp" style="animation-delay: 1.4s;">
+                <div class="bg-gradient-to-r from-blue-500 via-purple-600 to-blue-500 rounded-3xl p-8 lg:p-12 text-white relative overflow-hidden">
+                    <!-- Elementos decorativos -->
+                    <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+                    <div class="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+                    
+                    <div class="relative z-10 text-center">
+                        <h3 class="text-3xl lg:text-4xl font-bold mb-6">
+                            ¿Listo para transformar tu negocio?
+                        </h3>
+                        <p class="text-xl mb-8 opacity-90 max-w-3xl mx-auto">
+                            Únete a más de 500 autolavados que ya están creciendo con AutoNew
+                        </p>
+                        
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <button onclick="showRegistrationForm()" class="group px-8 py-4 bg-white text-purple-600 font-semibold rounded-xl hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center">
+                                <i class="fas fa-rocket mr-2 group-hover:animate-bounce"></i>
+                                Comenzar Ahora
+                                <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                            </button>
+                            <a href="#stats" class="group px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-xl hover:bg-white/10 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex items-center justify-center">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                Ver Estadísticas
+                                <i class="fas fa-chevron-down ml-2 transform group-hover:translate-y-1 transition-transform duration-300"></i>
+                            </a>
+                        </div>
                     </div>
-                    <h4 class="text-lg font-bold text-slate-800 mb-2">Soporte 24/7</h4>
-                    <p class="text-gray-600 text-sm">Asistencia completa cuando la necesites</p>
-                </div>
-
-                <div class="bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-shield-alt text-white"></i>
-                    </div>
-                    <h4 class="text-lg font-bold text-slate-800 mb-2">Seguro</h4>
-                    <p class="text-gray-600 text-sm">100% confiable</p>
                 </div>
             </div>
         </div>

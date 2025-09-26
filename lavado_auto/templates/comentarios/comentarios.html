@@ -81,6 +81,82 @@
             </p>
         </div>
 
+        <!-- Estadísticas de comentarios -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 animate-fade-in-up" style="animation-delay: 0.1s;">
+            <div class="bg-white/70 backdrop-blur-sm rounded-xl p-6 text-center border border-slate-200/50 hover:shadow-lg transition-all duration-300">
+                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-star text-white text-xl"></i>
+                </div>
+                <div class="text-2xl font-bold text-slate-800 mb-1">{{ comentarios.count }}+</div>
+                <div class="text-sm text-slate-600">Comentarios publicados</div>
+            </div>
+            <div class="bg-white/70 backdrop-blur-sm rounded-xl p-6 text-center border border-slate-200/50 hover:shadow-lg transition-all duration-300">
+                <div class="w-12 h-12 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-heart text-white text-xl"></i>
+                </div>
+                <div class="text-2xl font-bold text-slate-800 mb-1">98%</div>
+                <div class="text-sm text-slate-600">Satisfacción del cliente</div>
+            </div>
+            <div class="bg-white/70 backdrop-blur-sm rounded-xl p-6 text-center border border-slate-200/50 hover:shadow-lg transition-all duration-300">
+                <div class="w-12 h-12 bg-gradient-to-r from-teal-500 to-teal-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-users text-white text-xl"></i>
+                </div>
+                <div class="text-2xl font-bold text-slate-800 mb-1">1,500+</div>
+                <div class="text-sm text-slate-600">Clientes felices</div>
+            </div>
+        </div>
+
+        <!-- Información sobre cómo comentar -->
+        <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-8 mb-12 border border-blue-100 animate-fade-in-up" style="animation-delay: 0.2s;">
+            <div class="max-w-3xl mx-auto">
+                <div class="text-center mb-8">
+                    <div class="w-14 h-14 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-lightbulb text-white text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">¿Cómo escribir un buen comentario?</h2>
+                    <p class="text-slate-600">Tu opinión es muy valiosa para nosotros y para otros clientes</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white/80 rounded-xl p-6 border border-white/50">
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-4 flex-shrink-0 mt-1">
+                                <i class="fas fa-check text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-800 mb-2">Qué incluir:</h3>
+                                <ul class="text-sm text-slate-600 space-y-1">
+                                    <li>• Tu experiencia general con el servicio</li>
+                                    <li>• Calidad del trabajo realizado</li>
+                                    <li>• Atención al cliente recibida</li>
+                                    <li>• Tiempo de espera y puntualidad</li>
+                                    <li>• Relación calidad-precio</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white/80 rounded-xl p-6 border border-white/50">
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-4 flex-shrink-0 mt-1">
+                                <i class="fas fa-star text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-800 mb-2">Consejos útiles:</h3>
+                                <ul class="text-sm text-slate-600 space-y-1">
+                                    <li>• Sé específico y detallado</li>
+                                    <li>• Mantén un tono respetuoso</li>
+                                    <li>• Comparte tanto lo positivo como lo mejorable</li>
+                                    <li>• Ayuda a otros clientes con tu experiencia</li>
+                                    <li>• Menciona el servicio que utilizaste</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Card principal de comentarios mejorado -->
         <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/50 overflow-hidden animate-fade-in-up" style="animation-delay: 0.2s;">
             {% if user.is_authenticated %}
@@ -125,9 +201,23 @@
                         <div class="flex items-center justify-between pt-4">
                             <div class="flex items-center text-sm text-slate-600 bg-slate-50 px-3 py-2 rounded-lg">
                                 <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mr-3">
-                                    <span class="text-white text-xs font-bold">{{ user.username|first|upper }}</span>
+                                    <span class="text-white text-xs font-bold">
+                                        {% if user.username %}
+                                            {{ user.username|first|upper }}
+                                        {% else %}
+                                            U
+                                        {% endif %}
+                                    </span>
                                 </div>
-                                <span>Publicando como <span class="font-semibold text-slate-800">{{ user.username }}</span></span>
+                                <span>Publicando como 
+                                    <span class="font-semibold text-slate-800">
+                                        {% if user.username %}
+                                            {{ user.username }}
+                                        {% else %}
+                                            Usuario
+                                        {% endif %}
+                                    </span>
+                                </span>
                             </div>
                             <button type="submit" id="submitCommentBtn" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 hover:from-blue-600 hover:via-cyan-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 group">
                                 <svg class="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,6 +262,222 @@
                     </div>
                 </div>
             {% endif %}
+        </div>
+        
+        <!-- Sección de comentarios recientes -->
+        {% if comentarios %}
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/50 overflow-hidden mb-12 animate-fade-in-up" style="animation-delay: 0.4s;">
+            <div class="p-8">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
+                        <i class="fas fa-comments text-white text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h2 class="text-2xl font-bold text-slate-800">Comentarios Recientes</h2>
+                        <p class="text-slate-600">Lo que dicen nuestros clientes</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {% for comentario in comentarios|slice:":4" %}
+                    <div class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-6 border border-slate-200/50 hover:shadow-lg transition-all duration-300">
+                        <div class="flex items-start mb-4">
+                            <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                <span class="text-white text-sm font-bold">
+                                    {{ comentario.usuario.nombre_usuario|first|upper }}
+                                </span>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-semibold text-slate-800">{{ comentario.usuario.nombre_usuario }}</div>
+                                <div class="text-sm text-slate-500">{{ comentario.fecha|date:"d M Y" }}</div>
+                            </div>
+                        </div>
+                        <p class="text-slate-700 text-sm leading-relaxed">
+                            "{{ comentario.comentario|truncatewords:20 }}"
+                        </p>
+                        <div class="flex items-center mt-4">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star text-xs"></i>
+                                <i class="fas fa-star text-xs"></i>
+                                <i class="fas fa-star text-xs"></i>
+                                <i class="fas fa-star text-xs"></i>
+                                <i class="fas fa-star text-xs"></i>
+                            </div>
+                            <span class="text-xs text-slate-500 ml-2">Experiencia verificada</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                {% if comentarios.count > 4 %}
+                <div class="text-center mt-8">
+                    <div class="inline-flex items-center px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl transition-all duration-300">
+                        <i class="fas fa-plus mr-2"></i>
+                        Ver más comentarios ({{ comentarios.count|add:-4 }} adicionales)
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Testimonios destacados -->
+        <div class="bg-gradient-to-br from-blue-600 via-cyan-600 to-teal-600 rounded-2xl p-8 text-white mb-12 relative overflow-hidden animate-fade-in-up" style="animation-delay: 0.5s;">
+            <!-- Elementos decorativos -->
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+            <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
+            
+            <div class="relative z-10">
+                <div class="text-center mb-8">
+                    <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-quote-left text-white text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-2">Lo que más valoran nuestros clientes</h2>
+                    <p class="text-blue-100">Testimonios reales de personas satisfechas</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                        <div class="flex items-center mb-4">
+                            <div class="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-medal text-yellow-800 text-sm"></i>
+                            </div>
+                            <h3 class="font-semibold">Calidad Excepcional</h3>
+                        </div>
+                        <p class="text-sm text-blue-100 italic">
+                            "El detallado de mi auto quedó impecable. Se nota la diferencia en cada centímetro."
+                        </p>
+                        <div class="mt-3 text-xs text-blue-200">- María González</div>
+                    </div>
+                    
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                        <div class="flex items-center mb-4">
+                            <div class="w-8 h-8 bg-green-400 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-clock text-green-800 text-sm"></i>
+                            </div>
+                            <h3 class="font-semibold">Servicio Rápido</h3>
+                        </div>
+                        <p class="text-sm text-blue-100 italic">
+                            "Puntualidad perfecta y servicio express de calidad. Exactamente lo que necesitaba."
+                        </p>
+                        <div class="mt-3 text-xs text-blue-200">- Carlos Ruiz</div>
+                    </div>
+                    
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                        <div class="flex items-center mb-4">
+                            <div class="w-8 h-8 bg-pink-400 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-handshake text-pink-800 text-sm"></i>
+                            </div>
+                            <h3 class="font-semibold">Trato Personalizado</h3>
+                        </div>
+                        <p class="text-sm text-blue-100 italic">
+                            "El equipo es muy profesional y amable. Te explican todo el proceso paso a paso."
+                        </p>
+                        <div class="mt-3 text-xs text-blue-200">- Ana Martínez</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FAQ sobre comentarios -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/50 overflow-hidden mb-12 animate-fade-in-up" style="animation-delay: 0.6s;">
+            <div class="p-8">
+                <div class="text-center mb-8">
+                    <div class="w-14 h-14 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-question-circle text-white text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">Preguntas Frecuentes</h2>
+                    <p class="text-slate-600">Todo lo que necesitas saber sobre los comentarios</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-6">
+                        <div class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-6 border border-slate-200/50">
+                            <h3 class="font-semibold text-slate-800 mb-2 flex items-center">
+                                <i class="fas fa-shield-alt text-blue-500 mr-2"></i>
+                                ¿Son seguros mis datos?
+                            </h3>
+                            <p class="text-sm text-slate-600">
+                                Sí, todos los comentarios se publican con tu nombre de usuario únicamente. 
+                                Tu información personal permanece privada y segura.
+                            </p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-slate-50 to-green-50 rounded-xl p-6 border border-slate-200/50">
+                            <h3 class="font-semibold text-slate-800 mb-2 flex items-center">
+                                <i class="fas fa-edit text-green-500 mr-2"></i>
+                                ¿Puedo editar mi comentario?
+                            </h3>
+                            <p class="text-sm text-slate-600">
+                                Una vez publicado, tu comentario queda registrado. Si necesitas hacer 
+                                cambios, contáctanos y te ayudaremos con gusto.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-gradient-to-br from-slate-50 to-purple-50 rounded-xl p-6 border border-slate-200/50">
+                            <h3 class="font-semibold text-slate-800 mb-2 flex items-center">
+                                <i class="fas fa-clock text-purple-500 mr-2"></i>
+                                ¿Cuándo aparece mi comentario?
+                            </h3>
+                            <p class="text-sm text-slate-600">
+                                Tu comentario aparece inmediatamente después de enviarlo. 
+                                No hay tiempo de espera ni moderación previa.
+                            </p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-slate-50 to-yellow-50 rounded-xl p-6 border border-slate-200/50">
+                            <h3 class="font-semibold text-slate-800 mb-2 flex items-center">
+                                <i class="fas fa-heart text-yellow-500 mr-2"></i>
+                                ¿Por qué son importantes?
+                            </h3>
+                            <p class="text-sm text-slate-600">
+                                Tus comentarios nos ayudan a mejorar nuestros servicios y ayudan 
+                                a otros clientes a tomar decisiones informadas.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Call to action final -->
+        <div class="text-center mb-12 animate-fade-in-up" style="animation-delay: 0.7s;">
+            <div class="bg-gradient-to-r from-slate-100 to-blue-100 rounded-2xl p-8 border border-slate-200/50">
+                <div class="max-w-2xl mx-auto">
+                    <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-thumbs-up text-white text-2xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4">
+                        ¿Ya probaste nuestros servicios?
+                    </h2>
+                    <p class="text-slate-600 mb-6">
+                        Nos encantaría conocer tu experiencia. Tu opinión es muy valiosa para nosotros 
+                        y para la comunidad de AutoNew.
+                    </p>
+                    
+                    {% if not user.is_authenticated %}
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="{% url 'login' %}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 hover:from-blue-600 hover:via-cyan-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            Iniciar sesión para comentar
+                        </a>
+                        <a href="{% url 'servicios' %}" class="inline-flex items-center px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 font-semibold rounded-xl border border-slate-300 hover:border-slate-400 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
+                            <i class="fas fa-eye mr-2"></i>
+                            Ver nuestros servicios
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="text-center">
+                        <a href="{% url 'servicios' %}" class="inline-flex items-center px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 font-semibold rounded-xl border border-slate-300 hover:border-slate-400 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
+                            <i class="fas fa-star mr-2"></i>
+                            Conoce todos nuestros servicios
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
         
         <!-- Espaciado adicional para el footer -->
@@ -750,61 +1056,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return bubble;
     }
 
-    // Función para mostrar notificación de éxito personalizada
-    function showSuccessNotification() {
-        // Eliminar notificaciones existentes
-        const existingNotifications = document.querySelectorAll('.custom-success-notification');
-        existingNotifications.forEach(notif => notif.remove());
-        
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-24 right-4 z-50 max-w-sm w-full custom-success-notification';
-        notification.innerHTML = `
-            <div class="mb-3 p-4 rounded-lg shadow-lg border backdrop-blur-sm bg-green-50 border-green-200 text-green-800 success-notification" role="alert" aria-live="polite">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0 mr-3">
-                            <svg class="w-5 h-5 text-green-600 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                        </div>
-                        <span class="text-sm font-medium">¡Comentario enviado con éxito! 🎉</span>
-                    </div>
-                    <button onclick="this.parentElement.parentElement.parentElement.remove()" 
-                            class="ml-3 text-gray-400 hover:text-gray-600 transition-colors"
-                            aria-label="Cerrar notificación">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        // Anunciar para lectores de pantalla
-        const announcement = document.createElement('div');
-        announcement.setAttribute('aria-live', 'polite');
-        announcement.setAttribute('aria-atomic', 'true');
-        announcement.className = 'sr-only';
-        announcement.textContent = 'Tu comentario ha sido enviado exitosamente';
-        document.body.appendChild(announcement);
-        
-        setTimeout(() => {
-            if (announcement.parentNode) {
-                announcement.remove();
-            }
-        }, 1000);
-        
-        // Auto-eliminar después de 5 segundos
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.style.opacity = '0';
-                notification.style.transform = 'translateX(100px)';
-                setTimeout(() => notification.remove(), 300);
-            }
-        }, 5000);
-    }
+
 
     // Manejar el envío del formulario con animación
     const commentForm = document.querySelector('form[method="POST"]');
@@ -841,8 +1093,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // Esperar un poco más y entonces enviar el formulario real
                     setTimeout(() => {
-                        // Mostrar notificación de éxito
-                        showSuccessNotification();
+                        // Solo mostrar efectos de feedback, sin notificación duplicada
+                        // showSuccessNotification(); // Comentado para evitar notificación duplicada
                         
                         // Efectos adicionales de feedback
                         createHapticFeedback();

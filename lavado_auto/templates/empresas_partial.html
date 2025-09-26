@@ -1,0 +1,242 @@
+{% load static %}
+<!-- Grid de ubicaciones dinámico desde BD -->
+<div class="grid md:grid-cols-2 gap-6" id="empresas-grid">
+    {% for empresa in empresas %}
+    {% cycle 'cyan' 'emerald' 'purple' 'amber' 'rose' 'indigo' 'teal' 'orange' as colors silent %}
+    
+    <div class="group relative" data-direccion="{{ empresa.direccion }}" data-empresa="{{ empresa.nombre_empresa }}">
+        {% if colors == 'cyan' %}
+            <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl opacity-0 group-hover:opacity-5 transition-all duration-500"></div>
+            <div class="relative bg-white rounded-2xl p-5 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-cyan-200 transform hover:-translate-y-2 h-full cursor-pointer empresa-card">
+        {% elif colors == 'emerald' %}
+            <div class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl opacity-0 group-hover:opacity-5 transition-all duration-500"></div>
+            <div class="relative bg-white rounded-2xl p-5 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-emerald-200 transform hover:-translate-y-2 h-full cursor-pointer empresa-card">
+        {% elif colors == 'purple' %}
+            <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl opacity-0 group-hover:opacity-5 transition-all duration-500"></div>
+            <div class="relative bg-white rounded-2xl p-5 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-purple-200 transform hover:-translate-y-2 h-full cursor-pointer empresa-card">
+        {% elif colors == 'amber' %}
+            <div class="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl opacity-0 group-hover:opacity-5 transition-all duration-500"></div>
+            <div class="relative bg-white rounded-2xl p-5 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-amber-200 transform hover:-translate-y-2 h-full cursor-pointer empresa-card">
+        {% elif colors == 'rose' %}
+            <div class="absolute inset-0 bg-gradient-to-r from-rose-500 to-pink-500 rounded-2xl opacity-0 group-hover:opacity-5 transition-all duration-500"></div>
+            <div class="relative bg-white rounded-2xl p-5 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-rose-200 transform hover:-translate-y-2 h-full cursor-pointer empresa-card">
+        {% elif colors == 'indigo' %}
+            <div class="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl opacity-0 group-hover:opacity-5 transition-all duration-500"></div>
+            <div class="relative bg-white rounded-2xl p-5 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-indigo-200 transform hover:-translate-y-2 h-full cursor-pointer empresa-card">
+        {% elif colors == 'teal' %}
+            <div class="absolute inset-0 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-2xl opacity-0 group-hover:opacity-5 transition-all duration-500"></div>
+            <div class="relative bg-white rounded-2xl p-5 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-teal-200 transform hover:-translate-y-2 h-full cursor-pointer empresa-card">
+        {% else %}
+            <div class="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl opacity-0 group-hover:opacity-5 transition-all duration-500"></div>
+            <div class="relative bg-white rounded-2xl p-5 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-orange-200 transform hover:-translate-y-2 h-full cursor-pointer empresa-card">
+        {% endif %}
+        
+            <div class="flex flex-col h-full">
+                <!-- Header con icono y título -->
+                <div class="flex items-center space-x-4 mb-4">
+                    {% if colors == 'cyan' %}
+                        <div class="w-12 h-12 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    {% elif colors == 'emerald' %}
+                        <div class="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    {% elif colors == 'purple' %}
+                        <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    {% elif colors == 'amber' %}
+                        <div class="w-12 h-12 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    {% elif colors == 'rose' %}
+                        <div class="w-12 h-12 bg-gradient-to-r from-rose-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    {% elif colors == 'indigo' %}
+                        <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    {% elif colors == 'teal' %}
+                        <div class="w-12 h-12 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    {% else %}
+                        <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    {% endif %}
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </div>
+                    {% if colors == 'cyan' %}
+                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-cyan-600 transition-colors duration-300">
+                    {% elif colors == 'emerald' %}
+                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-emerald-600 transition-colors duration-300">
+                    {% elif colors == 'purple' %}
+                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors duration-300">
+                    {% elif colors == 'amber' %}
+                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-amber-600 transition-colors duration-300">
+                    {% elif colors == 'rose' %}
+                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-rose-600 transition-colors duration-300">
+                    {% elif colors == 'indigo' %}
+                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors duration-300">
+                    {% elif colors == 'teal' %}
+                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-teal-600 transition-colors duration-300">
+                    {% else %}
+                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-orange-600 transition-colors duration-300">
+                    {% endif %}
+                        {{ empresa.nombre_empresa }}
+                    </h3>
+                </div>
+                
+                <!-- Información -->
+                <div class="space-y-3 flex-1">
+                    <div class="flex items-start space-x-2">
+                        {% if colors == 'cyan' %}
+                            <svg class="w-4 h-4 text-cyan-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {% elif colors == 'emerald' %}
+                            <svg class="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {% elif colors == 'purple' %}
+                            <svg class="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {% elif colors == 'amber' %}
+                            <svg class="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {% elif colors == 'rose' %}
+                            <svg class="w-4 h-4 text-rose-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {% elif colors == 'indigo' %}
+                            <svg class="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {% elif colors == 'teal' %}
+                            <svg class="w-4 h-4 text-teal-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {% else %}
+                            <svg class="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {% endif %}
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span class="text-sm text-gray-600">{{ empresa.direccion }}</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                        </svg>
+                        <span class="text-sm font-medium text-gray-700">{{ empresa.telefono }}</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-4 h-4 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 012 2z"/>
+                        </svg>
+                        <span class="text-sm text-gray-600">{{ empresa.email }}</span>
+                    </div>
+                </div>
+                
+                <!-- Tags -->
+                <div class="flex flex-wrap gap-1 mt-4">
+                    {% if colors == 'cyan' %}
+                        <span class="px-2 py-1 bg-cyan-100 text-cyan-800 rounded-full text-xs font-medium">Verificada</span>
+                        <span class="px-2 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-medium">Premium</span>
+                    {% elif colors == 'emerald' %}
+                        <span class="px-2 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-medium">Eco-Friendly</span>
+                        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Express</span>
+                    {% elif colors == 'purple' %}
+                        <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">VIP</span>
+                        <span class="px-2 py-1 bg-pink-100 text-pink-800 rounded-full text-xs font-medium">24/7</span>
+                    {% elif colors == 'amber' %}
+                        <span class="px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">Parking</span>
+                        <span class="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-medium">Detallado</span>
+                    {% else %}
+                        <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">Servicio</span>
+                        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Calidad</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Línea decorativa animada -->
+            {% if colors == 'cyan' %}
+                <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 group-hover:w-full transition-all duration-500 rounded-bl-2xl"></div>
+            {% elif colors == 'emerald' %}
+                <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 group-hover:w-full transition-all duration-500 rounded-bl-2xl"></div>
+            {% elif colors == 'purple' %}
+                <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500 group-hover:w-full transition-all duration-500 rounded-bl-2xl"></div>
+            {% elif colors == 'amber' %}
+                <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500 group-hover:w-full transition-all duration-500 rounded-bl-2xl"></div>
+            {% elif colors == 'rose' %}
+                <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-rose-500 to-pink-500 group-hover:w-full transition-all duration-500 rounded-bl-2xl"></div>
+            {% elif colors == 'indigo' %}
+                <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 group-hover:w-full transition-all duration-500 rounded-bl-2xl"></div>
+            {% elif colors == 'teal' %}
+                <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-teal-500 to-cyan-500 group-hover:w-full transition-all duration-500 rounded-bl-2xl"></div>
+            {% else %}
+                <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-orange-500 to-red-500 group-hover:w-full transition-all duration-500 rounded-bl-2xl"></div>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <!-- Mensaje cuando no hay empresas -->
+    <div class="col-span-full text-center py-16">
+        <div class="bg-gray-100 rounded-3xl p-12 max-w-md mx-auto">
+            <div class="w-20 h-20 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full mx-auto mb-6 flex items-center justify-center">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">No hay ubicaciones disponibles</h3>
+            <p class="text-gray-600">Próximamente tendremos más ubicaciones para servirte mejor.</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Controles de paginación para empresas -->
+{% if empresas.has_other_pages %}
+<div class="flex justify-center items-center mt-8 mb-6">
+    <nav class="flex items-center space-x-2">
+        <!-- Botón anterior -->
+        {% if empresas.has_previous %}
+            <a href="#" data-page="{{ empresas.previous_page_number }}" 
+               class="empresas-pagination-link group relative inline-flex items-center px-4 py-3 bg-white border border-gray-300 text-gray-700 hover:bg-cyan-50 hover:border-cyan-300 hover:text-cyan-600 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Anterior
+            </a>
+        {% else %}
+            <span class="inline-flex items-center px-4 py-3 bg-gray-100 border border-gray-200 text-gray-400 rounded-xl font-medium cursor-not-allowed">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Anterior
+            </span>
+        {% endif %}
+
+        <!-- Números de página -->
+        <div class="flex items-center space-x-1">
+            {% for num in empresas.paginator.page_range %}
+                {% if empresas.number == num %}
+                    <span class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-cyan-600 to-cyan-700 text-white font-bold rounded-xl shadow-lg">
+                        {{ num }}
+                    </span>
+                {% elif num > empresas.number|add:'-3' and num < empresas.number|add:'3' %}
+                    <a href="#" data-page="{{ num }}" 
+                       class="empresas-pagination-link inline-flex items-center justify-center w-12 h-12 bg-white border border-gray-300 text-gray-700 hover:bg-cyan-50 hover:border-cyan-300 hover:text-cyan-600 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                        {{ num }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Botón siguiente -->
+        {% if empresas.has_next %}
+            <a href="#" data-page="{{ empresas.next_page_number }}" 
+               class="empresas-pagination-link group relative inline-flex items-center px-4 py-3 bg-white border border-gray-300 text-gray-700 hover:bg-cyan-50 hover:border-cyan-300 hover:text-cyan-600 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                Siguiente
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
+        {% else %}
+            <span class="inline-flex items-center px-4 py-3 bg-gray-100 border border-gray-200 text-gray-400 rounded-xl font-medium cursor-not-allowed">
+                Siguiente
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </span>
+        {% endif %}
+    </nav>
+</div>
+
+<!-- Información de paginación -->
+<div class="text-center mb-6">
+    <p class="text-gray-600">
+        Mostrando página {{ empresas.number }} de {{ empresas.paginator.num_pages }} 
+        ({{ empresas.paginator.count }} ubicaciones en total)
+    </p>
+</div>
+{% endif %}

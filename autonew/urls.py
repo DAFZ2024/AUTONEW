@@ -23,16 +23,23 @@ from django.contrib.auth import views as auth_views
 from lavado_auto.forms import CustomPasswordResetForm
 from lavado_auto import views
 from lavado_auto.views import get_horas, cambiar_estado_reserva
+from lavado_auto.cookie_views import CookieConsentView, cookie_status, UserPreferencesView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.home, name = 'home'),
+    path('ajax/servicios/', views.servicios_page_ajax, name='servicios_page_ajax'),
+    path('ajax/servicios-home/', views.servicios_ajax, name='servicios_home_ajax'),
+    path('ajax/empresas/', views.empresas_ajax, name='empresas_ajax'),
+    path('ajax/planes/', views.planes_ajax, name='planes_ajax'),
     path('nosotros/',views.nosotros, name = 'nosotros'),
     path('servicios/',views.servicios, name = 'servicios'),
     path('planes/',views.planes_view, name = 'planes'),
     path('planes-empresariales/',views.planes_empresariales, name = 'planes_empresariales'),
+    path('solicitar-contacto-plan/', views.solicitar_contacto_plan, name='solicitar_contacto_plan'),
     path('reservas/',views.reservas, name = 'reservas'),
     path('obtener-servicios/', views.obtener_servicios, name='obtener_servicios'),
+    path('obtener-empresas-por-servicios/', views.obtener_empresas_por_servicios, name='obtener_empresas_por_servicios'),
     path('obtener-info-empresa/', views.obtener_info_empresa, name='obtener_info_empresa'),
     path('obtener-info-servicio/', views.obtener_info_servicio, name='obtener_info_servicio'),
     path('get-horas/', views.get_horas, name='get_horas'),
@@ -40,14 +47,14 @@ urlpatterns = [
     path('contacto/',views.contacto, name = 'contacto'),
     # Recuperación de contraseña (Django auth)
     path('resetcorreo/', auth_views.PasswordResetView.as_view(
-        template_name='reset_correo.html',
+        template_name='auth/reset_correo.html',
         form_class=CustomPasswordResetForm,
-        email_template_name='password_reset_email.html',
-        subject_template_name='password_reset_subject.txt'
+        email_template_name='auth/password_reset_email.html',
+        subject_template_name='auth/password_reset_subject.txt'
     ), name='password_reset'),
-    path('resetcorreo/enviado/', auth_views.PasswordResetDoneView.as_view(template_name='reset_correo_enviado.html'), name='password_reset_done'),
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='reset_contrasena.html'), name='password_reset_confirm'),
-    path('reset/completo/', auth_views.PasswordResetCompleteView.as_view(template_name='reset_completo.html'), name='password_reset_complete'),
+    path('resetcorreo/enviado/', auth_views.PasswordResetDoneView.as_view(template_name='auth/reset_correo_enviado.html'), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='auth/reset_contrasena.html'), name='password_reset_confirm'),
+    path('reset/completo/', auth_views.PasswordResetCompleteView.as_view(template_name='auth/reset_completo.html'), name='password_reset_complete'),
     path('login/',views.login, name = 'login'),
     path('logout/', views.logout, name='logout'),
     path('comentarios/', views.comentarios, name='comentarios'),
@@ -73,6 +80,7 @@ urlpatterns = [
     path("quejascrud/",views.quejas_crud, name="quejascrud"),
     path("usuarioscrud/",views.usuarios_crud, name="usuarioscrud"),
     path("editar-usuario/<int:usuario_id>/",views.editar_usuario, name="editar_usuario"),
+    path("desbloquear-usuario/<int:usuario_id>/",views.desbloquear_usuario, name="desbloquear_usuario"),
     path("citascrud/",views.citas_crud, name="citascrud"),
     path("crear-cita-admin/",views.crear_cita_admin, name="crear_cita_admin"),
     # NUEVAS URLs AJAX para CRUD de citas
@@ -115,16 +123,30 @@ urlpatterns = [
     path('eliminar-plan-empresarial/<int:plan_id>/', views.eliminar_plan_empresarial, name='eliminar_plan_empresarial'),
     path('detalle-plan-empresarial/<int:plan_id>/', views.detalle_plan_empresarial, name='detalle_plan_empresarial'),
     path('suscripciones-empresariales-crud/', views.suscripciones_empresariales_crud, name='suscripciones_empresariales_crud'),
+    path('detalle-suscripcion-empresarial/<int:suscripcion_id>/', views.detalle_suscripcion_empresarial, name='detalle_suscripcion_empresarial'),
+    path('editar-suscripcion-empresarial/<int:suscripcion_id>/', views.editar_suscripcion_empresarial, name='editar_suscripcion_empresarial'),
     
     # empresas
     path('home-empresas/',views.home_empresas, name='home_empresas'),
     path('citas-empresa/',views.citas_empresa, name='citas_empresa'),
+    path('detalle-reserva-empresa/<int:reserva_id>/', views.detalle_reserva_empresa, name='detalle_reserva_empresa'),
+    path('editar-reserva-empresa/<int:reserva_id>/', views.editar_reserva_empresa, name='editar_reserva_empresa'),
     path('reportes-empresa/',views.reportes_empresa, name='reportes_empresa'),
     path('exportar-reporte-empresa/',views.exportar_reporte_empresa, name='exportar_reporte_empresa'),
     path('perfil-empresa/',views.perfil_empresa, name='perfil_empresa'),
     path('solicitar-servicio-empresa/',views.solicitar_servicio_empresa, name='solicitar_servicio_empresa'),
     path('actualizar-estado-cita/', views.actualizar_estado_cita, name='actualizar_estado_cita'),
     path('logout-empresa/', views.logout_empresa, name='logout_empresa'),
+    
+    # =================================
+    # URLs PARA GESTIÓN DE COOKIES
+    # =================================
+    path('cookies/', include([
+        path('consent/', CookieConsentView.as_view(), name='cookie_consent'),
+        path('status/', cookie_status, name='cookie_status'),
+        path('preferences/', UserPreferencesView.as_view(), name='user_preferences'),
+        # path('politica/', CookieConsentView.as_view(), name='cookie_policy'), # Ahora es modal
+    ])),
 ]
 
 if settings.DEBUG:

@@ -4,6 +4,51 @@
 
 {% block content %}
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-teal-50 py-8">
+        <style>
+            /* Limita el ancho de la columna de usuario y correo, y muestra puntos suspensivos */
+            .tabla-suscripciones-usuario {
+                max-width: 220px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: block;
+            }
+            .tabla-suscripciones-correo {
+                max-width: 180px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: block;
+            }
+            /* Asegura que los botones de acción no se oculten */
+            .tabla-suscripciones-acciones {
+                white-space: nowrap;
+            }
+            /* Fija la columna de acciones a la derecha para que siempre sea visible */
+            .acciones-col,
+            .tabla-suscripciones-acciones {
+                position: -webkit-sticky;
+                position: sticky;
+                right: 0;
+                background: rgba(255,255,255,0.92);
+                backdrop-filter: blur(4px);
+                z-index: 30;
+                border-left: 1px solid rgba(0,0,0,0.04);
+            }
+            /* Botones de acción más compactos para caber mejor */
+            .accion-btn {
+                padding: 0.35rem 0.5rem !important;
+                min-width: 36px;
+                height: 36px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 0.5rem;
+            }
+            .tabla-suscripciones-acciones .inline-flex i { font-size: 0.95rem; }
+            /* Pequeño padding para el wrapper horizontal para evitar que el sticky tape contenido */
+            .overflow-x-auto { padding-right: 0.5rem; }
+        </style>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <!-- Header mejorado -->
@@ -20,6 +65,61 @@
                         <p class="text-gray-600 mt-1">Gestiona las suscripciones de usuarios individuales</p>
                     </div>
                 </div>
+                <style>
+                    /* Limita el ancho de las columnas y muestra puntos suspensivos */
+                    .tabla-suscripciones-usuario {
+                        max-width: 220px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        display: block;
+                    }
+                    .tabla-suscripciones-correo {
+                        max-width: 180px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        display: block;
+                    }
+                    .tabla-suscripciones-plan {
+                        max-width: 160px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        display: block;
+                    }
+                    .tabla-suscripciones-periodo {
+                        max-width: 140px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        display: block;
+                    }
+                    .tabla-suscripciones-estado {
+                        max-width: 120px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        display: block;
+                    }
+                    .tabla-suscripciones-servicios {
+                        max-width: 120px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        display: block;
+                    }
+                    .tabla-suscripciones-renovar {
+                        max-width: 100px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        display: block;
+                    }
+                    .tabla-suscripciones-acciones {
+                        white-space: nowrap;
+                    }
+                </style>
                 
                 <div class="flex flex-col sm:flex-row gap-3">
                     <a href="{% url 'crear_suscripcion_individual' %}" 
@@ -42,7 +142,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-600">Total Suscripciones</p>
-                        <p class="text-3xl font-bold text-emerald-600">{{ suscripciones|length }}</p>
+                        <p class="text-3xl font-bold text-emerald-600">{{ total_suscripciones }}</p>
                     </div>
                     <div class="p-3 bg-emerald-100 rounded-xl">
                         <i class="fas fa-users text-emerald-600 text-xl"></i>
@@ -89,39 +189,55 @@
 
         <!-- Filtros y búsqueda -->
         <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6 mb-8">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <form method="GET" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div class="flex-1 max-w-md">
                     <div class="relative">
-                        <input type="text" id="searchInput" placeholder="Buscar por usuario o plan..." 
+                        <input type="text" name="busqueda" id="searchInput" placeholder="Buscar por usuario o plan..." 
+                               value="{{ filtros_activos.busqueda|default:'' }}"
                                class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300">
                         <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                     </div>
                 </div>
                 
                 <div class="flex gap-3">
-                    <select id="estadoFilter" class="px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300">
+                    <select name="estado" class="px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300">
                         <option value="">Todos los estados</option>
-                        <option value="activa">Activas</option>
-                        <option value="pausada">Pausadas</option>
-                        <option value="cancelada">Canceladas</option>
-                        <option value="vencida">Vencidas</option>
+                        <option value="activa" {% if filtros_activos.estado == 'activa' %}selected{% endif %}>Activas</option>
+                        <option value="pausada" {% if filtros_activos.estado == 'pausada' %}selected{% endif %}>Pausadas</option>
+                        <option value="cancelada" {% if filtros_activos.estado == 'cancelada' %}selected{% endif %}>Canceladas</option>
+                        <option value="vencida" {% if filtros_activos.estado == 'vencida' %}selected{% endif %}>Vencidas</option>
                     </select>
                     
-                    <select id="planFilter" class="px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300">
+                    <select name="plan" class="px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300">
                         <option value="">Todos los planes</option>
                         {% for plan in planes_disponibles %}
-                            <option value="{{ plan.id_plan }}">{{ plan.nombre }}</option>
+                            <option value="{{ plan.id_plan }}" {% if filtros_activos.plan == plan.id_plan|stringformat:"s" %}selected{% endif %}>{{ plan.nombre }}</option>
                         {% endfor %}
                     </select>
+                    
+                    <button type="submit" class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all duration-300">
+                        <i class="fas fa-filter mr-2"></i>Filtrar
+                    </button>
+                    
+                    {% if filtros_activos.busqueda or filtros_activos.estado or filtros_activos.plan %}
+                        <a href="{% url 'suscripciones_individuales_crud' %}" class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-300">
+                            <i class="fas fa-times mr-2"></i>Limpiar
+                        </a>
+                    {% endif %}
                 </div>
-            </div>
+            </form>
         </div>
 
         <!-- Lista de suscripciones -->
         <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden">
             <div class="p-6 sm:p-8 border-b border-gray-200">
                 <h2 class="text-2xl font-bold text-gray-900">Suscripciones de Usuarios</h2>
-                <p class="text-gray-600 mt-1">Total: {{ suscripciones|length }} suscripción{{ suscripciones|length|pluralize:"es" }}</p>
+                <p class="text-gray-600 mt-1">
+                    Mostrando {{ suscripciones.start_index }}-{{ suscripciones.end_index }} de {{ total_suscripciones }} suscripción{{ total_suscripciones|pluralize:"es" }}
+                    {% if paginator.num_pages > 1 %}
+                        (página {{ suscripciones.number }} de {{ paginator.num_pages }})
+                    {% endif %}
+                </p>
             </div>
 
             {% if suscripciones %}
@@ -153,12 +269,12 @@
                                                 {% endif %}
                                             </div>
                                             <div>
-                                                <div class="text-lg font-semibold text-gray-900">{{ suscripcion.usuario.nombre_completo }}</div>
-                                                <div class="text-sm text-gray-500">{{ suscripcion.usuario.correo }}</div>
+                                                <div class="text-lg font-semibold text-gray-900 tabla-suscripciones-usuario" title="{{ suscripcion.usuario.nombre_completo }}">{{ suscripcion.usuario.nombre_completo }}</div>
+                                                <div class="text-sm text-gray-500 tabla-suscripciones-correo" title="{{ suscripcion.usuario.correo }}">{{ suscripcion.usuario.correo }}</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-6 py-4 tabla-suscripciones-acciones">
                                         <div class="flex items-center space-x-2">
                                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
                                                 {% if suscripcion.plan.tipo == 'basico' %}bg-blue-100 text-blue-800
@@ -230,27 +346,27 @@
                                             </span>
                                         {% endif %}
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-6 py-4 tabla-suscripciones-acciones acciones-col">
                                         <div class="flex items-center space-x-2">
                                             <a href="{% url 'editar_suscripcion_individual' suscripcion.id_suscripcion %}" 
-                                               class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105"
+                                               class="inline-flex accion-btn items-center px-3 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105"
                                                title="Editar suscripción">
                                                 <i class="fas fa-edit text-sm"></i>
                                             </a>
                                             <a href="{% url 'historial_pagos_suscripcion' suscripcion.id_suscripcion %}" 
-                                               class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 transform hover:scale-105"
+                                               class="inline-flex accion-btn items-center px-3 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 transform hover:scale-105"
                                                title="Ver pagos">
                                                 <i class="fas fa-receipt text-sm"></i>
                                             </a>
                                             {% if suscripcion.estado == 'activa' %}
                                                 <a href="{% url 'pausar_suscripcion_individual' suscripcion.id_suscripcion %}" 
-                                                   class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-yellow-500 to-amber-500 text-white rounded-lg hover:from-yellow-600 hover:to-amber-600 transition-all duration-300 transform hover:scale-105"
+                                                   class="inline-flex accion-btn items-center px-3 py-2 bg-gradient-to-r from-yellow-500 to-amber-500 text-white rounded-lg hover:from-yellow-600 hover:to-amber-600 transition-all duration-300 transform hover:scale-105"
                                                    title="Pausar suscripción">
                                                     <i class="fas fa-pause text-sm"></i>
                                                 </a>
                                             {% endif %}
                                             <a href="{% url 'eliminar_suscripcion_individual' suscripcion.id_suscripcion %}" 
-                                               class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg hover:from-red-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 delete-btn"
+                                               class="inline-flex accion-btn items-center px-3 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg hover:from-red-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 delete-btn"
                                                title="Eliminar suscripción">
                                                 <i class="fas fa-trash text-sm"></i>
                                             </a>
@@ -276,45 +392,107 @@
                 </div>
             {% endif %}
         </div>
+
+        <!-- Paginación -->
+        {% if paginator.num_pages > 1 %}
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6 mt-8">
+                <div class="flex items-center justify-between">
+                    <!-- Información de página -->
+                    <div class="flex items-center space-x-2 text-sm text-gray-600">
+                        <span>Página {{ suscripciones.number }} de {{ paginator.num_pages }}</span>
+                        <span class="text-gray-400">|</span>
+                        <span>{{ total_suscripciones }} resultado{{ total_suscripciones|pluralize:"s" }} total{{ total_suscripciones|pluralize:"es" }}</span>
+                    </div>
+
+                    <!-- Controles de paginación -->
+                    <div class="flex items-center space-x-2">
+                        <!-- Primera página -->
+                        {% if suscripciones.has_previous %}
+                            <a href="?page=1{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}{% if filtros_activos.estado %}&estado={{ filtros_activos.estado }}{% endif %}{% if filtros_activos.plan %}&plan={{ filtros_activos.plan }}{% endif %}" 
+                               class="px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                        {% else %}
+                            <span class="px-3 py-2 text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+                                <i class="fas fa-angle-double-left"></i>
+                            </span>
+                        {% endif %}
+
+                        <!-- Página anterior -->
+                        {% if suscripciones.has_previous %}
+                            <a href="?page={{ suscripciones.previous_page_number }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}{% if filtros_activos.estado %}&estado={{ filtros_activos.estado }}{% endif %}{% if filtros_activos.plan %}&plan={{ filtros_activos.plan }}{% endif %}" 
+                               class="px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        {% else %}
+                            <span class="px-3 py-2 text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+                                <i class="fas fa-angle-left"></i>
+                            </span>
+                        {% endif %}
+
+                        <!-- Números de página -->
+                        {% for num in paginator.page_range %}
+                            {% if num == suscripciones.number %}
+                                <span class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold rounded-lg">
+                                    {{ num }}
+                                </span>
+                            {% elif num > suscripciones.number|add:'-3' and num < suscripciones.number|add:'3' %}
+                                <a href="?page={{ num }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}{% if filtros_activos.estado %}&estado={{ filtros_activos.estado }}{% endif %}{% if filtros_activos.plan %}&plan={{ filtros_activos.plan }}{% endif %}" 
+                                   class="px-4 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
+                                    {{ num }}
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- Página siguiente -->
+                        {% if suscripciones.has_next %}
+                            <a href="?page={{ suscripciones.next_page_number }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}{% if filtros_activos.estado %}&estado={{ filtros_activos.estado }}{% endif %}{% if filtros_activos.plan %}&plan={{ filtros_activos.plan }}{% endif %}" 
+                               class="px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        {% else %}
+                            <span class="px-3 py-2 text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+                                <i class="fas fa-angle-right"></i>
+                            </span>
+                        {% endif %}
+
+                        <!-- Última página -->
+                        {% if suscripciones.has_next %}
+                            <a href="?page={{ paginator.num_pages }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}{% if filtros_activos.estado %}&estado={{ filtros_activos.estado }}{% endif %}{% if filtros_activos.plan %}&plan={{ filtros_activos.plan }}{% endif %}" 
+                               class="px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        {% else %}
+                            <span class="px-3 py-2 text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+                                <i class="fas fa-angle-double-right"></i>
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Salto rápido a página -->
+                <div class="mt-4 flex items-center justify-center space-x-2 text-sm">
+                    <span class="text-gray-600">Ir a página:</span>
+                    <form method="GET" class="inline-flex items-center space-x-2">
+                        {% if filtros_activos.busqueda %}<input type="hidden" name="busqueda" value="{{ filtros_activos.busqueda }}">{% endif %}
+                        {% if filtros_activos.estado %}<input type="hidden" name="estado" value="{{ filtros_activos.estado }}">{% endif %}
+                        {% if filtros_activos.plan %}<input type="hidden" name="plan" value="{{ filtros_activos.plan }}">{% endif %}
+                        <input type="number" name="page" min="1" max="{{ paginator.num_pages }}" 
+                               value="{{ suscripciones.number }}"
+                               class="w-16 px-2 py-1 text-center border border-gray-200 rounded focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200">
+                        <button type="submit" class="px-3 py-1 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
     </div>
 </div>
 
-<!-- JavaScript para filtros y búsqueda -->
+<!-- JavaScript para confirmaciones y funcionalidad -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchInput');
-    const estadoFilter = document.getElementById('estadoFilter');
-    const planFilter = document.getElementById('planFilter');
-    const tableRows = document.querySelectorAll('tbody tr[data-estado]');
-
-    function filterTable() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const selectedEstado = estadoFilter.value;
-        const selectedPlan = planFilter.value;
-
-        tableRows.forEach(row => {
-            const userName = row.querySelector('td:first-child .text-lg').textContent.toLowerCase();
-            const userEmail = row.querySelector('td:first-child .text-sm').textContent.toLowerCase();
-            const planName = row.querySelector('td:nth-child(2) .inline-flex').textContent.toLowerCase();
-            const suscripcionEstado = row.getAttribute('data-estado');
-            const suscripcionPlan = row.getAttribute('data-plan');
-
-            const matchesSearch = userName.includes(searchTerm) || userEmail.includes(searchTerm) || planName.includes(searchTerm);
-            const matchesEstado = !selectedEstado || suscripcionEstado === selectedEstado;
-            const matchesPlan = !selectedPlan || suscripcionPlan === selectedPlan;
-
-            if (matchesSearch && matchesEstado && matchesPlan) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    }
-
-    searchInput.addEventListener('input', filterTable);
-    estadoFilter.addEventListener('change', filterTable);
-    planFilter.addEventListener('change', filterTable);
-
     // Confirmar eliminación
     const deleteButtons = document.querySelectorAll('.delete-btn');
     deleteButtons.forEach(button => {
@@ -326,6 +504,32 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Auto-submit del formulario de filtros cuando se cambian los selects
+    const estadoSelect = document.querySelector('select[name="estado"]');
+    const planSelect = document.querySelector('select[name="plan"]');
+    
+    if (estadoSelect) {
+        estadoSelect.addEventListener('change', function() {
+            this.form.submit();
+        });
+    }
+    
+    if (planSelect) {
+        planSelect.addEventListener('change', function() {
+            this.form.submit();
+        });
+    }
+
+    // Indicador visual para filtros activos
+    const hasActiveFilters = {{ filtros_activos.busqueda|yesno:"true,false" }} || 
+                           {{ filtros_activos.estado|yesno:"true,false" }} || 
+                           {{ filtros_activos.plan|yesno:"true,false" }};
+    
+    if (hasActiveFilters) {
+        const filterSection = document.querySelector('form[method="GET"]').parentElement;
+        filterSection.classList.add('ring-2', 'ring-emerald-200', 'ring-opacity-50');
+    }
 });
 </script>
 {% endblock %}

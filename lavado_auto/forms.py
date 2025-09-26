@@ -11,7 +11,7 @@ class CustomPasswordResetForm(PasswordResetForm):
         UserModel = get_user_model()
         return UserModel.objects.filter(correo__iexact=email, is_active=True)
 from django import forms
-from .models import Comentario,Reserva,Usuario, MensajeQueja,Servicio,Empresa,ReservaServicio,SolicitudServicioEmpresa,Plan
+from .models import Comentario,Reserva,Usuario, MensajeQueja,Servicio,Empresa,ReservaServicio,SolicitudServicioEmpresa,Plan,SolicitudContactoPlan
 
 
 class ComentarioClienteForm(forms.ModelForm):
@@ -514,3 +514,101 @@ class AdminProfileForm(forms.ModelForm):
                 raise forms.ValidationError("La nueva contraseña debe tener al menos 6 caracteres.")
         
         return cleaned_data
+
+
+class SolicitudContactoPlanForm(forms.ModelForm):
+    """Formulario para solicitudes de contacto de planes empresariales"""
+    
+    class Meta:
+        model = SolicitudContactoPlan
+        fields = [
+            'nombre_completo', 'email', 'telefono', 'empresa', 'cargo',
+            'cantidad_vehiculos', 'mensaje_adicional'
+        ]
+        
+        widgets = {
+            'nombre_completo': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-300',
+                'placeholder': 'Tu nombre completo',
+                'maxlength': '200'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-300',
+                'placeholder': 'tu.email@empresa.com'
+            }),
+            'telefono': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-300',
+                'placeholder': '+57 300 123 4567',
+                'maxlength': '20'
+            }),
+            'empresa': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-300',
+                'placeholder': 'Nombre de tu empresa',
+                'maxlength': '200'
+            }),
+            'cargo': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-300',
+                'placeholder': 'Tu cargo en la empresa (opcional)',
+                'maxlength': '100'
+            }),
+            'cantidad_vehiculos': forms.NumberInput(attrs={
+                'class': 'w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-300',
+                'placeholder': '25',
+                'min': '1',
+                'max': '10000'
+            }),
+            'mensaje_adicional': forms.Textarea(attrs={
+                'class': 'w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-300 resize-none',
+                'placeholder': 'Cuéntanos sobre tus necesidades específicas, tipo de vehículos, horarios preferidos, etc.',
+                'rows': 4,
+                'maxlength': '1000'
+            }),
+        }
+        
+        labels = {
+            'nombre_completo': 'Nombre Completo *',
+            'email': 'Correo Electrónico *',
+            'telefono': 'Teléfono *',
+            'empresa': 'Empresa *',
+            'cargo': 'Cargo',
+            'cantidad_vehiculos': 'Cantidad de Vehículos *',
+            'mensaje_adicional': 'Información Adicional',
+        }
+        
+        help_texts = {
+            'cantidad_vehiculos': 'Aproximadamente, ¿cuántos vehículos tienes en tu flota?',
+            'mensaje_adicional': 'Opcional: Compártenos detalles adicionales que nos ayuden a personalizar nuestra propuesta.',
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.widget.attrs['required'] = True
+    
+    def clean_telefono(self):
+        telefono = self.cleaned_data.get('telefono')
+        if telefono:
+            telefono_limpio = ''.join(filter(str.isdigit, telefono))
+            if len(telefono_limpio) < 7:
+                raise forms.ValidationError("El número de teléfono debe tener al menos 7 dígitos.")
+            if len(telefono_limpio) > 15:
+                raise forms.ValidationError("El número de teléfono no puede tener más de 15 dígitos.")
+        return telefono
+    
+    def clean_cantidad_vehiculos(self):
+        cantidad = self.cleaned_data.get('cantidad_vehiculos')
+        if cantidad and cantidad < 1:
+            raise forms.ValidationError("La cantidad de vehículos debe ser mayor a 0.")
+        if cantidad and cantidad > 10000:
+            raise forms.ValidationError("Por favor contacta directamente para flotas de más de 10,000 vehículos.")
+        return cantidad
+    
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email:
+            dominios_temporales = ['10minutemail.com', 'tempmail.org', 'guerrillamail.com']
+            dominio = email.split('@')[1].lower() if '@' in email else ''
+            if dominio in dominios_temporales:
+                raise forms.ValidationError("Por favor usa un correo empresarial válido.")
+        return email

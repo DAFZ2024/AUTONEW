@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Autonew - Panel de Empresa{% endblock %}</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
+    <script  type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    {% load static %}
+    <!-- Estilo de plantilla -->
+    <link href="{% static "estilos/estilos.css" %}" rel="stylesheet" type="text/css" >
+</head>
+<body>
+    <style>
+        /* Estilos personalizados y ajustes para Tailwind */
+        body {
+            padding-top: 85px; /* Ajustado para el navbar de empresas */
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+        }
+        
+        /* Asegurar que los enlaces funcionen correctamente */
+        a {
+            text-decoration: none;
+        }
+        
+        /* Transiciones suaves globales */
+        * {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 300ms;
+        }
+        
+        /* Efectos de glassmorphism para navbar de empresas */
+        .navbar-empresa-glass {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Estilos para imagen de perfil de empresa */
+        .profile-image-empresa {
+            object-fit: cover;
+            aspect-ratio: 1 / 1;
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+        
+        /* Estilos específicos para imagen de perfil en navbar */
+        .profile-image-navbar-empresa {
+            width: 2.5rem !important; /* 40px - w-10 */
+            height: 2.5rem !important; /* 40px - h-10 */
+        }
+        
+        /* Estilos específicos para imagen de perfil en dropdown */
+        .profile-image-dropdown-empresa {
+            width: 3.5rem !important; /* 56px - w-14 */
+            height: 3.5rem !important; /* 56px - h-14 */
+        }
+        
+        /* Media queries para ajustar tamaños en móvil */
+        @media (max-width: 768px) {
+            .profile-image-navbar-empresa {
+                width: 2rem !important; /* 32px - más pequeño en móvil */
+                height: 2rem !important; /* 32px */
+            }
+            
+            .profile-image-dropdown-empresa {
+                width: 3rem !important; /* 48px - más pequeño en móvil */
+                height: 3rem !important; /* 48px */
+            }
+            
+            body {
+                padding-top: 75px;
+            }
+        }
+        
+        /* Asegurar que las imágenes sean visibles en PC */
+        @media (min-width: 1024px) {
+            .profile-image-empresa {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+            .profile-image-navbar-empresa {
+                width: 3rem !important; /* 48px - más ancho en PC */
+                height: 3rem !important; /* 48px */
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+        }
+        
+        /* Efecto de cristal para dropdown mejorado */
+        .glass-effect-empresa {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        /* Animaciones personalizadas */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        /* Aplicar animaciones */
+        .animate-slide-down {
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        /* Hover effects mejorados */
+        .nav-link-hover-empresa:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Logo container effects */
+        .logo-container {
+            position: relative;
+        }
+
+        .logo-container::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(45deg, #3B82F6, #8B5CF6, #3B82F6);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .logo-container:hover::before {
+            opacity: 1;
+        }
+
+        .logo-img {
+            position: relative;
+            z-index: 2;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Estilos adicionales para empresa */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(200, 200, 200, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Optimizaciones móviles */
+        @media (max-width: 640px) {
+            body {
+                padding-top: 70px;
+            }
+        }
+
+        /* Mejoras para landscape en móvil */
+        @media (max-width: 896px) and (orientation: landscape) {
+            body {
+                padding-top: 60px;
+            }
+        }
+    </style>
+
+    <!-- Navbar Específico para Empresas -->
+    <nav class="navbar-empresa-glass shadow-xl px-4 sm:px-6 lg:px-8 py-3 sm:py-4 fixed top-0 left-0 right-0 z-50">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Logo y marca de empresa -->
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <div class="logo-container">
+                    <i class="fas fa-building logo-img w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-lg sm:text-2xl text-white bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"></i>
+                </div>
+                <div class="flex flex-col">
+                    <h1 class="text-lg sm:text-xl lg:text-2xl font-black tracking-tight bg-gradient-to-r from-blue-600 via-purple-700 to-blue-600 bg-clip-text text-transparent">
+                        AUTO<span class="text-purple-500">NEW</span>
+                    </h1>
+                    <span class="text-xs font-semibold text-purple-600/70 tracking-wider uppercase hidden lg:block">Panel Empresarial</span>
+                </div>
+            </div>
+
+            <!-- Navegación Desktop para Empresas -->
+            <div class="hidden lg:flex items-center space-x-1">
+                <!-- Grupo Principal: Dashboard -->
+                <div class="flex items-center bg-gray-50/80 rounded-2xl p-1.5 border border-gray-200/50 backdrop-blur-sm">
+                    <a href="{% url 'home_empresas' %}" class="group px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center space-x-2 {% if request.resolver_match.url_name == 'home_empresas' %}bg-blue-600 text-white shadow-lg shadow-blue-600/25{% else %}text-gray-600 hover:text-blue-600 hover:bg-white/70{% endif %}">
+                        <i class="fas fa-tachometer-alt text-sm group-hover:scale-110 transition-transform duration-300"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="{% url 'citas_empresa' %}" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-emerald-600 hover:bg-emerald-50/70 transition-all duration-300 flex items-center space-x-2">
+                        <i class="fas fa-calendar-alt text-sm text-emerald-500 group-hover:scale-110 transition-transform duration-300"></i>
+                        <span>Citas</span>
+                    </a>
+                </div>
+                
+                <!-- Grupo Reportes y Analytics -->
+                <div class="flex items-center bg-gray-50/80 rounded-2xl p-1.5 border border-gray-200/50 backdrop-blur-sm">
+                    <a href="{% url 'reportes_empresa' %}" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-orange-600 hover:bg-orange-50/70 transition-all duration-300 flex items-center space-x-2">
+                        <i class="fas fa-chart-bar text-sm text-orange-500 group-hover:scale-110 transition-transform duration-300"></i>
+                        <span>Reportes</span>
+                    </a>
+                    <a href="{% url 'perfil_empresa' %}" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-purple-600 hover:bg-purple-50/70 transition-all duration-300 flex items-center space-x-2">
+                        <i class="fas fa-user-cog text-sm text-purple-500 group-hover:scale-110 transition-transform duration-300"></i>
+                        <span>Perfil</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Usuario y opciones de empresa -->
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <!-- Información de la empresa (visible en pantallas medianas y grandes) -->
+                <div class="hidden md:block text-right">
+                    {% if empresa %}
+                        <p class="text-gray-800 font-semibold text-sm lg:text-base truncate max-w-32 lg:max-w-none">{{ empresa.nombre_empresa }}</p>
+                        <p class="text-gray-600 text-xs lg:text-sm">Administrador</p>
+                    {% else %}
+                        <p class="text-gray-800 font-semibold text-sm lg:text-base">Empresa</p>
+                        <p class="text-gray-600 text-xs lg:text-sm">Panel</p>
+                    {% endif %}
+                </div>
+
+                <!-- Avatar de empresa -->
+                <div class="relative group">
+                    <button onclick="toggleProfileMenuEmpresa()" class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-lg hover:shadow-xl transition-all">
+                        <i class="fas fa-building text-sm sm:text-base"></i>
+                    </button>
+                    
+                    <!-- Dropdown Menu de empresa -->
+                    <div id="profileDropdownEmpresa" class="hidden absolute right-0 top-full mt-3 w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/60 z-50 overflow-hidden ring-1 ring-gray-900/5">
+                        <!-- Header del dropdown -->
+                        <div class="p-5 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-100">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <div>
+                                    {% if empresa %}
+                                        <h3 class="font-semibold text-gray-800">{{ empresa.nombre_empresa }}</h3>
+                                        <p class="text-sm text-gray-600">Panel Empresarial</p>
+                                    {% else %}
+                                        <h3 class="font-semibold text-gray-800">Empresa</h3>
+                                        <p class="text-sm text-gray-600">Panel de Control</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Opciones del menú -->
+                        <div class="py-2">
+                            <a href="{% url 'perfil_empresa' %}" class="flex items-center space-x-3 px-5 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="fas fa-user-edit w-5 h-5 text-gray-400"></i>
+                                <span class="font-medium">Configurar Perfil</span>
+                            </a>
+                            <a href="{% url 'reportes_empresa' %}" class="flex items-center space-x-3 px-5 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="fas fa-chart-line w-5 h-5 text-gray-400"></i>
+                                <span class="font-medium">Ver Reportes</span>
+                            </a>
+                            <div class="border-t border-gray-100 my-2"></div>
+                            <button onclick="logoutEmpresa()" class="w-full flex items-center space-x-3 px-5 py-3 text-red-600 hover:bg-red-50 transition-colors">
+                                <i class="fas fa-sign-out-alt w-5 h-5"></i>
+                                <span class="font-medium">Cerrar Sesión</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Menú hamburguesa para móvil -->
+                <button onclick="toggleMobileMenuEmpresa()" class="lg:hidden text-gray-600 hover:text-blue-500 transition-colors p-2" title="Menú">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+
+                <!-- Botón de cerrar sesión (visible solo en pantallas sm y mayores) -->
+                <button onclick="logoutEmpresa()" class="hidden sm:block lg:hidden text-gray-600 hover:text-red-500 transition-colors p-2" title="Cerrar Sesión">
+                    <i class="fas fa-sign-out-alt text-lg sm:text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Menú móvil para empresas -->
+        <div id="mobile-menu-empresa" class="hidden lg:hidden bg-white/95 backdrop-blur-sm border-t border-gray-200 mt-3 -mx-4 px-4 py-4">
+            <div class="space-y-3">
+                <a href="{% url 'home_empresas' %}" class="flex items-center text-gray-700 hover:text-blue-600 font-medium transition-colors py-2">
+                    <i class="fas fa-tachometer-alt mr-3 w-5"></i>Dashboard
+                </a>
+                <a href="{% url 'citas_empresa' %}" class="flex items-center text-gray-700 hover:text-emerald-600 font-medium transition-colors py-2">
+                    <i class="fas fa-calendar-alt mr-3 w-5"></i>Citas
+                </a>
+                <a href="{% url 'reportes_empresa' %}" class="flex items-center text-gray-700 hover:text-orange-600 font-medium transition-colors py-2">
+                    <i class="fas fa-chart-bar mr-3 w-5"></i>Reportes
+                </a>
+                <a href="{% url 'perfil_empresa' %}" class="flex items-center text-gray-700 hover:text-purple-600 font-medium transition-colors py-2">
+                    <i class="fas fa-user-cog mr-3 w-5"></i>Perfil
+                </a>
+                <div class="border-t border-gray-200 pt-3 mt-3">
+                    <div class="md:hidden mb-3">
+                        {% if empresa %}
+                            <p class="text-gray-800 font-semibold text-sm">{{ empresa.nombre_empresa }}</p>
+                            <p class="text-gray-600 text-xs">Administrador</p>
+                        {% else %}
+                            <p class="text-gray-800 font-semibold text-sm">Panel Empresarial</p>
+                        {% endif %}
+                    </div>
+                    <button onclick="logoutEmpresa()" class="flex items-center text-red-600 hover:text-red-800 font-medium transition-colors py-2 w-full text-left">
+                        <i class="fas fa-sign-out-alt mr-3 w-5"></i>Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="min-h-screen">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer Específico para Empresas -->
+    <footer class="bg-gradient-to-br from-slate-50 to-purple-50 border-t border-gray-200 mt-16">
+        <div class="max-w-7xl mx-auto px-6 py-12">
+            <!-- Contenido principal del footer -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <!-- Información de la empresa -->
+                <div class="text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-building text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                AUTONEW
+                            </h3>
+                            <p class="text-xs text-gray-600">Panel Empresarial</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 leading-relaxed">
+                        Plataforma integral para la gestión de servicios de lavado de autos. 
+                        Optimiza tu negocio con nuestras herramientas empresariales.
+                    </p>
+                </div>
+                
+                <!-- Enlaces rápidos para empresas -->
+                <div class="text-center">
+                    <h4 class="text-lg font-semibold text-slate-800 mb-4">Funcionalidades</h4>
+                    <div class="space-y-2">
+                        <a href="{% url 'home_empresas' %}" class="block text-gray-600 hover:text-blue-600 transition-colors">
+                            <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                        </a>
+                        <a href="{% url 'citas_empresa' %}" class="block text-gray-600 hover:text-emerald-600 transition-colors">
+                            <i class="fas fa-calendar-alt mr-2"></i>Gestión de Citas
+                        </a>
+                        <a href="{% url 'reportes_empresa' %}" class="block text-gray-600 hover:text-orange-600 transition-colors">
+                            <i class="fas fa-chart-bar mr-2"></i>Reportes
+                        </a>
+                        <a href="{% url 'perfil_empresa' %}" class="block text-gray-600 hover:text-purple-600 transition-colors">
+                            <i class="fas fa-user-cog mr-2"></i>Configuración
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Información de soporte -->
+                <div class="text-center md:text-right">
+                    <h4 class="text-lg font-semibold text-slate-800 mb-4">Soporte Empresarial</h4>
+                    <div class="space-y-2">
+                        <p class="text-gray-600 flex items-center justify-center md:justify-end">
+                            <i class="fas fa-envelope mr-2 text-blue-500"></i>
+                            soporte.empresas@autonew.com
+                        </p>
+                        <p class="text-gray-600 flex items-center justify-center md:justify-end">
+                            <i class="fas fa-phone mr-2 text-green-500"></i>
+                            +57 3114996440
+                        </p>
+                        <p class="text-gray-600 flex items-center justify-center md:justify-end">
+                            <i class="fas fa-clock mr-2 text-orange-500"></i>
+                            24/7 Soporte Técnico
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Línea divisoria -->
+            <div class="border-t border-gray-300 pt-8">
+                <div class="text-center">
+                    <p class="text-gray-600 text-lg">
+                        © 2024 <span class="font-semibold text-blue-600">AUTONEW</span> - Panel Empresarial. 
+                        <span class="text-gray-500">Todos los derechos reservados.</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript para menú móvil y perfil de empresa -->
+    <script>
+        // Toggle del menú móvil de empresa
+        function toggleMobileMenuEmpresa() {
+            const mobileMenu = document.getElementById('mobile-menu-empresa');
+            const button = document.querySelector('button[onclick="toggleMobileMenuEmpresa()"]');
+            
+            if (mobileMenu) {
+                mobileMenu.classList.toggle('hidden');
+                
+                // Cambiar ícono del botón con animación
+                const icon = button.querySelector('i');
+                if (mobileMenu.classList.contains('hidden')) {
+                    icon.className = 'fas fa-bars text-lg';
+                    button.classList.remove('text-blue-500');
+                } else {
+                    icon.className = 'fas fa-times text-lg';
+                    button.classList.add('text-blue-500');
+                }
+            }
+        }
+        
+        // Toggle del menú de perfil de empresa
+        function toggleProfileMenuEmpresa() {
+            const dropdown = document.getElementById('profileDropdownEmpresa');
+            if (dropdown) {
+                dropdown.classList.toggle('hidden');
+            }
+        }
+        
+        // Función para cerrar sesión de empresa
+        function logoutEmpresa() {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                window.location.href = '{% url "logout_view" %}';
+            }
+        }
+        
+        // Cerrar menús al hacer click fuera
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu-empresa');
+            const profileDropdown = document.getElementById('profileDropdownEmpresa');
+            const mobileButton = document.querySelector('button[onclick="toggleMobileMenuEmpresa()"]');
+            const profileButton = document.querySelector('button[onclick="toggleProfileMenuEmpresa()"]');
+            
+            // Cerrar menú móvil si se hace click fuera
+            if (mobileButton && !mobileButton.contains(event.target) && mobileMenu && !mobileMenu.contains(event.target)) {
+                mobileMenu.classList.add('hidden');
+                const icon = mobileButton.querySelector('i');
+                icon.className = 'fas fa-bars text-lg';
+                mobileButton.classList.remove('text-blue-500');
+            }
+            
+            // Cerrar menú de perfil si se hace click fuera
+            if (profileButton && !profileButton.contains(event.target) && profileDropdown && !profileDropdown.contains(event.target)) {
+                profileDropdown.classList.add('hidden');
+            }
+        });
+        
+        // Cerrar menús al cambiar tamaño de pantalla
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 1024) {
+                const mobileMenu = document.getElementById('mobile-menu-empresa');
+                const mobileButton = document.querySelector('button[onclick="toggleMobileMenuEmpresa()"]');
+                
+                if (mobileMenu) {
+                    mobileMenu.classList.add('hidden');
+                }
+                if (mobileButton) {
+                    const icon = mobileButton.querySelector('i');
+                    icon.className = 'fas fa-bars text-lg';
+                    mobileButton.classList.remove('text-blue-500');
+                }
+            }
+        });
+        
+        // Animaciones adicionales para mejor UX
+        document.addEventListener('DOMContentLoaded', function() {
+            // Agregar efecto de aparición suave al navbar
+            const navbar = document.querySelector('nav');
+            if (navbar) {
+                navbar.style.transform = 'translateY(-100%)';
+                navbar.style.transition = 'transform 0.5s ease-out';
+                
+                setTimeout(() => {
+                    navbar.style.transform = 'translateY(0)';
+                }, 100);
+            }
+            
+            // Efectos de hover mejorados para los enlaces de navegación
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

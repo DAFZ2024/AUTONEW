@@ -36,7 +36,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-600">Total Suscripciones</p>
-                        <p class="text-3xl font-bold text-emerald-600">{{ suscripciones|length }}</p>
+                        <p class="text-3xl font-bold text-emerald-600">{{ total_suscripciones }}</p>
                     </div>
                     <div class="p-3 bg-emerald-100 rounded-xl">
                         <i class="fas fa-users text-emerald-600 text-xl"></i>
@@ -48,9 +48,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-600">Activas</p>
-                        {% with activas=suscripciones|length %}
-                            <p class="text-3xl font-bold text-blue-600">{{ activas }}</p>
-                        {% endwith %}
+                        <p class="text-3xl font-bold text-blue-600">{{ suscripciones_activas }}</p>
                     </div>
                     <div class="p-3 bg-blue-100 rounded-xl">
                         <i class="fas fa-check-circle text-blue-600 text-xl"></i>
@@ -62,12 +60,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-600">Total Vehículos</p>
-                        {% with total_vehiculos=0 %}
-                            {% for suscripcion in suscripciones %}
-                                {% with total_vehiculos=total_vehiculos|add:suscripcion.cantidad_vehiculos %}{% endwith %}
-                            {% endfor %}
-                            <p class="text-3xl font-bold text-purple-600">{{ total_vehiculos }}</p>
-                        {% endwith %}
+                        <p class="text-3xl font-bold text-purple-600">{{ total_vehiculos }}</p>
                     </div>
                     <div class="p-3 bg-purple-100 rounded-xl">
                         <i class="fas fa-car text-purple-600 text-xl"></i>
@@ -79,14 +72,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-600">Ingresos Mensuales</p>
-                        {% with ingresos_total=0 %}
-                            {% for suscripcion in suscripciones %}
-                                {% if suscripcion.estado == 'activa' %}
-                                    {% with ingresos_total=ingresos_total|add:suscripcion.precio_mensual_actual %}{% endwith %}
-                                {% endif %}
-                            {% endfor %}
-                            <p class="text-2xl font-bold text-indigo-600">${{ ingresos_total|floatformat:0 }}</p>
-                        {% endwith %}
+                        <p class="text-2xl font-bold text-indigo-600">${{ ingresos_mensuales|floatformat:0 }}</p>
                     </div>
                     <div class="p-3 bg-indigo-100 rounded-xl">
                         <i class="fas fa-dollar-sign text-indigo-600 text-xl"></i>
@@ -97,39 +83,55 @@
 
         <!-- Filtros y búsqueda -->
         <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6 mb-8">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <form method="GET" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div class="flex-1 max-w-md">
                     <div class="relative">
-                        <input type="text" id="searchInput" placeholder="Buscar por empresa..." 
+                        <input type="text" name="busqueda" id="searchInput" placeholder="Buscar por empresa..." 
+                               value="{{ filtros_activos.busqueda|default:'' }}"
                                class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300">
                         <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                     </div>
                 </div>
                 
                 <div class="flex gap-3">
-                    <select id="estadoFilter" class="px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300">
+                    <select name="estado" class="px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300">
                         <option value="">Todos los estados</option>
-                        <option value="activa">Activa</option>
-                        <option value="pausada">Pausada</option>
-                        <option value="cancelada">Cancelada</option>
-                        <option value="vencida">Vencida</option>
+                        <option value="activa" {% if filtros_activos.estado == 'activa' %}selected{% endif %}>Activa</option>
+                        <option value="pausada" {% if filtros_activos.estado == 'pausada' %}selected{% endif %}>Pausada</option>
+                        <option value="cancelada" {% if filtros_activos.estado == 'cancelada' %}selected{% endif %}>Cancelada</option>
+                        <option value="vencida" {% if filtros_activos.estado == 'vencida' %}selected{% endif %}>Vencida</option>
                     </select>
                     
-                    <select id="planFilter" class="px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300">
+                    <select name="plan" class="px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300">
                         <option value="">Todos los planes</option>
-                        {% for suscripcion in suscripciones %}
-                            <option value="{{ suscripcion.plan.id_plan }}">{{ suscripcion.plan.nombre }}</option>
+                        {% for plan in planes_disponibles %}
+                            <option value="{{ plan.id_plan }}" {% if filtros_activos.plan == plan.id_plan|stringformat:"s" %}selected{% endif %}>{{ plan.nombre }}</option>
                         {% endfor %}
                     </select>
+                    
+                    <button type="submit" class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-cyan-700 transition-all duration-300">
+                        <i class="fas fa-filter mr-2"></i>Filtrar
+                    </button>
+                    
+                    {% if filtros_activos.busqueda or filtros_activos.estado or filtros_activos.plan %}
+                        <a href="{% url 'suscripciones_empresariales_crud' %}" class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-300">
+                            <i class="fas fa-times mr-2"></i>Limpiar
+                        </a>
+                    {% endif %}
                 </div>
-            </div>
+            </form>
         </div>
 
         <!-- Lista de suscripciones empresariales -->
         <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden">
             <div class="p-6 sm:p-8 border-b border-gray-200">
                 <h2 class="text-2xl font-bold text-gray-900">Suscripciones Empresariales Registradas</h2>
-                <p class="text-gray-600 mt-1">Total: {{ suscripciones|length }} suscripción{{ suscripciones|length|pluralize:"es" }}</p>
+                <p class="text-gray-600 mt-1">
+                    Mostrando {{ suscripciones.start_index }}-{{ suscripciones.end_index }} de {{ total_suscripciones }} suscripción{{ total_suscripciones|pluralize:"es" }}
+                    {% if paginator.num_pages > 1 %}
+                        (página {{ suscripciones.number }} de {{ paginator.num_pages }})
+                    {% endif %}
+                </p>
             </div>
 
             {% if suscripciones %}
@@ -228,14 +230,16 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center space-x-2">
-                                            <button class="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors duration-200"
-                                                    title="Ver detalles">
+                                            <a href="{% url 'detalle_suscripcion_empresarial' suscripcion.id_suscripcion %}" 
+                                               class="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors duration-200"
+                                               title="Ver detalles">
                                                 <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="p-2 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors duration-200"
-                                                    title="Editar suscripción">
+                                            </a>
+                                            <a href="{% url 'editar_suscripcion_empresarial' suscripcion.id_suscripcion %}" 
+                                               class="p-2 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors duration-200"
+                                               title="Editar suscripción">
                                                 <i class="fas fa-edit"></i>
-                                            </button>
+                                            </a>
                                             {% if suscripcion.estado == 'activa' %}
                                                 <button class="p-2 text-orange-600 hover:bg-orange-100 rounded-lg transition-colors duration-200"
                                                         title="Pausar suscripción">
@@ -273,52 +277,145 @@
                 </div>
             {% endif %}
         </div>
+
+        <!-- Paginación -->
+        {% if paginator.num_pages > 1 %}
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6 mt-8">
+                <div class="flex items-center justify-between">
+                    <!-- Información de página -->
+                    <div class="flex items-center space-x-2 text-sm text-gray-600">
+                        <span>Página {{ suscripciones.number }} de {{ paginator.num_pages }}</span>
+                        <span class="text-gray-400">|</span>
+                        <span>{{ total_suscripciones }} resultado{{ total_suscripciones|pluralize:"s" }} total{{ total_suscripciones|pluralize:"es" }}</span>
+                    </div>
+
+                    <!-- Controles de paginación -->
+                    <div class="flex items-center space-x-2">
+                        <!-- Primera página -->
+                        {% if suscripciones.has_previous %}
+                            <a href="?page=1{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}{% if filtros_activos.estado %}&estado={{ filtros_activos.estado }}{% endif %}{% if filtros_activos.plan %}&plan={{ filtros_activos.plan }}{% endif %}" 
+                               class="px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                        {% else %}
+                            <span class="px-3 py-2 text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+                                <i class="fas fa-angle-double-left"></i>
+                            </span>
+                        {% endif %}
+
+                        <!-- Página anterior -->
+                        {% if suscripciones.has_previous %}
+                            <a href="?page={{ suscripciones.previous_page_number }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}{% if filtros_activos.estado %}&estado={{ filtros_activos.estado }}{% endif %}{% if filtros_activos.plan %}&plan={{ filtros_activos.plan }}{% endif %}" 
+                               class="px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        {% else %}
+                            <span class="px-3 py-2 text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+                                <i class="fas fa-angle-left"></i>
+                            </span>
+                        {% endif %}
+
+                        <!-- Números de página -->
+                        {% for num in paginator.page_range %}
+                            {% if num == suscripciones.number %}
+                                <span class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-semibold rounded-lg">
+                                    {{ num }}
+                                </span>
+                            {% elif num > suscripciones.number|add:'-3' and num < suscripciones.number|add:'3' %}
+                                <a href="?page={{ num }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}{% if filtros_activos.estado %}&estado={{ filtros_activos.estado }}{% endif %}{% if filtros_activos.plan %}&plan={{ filtros_activos.plan }}{% endif %}" 
+                                   class="px-4 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
+                                    {{ num }}
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- Página siguiente -->
+                        {% if suscripciones.has_next %}
+                            <a href="?page={{ suscripciones.next_page_number }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}{% if filtros_activos.estado %}&estado={{ filtros_activos.estado }}{% endif %}{% if filtros_activos.plan %}&plan={{ filtros_activos.plan }}{% endif %}" 
+                               class="px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        {% else %}
+                            <span class="px-3 py-2 text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+                                <i class="fas fa-angle-right"></i>
+                            </span>
+                        {% endif %}
+
+                        <!-- Última página -->
+                        {% if suscripciones.has_next %}
+                            <a href="?page={{ paginator.num_pages }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}{% if filtros_activos.estado %}&estado={{ filtros_activos.estado }}{% endif %}{% if filtros_activos.plan %}&plan={{ filtros_activos.plan }}{% endif %}" 
+                               class="px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        {% else %}
+                            <span class="px-3 py-2 text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+                                <i class="fas fa-angle-double-right"></i>
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Salto rápido a página -->
+                <div class="mt-4 flex items-center justify-center space-x-2 text-sm">
+                    <span class="text-gray-600">Ir a página:</span>
+                    <form method="GET" class="inline-flex items-center space-x-2">
+                        {% if filtros_activos.busqueda %}<input type="hidden" name="busqueda" value="{{ filtros_activos.busqueda }}">{% endif %}
+                        {% if filtros_activos.estado %}<input type="hidden" name="estado" value="{{ filtros_activos.estado }}">{% endif %}
+                        {% if filtros_activos.plan %}<input type="hidden" name="plan" value="{{ filtros_activos.plan }}">{% endif %}
+                        <input type="number" name="page" min="1" max="{{ paginator.num_pages }}" 
+                               value="{{ suscripciones.number }}"
+                               class="w-16 px-2 py-1 text-center border border-gray-200 rounded focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200">
+                        <button type="submit" class="px-3 py-1 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
     </div>
 </div>
 
-<!-- JavaScript para filtros y búsqueda -->
+<!-- JavaScript para confirmaciones y funcionalidad -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchInput');
-    const estadoFilter = document.getElementById('estadoFilter');
-    const planFilter = document.getElementById('planFilter');
-    const tableRows = document.querySelectorAll('tbody tr[data-estado]');
-
-    function filterTable() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const selectedEstado = estadoFilter.value;
-        const selectedPlan = planFilter.value;
-
-        tableRows.forEach(row => {
-            const empresaName = row.getAttribute('data-empresa');
-            const suscripcionEstado = row.getAttribute('data-estado');
-            const suscripcionPlan = row.getAttribute('data-plan');
-
-            const matchesSearch = !searchTerm || empresaName.includes(searchTerm);
-            const matchesEstado = !selectedEstado || suscripcionEstado === selectedEstado;
-            const matchesPlan = !selectedPlan || suscripcionPlan === selectedPlan;
-
-            if (matchesSearch && matchesEstado && matchesPlan) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
+    // Auto-submit del formulario de filtros cuando se cambian los selects
+    const estadoSelect = document.querySelector('select[name="estado"]');
+    const planSelect = document.querySelector('select[name="plan"]');
+    
+    if (estadoSelect) {
+        estadoSelect.addEventListener('change', function() {
+            this.form.submit();
+        });
+    }
+    
+    if (planSelect) {
+        planSelect.addEventListener('change', function() {
+            this.form.submit();
         });
     }
 
-    searchInput.addEventListener('input', filterTable);
-    estadoFilter.addEventListener('change', filterTable);
-    planFilter.addEventListener('change', filterTable);
+    // Indicador visual para filtros activos
+    const hasActiveFilters = {{ filtros_activos.busqueda|yesno:"true,false" }} || 
+                           {{ filtros_activos.estado|yesno:"true,false" }} || 
+                           {{ filtros_activos.plan|yesno:"true,false" }};
+    
+    if (hasActiveFilters) {
+        const filterSection = document.querySelector('form[method="GET"]').parentElement;
+        filterSection.classList.add('ring-2', 'ring-emerald-200', 'ring-opacity-50');
+    }
 
-    // Eliminar duplicados del filtro de planes
-    const planOptions = planFilter.querySelectorAll('option');
-    const uniquePlans = new Set();
-    planOptions.forEach(option => {
-        if (option.value && uniquePlans.has(option.value)) {
-            option.remove();
-        } else if (option.value) {
-            uniquePlans.add(option.value);
-        }
+    // Confirmar acciones para botones de gestión
+    const actionButtons = document.querySelectorAll('button[title*="Pausar"], button[title*="Cancelar"], button[title*="Reactivar"]');
+    actionButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const action = this.title.toLowerCase();
+            const result = confirm(`¿Estás seguro de que deseas ${action} esta suscripción?`);
+            if (result) {
+                // Aquí se ejecutaría la acción correspondiente
+                console.log(`Acción confirmada: ${action}`);
+            }
+        });
     });
 });
 </script>

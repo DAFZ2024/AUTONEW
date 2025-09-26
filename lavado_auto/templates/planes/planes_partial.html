@@ -1,0 +1,217 @@
+{% load static %}
+{% load humanize %}
+
+<!-- Grid de planes dinámico desde BD -->
+<div class="space-y-6" id="planes-grid">
+    {% for plan in planes %}
+    <div class="relative bg-white border border-slate-200 rounded-3xl overflow-hidden transition-all duration-500 ease-out shadow-lg shadow-slate-200/50 hover:shadow-2xl hover:shadow-slate-300/50 hover:-translate-y-2 hover:border-blue-300 group {% if plan.tipo == 'premium' %}bg-gradient-to-br from-blue-50/50 to-cyan-50/50 border-2 border-blue-500 shadow-xl shadow-blue-500/30{% endif %}">
+
+        <!-- Badge "Más Popular" para plan premium -->
+        {% if plan.tipo == 'premium' %}
+            <div class="absolute top-4 right-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-2 px-4 rounded-full text-xs font-bold tracking-wide shadow-lg shadow-emerald-500/30 animate-pulse z-10">
+                <i class="fas fa-star mr-1"></i>
+                Más Popular
+            </div>
+        {% endif %}
+
+        <div class="flex flex-col lg:flex-row">
+            <!-- Sección izquierda - Info del plan -->
+            <div class="lg:w-2/3 p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-4">
+                        <!-- Icono del plan -->
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 {% if plan.tipo == 'premium' %}from-emerald-500 to-emerald-600{% elif plan.tipo == 'completo' %}from-yellow-500 to-orange-500{% endif %} rounded-full flex items-center justify-center text-2xl text-white shadow-lg">
+                            {% if plan.tipo == 'basico' %}
+                                <i class="fas fa-car"></i>
+                            {% elif plan.tipo == 'premium' %}
+                                <i class="fas fa-star"></i>
+                            {% else %}
+                                <i class="fas fa-crown"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h3 class="text-3xl font-bold text-slate-800 mb-2">{{ plan.nombre }}</h3>
+                            <div class="inline-block bg-blue-100 text-blue-600 py-1 px-3 rounded-full text-sm font-semibold">
+                                Plan Mensual
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Características del plan -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="flex items-center gap-3 py-2 text-gray-700">
+                        <span class="w-5 h-5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full flex items-center justify-center text-xs">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        {% if plan.cantidad_servicios_mes == 0 %}
+                            Servicios ilimitados
+                        {% else %}
+                            {{ plan.cantidad_servicios_mes }} servicios por mes
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center gap-3 py-2 text-gray-700">
+                        <span class="w-5 h-5 {% if plan.incluye_lavado_asientos %}bg-gradient-to-r from-emerald-500 to-emerald-600 text-white{% else %}bg-red-100 text-red-500{% endif %} rounded-full flex items-center justify-center text-xs">
+                            <i class="fas {% if plan.incluye_lavado_asientos %}fa-check{% else %}fa-times{% endif %}"></i>
+                        </span>
+                        Lavado de asientos
+                    </div>
+                    <div class="flex items-center gap-3 py-2 text-gray-700">
+                        <span class="w-5 h-5 {% if plan.incluye_aspirado %}bg-gradient-to-r from-emerald-500 to-emerald-600 text-white{% else %}bg-red-100 text-red-500{% endif %} rounded-full flex items-center justify-center text-xs">
+                            <i class="fas {% if plan.incluye_aspirado %}fa-check{% else %}fa-times{% endif %}"></i>
+                        </span>
+                        Aspirado profesional
+                    </div>
+                    <div class="flex items-center gap-3 py-2 text-gray-700">
+                        <span class="w-5 h-5 {% if plan.incluye_lavado_exterior %}bg-gradient-to-r from-emerald-500 to-emerald-600 text-white{% else %}bg-red-100 text-red-500{% endif %} rounded-full flex items-center justify-center text-xs">
+                            <i class="fas {% if plan.incluye_lavado_exterior %}fa-check{% else %}fa-times{% endif %}"></i>
+                        </span>
+                        Lavado exterior
+                    </div>
+                    <div class="flex items-center gap-3 py-2 text-gray-700">
+                        <span class="w-5 h-5 {% if plan.incluye_lavado_interior_humedo %}bg-gradient-to-r from-emerald-500 to-emerald-600 text-white{% else %}bg-red-100 text-red-500{% endif %} rounded-full flex items-center justify-center text-xs">
+                            <i class="fas {% if plan.incluye_lavado_interior_humedo %}fa-check{% else %}fa-times{% endif %}"></i>
+                        </span>
+                        Lavado interior húmedo
+                    </div>
+                    <div class="flex items-center gap-3 py-2 text-gray-700">
+                        <span class="w-5 h-5 {% if plan.incluye_encerado %}bg-gradient-to-r from-emerald-500 to-emerald-600 text-white{% else %}bg-red-100 text-red-500{% endif %} rounded-full flex items-center justify-center text-xs">
+                            <i class="fas {% if plan.incluye_encerado %}fa-check{% else %}fa-times{% endif %}"></i>
+                        </span>
+                        {% if plan.incluye_detallado_completo %}
+                            Detallado completo y encerado
+                        {% else %}
+                            Encerado básico
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección derecha - Precio y botón -->
+            <div class="lg:w-1/3 bg-gradient-to-br from-slate-50 to-slate-100 {% if plan.tipo == 'premium' %}from-emerald-50 to-emerald-100{% elif plan.tipo == 'completo' %}from-yellow-50 to-orange-100{% endif %} p-8 flex flex-col justify-center items-center text-center">
+                <!-- Precio -->
+                <div class="mb-6">
+                    <div class="flex items-baseline justify-center mb-2">
+                        <span class="text-3xl text-slate-600">COP</span>
+                        <span class="text-6xl font-black text-slate-800">{{ plan.precio_mensual|floatformat:0|intcomma }}</span>
+                        <span class="text-2xl text-slate-500">/mes</span>
+                    </div>
+                    {% if plan.tipo == 'premium' %}
+                        <p class="text-emerald-600 font-semibold text-sm">¡Mejor valor!</p>
+                    {% elif plan.tipo == 'completo' %}
+                        <p class="text-yellow-600 font-semibold text-sm">Experiencia premium</p>
+                    {% else %}
+                        <p class="text-slate-500 text-sm">Ideal para comenzar</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Botón de suscripción -->
+                {% if user.is_authenticated %}
+                    {% if not suscripcion_actual %}
+                        <a href="{% url 'suscribirse_plan' plan.id_plan %}" class="w-full bg-gradient-to-r from-blue-500 to-cyan-500 {% if plan.tipo == 'premium' %}from-emerald-500 to-emerald-600{% elif plan.tipo == 'completo' %}from-yellow-500 to-orange-500{% endif %} text-white font-bold py-4 px-6 rounded-xl uppercase tracking-wide transition-all duration-300 hover:-translate-y-1 hover:shadow-xl text-center block no-underline group">
+                            <i class="fas fa-shopping-cart mr-2 group-hover:animate-bounce"></i>
+                            {% if plan.tipo == 'premium' %}
+                                Elegir Premium
+                            {% elif plan.tipo == 'completo' %}
+                                Plan Completo
+                            {% else %}
+                                Comenzar Ahora
+                            {% endif %}
+                        </a>
+                    {% else %}
+                        {% if suscripcion_actual.plan.id_plan == plan.id_plan %}
+                            <button class="w-full bg-emerald-500 text-white font-bold py-4 px-6 rounded-xl uppercase tracking-wide cursor-not-allowed">
+                                <i class="fas fa-check mr-2"></i>
+                                Plan Actual
+                            </button>
+                        {% else %}
+                            <button class="w-full bg-gray-400 text-white font-bold py-4 px-6 rounded-xl uppercase tracking-wide cursor-not-allowed">
+                                <i class="fas fa-lock mr-2"></i>
+                                Ya tienes un plan
+                            </button>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'login' %}?next={% url 'suscribirse_plan' plan.id_plan %}" class="w-full bg-gradient-to-r from-blue-500 to-cyan-500 {% if plan.tipo == 'premium' %}from-emerald-500 to-emerald-600{% elif plan.tipo == 'completo' %}from-yellow-500 to-orange-500{% endif %} text-white font-bold py-4 px-6 rounded-xl uppercase tracking-wide transition-all duration-300 hover:-translate-y-1 hover:shadow-xl text-center block no-underline group">
+                        <i class="fas fa-user-plus mr-2 group-hover:animate-bounce"></i>
+                        {% if plan.tipo == 'premium' %}
+                            Elegir Premium
+                        {% elif plan.tipo == 'completo' %}
+                            Plan Completo
+                        {% else %}
+                            Comenzar Ahora
+                        {% endif %}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Paginación de planes -->
+{% if planes.paginator.num_pages > 1 %}
+<div class="mt-16 mb-8">
+    <nav class="flex justify-center items-center space-x-4">
+        <!-- Botón anterior -->
+        {% if planes.has_previous %}
+            <a href="#" data-page="{{ planes.previous_page_number }}" 
+               class="planes-pagination-link group relative inline-flex items-center px-4 py-3 bg-white border border-gray-300 text-gray-700 hover:bg-cyan-50 hover:border-cyan-300 hover:text-cyan-600 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Anterior
+            </a>
+        {% else %}
+            <span class="inline-flex items-center px-4 py-3 bg-gray-100 border border-gray-200 text-gray-400 rounded-xl font-medium cursor-not-allowed">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Anterior
+            </span>
+        {% endif %}
+
+        <!-- Números de página -->
+        <div class="flex items-center space-x-1">
+            {% for num in planes.paginator.page_range %}
+                {% if planes.number == num %}
+                    <span class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-cyan-600 to-cyan-700 text-white font-bold rounded-xl shadow-lg">
+                        {{ num }}
+                    </span>
+                {% elif num > planes.number|add:'-3' and num < planes.number|add:'3' %}
+                    <a href="#" data-page="{{ num }}" 
+                       class="planes-pagination-link inline-flex items-center justify-center w-12 h-12 bg-white border border-gray-300 text-gray-700 hover:bg-cyan-50 hover:border-cyan-300 hover:text-cyan-600 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                        {{ num }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Botón siguiente -->
+        {% if planes.has_next %}
+            <a href="#" data-page="{{ planes.next_page_number }}" 
+               class="planes-pagination-link group relative inline-flex items-center px-4 py-3 bg-white border border-gray-300 text-gray-700 hover:bg-cyan-50 hover:border-cyan-300 hover:text-cyan-600 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                Siguiente
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
+        {% else %}
+            <span class="inline-flex items-center px-4 py-3 bg-gray-100 border border-gray-200 text-gray-400 rounded-xl font-medium cursor-not-allowed">
+                Siguiente
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </span>
+        {% endif %}
+    </nav>
+</div>
+
+<!-- Información de paginación -->
+<div class="text-center mb-8">
+    <p class="text-gray-600">
+        Mostrando página {{ planes.number }} de {{ planes.paginator.num_pages }} 
+        ({{ planes.paginator.count }} planes en total)
+    </p>
+</div>
+{% endif %}

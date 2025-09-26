@@ -1,0 +1,408 @@
+{% load static %}
+
+<!-- Custom CSS for enhanced animations and effects -->
+<style>
+/* Line clamp utility for description text */
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Enhanced hover effects */
+.service-card {
+    position: relative;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(99, 102, 241, 0.05) 100%);
+    border-radius: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.service-card:hover::before {
+    opacity: 1;
+}
+
+/* Icon bounce animation */
+@keyframes iconBounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0) scale(1); }
+    40% { transform: translateY(-4px) scale(1.05); }
+    60% { transform: translateY(-2px) scale(1.02); }
+}
+
+.service-card:hover .icon-container {
+    animation: iconBounce 1s ease-in-out;
+}
+
+/* Gradient text animation */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.animated-gradient {
+    background: linear-gradient(-45deg, #2563eb, #3b82f6, #6366f1, #8b5cf6);
+    background-size: 400% 400%;
+    animation: gradientShift 4s ease infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Enhanced button hover effects */
+.btn-enhanced {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #2563eb 0%, #3730a3 100%);
+}
+
+.btn-enhanced::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.8s;
+}
+
+.btn-enhanced:hover::before {
+    left: 100%;
+}
+
+/* Floating animation for decorative elements */
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+.floating {
+    animation: float 3s ease-in-out infinite;
+}
+
+.floating-delayed {
+    animation: float 3s ease-in-out infinite;
+    animation-delay: 1.5s;
+}
+</style>
+
+<!-- Grid de servicios dinámico desde BD -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="servicios-grid">
+    {% for servicio in servicios %}
+    <div class="group service-card relative bg-white border border-gray-200 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 hover:border-blue-300 overflow-hidden">
+        <!-- Decorative background elements -->
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full -mr-16 -mt-16 opacity-50 group-hover:opacity-80 transition-opacity duration-500 floating"></div>
+        <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-purple-50 to-pink-50 rounded-full -ml-12 -mb-12 opacity-30 group-hover:opacity-60 transition-opacity duration-500 floating-delayed"></div>
+        
+        <!-- Icon container with enhanced design -->
+        <div class="icon-container relative z-10 w-20 h-20 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg">
+            <div class="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                <!-- Iconos dinámicos basados en el nombre del servicio -->
+                {% if 'exterior' in servicio.nombre_servicio.lower or 'lavado' in servicio.nombre_servicio.lower %}
+                    <i class="fas fa-car text-2xl text-white drop-shadow-lg"></i>
+                {% elif 'interior' in servicio.nombre_servicio.lower %}
+                    <i class="fas fa-couch text-2xl text-white drop-shadow-lg"></i>
+                {% elif 'detallado' in servicio.nombre_servicio.lower or 'premium' in servicio.nombre_servicio.lower %}
+                    <i class="fas fa-star text-2xl text-white drop-shadow-lg"></i>
+                {% elif 'ecológico' in servicio.nombre_servicio.lower or 'eco' in servicio.nombre_servicio.lower %}
+                    <i class="fas fa-leaf text-2xl text-white drop-shadow-lg"></i>
+                {% elif 'express' in servicio.nombre_servicio.lower or 'rápido' in servicio.nombre_servicio.lower %}
+                    <i class="fas fa-bolt text-2xl text-white drop-shadow-lg"></i>
+                {% elif 'mantenimiento' in servicio.nombre_servicio.lower %}
+                    <i class="fas fa-tools text-2xl text-white drop-shadow-lg"></i>
+                {% else %}
+                    <i class="fas fa-car-side text-2xl text-white drop-shadow-lg"></i>
+                {% endif %}
+            </div>
+            <!-- Small decorative dot -->
+            <div class="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full shadow-md group-hover:scale-125 transition-transform duration-300"></div>
+        </div>
+        
+        <!-- Service title with enhanced design -->
+        <h3 class="relative z-10 text-2xl font-bold text-slate-800 mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-indigo-600 group-hover:bg-clip-text transition-all duration-500 leading-tight">
+            {{ servicio.nombre_servicio }}
+        </h3>
+        
+        <!-- Service description with better styling -->
+        <p class="relative z-10 text-gray-600 mb-6 leading-relaxed text-sm line-clamp-3 group-hover:text-gray-700 transition-colors duration-300">
+            {{ servicio.descripcion }}
+        </p>
+        
+        <!-- Enhanced features list -->
+        <div class="relative z-10 mb-6">
+            <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                <i class="fas fa-shield-alt text-green-500 mr-2"></i>
+                Beneficios incluidos
+            </h4>
+            <ul class="space-y-2">
+                <li class="flex items-center text-gray-600 text-sm group-hover:text-gray-700 transition-colors duration-300">
+                    <div class="w-2 h-2 bg-gradient-to-r from-green-400 to-green-500 rounded-full mr-3 flex-shrink-0"></div>
+                    Servicio profesional garantizado
+                </li>
+                <li class="flex items-center text-gray-600 text-sm group-hover:text-gray-700 transition-colors duration-300">
+                    <div class="w-2 h-2 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full mr-3 flex-shrink-0"></div>
+                    Productos de alta calidad
+                </li>
+                <li class="flex items-center text-gray-600 text-sm group-hover:text-gray-700 transition-colors duration-300">
+                    <div class="w-2 h-2 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full mr-3 flex-shrink-0"></div>
+                    Personal especializado
+                </li>
+                <li class="flex items-center text-gray-600 text-sm group-hover:text-gray-700 transition-colors duration-300">
+                    <div class="w-2 h-2 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full mr-3 flex-shrink-0"></div>
+                    Satisfacción garantizada
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Price and action section with enhanced design -->
+        <div class="relative z-10 flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl border border-gray-200 group-hover:border-blue-200 transition-colors duration-300">
+            <div class="flex flex-col">
+                <span class="text-sm text-gray-500 font-medium mb-1">Precio del servicio</span>
+                <span class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    ${{ servicio.precio|floatformat:0 }}
+                </span>
+            </div>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'reservas' %}" class="btn-enhanced group/btn px-6 py-3 text-white font-semibold rounded-xl hover:shadow-xl hover:scale-105 transition-all duration-300 relative overflow-hidden">
+                    <span class="relative z-10 flex items-center">
+                        <i class="fas fa-calendar-check mr-2 group-hover/btn:animate-pulse"></i>
+                        Reservar Ahora
+                    </span>
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-enhanced group/btn px-6 py-3 bg-gradient-to-r from-gray-600 via-gray-700 to-gray-800 text-white font-semibold rounded-xl hover:shadow-xl hover:scale-105 transition-all duration-300 relative overflow-hidden" title="Inicia sesión para reservar este servicio">
+                    <span class="relative z-10 flex items-center">
+                        <i class="fas fa-sign-in-alt mr-2 group-hover/btn:animate-pulse"></i>
+                        Iniciar Sesión
+                    </span>
+                </a>
+            {% endif %}
+        </div>
+        
+        <!-- Hover effect overlay -->
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-50/0 to-indigo-50/0 group-hover:from-blue-50/30 group-hover:to-indigo-50/20 rounded-3xl transition-all duration-500 pointer-events-none"></div>
+    </div>
+    {% empty %}
+    <!-- Enhanced empty state -->
+    <div class="col-span-full text-center py-20">
+        <div class="relative mx-auto mb-8">
+            <!-- Animated background circles -->
+            <div class="w-32 h-32 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto relative">
+                <div class="w-24 h-24 bg-gradient-to-br from-blue-200 to-indigo-200 rounded-full flex items-center justify-center animate-pulse">
+                    <i class="fas fa-car text-4xl text-blue-500"></i>
+                </div>
+                <!-- Decorative elements -->
+                <div class="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-bounce"></div>
+                <div class="absolute -bottom-2 -left-2 w-6 h-6 bg-gradient-to-br from-green-400 to-green-500 rounded-full animate-bounce" style="animation-delay: 0.5s;"></div>
+            </div>
+        </div>
+        <h3 class="text-3xl font-bold text-gray-700 mb-4">No hay servicios disponibles</h3>
+        <p class="text-gray-500 text-lg max-w-md mx-auto leading-relaxed">
+            Los servicios se mostrarán aquí una vez que sean agregados por el administrador. 
+            <br><span class="text-blue-600 font-medium">¡Vuelve pronto!</span>
+        </p>
+        <!-- Optional call to action for admins -->
+        {% if user.is_staff %}
+        <div class="mt-8">
+            <a href="{% url 'admin:index' %}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300">
+                <i class="fas fa-plus mr-2"></i>
+                Agregar Servicios
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Paginación con estilos inline para evitar conflictos CSS -->
+{% if servicios.paginator.num_pages > 1 %}
+<div style="position: static; display: block; width: 100%; margin: 40px auto; padding: 20px; background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%); border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 800px; clear: both;">
+    <!-- Título -->
+    <div style="text-align: center; margin-bottom: 20px;">
+        <h3 style="color: #1f2937; font-size: 18px; font-weight: 600; margin-bottom: 8px;">Navegación de Servicios</h3>
+        <p style="color: #6b7280; font-size: 14px;">Página {{ servicios.number }} de {{ servicios.paginator.num_pages }} <span style="color: #2563eb; font-weight: 500;">({{ servicios.paginator.count }} servicios en total)</span></p>
+    </div>
+    
+    <!-- Botones -->
+    <div style="display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap;">
+        <!-- Anterior -->
+        {% if servicios.has_previous %}
+            <a href="#" data-page="{{ servicios.previous_page_number }}" class="servicios-pagination-link" style="display: inline-flex; align-items: center; padding: 12px 20px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; font-weight: 600; border-radius: 15px; text-decoration: none; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);">← Anterior</a>
+        {% else %}
+            <span style="display: inline-flex; align-items: center; padding: 12px 20px; background: #d1d5db; color: #9ca3af; font-weight: 600; border-radius: 15px; cursor: not-allowed;">← Anterior</span>
+        {% endif %}
+
+        <!-- Números -->
+        <div style="display: flex; gap: 8px; align-items: center;">
+            {% for num in servicios.paginator.page_range %}
+                {% if servicios.number == num %}
+                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); color: white; font-weight: bold; border-radius: 12px; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);">{{ num }}</span>
+                {% elif num > servicios.number|add:'-3' and num < servicios.number|add:'3' %}
+                    <a href="#" data-page="{{ num }}" class="servicios-pagination-link" style="display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; background: white; color: #374151; font-weight: 600; border-radius: 12px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 2px solid #e5e7eb;">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Siguiente -->
+        {% if servicios.has_next %}
+            <a href="#" data-page="{{ servicios.next_page_number }}" class="servicios-pagination-link" style="display: inline-flex; align-items: center; padding: 12px 20px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; font-weight: 600; border-radius: 15px; text-decoration: none; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);">Siguiente →</a>
+        {% else %}
+            <span style="display: inline-flex; align-items: center; padding: 12px 20px; background: #d1d5db; color: #9ca3af; font-weight: 600; border-radius: 15px; cursor: not-allowed;">Siguiente →</span>
+        {% endif %}
+    </div>
+    
+    <!-- Progreso -->
+    <div style="margin-top: 20px;">
+        {% widthratio servicios.number servicios.paginator.num_pages 100 as progress_percent %}
+        <div style="width: 100%; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden;">
+            <div style="width: {{ progress_percent }}%; height: 100%; background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%); border-radius: 3px;"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: #6b7280;">
+            <span>Inicio</span>
+            <span>{{ progress_percent }}% completado</span>
+            <span>Final</span>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Enhanced JavaScript for better interactions -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Enhanced hover effects for service cards
+    const serviceCards = document.querySelectorAll('.service-card');
+    
+    serviceCards.forEach(card => {
+        let timeout;
+        
+        // Add mouse enter effect
+        card.addEventListener('mouseenter', function() {
+            clearTimeout(timeout);
+            
+            // Add subtle rotation based on mouse position
+            card.addEventListener('mousemove', handleMouseMove);
+            
+            // Add loading effect to buttons
+            const button = card.querySelector('.btn-enhanced');
+            if (button) {
+                button.style.transform = 'translateY(-2px)';
+            }
+        });
+        
+        // Add mouse leave effect
+        card.addEventListener('mouseleave', function() {
+            card.removeEventListener('mousemove', handleMouseMove);
+            
+            // Reset transformations
+            timeout = setTimeout(() => {
+                card.style.transform = '';
+                const button = card.querySelector('.btn-enhanced');
+                if (button) {
+                    button.style.transform = '';
+                }
+            }, 100);
+        });
+        
+        function handleMouseMove(e) {
+            const rect = card.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const deltaX = (e.clientX - centerX) / rect.width;
+            const deltaY = (e.clientY - centerY) / rect.height;
+            
+            // Apply subtle 3D rotation
+            card.style.transform = `
+                rotateY(${deltaX * 5}deg) 
+                rotateX(${-deltaY * 5}deg) 
+                translateY(-12px)
+                scale(1.02)
+            `;
+        }
+    });
+    
+    // Add click animation for buttons
+    const buttons = document.querySelectorAll('.btn-enhanced');
+    buttons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            // Create ripple effect
+            const ripple = document.createElement('span');
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                left: ${x}px;
+                top: ${y}px;
+                background: rgba(255, 255, 255, 0.3);
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                pointer-events: none;
+            `;
+            
+            button.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+    
+    // Add stagger animation for cards on page load
+    const cards = document.querySelectorAll('.service-card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(50px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 150);
+    });
+});
+
+// Add CSS for ripple animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes ripple {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+    
+    /* Enhanced price animation */
+    .animated-gradient {
+        animation: gradientShift 4s ease infinite;
+    }
+    
+    /* Smooth transitions for all interactive elements */
+    .service-card * {
+        transition: inherit;
+    }
+    
+    /* Enhanced shadow on scroll */
+    .service-card.in-view {
+        box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.25);
+    }
+`;
+document.head.appendChild(style);
+</script>

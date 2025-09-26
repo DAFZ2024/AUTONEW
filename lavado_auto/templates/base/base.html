@@ -8,20 +8,32 @@
     <meta name="keywords" content="lavado de autos, cuidado automotriz, lavado premium, detailing, encerado, pulido, limpieza vehicular">
     <meta name="author" content="Autonew - Andres Forero">
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-red': '#E81C2E',
-                        'brand-blue': '#0c2331',
+    <!-- Tailwind CSS - Using local version for production -->
+    {% if debug %}
+        <!-- Development: Use CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            'brand-red': '#E81C2E',
+                            'brand-blue': '#0c2331',
+                        }
                     }
                 }
             }
-        }
-    </script>
+        </script>
+    {% else %}
+        <!-- Production: Use compiled Tailwind or fallback -->
+        <link href="https://unpkg.com/tailwindcss@3.4.0/dist/tailwind.min.css" rel="stylesheet">
+        <style>
+            :root {
+                --brand-red: #E81C2E;
+                --brand-blue: #0c2331;
+            }
+        </style>
+    {% endif %}
     
     <link
     rel="stylesheet"
@@ -67,6 +79,45 @@
             border: 3px solid;
             border-image: linear-gradient(45deg, #06b6d4, #3b82f6, #06b6d4) 1;
             border-radius: 50%;
+        }
+        
+        /* Loader básico */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+        
+        #loader.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        #loader:not(.show) {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
         /* Animación suave para tooltip */
@@ -136,6 +187,62 @@
                 margin-top: 1rem;
             }
         }
+        
+        /* Estilos para modales de términos y condiciones y política de privacidad */
+        .modal-enter {
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        /* Estilos para el contenido de los modales */
+        .prose h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .prose p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+        
+        .prose ul {
+            margin-bottom: 1rem;
+        }
+        
+        .prose li {
+            margin-bottom: 0.25rem;
+        }
+        
+        /* Scrollbar personalizada para los modales */
+        .modal-enter::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .modal-enter::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+        
+        .modal-enter::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        
+        .modal-enter::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
     </style>
     <header>
         <!-- Navbar con Tailwind CSS (Paleta clara) -->
@@ -172,7 +279,7 @@
                             {% if request.user.is_authenticated %}
                             <li><a href="/citas" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Tus reservas</a></li>
                             <li><a href="/reservas" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Reservar</a></li>
-                            <li><a href="/contacto" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Contacto</a></li>
+                            <li><a href="/contacto" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">PQRS</a></li>
                             <li><a href="/comentarios" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Comentar</a></li>
                             <li><a href="/perfil" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Perfil</a></li>
                             {% endif %}
@@ -342,13 +449,19 @@
             const mobileMenu = document.getElementById('mobile-menu');
             const navbar = document.querySelector('nav');
             
-            mobileMenuButton.addEventListener('click', function() {
-                mobileMenu.classList.toggle('hidden');
-            });
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', function() {
+                    if (mobileMenu) {
+                        mobileMenu.classList.toggle('hidden');
+                    }
+                });
+            }
         
             // Cerrar menú móvil al hacer clic fuera
             document.addEventListener('click', function(event) {
-                if (!mobileMenuButton.contains(event.target) && !mobileMenu.contains(event.target)) {
+                if (mobileMenuButton && mobileMenu && 
+                    !mobileMenuButton.contains(event.target) && 
+                    !mobileMenu.contains(event.target)) {
                     mobileMenu.classList.add('hidden');
                 }
             });
@@ -387,7 +500,7 @@
             const dropdown = document.getElementById('profileDropdown');
             const profileImage = event.target.closest('[onclick="toggleProfileMenu()"]');
             
-            if (!profileImage && !dropdown.contains(event.target)) {
+            if (dropdown && !profileImage && !dropdown.contains(event.target)) {
                 dropdown.classList.add('hidden');
             }
         });
@@ -418,8 +531,8 @@
                 <div>
                     <a href="/" class="relative group inline-block">
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-600 to-cyan-700 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wider hover:from-cyan-500 hover:via-blue-500 hover:to-cyan-600 transition-all duration-300">
-                            Auto<span class="text-blue-800 font-extrabold">new</span>
-                        </span>
+                                    Auto<span class="text-blue-800 font-extrabold">new</span>
+                                </span>
                         <div class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 group-hover:w-full transition-all duration-300"></div>
                     </a>
                     <p class="text-gray-500 mt-3 sm:mt-4 leading-relaxed text-sm sm:text-base max-w-sm mx-auto sm:mx-0">
@@ -490,6 +603,32 @@
     <!-- Bottom Footer - Optimizado para móviles -->
     <div class="border-t border-gray-200 mt-6 sm:mt-8 pt-4 sm:pt-6 pb-4 sm:pb-6 bg-gray-50 rounded-b-3xl">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Enlaces adicionales -->
+            <div class="flex flex-wrap justify-center items-center space-x-4 mb-4 text-xs sm:text-sm">
+                <button onclick="mostrarModal('modalPoliticaCookies')" 
+                   class="text-gray-600 hover:text-cyan-600 underline hover:no-underline transition-colors duration-200 flex items-center space-x-1 bg-transparent border-0 p-0">
+                    <span>🍪</span>
+                    <span>Política de Cookies</span>
+                </button>
+                <span class="text-gray-400">|</span>
+                <button onclick="mostrarModal('modalConfigCookies')" 
+                        class="text-gray-600 hover:text-cyan-600 underline hover:no-underline transition-colors duration-200 flex items-center space-x-1 bg-transparent border-0 p-0">
+                    <span>⚙️</span>
+                    <span>Configurar Cookies</span>
+                </button>
+                <span class="text-gray-400">|</span>
+                <button onclick="mostrarModal('modalTerminos')" 
+                   class="text-gray-600 hover:text-cyan-600 underline hover:no-underline transition-colors duration-200 bg-transparent border-0 p-0">
+                    Términos y Condiciones
+                </button>
+                <span class="text-gray-400">|</span>
+                <button onclick="mostrarModal('modalPrivacidad')" 
+                   class="text-gray-600 hover:text-cyan-600 underline hover:no-underline transition-colors duration-200 bg-transparent border-0 p-0">
+                    Política de Privacidad
+                </button>
+            </div>
+            
+            <!-- Copyright -->
             <p class="text-center text-gray-500 text-xs sm:text-sm leading-relaxed">
                 &copy; <span id="year"></span> 
                 <a href="#" class="text-cyan-700 font-semibold hover:text-cyan-500 hover:underline transition-colors duration-300">AUTONEW</a>. 
@@ -503,20 +642,502 @@
         </div>
     </div>
 </footer>
+
+<!-- Modal para Términos y Condiciones -->
+<div id="modalTerminos" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-50 modal-overlay">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-enter">
+            <div class="sticky top-0 bg-white/95 backdrop-blur-xl border-b border-gray-200 px-6 py-4 rounded-t-2xl">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-file-contract text-cyan-600 mr-3"></i>
+                        Términos y Condiciones
+                    </h2>
+                    <button onclick="cerrarModal('modalTerminos')" 
+                            class="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors duration-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6 space-y-6">
+                <div class="prose prose-gray max-w-none">
+                    <div class="bg-gradient-to-r from-cyan-50 to-blue-50 border border-cyan-200 rounded-lg p-4 mb-6">
+                        <p class="text-sm text-gray-600 mb-2"><strong>Última actualización:</strong> {{ "now"|date:"d/m/Y" }}</p>
+                        <p class="text-sm text-gray-700">Al usar nuestros servicios, aceptas estos términos y condiciones.</p>
+                    </div>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">1. Aceptación de los Términos</h3>
+                    <p class="text-gray-700 mb-4">Al acceder y utilizar los servicios de AUTONEW, usted acepta estar sujeto a estos Términos y Condiciones de uso, todas las leyes y regulaciones aplicables, y acepta que es responsable del cumplimiento de cualquier ley local aplicable.</p>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">2. Descripción del Servicio</h3>
+                    <p class="text-gray-700 mb-4">AUTONEW ofrece servicios profesionales de lavado y cuidado automotriz, incluyendo pero no limitado a:</p>
+                    <ul class="list-disc pl-6 mb-4 text-gray-700">
+                        <li>Lavado exterior e interior de vehículos</li>
+                        <li>Servicios de detailing automotriz</li>
+                        <li>Encerado y pulido</li>
+                        <li>Limpieza especializada</li>
+                        <li>Servicios adicionales según disponibilidad</li>
+                    </ul>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">3. Reservas y Cancelaciones</h3>
+                    <p class="text-gray-700 mb-2"><strong>3.1 Reservas:</strong></p>
+                    <ul class="list-disc pl-6 mb-4 text-gray-700">
+                        <li>Las reservas deben realizarse con al menos 24 horas de anticipación</li>
+                        <li>Confirmamos disponibilidad por email o WhatsApp</li>
+                        <li>El pago puede realizarse al momento del servicio o mediante pago en línea</li>
+                    </ul>
+                    
+                    <p class="text-gray-700 mb-2"><strong>3.2 Cancelaciones:</strong></p>
+                    <ul class="list-disc pl-6 mb-4 text-gray-700">
+                        <li>Cancelaciones gratuitas hasta 12 horas antes del servicio</li>
+                        <li>Cancelaciones con menos de 12 horas pueden incurrir en cargos</li>
+                        <li>No-show (no presentarse) resultará en cargo del 50% del servicio</li>
+                    </ul>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">4. Precios y Pagos</h3>
+                    <p class="text-gray-700 mb-4">Los precios están sujetos a cambios sin previo aviso. Aceptamos efectivo, tarjetas de crédito/débito y pagos en línea. Todos los precios incluyen IVA cuando aplique.</p>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">5. Responsabilidad y Limitaciones</h3>
+                    <p class="text-gray-700 mb-4">AUTONEW se compromete a brindar servicios de alta calidad, sin embargo:</p>
+                    <ul class="list-disc pl-6 mb-4 text-gray-700">
+                        <li>No nos hacemos responsables por objetos de valor dejados en el vehículo</li>
+                        <li>Inspeccionamos el vehículo antes del servicio para documentar cualquier daño preexistente</li>
+                        <li>Cualquier reclamo debe realizarse inmediatamente después del servicio</li>
+                        <li>Nuestra responsabilidad está limitada al costo del servicio prestado</li>
+                    </ul>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">6. Política de Privacidad</h3>
+                    <p class="text-gray-700 mb-4">Respetamos su privacidad y protegemos sus datos personales de acuerdo con nuestra Política de Privacidad y las leyes aplicables de protección de datos.</p>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">7. Modificaciones</h3>
+                    <p class="text-gray-700 mb-4">AUTONEW se reserva el derecho de modificar estos términos en cualquier momento. Las modificaciones entrarán en vigor inmediatamente después de su publicación en nuestro sitio web.</p>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">8. Contacto</h3>
+                    <p class="text-gray-700 mb-4">Para preguntas sobre estos términos, contáctanos en:</p>
+                    <ul class="list-none pl-0 mb-4 text-gray-700">
+                        <li><strong>Email:</strong> info@autonew.com</li>
+                        <li><strong>Teléfono:</strong> +57 XXX XXX XXXX</li>
+                        <li><strong>WhatsApp:</strong> +57 XXX XXX XXXX</li>
+                    </ul>
+                </div>
+                
+                <div class="flex justify-end pt-4 border-t border-gray-200">
+                    <button onclick="cerrarModal('modalTerminos')" 
+                            class="px-6 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors duration-200 font-medium">
+                        <i class="fas fa-check mr-2"></i>Entendido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Política de Privacidad -->
+<div id="modalPrivacidad" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-50 modal-overlay">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-enter">
+            <div class="sticky top-0 bg-white/95 backdrop-blur-xl border-b border-gray-200 px-6 py-4 rounded-t-2xl">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-shield-alt text-cyan-600 mr-3"></i>
+                        Política de Privacidad
+                    </h2>
+                    <button onclick="cerrarModal('modalPrivacidad')" 
+                            class="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors duration-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6 space-y-6">
+                <div class="prose prose-gray max-w-none">
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4 mb-6">
+                        <p class="text-sm text-gray-600 mb-2"><strong>Última actualización:</strong> {{ "now"|date:"d/m/Y" }}</p>
+                        <p class="text-sm text-gray-700">En AUTONEW valoramos y protegemos tu privacidad. Esta política explica cómo recopilamos, usamos y protegemos tu información.</p>
+                    </div>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">1. Información que Recopilamos</h3>
+                    <p class="text-gray-700 mb-2"><strong>1.1 Información Personal:</strong></p>
+                    <ul class="list-disc pl-6 mb-4 text-gray-700">
+                        <li>Nombre completo y datos de contacto</li>
+                        <li>Información del vehículo (marca, modelo, placa)</li>
+                        <li>Historial de servicios</li>
+                        <li>Preferencias de servicio</li>
+                    </ul>
+
+                    <p class="text-gray-700 mb-2"><strong>1.2 Información Técnica:</strong></p>
+                    <ul class="list-disc pl-6 mb-4 text-gray-700">
+                        <li>Dirección IP y datos de navegación</li>
+                        <li>Cookies y tecnologías similares</li>
+                        <li>Información del dispositivo</li>
+                    </ul>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">2. Cómo Usamos tu Información</h3>
+                    <ul class="list-disc pl-6 mb-4 text-gray-700">
+                        <li>Procesar y gestionar tus reservas de servicios</li>
+                        <li>Comunicarnos contigo sobre nuestros servicios</li>
+                        <li>Mejorar la calidad de nuestros servicios</li>
+                        <li>Enviar promociones y ofertas especiales (con tu consentimiento)</li>
+                        <li>Cumplir con obligaciones legales</li>
+                    </ul>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">3. Compartir Información</h3>
+                    <p class="text-gray-700 mb-4">No vendemos, comercializamos ni transferimos tu información personal a terceros, excepto:</p>
+                    <ul class="list-disc pl-6 mb-4 text-gray-700">
+                        <li>Proveedores de servicios de confianza que nos ayudan a operar</li>
+                        <li>Cuando lo requiera la ley</li>
+                        <li>Para proteger nuestros derechos o seguridad</li>
+                    </ul>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">4. Cookies y Tecnologías de Seguimiento</h3>
+                    <p class="text-gray-700 mb-4">Utilizamos cookies para:</p>
+                    <ul class="list-disc pl-6 mb-4 text-gray-700">
+                        <li>Mejorar la funcionalidad del sitio web</li>
+                        <li>Recordar tus preferencias</li>
+                        <li>Analizar el uso del sitio</li>
+                        <li>Personalizar tu experiencia</li>
+                    </ul>
+                    <p class="text-gray-700 mb-4">Puedes gestionar las cookies en la configuración de tu navegador o usando nuestro panel de configuración de cookies.</p>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">5. Seguridad de Datos</h3>
+                    <p class="text-gray-700 mb-4">Implementamos medidas de seguridad técnicas y organizativas para proteger tu información:</p>
+                    <ul class="list-disc pl-6 mb-4 text-gray-700">
+                        <li>Encriptación SSL para transmisión de datos</li>
+                        <li>Acceso restringido a información personal</li>
+                        <li>Auditorías regulares de seguridad</li>
+                        <li>Capacitación del personal en protección de datos</li>
+                    </ul>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">6. Tus Derechos</h3>
+                    <p class="text-gray-700 mb-4">Tienes derecho a:</p>
+                    <ul class="list-disc pl-6 mb-4 text-gray-700">
+                        <li>Acceder a tu información personal</li>
+                        <li>Rectificar datos incorrectos</li>
+                        <li>Solicitar la eliminación de tus datos</li>
+                        <li>Oponerte al procesamiento</li>
+                        <li>Portabilidad de datos</li>
+                        <li>Retirar el consentimiento en cualquier momento</li>
+                    </ul>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">7. Retención de Datos</h3>
+                    <p class="text-gray-700 mb-4">Conservamos tu información personal solo durante el tiempo necesario para los fines establecidos en esta política o según lo requiera la ley.</p>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">8. Cambios en esta Política</h3>
+                    <p class="text-gray-700 mb-4">Podemos actualizar esta política ocasionalmente. Te notificaremos sobre cambios significativos por email o mediante aviso en nuestro sitio web.</p>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">9. Contacto</h3>
+                    <p class="text-gray-700 mb-4">Para ejercer tus derechos o si tienes preguntas sobre esta política:</p>
+                    <ul class="list-none pl-0 mb-4 text-gray-700">
+                        <li><strong>Email:</strong> privacidad@autonew.com</li>
+                        <li><strong>Teléfono:</strong> +57 XXX XXX XXXX</li>
+                        <li><strong>Dirección:</strong> [Dirección física de la empresa]</li>
+                    </ul>
+                </div>
+                
+                <div class="flex justify-end pt-4 border-t border-gray-200">
+                    <button onclick="cerrarModal('modalPrivacidad')" 
+                            class="px-6 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors duration-200 font-medium">
+                        <i class="fas fa-check mr-2"></i>Entendido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Política de Cookies -->
+<div id="modalPoliticaCookies" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-50 modal-overlay">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-enter">
+            <div class="sticky top-0 bg-white/95 backdrop-blur-xl border-b border-gray-200 px-6 py-4 rounded-t-2xl">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-cookie-bite text-cyan-600 mr-3"></i>
+                        Política de Cookies
+                    </h2>
+                    <button onclick="cerrarModal('modalPoliticaCookies')" 
+                            class="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors duration-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6 space-y-6">
+                <div class="prose prose-gray max-w-none">
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-6">
+                        <p class="text-sm text-gray-600 mb-2"><strong>Última actualización:</strong> {{ "now"|date:"d/m/Y" }}</p>
+                        <p class="text-sm text-gray-700">En AUTONEW utilizamos cookies para mejorar tu experiencia de navegación y ofrecerte contenido personalizado.</p>
+                    </div>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">¿Qué son las cookies?</h3>
+                    <p class="text-gray-700 mb-4">Las cookies son pequeños archivos de texto que se almacenan en tu dispositivo cuando visitas nuestro sitio web. Nos ayudan a mejorar tu experiencia de navegación y recordar tus preferencias.</p>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">Tipos de cookies que utilizamos</h3>
+                    
+                    <div class="space-y-4 mb-6">
+                        <div class="border border-green-200 rounded-lg p-4 bg-green-50">
+                            <h4 class="font-semibold text-gray-800 mb-2 flex items-center">
+                                <i class="fas fa-lock text-green-600 mr-2"></i>
+                                Cookies Necesarias
+                                <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs ml-2">Siempre Activas</span>
+                            </h4>
+                            <p class="text-gray-700 text-sm mb-2">Esenciales para el funcionamiento del sitio. No se pueden desactivar.</p>
+                            <ul class="list-disc pl-5 text-sm text-gray-600">
+                                <li>Cookies de sesión de usuario</li>
+                                <li>Cookies de autenticación y seguridad</li>
+                                <li>Cookies del carrito de reservas</li>
+                                <li>Cookies de configuración básica del sitio</li>
+                            </ul>
+                        </div>
+
+                        <div class="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                            <h4 class="font-semibold text-gray-800 mb-2 flex items-center">
+                                <i class="fas fa-cog text-blue-600 mr-2"></i>
+                                Cookies Funcionales
+                                <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs ml-2">Opcionales</span>
+                            </h4>
+                            <p class="text-gray-700 text-sm mb-2">Mejoran la funcionalidad y recuerdan tus preferencias.</p>
+                            <ul class="list-disc pl-5 text-sm text-gray-600">
+                                <li>Preferencias de idioma</li>
+                                <li>Configuraciones de tema</li>
+                                <li>Datos del formulario guardados</li>
+                                <li>Ubicación preferida para servicios</li>
+                            </ul>
+                        </div>
+
+                        <div class="border border-yellow-200 rounded-lg p-4 bg-yellow-50">
+                            <h4 class="font-semibold text-gray-800 mb-2 flex items-center">
+                                <i class="fas fa-chart-bar text-yellow-600 mr-2"></i>
+                                Cookies de Análisis
+                                <span class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs ml-2">Opcionales</span>
+                            </h4>
+                            <p class="text-gray-700 text-sm mb-2">Nos ayudan a entender cómo usas nuestro sitio para mejorarlo.</p>
+                            <ul class="list-disc pl-5 text-sm text-gray-600">
+                                <li>Google Analytics (anónimo)</li>
+                                <li>Tiempo de permanencia en el sitio</li>
+                                <li>Páginas más visitadas</li>
+                                <li>Servicios más solicitados</li>
+                            </ul>
+                        </div>
+
+                        <div class="border border-purple-200 rounded-lg p-4 bg-purple-50">
+                            <h4 class="font-semibold text-gray-800 mb-2 flex items-center">
+                                <i class="fas fa-bullseye text-purple-600 mr-2"></i>
+                                Cookies de Marketing
+                                <span class="bg-purple-500 text-white px-2 py-1 rounded-full text-xs ml-2">Opcionales</span>
+                            </h4>
+                            <p class="text-gray-700 text-sm mb-2">Para mostrarte ofertas personalizadas y promociones relevantes.</p>
+                            <ul class="list-disc pl-5 text-sm text-gray-600">
+                                <li>Remarketing de servicios</li>
+                                <li>Publicidad personalizada</li>
+                                <li>Seguimiento de conversiones</li>
+                                <li>Campañas de email marketing</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">Gestión de cookies</h3>
+                    <p class="text-gray-700 mb-4">Puedes gestionar tus preferencias de cookies en cualquier momento:</p>
+                    <ul class="list-disc pl-6 mb-4 text-gray-700">
+                        <li>Desde tu navegador: configurar para rechazar o alertar sobre cookies</li>
+                        <li>Desde nuestro sitio: usar el centro de preferencias</li>
+                        <li>Las cookies necesarias no pueden desactivarse</li>
+                    </ul>
+
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Centro de Preferencias</h4>
+                        <p class="text-sm text-gray-700 mb-3">Configura qué tipos de cookies quieres permitir:</p>
+                        <button onclick="cerrarModal('modalPoliticaCookies'); setTimeout(() => mostrarModal('modalConfigCookies'), 300);" 
+                                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm">
+                            <i class="fas fa-cog mr-2"></i>Configurar Cookies
+                        </button>
+                    </div>
+
+                    <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">Contacto</h3>
+                    <p class="text-gray-700 mb-4">Si tienes preguntas sobre nuestras cookies:</p>
+                    <ul class="list-none pl-0 mb-4 text-gray-700">
+                        <li><strong>Email:</strong> privacidad@autonew.com</li>
+                        <li><strong>Teléfono:</strong> +57 XXX XXX XXXX</li>
+                    </ul>
+                </div>
+                
+                <div class="flex justify-end pt-4 border-t border-gray-200">
+                    <button onclick="cerrarModal('modalPoliticaCookies')" 
+                            class="px-6 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors duration-200 font-medium">
+                        <i class="fas fa-check mr-2"></i>Entendido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Configuración de Cookies -->
+<div id="modalConfigCookies" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-50 modal-overlay">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 max-w-3xl w-full max-h-[90vh] overflow-y-auto modal-enter">
+            <div class="sticky top-0 bg-white/95 backdrop-blur-xl border-b border-gray-200 px-6 py-4 rounded-t-2xl">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-cogs text-cyan-600 mr-3"></i>
+                        Configuración de Cookies
+                    </h2>
+                    <button onclick="cerrarModal('modalConfigCookies')" 
+                            class="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors duration-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6 space-y-6">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-6">
+                    <p class="text-sm text-gray-700">Personaliza tu experiencia eligiendo qué tipos de cookies permitir. Puedes cambiar estas preferencias en cualquier momento.</p>
+                </div>
+
+                <form id="cookiePreferencesForm" class="space-y-6">
+                    <!-- Cookies Necesarias -->
+                    <div class="border border-green-200 rounded-lg p-4 bg-green-50">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-lock text-green-600 mr-3 text-lg"></i>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Cookies Necesarias</h3>
+                                    <p class="text-sm text-gray-600">Requeridas para el funcionamiento del sitio</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="cookiesNecesarias" checked disabled class="w-5 h-5 text-green-600">
+                                <label for="cookiesNecesarias" class="ml-2 text-sm text-gray-500">Siempre activas</label>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-600">Estas cookies son esenciales para el funcionamiento del sitio web y no pueden ser desactivadas.</p>
+                    </div>
+
+                    <!-- Cookies Funcionales -->
+                    <div class="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-cog text-blue-600 mr-3 text-lg"></i>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Cookies Funcionales</h3>
+                                    <p class="text-sm text-gray-600">Mejoran la funcionalidad y personalizaci&oacute;n</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="cookiesFuncionales" class="sr-only peer" value="funcionales">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-600">Permiten recordar tus preferencias y personalizar tu experiencia de navegaci&oacute;n.</p>
+                    </div>
+
+                    <!-- Cookies de Análisis -->
+                    <div class="border border-yellow-200 rounded-lg p-4 bg-yellow-50">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-chart-bar text-yellow-600 mr-3 text-lg"></i>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Cookies de Análisis</h3>
+                                    <p class="text-sm text-gray-600">Nos ayudan a mejorar el sitio web</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="cookiesAnalisis" class="sr-only peer" value="analisis">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-yellow-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-600">Recopilan información anónima sobre c&oacute;mo usas el sitio para ayudarnos a mejorarlo.</p>
+                    </div>
+
+                    <!-- Cookies de Marketing -->
+                    <div class="border border-purple-200 rounded-lg p-4 bg-purple-50">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-bullseye text-purple-600 mr-3 text-lg"></i>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Cookies de Marketing</h3>
+                                    <p class="text-sm text-gray-600">Para ofertas y promociones personalizadas</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="cookiesMarketing" class="sr-only peer" value="marketing">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-600">Permiten mostrar anuncios y ofertas personalizadas basadas en tus intereses.</p>
+                    </div>
+                </form>
+                
+                <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
+                    <button onclick="rechazarTodasLasCookies()" 
+                            class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium">
+                        <i class="fas fa-times mr-2"></i>Solo Necesarias
+                    </button>
+                    <button onclick="aceptarTodasLasCookies()" 
+                            class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">
+                        <i class="fas fa-check mr-2"></i>Aceptar Todas
+                    </button>
+                    <button onclick="guardarPreferenciasCookies()" 
+                            class="flex-1 px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors duration-200 font-medium">
+                        <i class="fas fa-save mr-2"></i>Guardar Preferencias
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 </script>
 
-<!-- Pre carga -->
+<!--boton de regresar -->
+<a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+<!-- Loader básico -->
 <div id="loader" class="show">
     <div class="loader"></div>
 </div>
 
-<!--boton de regresar -->
-<a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
-
 
 <!--  librerias JavaScript -->
+<!-- model-viewer para visualizar modelos 3D (web component) -->
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<!-- Polyfill para navegadores que no soportan Web Components/v1 -->
+<script nomodule src="https://unpkg.com/@webcomponents/webcomponentsjs@2.6.0/webcomponents-bundle.js"></script>
+<!-- Legacy build (para navegadores que no soportan módulos) -->
+<script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
+<!-- Verificación en consola para diagnosticar problemas de registro -->
+<script>
+    (function() {
+        function checkModelViewer() {
+            try {
+                if (window.customElements && window.customElements.get('model-viewer')) {
+                    console.debug('model-viewer registrado correctamente.');
+                } else {
+                    console.warn('model-viewer no está registrado. Revisa si el script fue bloqueado por CSP o si el navegador es muy antiguo.');
+                }
+            } catch (e) {
+                console.error('Error comprobando model-viewer:', e);
+            }
+        }
+
+        if (document.readyState === 'complete') {
+            checkModelViewer();
+        } else {
+            window.addEventListener('load', checkModelViewer);
+            // también un intento leve después de 1.5s por si carga tarde
+            setTimeout(checkModelViewer, 1500);
+        }
+    })();
+</script>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
 <script src="{% static 'lib/easing/easing.min.js' %}"></script>
@@ -527,9 +1148,236 @@
 <!-- Template Javascript -->
 <script src="{% static 'js/main.js' %}"></script>
 
+<!-- Scripts para los modales de términos y condiciones y política de privacidad -->
+<script>
+    // Funciones para manejar modales
+    function mostrarModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('hidden');
+            
+            // Agregar animación de entrada suave
+            setTimeout(() => {
+                const modalContent = modal.querySelector('.modal-enter');
+                if (modalContent) {
+                    modalContent.style.opacity = '0';
+                    modalContent.style.transform = 'scale(0.95) translateY(-20px)';
+                    
+                    setTimeout(() => {
+                        modalContent.style.transition = 'all 0.3s ease-out';
+                        modalContent.style.opacity = '1';
+                        modalContent.style.transform = 'scale(1) translateY(0)';
+                    }, 10);
+                }
+            }, 10);
+            
+            // Prevenir scroll del body
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function cerrarModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            const modalContent = modal.querySelector('.modal-enter');
+            if (modalContent) {
+                modalContent.style.transition = 'all 0.2s ease-in';
+                modalContent.style.opacity = '0';
+                modalContent.style.transform = 'scale(0.95) translateY(-20px)';
+                
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    // Restaurar scroll del body
+                    document.body.style.overflow = '';
+                }, 200);
+            } else {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+    }
+
+    // Cerrar modales al hacer clic fuera de ellos
+    document.addEventListener('DOMContentLoaded', function() {
+        const modales = ['modalTerminos', 'modalPrivacidad', 'modalPoliticaCookies', 'modalConfigCookies'];
+        
+        modales.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        cerrarModal(modalId);
+                    }
+                });
+            }
+        });
+        
+        // Cerrar modales con la tecla ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                modales.forEach(modalId => {
+                    const modal = document.getElementById(modalId);
+                    if (modal && !modal.classList.contains('hidden')) {
+                        cerrarModal(modalId);
+                    }
+                });
+            }
+        });
+        
+        // Cargar preferencias de cookies guardadas
+        cargarPreferenciasCookies();
+    });
+    
+    // Funciones específicas para gestión de cookies
+    function cargarPreferenciasCookies() {
+        const preferencias = JSON.parse(localStorage.getItem('cookiePreferences') || '{}');
+        
+        // Aplicar preferencias guardadas a los checkboxes
+        if (preferencias.funcionales !== undefined) {
+            document.getElementById('cookiesFuncionales').checked = preferencias.funcionales;
+        }
+        if (preferencias.analisis !== undefined) {
+            document.getElementById('cookiesAnalisis').checked = preferencias.analisis;
+        }
+        if (preferencias.marketing !== undefined) {
+            document.getElementById('cookiesMarketing').checked = preferencias.marketing;
+        }
+    }
+    
+    function guardarPreferenciasCookies() {
+        const preferencias = {
+            necesarias: true, // Siempre true
+            funcionales: document.getElementById('cookiesFuncionales').checked,
+            analisis: document.getElementById('cookiesAnalisis').checked,
+            marketing: document.getElementById('cookiesMarketing').checked,
+            timestamp: new Date().toISOString()
+        };
+        
+        localStorage.setItem('cookiePreferences', JSON.stringify(preferencias));
+        
+        // Aplicar las preferencias
+        aplicarPreferenciasCookies(preferencias);
+        
+        // Cerrar modal y mostrar mensaje
+        cerrarModal('modalConfigCookies');
+        mostrarMensajeCookies('Preferencias guardadas correctamente');
+    }
+    
+    function aceptarTodasLasCookies() {
+        // Marcar todas las opciones como verdaderas
+        document.getElementById('cookiesFuncionales').checked = true;
+        document.getElementById('cookiesAnalisis').checked = true;
+        document.getElementById('cookiesMarketing').checked = true;
+        
+        // Guardar preferencias
+        guardarPreferenciasCookies();
+    }
+    
+    function rechazarTodasLasCookies() {
+        // Marcar todas las opciones opcionales como falsas
+        document.getElementById('cookiesFuncionales').checked = false;
+        document.getElementById('cookiesAnalisis').checked = false;
+        document.getElementById('cookiesMarketing').checked = false;
+        
+        // Guardar preferencias
+        guardarPreferenciasCookies();
+    }
+    
+    function aplicarPreferenciasCookies(preferencias) {
+        // Aquí puedes agregar lógica específica para habilitar/deshabilitar 
+        // cookies según las preferencias del usuario
+        
+        // Ejemplo: Google Analytics
+        if (preferencias.analisis) {
+            // Habilitar Google Analytics
+            console.log('Analytics habilitado');
+        } else {
+            // Deshabilitar Google Analytics
+            console.log('Analytics deshabilitado');
+        }
+        
+        // Ejemplo: Marketing cookies
+        if (preferencias.marketing) {
+            // Habilitar cookies de marketing
+            console.log('Marketing cookies habilitadas');
+        } else {
+            // Deshabilitar cookies de marketing
+            console.log('Marketing cookies deshabilitadas');
+        }
+    }
+    
+    function mostrarMensajeCookies(mensaje) {
+        // Crear una notificación temporal
+        const notificacion = document.createElement('div');
+        notificacion.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300';
+        notificacion.innerHTML = `<i class="fas fa-check mr-2"></i>${mensaje}`;
+        
+        document.body.appendChild(notificacion);
+        
+        // Remover después de 3 segundos
+        setTimeout(() => {
+            notificacion.style.opacity = '0';
+            notificacion.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                document.body.removeChild(notificacion);
+            }, 300);
+        }, 3000);
+    }
+</script>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Scripts adicionales para cookies -->
+<script>
+    // Función helper para verificar consentimiento antes de cargar scripts externos
+    function hasConsentFor(type) {
+        try {
+            const preferences = JSON.parse(getCookie('cookie_preferences') || '{}');
+            return preferences[type] === true;
+        } catch {
+            return false;
+        }
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Cargar Google Analytics solo si hay consentimiento
+    if (hasConsentFor('analytics')) {
+        // Aquí puedes integrar Google Analytics u otra herramienta
+        console.log('📊 Analytics autorizado para AutoNew');
+        
+        // Ejemplo de Google Analytics (descomenta y configura con tu ID):
+        /*
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        
+        ga('create', 'UA-XXXXXXX-X', 'auto');
+        ga('send', 'pageview');
+        */
+    }
+    
+    // Cargar scripts de marketing solo si hay consentimiento
+    if (hasConsentFor('marketing')) {
+        console.log('🎯 Marketing cookies autorizados para AutoNew');
+        // Aquí puedes integrar Facebook Pixel, Google Ads, etc.
+    }
+</script>
 </body>
 </html>
