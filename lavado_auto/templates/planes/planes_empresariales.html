@@ -122,7 +122,19 @@
                                             data-per-vehicle="{{ plan.precio_mensual_por_vehiculo }}"
                                             data-discount="{{ plan.descuento_volumen }}"
                                             data-min="{{ plan.vehiculos_minimos }}"
-                                            data-max="{{ plan.vehiculos_maximos|default:'999999' }}">
+                                            data-max="{{ plan.vehiculos_maximos|default:'999999' }}"
+                                            data-servicios='{% for servicio in plan.servicios_incluidos.all %}{{ servicio.nombre_servicio }}{% if not forloop.last %}|{% endif %}{% endfor %}'
+                                            data-servicios-mes="{{ plan.servicios_por_vehiculo_mes }}"
+                                            data-incluye-lavado-asientos="{{ plan.incluye_lavado_asientos|yesno:'true,false' }}"
+                                            data-incluye-aspirado="{{ plan.incluye_aspirado|yesno:'true,false' }}"
+                                            data-incluye-lavado-exterior="{{ plan.incluye_lavado_exterior|yesno:'true,false' }}"
+                                            data-incluye-lavado-interior="{{ plan.incluye_lavado_interior_humedo|yesno:'true,false' }}"
+                                            data-incluye-encerado="{{ plan.incluye_encerado|yesno:'true,false' }}"
+                                            data-incluye-detallado="{{ plan.incluye_detallado_completo|yesno:'true,false' }}"
+                                            data-incluye-domicilio="{{ plan.incluye_servicio_domicilio|yesno:'true,false' }}"
+                                            data-incluye-programado="{{ plan.incluye_mantenimiento_programado|yesno:'true,false' }}"
+                                            data-incluye-reporte="{{ plan.incluye_reporte_mensual|yesno:'true,false' }}"
+                                            data-incluye-soporte="{{ plan.incluye_soporte_24_7|yesno:'true,false' }}">
                                         {{ plan.nombre }}
                                     </option>
                                 {% endfor %}
@@ -427,176 +439,186 @@
                                     </p>
                                 </div>
                             </div>
-                            
-                            <!-- Formulario de contacto expandible -->
-                            <div id="formularioContacto_{{ plan.id_plan }}" class="hidden mt-12 -mx-8 sm:-mx-12 lg:-mx-16 xl:-mx-24 ml-0 sm:-ml-4 lg:-ml-8 xl:-ml-12 bg-gradient-to-r {% if plan.tipo == 'premium_flota' %}from-blue-50 to-white border-blue-200{% elif plan.tipo == 'corporativo' %}from-purple-50 to-white border-purple-200{% else %}from-slate-50 to-white border-slate-200{% endif %} border-2 rounded-2xl p-6 sm:p-8 lg:p-12 xl:p-16 shadow-inner animate-fade-in-down">
-                                <div class="max-w-7xl mr-auto ml-0">
-                                <!-- Header del formulario -->
-                                <div class="mb-6 text-center">
-                                    <h4 class="text-xl font-bold {% if plan.tipo == 'premium_flota' %}text-blue-800{% elif plan.tipo == 'corporativo' %}text-purple-800{% else %}text-slate-800{% endif %}">
-                                        <i class="fas fa-envelope mr-2"></i>
-                                        Solicitar información de {{ plan.nombre }}
-                                    </h4>
-                                    <p class="text-base {% if plan.tipo == 'premium_flota' %}text-blue-600{% elif plan.tipo == 'corporativo' %}text-purple-600{% else %}text-slate-600{% endif %}">
-                                        Te responderemos en menos de 2 horas
-                                    </p>
-                                </div>
-                                
-                                <!-- Formulario -->
-                                <form id="contactForm_{{ plan.id_plan }}" class="space-y-6" onsubmit="enviarSolicitud(event, {{ plan.id_plan }})">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="plan_id" value="{{ plan.id_plan }}">
-                                    <input type="hidden" name="plan_id" value="{{ plan.id_plan }}">
-                                    
-                                    <!-- Primera fila: Nombre y Email -->
-                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                                        <div class="w-full">
-                                            <label class="block text-sm font-medium {% if plan.tipo == 'premium_flota' %}text-blue-700{% elif plan.tipo == 'corporativo' %}text-purple-700{% else %}text-slate-700{% endif %} mb-3">
-                                                Nombre completo *
-                                            </label>
-                                            <input 
-                                                type="text" 
-                                                name="nombre_completo" 
-                                                required
-                                                class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 {% if plan.tipo == 'premium_flota' %}focus:ring-blue-500 focus:border-blue-500{% elif plan.tipo == 'corporativo' %}focus:ring-purple-500 focus:border-purple-500{% else %}focus:ring-slate-500 focus:border-slate-500{% endif %} transition-colors text-lg"
-                                                placeholder="Tu nombre completo"
-                                            >
-                                        </div>
-                                        
-                                        <div class="w-full">
-                                            <label class="block text-sm font-medium {% if plan.tipo == 'premium_flota' %}text-blue-700{% elif plan.tipo == 'corporativo' %}text-purple-700{% else %}text-slate-700{% endif %} mb-3">
-                                                Email corporativo *
-                                            </label>
-                                            <input 
-                                                type="email" 
-                                                name="email" 
-                                                required
-                                                class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 {% if plan.tipo == 'premium_flota' %}focus:ring-blue-500 focus:border-blue-500{% elif plan.tipo == 'corporativo' %}focus:ring-purple-500 focus:border-purple-500{% else %}focus:ring-slate-500 focus:border-slate-500{% endif %} transition-colors text-lg"
-                                                placeholder="correo@empresa.com"
-                                            >
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Segunda fila: Teléfono y Empresa -->
-                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                                        <div class="w-full">
-                                            <label class="block text-sm font-medium {% if plan.tipo == 'premium_flota' %}text-blue-700{% elif plan.tipo == 'corporativo' %}text-purple-700{% else %}text-slate-700{% endif %} mb-3">
-                                                Teléfono *
-                                            </label>
-                                            <input 
-                                                type="tel" 
-                                                name="telefono" 
-                                                required
-                                                class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 {% if plan.tipo == 'premium_flota' %}focus:ring-blue-500 focus:border-blue-500{% elif plan.tipo == 'corporativo' %}focus:ring-purple-500 focus:border-purple-500{% else %}focus:ring-slate-500 focus:border-slate-500{% endif %} transition-colors text-lg"
-                                                placeholder="+56 9 1234 5678"
-                                            >
-                                        </div>
-                                        
-                                        <div class="w-full">
-                                            <label class="block text-sm font-medium {% if plan.tipo == 'premium_flota' %}text-blue-700{% elif plan.tipo == 'corporativo' %}text-purple-700{% else %}text-slate-700{% endif %} mb-3">
-                                                Empresa *
-                                            </label>
-                                            <input 
-                                                type="text" 
-                                                name="empresa" 
-                                                required
-                                                class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 {% if plan.tipo == 'premium_flota' %}focus:ring-blue-500 focus:border-blue-500{% elif plan.tipo == 'corporativo' %}focus:ring-purple-500 focus:border-purple-500{% else %}focus:ring-slate-500 focus:border-slate-500{% endif %} transition-colors text-lg"
-                                                placeholder="Nombre de tu empresa"
-                                            >
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Tercera fila: Cargo -->
-                                    <div class="mb-8">
-                                        <div class="w-full lg:w-1/2 mx-auto">
-                                            <label class="block text-sm font-medium {% if plan.tipo == 'premium_flota' %}text-blue-700{% elif plan.tipo == 'corporativo' %}text-purple-700{% else %}text-slate-700{% endif %} mb-3 text-center lg:text-left">
-                                                Cargo (Opcional)
-                                            </label>
-                                            <input 
-                                                type="text" 
-                                                name="cargo"
-                                                class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 {% if plan.tipo == 'premium_flota' %}focus:ring-blue-500 focus:border-blue-500{% elif plan.tipo == 'corporativo' %}focus:ring-purple-500 focus:border-purple-500{% else %}focus:ring-slate-500 focus:border-slate-500{% endif %} transition-colors text-lg"
-                                                placeholder="Gerente General, Director de Operaciones, etc."
-                                            >
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Cantidad de vehículos - centrado -->
-                                    <div class="mb-8">
-                                        <div class="w-full lg:w-1/2 mx-auto">
-                                            <label class="block text-sm font-medium {% if plan.tipo == 'premium_flota' %}text-blue-700{% elif plan.tipo == 'corporativo' %}text-purple-700{% else %}text-slate-700{% endif %} mb-3 text-center lg:text-left">
-                                                Cantidad de vehículos * 
-                                                <span class="font-semibold text-gray-600">
-                                                    (Este plan: {% if plan.vehiculos_maximos %}{{ plan.vehiculos_minimos }}-{{ plan.vehiculos_maximos }}{% else %}{{ plan.vehiculos_minimos }}+{% endif %} vehículos)
-                                                </span>
-                                            </label>
-                                            <input 
-                                                type="number" 
-                                                name="cantidad_vehiculos" 
-                                                required
-                                                min="{{ plan.vehiculos_minimos }}"
-                                                {% if plan.vehiculos_maximos %}max="{{ plan.vehiculos_maximos }}"{% endif %}
-                                                value="{{ plan.vehiculos_minimos }}"
-                                                class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 {% if plan.tipo == 'premium_flota' %}focus:ring-blue-500 focus:border-blue-500{% elif plan.tipo == 'corporativo' %}focus:ring-purple-500 focus:border-purple-500{% else %}focus:ring-slate-500 focus:border-slate-500{% endif %} transition-colors text-lg text-center"
-                                                placeholder="Ingresa la cantidad de vehículos"
-                                            >
-                                            <div class="mt-2 text-sm text-gray-600 text-center">
-                                                {% if plan.vehiculos_maximos %}
-                                                    Rango permitido: {{ plan.vehiculos_minimos }} a {{ plan.vehiculos_maximos }} vehículos
-                                                {% else %}
-                                                    Mínimo requerido: {{ plan.vehiculos_minimos }} vehículos
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Mensaje adicional - ancho completo -->
-                                    <div class="mb-8">
-                                        <label class="block text-sm font-medium {% if plan.tipo == 'premium_flota' %}text-blue-700{% elif plan.tipo == 'corporativo' %}text-purple-700{% else %}text-slate-700{% endif %} mb-3 text-center lg:text-left">
-                                            Mensaje adicional
-                                        </label>
-                                        <textarea 
-                                            name="mensaje_adicional" 
-                                            rows="5"
-                                            class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 {% if plan.tipo == 'premium_flota' %}focus:ring-blue-500 focus:border-blue-500{% elif plan.tipo == 'corporativo' %}focus:ring-purple-500 focus:border-purple-500{% else %}focus:ring-slate-500 focus:border-slate-500{% endif %} transition-colors resize-none text-lg"
-                                            placeholder="Cuéntanos sobre tus necesidades específicas, horarios preferidos para el contacto, o cualquier información adicional..."
-                                        ></textarea>
-                                    </div>
-                                    
-                                    <!-- Mensajes -->
-                                    <div id="mensaje_{{ plan.id_plan }}" class="hidden p-3 rounded-lg text-sm font-medium text-center"></div>
-                                    
-                                    <!-- Botones -->
-                                    <div class="flex gap-6 pt-6 border-t border-gray-200">
-                                        <div class="w-full lg:w-1/2 mx-auto flex gap-4">
-                                            <button 
-                                                type="button" 
-                                                onclick="toggleFormularioContacto({{ plan.id_plan }})"
-                                                class="flex-1 px-8 py-4 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors text-lg"
-                                            >
-                                                Cancelar
-                                            </button>
-                                            <button 
-                                                type="submit" 
-                                                id="btnEnviar_{{ plan.id_plan }}"
-                                                class="flex-1 px-8 py-4 bg-gradient-to-r {% if plan.tipo == 'premium_flota' %}from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800{% elif plan.tipo == 'corporativo' %}from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800{% else %}from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800{% endif %} text-white rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg"
-                                            >
-                                                <i class="fas fa-paper-plane"></i>
-                                                <span>Enviar Solicitud</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
+        </div>
+    </div>
+    
+    <!-- Modales de contacto flotantes (fuera del contenedor) -->
+    {% for plan in planes_empresariales %}
+    <div id="formularioContacto_{{ plan.id_plan }}" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+        <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all duration-300">
+            <!-- Header del modal -->
+            <div class="sticky top-0 z-10 bg-gradient-to-r {% if plan.tipo == 'premium_flota' %}from-blue-600 to-blue-700{% elif plan.tipo == 'corporativo' %}from-purple-600 to-purple-700{% else %}from-slate-600 to-slate-700{% endif %} px-6 py-5 rounded-t-3xl">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-envelope text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-white">
+                                Solicitar información de {{ plan.nombre }}
+                            </h4>
+                            <p class="text-white/80 text-sm">
+                                Te responderemos en menos de 2 horas
+                            </p>
+                        </div>
+                    </div>
+                    <button 
+                        type="button" 
+                        onclick="toggleFormularioContacto({{ plan.id_plan }})"
+                        class="text-white/80 hover:text-white hover:bg-white/10 rounded-full p-2 transition-all">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Contenido del modal -->
+            <div class="p-6 sm:p-8">
+                <!-- Formulario -->
+                <form id="contactForm_{{ plan.id_plan }}" class="space-y-6" onsubmit="enviarSolicitud(event, {{ plan.id_plan }})">
+                    {% csrf_token %}
+                    <input type="hidden" name="plan_id" value="{{ plan.id_plan }}">
+                    
+                    <!-- Primera fila: Nombre y Email -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="w-full">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Nombre completo *
+                            </label>
+                            <input 
+                                type="text" 
+                                name="nombre_completo" 
+                                required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                placeholder="Tu nombre completo"
+                            >
+                        </div>
+                        
+                        <div class="w-full">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Email corporativo *
+                            </label>
+                            <input 
+                                type="email" 
+                                name="email" 
+                                required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                placeholder="correo@empresa.com"
+                            >
+                        </div>
+                    </div>
+                    
+                    <!-- Segunda fila: Teléfono y Empresa -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="w-full">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Teléfono *
+                            </label>
+                            <input 
+                                type="tel" 
+                                name="telefono" 
+                                required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                placeholder="+56 9 1234 5678"
+                            >
+                        </div>
+                        
+                        <div class="w-full">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Empresa *
+                            </label>
+                            <input 
+                                type="text" 
+                                name="empresa" 
+                                required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                placeholder="Nombre de tu empresa"
+                            >
+                        </div>
+                    </div>
+                    
+                    <!-- Tercera fila: Cargo y Cantidad de vehículos -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="w-full">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Cargo (Opcional)
+                            </label>
+                            <input 
+                                type="text" 
+                                name="cargo"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                placeholder="Gerente General, Director, etc."
+                            >
+                        </div>
+                        
+                        <div class="w-full">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Cantidad de vehículos *
+                                <span class="text-xs text-gray-500 block mt-1">
+                                    (Este plan: {% if plan.vehiculos_maximos %}{{ plan.vehiculos_minimos }}-{{ plan.vehiculos_maximos }}{% else %}{{ plan.vehiculos_minimos }}+{% endif %})
+                                </span>
+                            </label>
+                            <input 
+                                type="number" 
+                                name="cantidad_vehiculos" 
+                                required
+                                min="{{ plan.vehiculos_minimos }}"
+                                {% if plan.vehiculos_maximos %}max="{{ plan.vehiculos_maximos }}"{% endif %}
+                                value="{{ plan.vehiculos_minimos }}"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                placeholder="Cantidad de vehículos"
+                            >
+                        </div>
+                    </div>
+                    
+                    <!-- Mensaje adicional -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Mensaje adicional
+                        </label>
+                        <textarea 
+                            name="mensaje_adicional" 
+                            rows="4"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+                            placeholder="Cuéntanos sobre tus necesidades específicas..."
+                        ></textarea>
+                    </div>
+                    
+                    <!-- Mensajes -->
+                    <div id="mensaje_{{ plan.id_plan }}" class="hidden p-3 rounded-lg text-sm font-medium text-center"></div>
+                    
+                    <!-- Botones -->
+                    <div class="flex gap-4 pt-4">
+                        <button 
+                            type="button" 
+                            onclick="toggleFormularioContacto({{ plan.id_plan }})"
+                            class="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
+                        >
+                            Cancelar
+                        </button>
+                        <button 
+                            type="submit" 
+                            id="btnEnviar_{{ plan.id_plan }}"
+                            class="flex-1 px-6 py-3 bg-gradient-to-r {% if plan.tipo == 'premium_flota' %}from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800{% elif plan.tipo == 'corporativo' %}from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800{% else %}from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800{% endif %} text-white rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        >
+                            <i class="fas fa-paper-plane"></i>
+                            <span>Enviar Solicitud</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 
-            <!-- Beneficios empresariales con paleta suave -->
-            <div class="mt-24 rounded-3xl bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 py-24 border-t border-slate-200/50 relative overflow-hidden">
+    <!-- Sección principal con paleta suave -->
+    <div class="bg-gradient-to-b from-slate-50 via-gray-50 to-blue-50 py-20 relative">
                 <!-- Elementos decorativos suaves -->
                 <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                     <div class="absolute top-10 right-10 w-40 h-40 bg-blue-200/20 rounded-full blur-2xl opacity-60"></div>
@@ -793,6 +815,25 @@
             const minVehicles = parseInt(selectedOption.dataset.min);
             const maxVehicles = parseInt(selectedOption.dataset.max);
             
+            // Obtener servicios incluidos
+            const serviciosText = selectedOption.dataset.servicios || '';
+            const servicios = serviciosText ? serviciosText.split('|') : [];
+            const serviciosMes = selectedOption.dataset.serviciosMes || '0';
+            
+            // Obtener características del plan
+            const caracteristicas = {
+                lavadoAsientos: selectedOption.dataset.incluyeLavadoAsientos === 'true',
+                aspirado: selectedOption.dataset.incluyeAspirado === 'true',
+                lavadoExterior: selectedOption.dataset.incluyeLavadoExterior === 'true',
+                lavadoInterior: selectedOption.dataset.incluyeLavadoInterior === 'true',
+                encerado: selectedOption.dataset.incluyeEncerado === 'true',
+                detallado: selectedOption.dataset.incluyeDetallado === 'true',
+                domicilio: selectedOption.dataset.incluyeDomicilio === 'true',
+                programado: selectedOption.dataset.incluyeProgramado === 'true',
+                reporte: selectedOption.dataset.incluyeReporte === 'true',
+                soporte: selectedOption.dataset.incluyeSoporte === 'true'
+            };
+            
             if (vehicleCount < minVehicles) {
                 alert(`Este plan requiere un mínimo de ${minVehicles} vehículos`);
                 return;
@@ -809,6 +850,68 @@
             if (discount > 0) {
                 const discountAmount = totalPrice * (discount / 100);
                 totalPrice -= discountAmount;
+            }
+            
+            // Construir HTML de servicios incluidos
+            let serviciosHTML = '';
+            if (servicios.length > 0) {
+                serviciosHTML = `
+                    <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-blue-200/50">
+                        <h5 class="font-black text-slate-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-spa text-blue-600"></i>
+                            Servicios Incluidos en el Plan
+                        </h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            ${servicios.map(servicio => `
+                                <div class="flex items-center gap-2 text-gray-700">
+                                    <i class="fas fa-check-circle text-blue-500"></i>
+                                    <span class="font-medium">${servicio.trim()}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-200">
+                            <p class="text-sm text-gray-600 flex items-center gap-2">
+                                <i class="fas fa-calendar-alt text-blue-500"></i>
+                                <strong>Servicios por vehículo/mes:</strong> 
+                                ${serviciosMes === '0' ? 'Ilimitados ✨' : serviciosMes}
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Construir HTML de características adicionales
+            let caracteristicasHTML = '';
+            const caracteristicasActivas = [];
+            
+            if (caracteristicas.lavadoAsientos) caracteristicasActivas.push({icon: 'fa-couch', text: 'Lavado de asientos'});
+            if (caracteristicas.aspirado) caracteristicasActivas.push({icon: 'fa-wind', text: 'Aspirado completo'});
+            if (caracteristicas.lavadoExterior) caracteristicasActivas.push({icon: 'fa-car', text: 'Lavado exterior'});
+            if (caracteristicas.lavadoInterior) caracteristicasActivas.push({icon: 'fa-spray-can', text: 'Lavado interior húmedo'});
+            if (caracteristicas.encerado) caracteristicasActivas.push({icon: 'fa-sparkles', text: 'Encerado premium'});
+            if (caracteristicas.detallado) caracteristicasActivas.push({icon: 'fa-gem', text: 'Detallado completo'});
+            if (caracteristicas.domicilio) caracteristicasActivas.push({icon: 'fa-home', text: 'Servicio a domicilio'});
+            if (caracteristicas.programado) caracteristicasActivas.push({icon: 'fa-clock', text: 'Mantenimiento programado'});
+            if (caracteristicas.reporte) caracteristicasActivas.push({icon: 'fa-chart-line', text: 'Reportes mensuales'});
+            if (caracteristicas.soporte) caracteristicasActivas.push({icon: 'fa-headset', text: 'Soporte 24/7'});
+            
+            if (caracteristicasActivas.length > 0) {
+                caracteristicasHTML = `
+                    <div class="bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl p-6 shadow-lg border border-blue-200/50">
+                        <h5 class="font-black text-slate-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-star text-blue-600"></i>
+                            Características Premium Incluidas
+                        </h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            ${caracteristicasActivas.map(car => `
+                                <div class="flex items-center gap-2 text-gray-700 bg-white/80 rounded-lg p-2">
+                                    <i class="fas ${car.icon} text-blue-600"></i>
+                                    <span class="font-medium">${car.text}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
             }
             
             const resultsDiv = document.getElementById('calculatorResults');
@@ -859,7 +962,7 @@
                 </div>
                 
                 <!-- Total destacado con colores suaves -->
-                <div class="text-center rounded-3xl bg-gradient-to-r from-blue-600 to-blue-500 p-10 text-white shadow-xl ${basePrice > 0 && discount > 0 ? 'md:col-span-3' : basePrice > 0 || discount > 0 ? 'md:col-span-2' : 'md:col-span-3'} relative overflow-hidden">
+                <div class="text-center rounded-3xl bg-gradient-to-r from-blue-600 to-blue-500 p-10 text-white shadow-xl mb-8 relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-slate-500/20"></div>
                     <div class="relative z-10">
                         <div class="text-sm opacity-90 mb-2 uppercase tracking-wide font-bold">💰 Total Mensual Estimado</div>
@@ -870,6 +973,12 @@
                             Precio garantizado por 12 meses
                         </div>
                     </div>
+                </div>
+                
+                <!-- Servicios y Características -->
+                <div class="space-y-6 mb-8">
+                    ${serviciosHTML}
+                    ${caracteristicasHTML}
                 </div>
                 
                 <!-- Información adicional y CTAs con colores suaves -->
@@ -916,6 +1025,9 @@
             
             resultsDiv.classList.remove('hidden');
             resultsDiv.classList.add('block');
+            
+            // Scroll suave hacia los resultados
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         
         // Auto-calcular cuando cambian los valores
@@ -1359,12 +1471,23 @@
         @keyframes fadeInDown {
             from {
                 opacity: 0;
-                transform: translateY(-20px) scale(0.95);
+        /* Animaciones para modal flotante */
+        @keyframes fade-in {
+            from {
+                opacity: 0;
             }
             to {
                 opacity: 1;
-                transform: translateY(0) scale(1);
             }
+        }
+        
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+        }
+        
+        /* Prevenir scroll del body cuando el modal está abierto */
+        body.modal-open {
+            overflow: hidden;
         }
         
         /* Transiciones suaves para elementos del formulario */
@@ -1396,7 +1519,7 @@
     
     <!-- JavaScript para formularios expandibles -->
     <script>
-        // Función para mostrar/ocultar formulario de contacto
+        // Función para mostrar/ocultar modal de contacto
         function toggleFormularioContacto(planId) {
             const formulario = document.getElementById(`formularioContacto_${planId}`);
             const chevron = document.getElementById(`chevron_${planId}`);
@@ -1408,36 +1531,63 @@
             }
             
             if (formulario.classList.contains('hidden')) {
-                // Mostrar formulario
+                // Mostrar modal
                 formulario.classList.remove('hidden');
-                chevron.style.transform = 'rotate(180deg)';
-                btn.querySelector('span').textContent = 'Ocultar Formulario';
+                document.body.classList.add('modal-open');
                 
-                // Scroll suave hacia el formulario
+                if (chevron) {
+                    chevron.style.transform = 'rotate(180deg)';
+                }
+                
+                // Scroll al inicio del modal cuando se abre
                 setTimeout(() => {
-                    formulario.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'center' 
-                    });
+                    const modalContent = formulario.querySelector('.overflow-y-auto');
+                    if (modalContent) {
+                        modalContent.scrollTop = 0;
+                    }
                 }, 100);
                 
-                // Enfocar primer campo
-                setTimeout(() => {
-                    const primerCampo = formulario.querySelector('input[name="nombre_completo"]');
-                    if (primerCampo) {
-                        primerCampo.focus();
+                // Cerrar modal al hacer clic fuera de él
+                formulario.addEventListener('click', function(e) {
+                    if (e.target === formulario) {
+                        toggleFormularioContacto(planId);
                     }
-                }, 300);
+                });
+                
             } else {
-                // Ocultar formulario
+                // Ocultar modal
                 formulario.classList.add('hidden');
-                chevron.style.transform = 'rotate(0deg)';
-                btn.querySelector('span').textContent = 'Contactar Ahora';
+                document.body.classList.remove('modal-open');
+                
+                if (chevron) {
+                    chevron.style.transform = 'rotate(0deg)';
+                }
+                
+                // Limpiar el formulario al cerrar
+                const form = document.getElementById(`contactForm_${planId}`);
+                if (form) {
+                    form.reset();
+                }
                 
                 // Limpiar mensajes
-                limpiarMensaje(planId);
+                const mensaje = document.getElementById(`mensaje_${planId}`);
+                if (mensaje) {
+                    mensaje.classList.add('hidden');
+                    mensaje.textContent = '';
+                }
             }
         }
+        
+        // Cerrar modal con tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modalsAbiertos = document.querySelectorAll('[id^="formularioContacto_"]:not(.hidden)');
+                modalsAbiertos.forEach(modal => {
+                    const planId = modal.id.replace('formularioContacto_', '');
+                    toggleFormularioContacto(planId);
+                });
+            }
+        });
         
         // Función para limpiar mensajes
         function limpiarMensaje(planId) {

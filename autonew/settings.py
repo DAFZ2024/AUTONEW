@@ -147,16 +147,28 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'lavado_auto.validators.UserAttributeSimilarityValidatorES',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': 'lavado_auto.validators.MinimumLengthValidatorES',
+        'OPTIONS': {
+            'min_length': 8,
+        }
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': 'lavado_auto.validators.CommonPasswordValidatorES',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': 'lavado_auto.validators.NumericPasswordValidatorES',
+    },
+    {
+        'NAME': 'lavado_auto.validators.UppercaseValidatorES',
+    },
+    {
+        'NAME': 'lavado_auto.validators.LowercaseValidatorES',
+    },
+    {
+        'NAME': 'lavado_auto.validators.NumberValidatorES',
     },
 ]
 AUTH_USER_MODEL = 'lavado_auto.Usuario'
@@ -172,9 +184,9 @@ LOGOUT_REDIRECT_URL = 'home'  # URL a la que se redirige después de logout
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-es'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Mexico_City'
 
 USE_I18N = True
 

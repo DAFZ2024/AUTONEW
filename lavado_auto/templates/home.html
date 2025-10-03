@@ -2026,4 +2026,673 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<!-- Chatbot Flotante - FAQ -->
+<style>
+/* Contenedor del chatbot */
+.chatbot-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Botón flotante del chatbot */
+.chatbot-toggle {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.chatbot-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 35px rgba(59, 130, 246, 0.6);
+}
+
+.chatbot-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Animación del pulso */
+.chatbot-toggle::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* Ventana del chatbot */
+.chatbot-window {
+    position: absolute;
+    bottom: 85px;
+    right: 0;
+    width: 380px;
+    max-height: 600px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chatbot-window.active {
+    display: flex;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header del chatbot */
+.chatbot-header {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
+    color: white;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chatbot-header-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.chatbot-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    backdrop-filter: blur(10px);
+}
+
+.chatbot-title {
+    display: flex;
+    flex-direction: column;
+}
+
+.chatbot-title h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.chatbot-status {
+    font-size: 12px;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.chatbot-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.chatbot-close:hover {
+    opacity: 1;
+}
+
+/* Cuerpo del chatbot */
+.chatbot-body {
+    padding: 20px;
+    overflow-y: auto;
+    max-height: 450px;
+    background: linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%);
+}
+
+.chatbot-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chatbot-body::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.chatbot-body::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.chatbot-body::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Mensaje de bienvenida */
+.chatbot-welcome {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border-radius: 15px;
+    padding: 18px;
+    margin-bottom: 20px;
+    border-left: 4px solid #3b82f6;
+}
+
+.chatbot-welcome h4 {
+    margin: 0 0 8px 0;
+    color: #1e3a8a;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.chatbot-welcome p {
+    margin: 0;
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Preguntas frecuentes */
+.faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.faq-item {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.faq-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+}
+
+.faq-item:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
+    transform: translateX(5px);
+}
+
+.faq-item:hover::before {
+    transform: scaleY(1);
+}
+
+.faq-question {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.faq-question::before {
+    content: '💬';
+    font-size: 18px;
+}
+
+.faq-answer {
+    display: none;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e8f0;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.6;
+    animation: fadeIn 0.3s ease;
+}
+
+.faq-item.active .faq-answer {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Footer del chatbot */
+.chatbot-footer {
+    padding: 15px 20px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.chatbot-footer p {
+    margin: 0;
+    font-size: 12px;
+    color: #64748b;
+}
+
+.chatbot-footer a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.chatbot-footer a:hover {
+    color: #1e3a8a;
+}
+
+/* Badge de notificación */
+.chatbot-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 24px;
+    height: 24px;
+    background: #ef4444;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    border: 2px solid white;
+    animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .chatbot-container {
+        bottom: 20px;
+        right: 20px;
+    }
+    
+    .chatbot-window {
+        width: calc(100vw - 40px);
+        max-width: 380px;
+    }
+    
+    .chatbot-toggle {
+        width: 60px;
+        height: 60px;
+        font-size: 26px;
+    }
+}
+</style>
+
+<div class="chatbot-container">
+    <!-- Botón flotante -->
+    <button class="chatbot-toggle" id="chatbotToggle" aria-label="Abrir chatbot">
+        💬
+        <span class="chatbot-badge">3</span>
+    </button>
+    
+    <!-- Ventana del chatbot -->
+    <div class="chatbot-window" id="chatbotWindow">
+        <!-- Header -->
+        <div class="chatbot-header">
+            <div class="chatbot-header-content">
+                <div class="chatbot-avatar">🤖</div>
+                <div class="chatbot-title">
+                    <h3>AutoNew Asistente</h3>
+                    <div class="chatbot-status">
+                        <span class="status-dot"></span>
+                        En línea
+                    </div>
+                </div>
+            </div>
+            <button class="chatbot-close" id="chatbotClose" aria-label="Cerrar chatbot">×</button>
+        </div>
+        
+        <!-- Cuerpo -->
+        <div class="chatbot-body">
+            <!-- Mensaje de bienvenida -->
+            <div class="chatbot-welcome">
+                <h4>👋 ¡Hola! ¿Cómo podemos ayudarte?</h4>
+                <p>Selecciona una pregunta frecuente o contáctanos para más información.</p>
+            </div>
+            
+            <!-- Lista de FAQs -->
+            <div class="faq-list">
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">¿Cómo puedo reservar un servicio?</div>
+                    <div class="faq-answer">
+                        Para reservar un servicio, dirígete a la sección de "Reservas" en el menú principal. Selecciona el servicio deseado, elige la fecha y hora que prefieras, y completa el formulario de reserva. Recibirás una confirmación por email.
+                    </div>
+                </div>
+                
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">¿Cuáles son los métodos de pago?</div>
+                    <div class="faq-answer">
+                        Aceptamos múltiples métodos de pago: efectivo, tarjetas de crédito/débito, transferencias bancarias y pagos digitales. Puedes realizar el pago al finalizar el servicio o anticipadamente según tu preferencia.
+                    </div>
+                </div>
+                
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">¿Cuánto tiempo toma un lavado completo?</div>
+                    <div class="faq-answer">
+                        El tiempo varía según el tipo de servicio: un lavado básico toma aproximadamente 30-45 minutos, mientras que un lavado completo con detalles puede tomar entre 2-3 horas. Te informaremos el tiempo estimado al realizar tu reserva.
+                    </div>
+                </div>
+                
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">¿Puedo cancelar o modificar mi reserva?</div>
+                    <div class="faq-answer">
+                        Sí, puedes cancelar o modificar tu reserva hasta 24 horas antes de la cita programada sin ningún cargo. Para hacerlo, ingresa a tu perfil, ve a "Mis Reservas" y selecciona la opción deseada.
+                    </div>
+                </div>
+                
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">¿Ofrecen servicios a domicilio?</div>
+                    <div class="faq-answer">
+                        Sí, contamos con servicio a domicilio en áreas seleccionadas. El servicio tiene un costo adicional que varía según la distancia. Contáctanos para verificar la disponibilidad en tu zona.
+                    </div>
+                </div>
+                
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">¿Tienen programas de suscripción?</div>
+                    <div class="faq-answer">
+                        Sí, ofrecemos planes de suscripción mensual con descuentos especiales. Puedes elegir entre diferentes planes según tus necesidades. Consulta la sección de "Suscripciones" para más detalles.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="chatbot-footer">
+            <p>¿No encontraste lo que buscabas? <a href="#contacto">Contáctanos</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+// Funcionalidad del chatbot
+document.addEventListener('DOMContentLoaded', function() {
+    const chatbotToggle = document.getElementById('chatbotToggle');
+    const chatbotWindow = document.getElementById('chatbotWindow');
+    const chatbotClose = document.getElementById('chatbotClose');
+    const chatbotBadge = document.querySelector('.chatbot-badge');
+    
+    // Abrir/cerrar chatbot
+    chatbotToggle.addEventListener('click', function() {
+        chatbotWindow.classList.toggle('active');
+        
+        // Cambiar icono del botón
+        if (chatbotWindow.classList.contains('active')) {
+            chatbotToggle.innerHTML = '✕';
+            // Ocultar badge al abrir
+            if (chatbotBadge) {
+                chatbotBadge.style.display = 'none';
+            }
+        } else {
+            chatbotToggle.innerHTML = '💬';
+        }
+    });
+    
+    // Cerrar chatbot con botón X
+    chatbotClose.addEventListener('click', function() {
+        chatbotWindow.classList.remove('active');
+        chatbotToggle.innerHTML = '💬';
+    });
+    
+    // Cerrar al hacer clic fuera
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.chatbot-container')) {
+            chatbotWindow.classList.remove('active');
+            if (chatbotToggle.innerHTML === '✕') {
+                chatbotToggle.innerHTML = '💬';
+            }
+        }
+    });
+});
+
+// Función para expandir/contraer FAQs
+function toggleFaq(element) {
+    // Cerrar todos los otros FAQs
+    const allFaqs = document.querySelectorAll('.faq-item');
+    allFaqs.forEach(faq => {
+        if (faq !== element) {
+            faq.classList.remove('active');
+        }
+    });
+    
+    // Toggle el FAQ clickeado
+    element.classList.toggle('active');
+}
+
+// Modal de Descarga de App Móvil
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('appDownloadModal');
+    const closeBtn = document.querySelector('.close-modal');
+    const dismissBtn = document.getElementById('dismissModal');
+    
+    // Verificar si el modal ya se mostró en esta sesión
+    const modalShown = sessionStorage.getItem('appModalShown');
+    
+    if (!modalShown) {
+        // Mostrar el modal después de 1.5 segundos
+        setTimeout(function() {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            sessionStorage.setItem('appModalShown', 'true');
+        }, 1500);
+    }
+    
+    // Función para cerrar modal con animación
+    function closeModal() {
+        modal.classList.add('animate-out', 'fade-out', 'slide-out-to-bottom-8');
+        modal.classList.remove('animate-in', 'fade-in', 'slide-in-from-bottom-8');
+        
+        setTimeout(function() {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex', 'animate-out', 'fade-out', 'slide-out-to-bottom-8');
+            modal.classList.add('animate-in', 'fade-in', 'slide-in-from-bottom-8');
+        }, 300);
+    }
+    
+    // Cerrar modal con el botón X
+    closeBtn.addEventListener('click', closeModal);
+    
+    // Cerrar modal con el botón "Recordármelo después"
+    dismissBtn.addEventListener('click', closeModal);
+    
+    // Cerrar modal al hacer clic fuera del contenido
+    modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+});
+</script>
+
+<!-- Modal de Descarga de Aplicación Móvil -->
+<div id="appDownloadModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm animate-in fade-in duration-300">
+    <div class="relative w-full max-w-lg mx-4 bg-white rounded-3xl shadow-2xl shadow-gray-500/20 backdrop-blur-lg border border-gray-100 animate-in slide-in-from-bottom-8 duration-500">
+        
+        <!-- Botón Cerrar -->
+        <button class="close-modal absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-300 hover:rotate-90 z-10">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+        
+        <!-- Header con color de marca -->
+        <div class="relative overflow-hidden rounded-t-3xl p-8 text-center" style="background-color: #0C553C;">
+            <!-- Decoraciones de fondo -->
+            <div class="absolute top-0 left-0 w-full h-full opacity-10">
+                <div class="absolute top-4 left-4 w-16 h-16 bg-white rounded-full animate-pulse"></div>
+                <div class="absolute bottom-4 right-4 w-12 h-12 bg-white rounded-full animate-pulse animation-delay-500"></div>
+                <div class="absolute top-1/2 left-1/4 w-8 h-8 bg-white rounded-full animate-bounce animation-delay-1000"></div>
+            </div>
+            
+            <!-- Logo con animación -->
+            <div class="relative mb-4 flex justify-center">
+                <img src="{% static 'img/logo.png' %}" alt="AutoNEW Logo" class="w-20 h-20 object-cover rounded-full animate-float">
+            </div>
+            
+            <h2 class="text-3xl font-bold text-white mb-2 drop-shadow-lg">¡Descarga AutoNEW!</h2>
+            <div class="w-16 h-1 bg-white/30 rounded-full mx-auto"></div>
+        </div>
+        
+        <!-- Contenido Principal -->
+        <div class="p-6 space-y-6">
+            <!-- Descripción -->
+            <p class="text-center text-gray-600 text-base leading-relaxed">
+                Lleva el <span class="font-semibold" style="color: #0C553C;">lavado de tu auto</span> en la palma de tu mano. 
+                Descarga nuestra app móvil y disfruta de:
+            </p>
+            
+            <!-- Lista de Características -->
+            <div class="space-y-3">
+                <div class="flex items-center space-x-3 p-3 rounded-xl hover:bg-green-50 transition-all duration-300 group">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="background-color: #0C553C;">
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <span class="text-gray-700 font-medium">Reservas rápidas y fáciles</span>
+                </div>
+                
+                <div class="flex items-center space-x-3 p-3 rounded-xl hover:bg-green-50 transition-all duration-300 group">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="background-color: #0C553C;">
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <span class="text-gray-700 font-medium">Notificaciones en tiempo real</span>
+                </div>
+                
+                <div class="flex items-center space-x-3 p-3 rounded-xl hover:bg-green-50 transition-all duration-300 group">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="background-color: #0C553C;">
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <span class="text-gray-700 font-medium">Historial completo de servicios</span>
+                </div>
+                
+                <div class="flex items-center space-x-3 p-3 rounded-xl hover:bg-green-50 transition-all duration-300 group">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="background-color: #0C553C;">
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <span class="text-gray-700 font-medium">Ofertas exclusivas para app</span>
+                </div>
+            </div>
+            
+            <!-- Botones de Descarga -->
+            <div class="space-y-3 pt-2">
+                <!-- iOS Button -->
+                <a href="#" class="flex items-center justify-center space-x-3 w-full bg-black hover:bg-gray-800 text-white py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl group">
+                    <svg class="w-8 h-8 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                    </svg>
+                    <div class="text-left">
+                        <div class="text-xs opacity-80">Disponible en</div>
+                        <div class="text-lg font-bold">App Store</div>
+                    </div>
+                </a>
+                
+                <!-- Android Button -->
+                <a href="#" class="flex items-center justify-center space-x-3 w-full text-white py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl group hover:opacity-90" style="background-color: #0C553C;">
+                    <svg class="w-8 h-8 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.523 15.341c-.759 0-1.377-.617-1.377-1.377s.618-1.377 1.377-1.377 1.377.617 1.377 1.377-.618 1.377-1.377 1.377zm-11.046 0c-.759 0-1.377-.617-1.377-1.377s.618-1.377 1.377-1.377 1.377.617 1.377 1.377-.618 1.377-1.377 1.377zm11.837-12.209l1.476-2.555c.097-.168.038-.385-.13-.482-.168-.097-.385-.038-.482.13l-1.494 2.588c-1.323-.608-2.791-.937-4.339-.937-1.549 0-3.016.329-4.339.937L7.512.225c-.097-.168-.314-.227-.482-.13-.168.097-.227.314-.13.482l1.476 2.555C5.655 4.611 3.672 7.319 3.5 10.5h17c-.172-3.181-2.155-5.889-4.876-7.368zm-4.992-1.014c.276 0 .5.224.5.5s-.224.5-.5.5-.5-.224-.5-.5.224-.5.5-.5zm-4.646 0c.276 0 .5.224.5.5s-.224.5-.5.5-.5-.224-.5-.5.224-.5.5-.5z"/>
+                    </svg>
+                    <div class="text-left">
+                        <div class="text-xs opacity-80">Disponible en</div>
+                        <div class="text-lg font-bold">Google Play</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="px-6 pb-6">
+            <button id="dismissModal" class="w-full text-gray-500 py-3 text-sm font-medium transition-colors duration-300 hover:bg-green-50 rounded-xl" style="color: #0C553C; opacity: 0.7;" onmouseover="this.style.opacity='1';" onmouseout="this.style.opacity='0.7';">
+                Recordármelo después
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
 {% endblock %}

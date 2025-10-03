@@ -687,11 +687,6 @@
         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-400/10 rounded-full mix-blend-overlay filter blur-3xl animate-pulse animation-delay-4000 z-0"></div>
     </div>
     
-    <!-- Botón volver -->
-    <a href="/" class="fixed top-5 left-5 sm:top-10 sm:left-10 z-50 flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 bg-white text-gray-800 font-medium text-sm rounded-full shadow-lg border border-gray-200 transition-all duration-300 hover:bg-gray-50 hover:shadow-xl hover:-translate-y-0.5 hover:text-primary">
-        <span class="text-lg">←</span> Volver
-    </a>
-    
     <!-- Contenedor principal -->
     <div class="w-full max-w-6xl mx-auto flex flex-col items-center">
         <!-- Título principal mejorado con gradiente -->
@@ -728,6 +723,11 @@
             
             <!-- Sección de Login -->
             <div class="flex-1 px-6 py-8 sm:px-12 sm:py-16 flex flex-col justify-center bg-white transition-all duration-700 login-section form-section-mobile">
+                <!-- Botón volver -->
+                <a href="/" class="inline-flex items-center gap-2 px-3 py-2 mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 font-medium text-sm rounded-xl shadow-sm border border-blue-200 transition-all duration-300 hover:from-blue-100 hover:to-indigo-100 hover:shadow-md hover:-translate-y-0.5 hover:border-blue-300 group" style="width: auto; max-width: fit-content;">
+                    <span class="text-base group-hover:scale-110 transition-transform duration-300"></span>
+                    <span>Volver</span>
+                </a>
                 <div class="text-center mb-8 sm:mb-10">
                     <h1 class="text-2xl sm:text-4xl font-bold mb-3 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 bg-clip-text text-transparent">Iniciar Sesión</h1>
                     <p class="text-blue-700 text-sm sm:text-base">Ingresa a tu cuenta para continuar</p>

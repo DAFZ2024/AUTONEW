@@ -140,6 +140,7 @@ class Empresa(models.Model):
     telefono = models.CharField(max_length=15)
     email = models.EmailField()
     contrasena = models.CharField(max_length=255, default='temp_password')  # Campo para la contraseña con default temporal
+    token_reset = models.CharField(max_length=255, null=True, blank=True)  # Token para reset de contraseña
     fecha_registro = models.DateTimeField(default=timezone.now)  # Fecha de registro con default
     verificada = models.BooleanField(default=False)  # Campo para verificación de empresa
     # Coordenadas para el mapa
@@ -668,6 +669,8 @@ class SolicitudContactoPlan(models.Model):
     ESTADOS_SOLICITUD = [
         ('pendiente', 'Pendiente'),
         ('contactado', 'Contactado'),
+        ('aprobada', 'Aprobada'),
+        ('rechazada', 'Rechazada'),
         ('cerrado', 'Cerrado'),
     ]
     

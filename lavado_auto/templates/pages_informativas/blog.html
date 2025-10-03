@@ -1,0 +1,710 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    :root {
+        --navy: #1e3a8a;
+        --silver: #9ca3af;
+        --electric-blue: #3b82f6;
+        --snow-white: #ffffff;
+        --platinum: #e5e7eb;
+        --midnight: #111827;
+        --brand-red: #E81C2E;
+        --brand-blue: #0c2331;
+    }
+
+    body {
+        background: var(--snow-white);
+        min-height: 100vh;
+    }
+
+    .blog-card {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+    }
+
+    .blog-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .blog-card:hover .blog-image {
+        transform: scale(1.05);
+    }
+
+    .blog-image {
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gradient-bg {
+        background: var(--snow-white);
+    }
+
+    .category-badge {
+        transition: all 0.3s ease;
+    }
+
+    .category-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .floating-element {
+        animation: float 8s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        33% { transform: translateY(-20px) rotate(1deg); }
+        66% { transform: translateY(-10px) rotate(-1deg); }
+    }
+
+    .pulse-dot {
+        animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(1.05); }
+    }
+
+    .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .backdrop-blur {
+        backdrop-filter: blur(12px);
+    }
+
+    .search-glow:focus {
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 0 20px rgba(59, 130, 246, 0.15);
+    }
+
+    /* Animación de escritura */
+    .typing-animation {
+        overflow: hidden;
+        border-right: 3px solid #2563eb;
+        white-space: nowrap;
+        animation: typing 4s steps(30, end), blink-caret 0.75s step-end infinite;
+    }
+
+    @keyframes typing {
+        from { width: 0; }
+        to { width: 100%; }
+    }
+
+    @keyframes blink-caret {
+        from, to { border-color: transparent; }
+        50% { border-color: #2563eb; }
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="gradient-bg text-gray-900 relative overflow-hidden">
+    <!-- Elementos decorativos animados -->
+    <div class="absolute top-16 left-8 w-20 h-20 bg-blue-100 rounded-full floating-element"></div>
+    <div class="absolute top-32 right-12 w-12 h-12 bg-blue-200 rounded-full floating-element" style="animation-delay: 2s;"></div>
+    <div class="absolute bottom-20 left-1/3 w-16 h-16 bg-gray-100 rounded-full floating-element" style="animation-delay: 4s;"></div>
+    <div class="absolute top-1/2 right-1/4 w-8 h-8 bg-blue-300 rounded-full floating-element" style="animation-delay: 1s;"></div>
+    
+    <div class="container mx-auto px-6 py-24 relative z-10">
+        <div class="text-center max-w-5xl mx-auto">
+            <div class="mb-8">
+                <span class="inline-flex items-center px-6 py-3 bg-blue-100 rounded-full text-sm font-medium border border-blue-200">
+                    <svg class="w-5 h-5 mr-2 pulse-dot text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"/>
+                        <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"/>
+                    </svg>
+                    <span class="text-blue-700">Blog Autonew</span>
+                </span>
+            </div>
+            
+            <h1 class="text-6xl md:text-7xl font-bold mb-8 leading-tight">
+                <span class="text-gray-900">Noticias &</span><br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 typing-animation inline-block">
+                    Consejos Premium
+                </span>
+            </h1>
+            
+            <p class="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+                Descubre los últimos consejos profesionales, tendencias en cuidado automotriz y noticias de la industria. 
+                Mantén tu vehículo en perfectas condiciones con nuestros expertos.
+            </p>
+
+            <!-- Buscador -->
+            <div class="flex justify-center mb-8">
+                <div class="relative max-w-md w-full">
+                    <input 
+                        type="text" 
+                        id="blog-search"
+                        placeholder="Buscar artículos..."
+                        class="search-glow w-full px-8 py-4 rounded-2xl bg-white border-2 border-gray-200 text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-300 shadow-lg"
+                    >
+                    <svg class="absolute right-6 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-blue-600 mb-2">50+</div>
+                    <div class="text-gray-600 text-sm">Artículos</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-blue-600 mb-2">15k+</div>
+                    <div class="text-gray-600 text-sm">Lectores</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-blue-600 mb-2">98%</div>
+                    <div class="text-gray-600 text-sm">Satisfacción</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Onda decorativa -->
+    <div class="absolute bottom-0 left-0 right-0">
+        <svg viewBox="0 0 1440 120" class="w-full h-auto">
+            <path fill="#f8fafc" d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,69.3C960,85,1056,107,1152,112C1248,117,1344,107,1392,101.3L1440,96L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"/>
+        </svg>
+    </div>
+</div>
+
+<!-- Categorías filtros -->
+<div class="bg-gray-50 py-8 sticky top-0 z-40 backdrop-blur bg-white/95 border-b border-gray-100">
+    <div class="container mx-auto px-6">
+        <div class="flex flex-wrap justify-center gap-4">
+            <button class="category-filter active px-8 py-4 rounded-2xl bg-blue-600 text-white font-medium transition-all duration-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg" data-category="all">
+                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                </svg>
+                Todos los artículos
+            </button>
+            <button class="category-filter category-badge px-8 py-4 rounded-2xl bg-white text-gray-700 font-medium border-2 border-gray-200 transition-all duration-300 hover:bg-gray-50 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" data-category="consejos">
+                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                </svg>
+                Consejos
+            </button>
+            <button class="category-filter category-badge px-8 py-4 rounded-2xl bg-white text-gray-700 font-medium border-2 border-gray-200 transition-all duration-300 hover:bg-gray-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" data-category="tendencias">
+                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/>
+                </svg>
+                Tendencias
+            </button>
+            <button class="category-filter category-badge px-8 py-4 rounded-2xl bg-white text-gray-700 font-medium border-2 border-gray-200 transition-all duration-300 hover:bg-gray-50 hover:border-purple-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" data-category="tecnologia">
+                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clip-rule="evenodd"/>
+                </svg>
+                Tecnología
+            </button>
+            <button class="category-filter category-badge px-8 py-4 rounded-2xl bg-white text-gray-700 font-medium border-2 border-gray-200 transition-all duration-300 hover:bg-gray-50 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" data-category="noticias">
+                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z" clip-rule="evenodd"/>
+                    <path d="M15 7h1a2 2 0 012 2v5.5a1.5 1.5 0 01-3 0V7z"/>
+                </svg>
+                Noticias
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Artículo Destacado -->
+<div class="py-16 bg-gradient-to-br from-white to-blue-50">
+    <div class="container mx-auto px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="inline-block px-6 py-2 bg-red-100 text-red-600 rounded-full text-sm font-semibold mb-4">
+                    Artículo Destacado
+                </span>
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Lo Más Leído Esta Semana</h2>
+            </div>
+            
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden blog-card">
+                <div class="md:flex">
+                    <div class="md:w-1/2">
+                        <div class="h-64 md:h-full blog-image bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+                            <div class="text-center text-white p-8">
+                                <svg class="w-20 h-20 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                                </svg>
+                                <p class="text-lg font-medium">Imagen del Artículo</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 p-8 md:p-12">
+                        <div class="flex items-center mb-4">
+                            <span class="px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-medium mr-4">Consejos</span>
+                            <span class="text-gray-500 text-sm">5 min de lectura</span>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-900 mb-4 leading-tight">
+                            10 Consejos Profesionales para Mantener tu Auto Como Nuevo
+                        </h3>
+                        <p class="text-gray-600 text-lg leading-relaxed mb-6">
+                            Descubre los secretos que usan los profesionales del detailing para mantener los vehículos 
+                            en condiciones perfectas. Desde técnicas de lavado hasta productos especializados.
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                                    AU
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-900">Equipo Autonew</p>
+                                    <p class="text-gray-500 text-sm">28 de septiembre, 2025</p>
+                                </div>
+                            </div>
+                            <button class="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                Leer más
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Grid de Artículos -->
+<div class="py-16 bg-white">
+    <div class="container mx-auto px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Artículos Recientes</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Mantente al día con las últimas tendencias, consejos y noticias del mundo automotriz.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="articles-grid">
+                
+                <!-- Artículo 1 -->
+                <article class="blog-card bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100" data-category="consejos">
+                    <div class="h-48 blog-image bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                        <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-xs font-medium">Consejos</span>
+                            <span class="text-gray-400 text-sm ml-auto">3 min</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
+                            Cómo Preparar tu Auto para el Cambio de Temporada
+                        </h3>
+                        <p class="text-gray-600 mb-4 line-clamp-3">
+                            Guía completa para adaptar el cuidado de tu vehículo a las diferentes estaciones del año, incluyendo productos específicos y técnicas profesionales.
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500 text-sm">25 sept, 2025</span>
+                            <button class="text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+                                Leer más →
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Artículo 2 -->
+                <article class="blog-card bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100" data-category="tecnologia">
+                    <div class="h-48 blog-image bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+                        <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-xs font-medium">Tecnología</span>
+                            <span class="text-gray-400 text-sm ml-auto">5 min</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
+                            Las Últimas Innovaciones en Productos de Detailing
+                        </h3>
+                        <p class="text-gray-600 mb-4 line-clamp-3">
+                            Exploramos las nuevas tecnologías en ceras cerámicas, selladores nanotecnológicos y productos eco-friendly que están revolucionando la industria.
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500 text-sm">22 sept, 2025</span>
+                            <button class="text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+                                Leer más →
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Artículo 3 -->
+                <article class="blog-card bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100" data-category="tendencias">
+                    <div class="h-48 blog-image bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
+                        <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <span class="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-xs font-medium">Tendencias</span>
+                            <span class="text-gray-400 text-sm ml-auto">4 min</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
+                            Tendencias 2025: El Futuro del Cuidado Automotriz
+                        </h3>
+                        <p class="text-gray-600 mb-4 line-clamp-3">
+                            Descubre hacia dónde se dirige la industria del detailing: sostenibilidad, automatización y nuevas experiencias de cliente.
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500 text-sm">20 sept, 2025</span>
+                            <button class="text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+                                Leer más →
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Artículo 4 -->
+                <article class="blog-card bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100" data-category="noticias">
+                    <div class="h-48 blog-image bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center">
+                        <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z" clip-rule="evenodd"/>
+                            <path d="M15 7h1a2 2 0 012 2v5.5a1.5 1.5 0 01-3 0V7z"/>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-xs font-medium">Noticias</span>
+                            <span class="text-gray-400 text-sm ml-auto">2 min</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
+                            Autonew Inaugura Nueva Sucursal con Tecnología Avanzada
+                        </h3>
+                        <p class="text-gray-600 mb-4 line-clamp-3">
+                            Nuestra nueva ubicación cuenta con equipos de última generación y un sistema de reservas mejorado para brindar el mejor servicio.
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500 text-sm">18 sept, 2025</span>
+                            <button class="text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+                                Leer más →
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Artículo 5 -->
+                <article class="blog-card bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100" data-category="consejos">
+                    <div class="h-48 blog-image bg-gradient-to-br from-teal-400 to-cyan-600 flex items-center justify-center">
+                        <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <span class="px-3 py-1 bg-teal-100 text-teal-600 rounded-full text-xs font-medium">Consejos</span>
+                            <span class="text-gray-400 text-sm ml-auto">6 min</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
+                            Errores Comunes al Lavar tu Auto en Casa
+                        </h3>
+                        <p class="text-gray-600 mb-4 line-clamp-3">
+                            Evita estos errores frecuentes que pueden dañar la pintura y los acabados de tu vehículo. Guía paso a paso para un lavado seguro.
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500 text-sm">15 sept, 2025</span>
+                            <button class="text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+                                Leer más →
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Artículo 6 -->
+                <article class="blog-card bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100" data-category="tecnologia">
+                    <div class="h-48 blog-image bg-gradient-to-br from-pink-400 to-rose-600 flex items-center justify-center">
+                        <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                        </svg>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <span class="px-3 py-1 bg-pink-100 text-pink-600 rounded-full text-xs font-medium">Tecnología</span>
+                            <span class="text-gray-400 text-sm ml-auto">4 min</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
+                            IA y Robótica: El Futuro del Lavado Automotriz
+                        </h3>
+                        <p class="text-gray-600 mb-4 line-clamp-3">
+                            Conoce cómo la inteligencia artificial y la robótica están transformando los servicios de lavado y detailing automotriz.
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500 text-sm">12 sept, 2025</span>
+                            <button class="text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+                                Leer más →
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+
+            <!-- Mensaje sin resultados -->
+            <div id="no-results" class="hidden text-center py-16">
+                <svg class="w-20 h-20 text-gray-300 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.467-.881-6.08-2.33"/>
+                </svg>
+                <h3 class="text-2xl font-bold text-gray-700 mb-3">No se encontraron artículos</h3>
+                <p class="text-gray-500 text-lg">Intenta con otros términos de búsqueda o selecciona una categoría diferente.</p>
+            </div>
+
+            <!-- Botón cargar más -->
+            <div class="text-center mt-12">
+                <button class="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg">
+                    <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    Cargar más artículos
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Newsletter Section -->
+<div class="bg-gradient-to-br from-gray-900 via-blue-900 to-blue-800 text-white py-20">
+    <div class="container mx-auto px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="mb-8">
+                <div class="w-20 h-20 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 backdrop-blur">
+                    <svg class="w-10 h-10 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    Mantente Actualizado
+                </h2>
+                <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+                    Recibe los mejores consejos, ofertas exclusivas y las últimas noticias del mundo automotriz directamente en tu email.
+                </p>
+            </div>
+
+            <form class="max-w-md mx-auto">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <input 
+                        type="email" 
+                        placeholder="Tu email..."
+                        class="flex-1 px-6 py-4 rounded-2xl bg-white/10 backdrop-blur border border-white/20 text-white placeholder-blue-200 focus:outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300"
+                        required
+                    >
+                    <button 
+                        type="submit"
+                        class="px-8 py-4 bg-white text-blue-900 rounded-2xl font-bold hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-900 shadow-lg"
+                    >
+                        Suscribirse
+                    </button>
+                </div>
+                <p class="text-blue-200 text-sm mt-4">
+                    No spam, solo contenido de valor. Cancela en cualquier momento.
+                </p>
+            </form>
+
+            <!-- Beneficios -->
+            <div class="grid md:grid-cols-3 gap-8 mt-16">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Consejos Semanales</h3>
+                    <p class="text-blue-200 text-sm">Recibe tips profesionales cada semana</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Ofertas Exclusivas</h3>
+                    <p class="text-blue-200 text-sm">Descuentos especiales para suscriptores</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Acceso Prioritario</h3>
+                    <p class="text-blue-200 text-sm">Sé el primero en conocer las novedades</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Elementos del DOM
+    const categoryFilters = document.querySelectorAll('.category-filter');
+    const searchInput = document.getElementById('blog-search');
+    const articlesGrid = document.getElementById('articles-grid');
+    const noResults = document.getElementById('no-results');
+
+    // Filtros de categoría
+    categoryFilters.forEach(filter => {
+        filter.addEventListener('click', function() {
+            const category = this.dataset.category;
+            
+            // Actualizar botones activos
+            categoryFilters.forEach(btn => {
+                btn.classList.remove('active', 'bg-blue-600', 'text-white');
+                btn.classList.add('bg-white', 'text-gray-700', 'border-2', 'border-gray-200');
+            });
+            
+            this.classList.add('active', 'bg-blue-600', 'text-white');
+            this.classList.remove('bg-white', 'text-gray-700', 'border-2', 'border-gray-200');
+            
+            filterArticles(category, searchInput.value);
+        });
+    });
+
+    // Búsqueda
+    searchInput.addEventListener('input', function() {
+        const activeCategory = document.querySelector('.category-filter.active').dataset.category;
+        filterArticles(activeCategory, this.value);
+    });
+
+    // Función para filtrar artículos
+    function filterArticles(category, searchTerm) {
+        const articles = document.querySelectorAll('article[data-category]');
+        let visibleCount = 0;
+
+        articles.forEach(article => {
+            const articleCategory = article.dataset.category;
+            const title = article.querySelector('h3').textContent.toLowerCase();
+            const content = article.querySelector('p').textContent.toLowerCase();
+            
+            const matchesCategory = category === 'all' || articleCategory === category;
+            const matchesSearch = searchTerm === '' || 
+                                title.includes(searchTerm.toLowerCase()) || 
+                                content.includes(searchTerm.toLowerCase());
+
+            if (matchesCategory && matchesSearch) {
+                article.style.display = 'block';
+                visibleCount++;
+                // Animación de entrada
+                article.style.opacity = '0';
+                article.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    article.style.transition = 'all 0.3s ease';
+                    article.style.opacity = '1';
+                    article.style.transform = 'translateY(0)';
+                }, 100);
+            } else {
+                article.style.display = 'none';
+            }
+        });
+
+        // Mostrar mensaje de no resultados
+        if (visibleCount === 0) {
+            noResults.classList.remove('hidden');
+            articlesGrid.classList.add('hidden');
+        } else {
+            noResults.classList.add('hidden');
+            articlesGrid.classList.remove('hidden');
+        }
+    }
+
+    // Newsletter form
+    const newsletterForm = document.querySelector('form');
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.querySelector('input[type="email"]').value;
+            
+            // Aquí iría la lógica para enviar el email
+            alert('¡Gracias por suscribirte! Pronto recibirás nuestros mejores consejos.');
+            this.reset();
+        });
+    }
+
+    // Smooth scroll para enlaces
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Parallax effect para elementos flotantes
+    window.addEventListener('scroll', function() {
+        const scrolled = window.pageYOffset;
+        const parallax = document.querySelectorAll('.floating-element');
+        
+        parallax.forEach((element, index) => {
+            const speed = 0.5 + (index * 0.1);
+            element.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.01}deg)`;
+        });
+    });
+
+    // Intersection Observer para animaciones
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationDelay = Math.random() * 0.3 + 's';
+                entry.target.classList.add('animate-fade-in');
+            }
+        });
+    }, observerOptions);
+
+    // Observar todas las tarjetas de blog
+    document.querySelectorAll('.blog-card').forEach(card => {
+        observer.observe(card);
+    });
+});
+
+// CSS para animación de fade-in
+const style = document.createElement('style');
+style.textContent = `
+    .animate-fade-in {
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+`;
+document.head.appendChild(style);
+</script>
+
+{% endblock %}

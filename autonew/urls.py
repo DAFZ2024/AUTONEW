@@ -45,16 +45,26 @@ urlpatterns = [
     path('get-horas/', views.get_horas, name='get_horas'),
     path('obtener-horas/', views.get_horas, name='obtener_horas'),
     path('contacto/',views.contacto, name = 'contacto'),
+    path('faq/',views.faq, name = 'faq'),
+    path('blog/',views.blog, name = 'blog'),
     # Recuperación de contraseña (Django auth)
     path('resetcorreo/', auth_views.PasswordResetView.as_view(
         template_name='auth/reset_correo.html',
         form_class=CustomPasswordResetForm,
-        email_template_name='auth/password_reset_email.html',
+        email_template_name='auth/password_reset_email.txt',
+        html_email_template_name='auth/password_reset_email.html',
         subject_template_name='auth/password_reset_subject.txt'
     ), name='password_reset'),
     path('resetcorreo/enviado/', auth_views.PasswordResetDoneView.as_view(template_name='auth/reset_correo_enviado.html'), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='auth/reset_contrasena.html'), name='password_reset_confirm'),
     path('reset/completo/', auth_views.PasswordResetCompleteView.as_view(template_name='auth/reset_completo.html'), name='password_reset_complete'),
+    
+    # Recuperación de contraseña para EMPRESAS
+    path('empresa/reset/', views.empresa_password_reset, name='empresa_password_reset'),
+    path('empresa/reset/enviado/', views.empresa_password_reset_done, name='empresa_password_reset_done'),
+    path('empresa/reset/<str:token>/', views.empresa_password_reset_confirm, name='empresa_password_reset_confirm'),
+    path('empresa/reset/completo/', views.empresa_password_reset_complete, name='empresa_password_reset_complete'),
+    
     path('login/',views.login, name = 'login'),
     path('logout/', views.logout, name='logout'),
     path('comentarios/', views.comentarios, name='comentarios'),
@@ -122,6 +132,7 @@ urlpatterns = [
     path('editar-plan-empresarial/<int:plan_id>/', views.editar_plan_empresarial, name='editar_plan_empresarial'),
     path('eliminar-plan-empresarial/<int:plan_id>/', views.eliminar_plan_empresarial, name='eliminar_plan_empresarial'),
     path('detalle-plan-empresarial/<int:plan_id>/', views.detalle_plan_empresarial, name='detalle_plan_empresarial'),
+    path('aprobar-solicitud-empresarial/', views.aprobar_solicitud_empresarial, name='aprobar_solicitud_empresarial'),
     path('suscripciones-empresariales-crud/', views.suscripciones_empresariales_crud, name='suscripciones_empresariales_crud'),
     path('detalle-suscripcion-empresarial/<int:suscripcion_id>/', views.detalle_suscripcion_empresarial, name='detalle_suscripcion_empresarial'),
     path('editar-suscripcion-empresarial/<int:suscripcion_id>/', views.editar_suscripcion_empresarial, name='editar_suscripcion_empresarial'),

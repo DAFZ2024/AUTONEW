@@ -2,6 +2,8 @@
 from django import forms
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import get_user_model
+from django.core.mail import EmailMultiAlternatives
+from django.template import loader
 
 # Formulario personalizado para recuperación de contraseña por campo 'correo'
 class CustomPasswordResetForm(PasswordResetForm):
@@ -10,6 +12,30 @@ class CustomPasswordResetForm(PasswordResetForm):
     def get_users(self, email):
         UserModel = get_user_model()
         return UserModel.objects.filter(correo__iexact=email, is_active=True)
+    
+    def send_mail(
+        self,
+        subject_template_name,
+        email_template_name,
+        context,
+        from_email,
+        to_email,
+        html_email_template_name=None,
+    ):
+        """
+        Sobrescribe el método send_mail para enviar correos HTML
+        """
+        subject = loader.render_to_string(subject_template_name, context)
+        # El subject debe ser una sola línea
+        subject = "".join(subject.splitlines())
+        body = loader.render_to_string(email_template_name, context)
+
+        email_message = EmailMultiAlternatives(subject, body, from_email, [to_email])
+        if html_email_template_name is not None:
+            html_email = loader.render_to_string(html_email_template_name, context)
+            email_message.attach_alternative(html_email, "text/html")
+        
+        email_message.send()
 from django import forms
 from .models import Comentario,Reserva,Usuario, MensajeQueja,Servicio,Empresa,ReservaServicio,SolicitudServicioEmpresa,Plan,SolicitudContactoPlan
 

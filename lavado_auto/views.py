@@ -7,6 +7,7 @@ from django.http import HttpResponse,JsonResponse
 from django.contrib import messages
 from django.db.models import Avg, Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.views.decorators.http import require_http_methods
 from .models import Usuario,Comentario,MensajeQueja,Reserva,Servicio,Empresa,EmpresaServicio, ReservaServicio, Plan, SuscripcionUsuario, HistorialPagosSuscripcion, PlanEmpresarial, SuscripcionEmpresarial, SolicitudServicioEmpresa, HistorialPagosSuscripcionEmpresarial, SolicitudContactoPlan
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
@@ -392,6 +393,14 @@ def home(request):
         'servicios': servicios,
         'empresas': empresas
     })
+
+def faq(request):
+    """Vista para la página de Preguntas Frecuentes (FAQ)"""
+    return render(request, 'pages_informativas/faq.html')
+
+def blog(request):
+    """Vista para la página de Blog/Noticias"""
+    return render(request, 'pages_informativas/blog.html')
 
 def servicios_ajax(request):
     """Vista AJAX para cargar servicios paginados sin recargar la página"""
@@ -1298,7 +1307,7 @@ def planes(request):
 def planes_empresariales(request):
     """Vista para mostrar los planes empresariales disponibles"""
     # Obtener todos los planes empresariales activos, ordenados por precio
-    planes_empresariales = PlanEmpresarial.objects.filter(activo=True).order_by('precio_mensual_por_vehiculo')
+    planes_empresariales = PlanEmpresarial.objects.filter(activo=True).prefetch_related('servicios_incluidos').order_by('precio_mensual_por_vehiculo')
     
     context = {
         'planes_empresariales': planes_empresariales,
@@ -2126,6 +2135,167 @@ def logout_view(request):
     auth_logout(request)  # Cerrar sesión
     messages.success(request, 'Has cerrado sesión correctamente.')
     return redirect('home')  # Redirigir a la página de home normal
+
+
+# ==================== RECUPERACIÓN DE CONTRASEÑA PARA EMPRESAS ====================
+
+def empresa_password_reset(request):
+    """Vista para solicitar el restablecimiento de contraseña de empresa"""
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        
+        try:
+            empresa = Empresa.objects.get(email=email)
+            
+            # Generar token único para el reset
+            token = str(uuid.uuid4())
+            empresa.token_reset = token
+            empresa.save()
+            
+            # Crear URL de reset
+            reset_url = request.build_absolute_uri(f'/empresa/reset/{token}/')
+            
+            # Enviar correo con el enlace
+            subject = 'Recuperación de contraseña - AUTONEW Empresa'
+            html_message = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                    .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                    .header {{ background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }}
+                    .content {{ background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; }}
+                    .button {{ display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 20px 0; }}
+                    .footer {{ text-align: center; padding: 20px; color: #6b7280; font-size: 14px; }}
+                    .warning {{ background: #fef3c7; padding: 15px; border-left: 4px solid #f59e0b; margin: 20px 0; border-radius: 4px; }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>🔐 Recuperación de Contraseña</h1>
+                        <p>AUTONEW - Panel Empresarial</p>
+                    </div>
+                    <div class="content">
+                        <h2>Hola, {empresa.nombre_empresa}</h2>
+                        <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta empresarial.</p>
+                        <p>Para crear una nueva contraseña, haz clic en el siguiente botón:</p>
+                        <div style="text-align: center;">
+                            <a href="{reset_url}" class="button">Restablecer Contraseña</a>
+                        </div>
+                        <p>O copia y pega este enlace en tu navegador:</p>
+                        <p style="word-break: break-all; background: white; padding: 10px; border-radius: 4px; border: 1px solid #e5e7eb;">
+                            {reset_url}
+                        </p>
+                        <div class="warning">
+                            <strong>⚠️ Importante:</strong>
+                            <ul>
+                                <li>Este enlace expirará en 24 horas por seguridad</li>
+                                <li>Si no solicitaste este cambio, ignora este correo</li>
+                                <li>Tu contraseña actual permanecerá activa hasta que establezcas una nueva</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <p>Este es un correo automático, por favor no respondas a este mensaje.</p>
+                        <p>&copy; 2025 AUTONEW. Todos los derechos reservados.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            
+            plain_message = f"""
+            Recuperación de Contraseña - AUTONEW Empresa
+            
+            Hola, {empresa.nombre_empresa}
+            
+            Hemos recibido una solicitud para restablecer la contraseña de tu cuenta empresarial.
+            
+            Para crear una nueva contraseña, visita el siguiente enlace:
+            {reset_url}
+            
+            IMPORTANTE:
+            - Este enlace expirará en 24 horas por seguridad
+            - Si no solicitaste este cambio, ignora este correo
+            - Tu contraseña actual permanecerá activa hasta que establezcas una nueva
+            
+            Este es un correo automático, por favor no respondas a este mensaje.
+            
+            © 2025 AUTONEW. Todos los derechos reservados.
+            """
+            
+            try:
+                send_mail(
+                    subject,
+                    plain_message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [empresa.email],
+                    html_message=html_message,
+                    fail_silently=False,
+                )
+                messages.success(request, 'Se ha enviado un correo con las instrucciones para restablecer tu contraseña.')
+            except Exception as e:
+                print(f"❌ Error al enviar correo: {str(e)}")
+                messages.error(request, 'Error al enviar el correo. Por favor, intenta nuevamente.')
+                return redirect('empresa_password_reset')
+            
+            return redirect('empresa_password_reset_done')
+            
+        except Empresa.DoesNotExist:
+            # Por seguridad, no revelamos si el email existe o no
+            messages.success(request, 'Si el correo está registrado, recibirás las instrucciones para restablecer tu contraseña.')
+            return redirect('empresa_password_reset_done')
+    
+    return render(request, 'auth/empresa/reset_correo.html')
+
+
+def empresa_password_reset_done(request):
+    """Vista de confirmación de que se envió el correo"""
+    return render(request, 'auth/empresa/reset_correo_enviado.html')
+
+
+def empresa_password_reset_confirm(request, token):
+    """Vista para confirmar el token y establecer nueva contraseña"""
+    try:
+        empresa = Empresa.objects.get(token_reset=token)
+        
+        if request.method == 'POST':
+            nueva_contrasena = request.POST.get('nueva_contrasena')
+            confirmar_contrasena = request.POST.get('confirmar_contrasena')
+            
+            # Validaciones
+            if not nueva_contrasena or not confirmar_contrasena:
+                messages.error(request, 'Todos los campos son obligatorios.')
+                return render(request, 'auth/empresa/reset_contrasena.html', {'token': token})
+            
+            if nueva_contrasena != confirmar_contrasena:
+                messages.error(request, 'Las contraseñas no coinciden.')
+                return render(request, 'auth/empresa/reset_contrasena.html', {'token': token})
+            
+            if len(nueva_contrasena) < 8:
+                messages.error(request, 'La contraseña debe tener al menos 8 caracteres.')
+                return render(request, 'auth/empresa/reset_contrasena.html', {'token': token})
+            
+            # Actualizar contraseña
+            empresa.contrasena = make_password(nueva_contrasena)
+            empresa.token_reset = None  # Invalidar el token
+            empresa.save()
+            
+            messages.success(request, '¡Contraseña restablecida exitosamente! Ya puedes iniciar sesión.')
+            return redirect('empresa_password_reset_complete')
+        
+        return render(request, 'auth/empresa/reset_contrasena.html', {'token': token, 'empresa': empresa})
+        
+    except Empresa.DoesNotExist:
+        messages.error(request, 'El enlace de recuperación es inválido o ha expirado.')
+        return redirect('empresa_password_reset')
+
+
+def empresa_password_reset_complete(request):
+    """Vista de confirmación de que se restableció la contraseña"""
+    return render(request, 'auth/empresa/reset_completo.html')
 
 
 @admin_required
@@ -5722,14 +5892,24 @@ def obtener_horas_disponibles(request):
 @admin_required
 def detalle_suscripcion_empresarial(request, suscripcion_id):
     """Vista para ver detalles de una suscripción empresarial"""
-    suscripcion = get_object_or_404(SuscripcionEmpresarial, id_suscripcion=suscripcion_id)
+    suscripcion = get_object_or_404(
+        SuscripcionEmpresarial.objects.select_related('empresa', 'plan').prefetch_related('plan__servicios_incluidos'), 
+        id_suscripcion=suscripcion_id
+    )
     
     # Obtener historial de pagos
     pagos = HistorialPagosSuscripcionEmpresarial.objects.filter(suscripcion=suscripcion).order_by('-fecha_pago')[:10]
     
+    # Obtener todos los servicios disponibles para referencia
+    todos_servicios = Servicio.objects.all()
+    servicios_plan = suscripcion.plan.servicios_incluidos.all()
+    
     context = {
         'suscripcion': suscripcion,
         'pagos': pagos,
+        'todos_servicios': todos_servicios,
+        'servicios_plan': servicios_plan,
+        'servicios_count': servicios_plan.count(),
     }
     return render(request, 'planes/detalle_suscripcion_empresarial.html', context)
 
@@ -5755,3 +5935,97 @@ def editar_suscripcion_empresarial(request, suscripcion_id):
         'suscripcion': suscripcion,
     }
     return render(request, 'planes/editar_suscripcion_empresarial.html', context)
+
+@admin_required
+@require_http_methods(["POST"])
+def aprobar_solicitud_empresarial(request):
+    """Vista para aprobar o rechazar solicitudes de contacto de planes empresariales"""
+    try:
+        import json
+        from django.http import JsonResponse
+        from django.utils import timezone
+        
+        # Parsear el cuerpo JSON de la petición
+        data = json.loads(request.body)
+        solicitud_id = data.get('solicitud_id')
+        accion = data.get('accion')  # 'aprobar' o 'rechazar'
+        comentario = data.get('comentario', '')
+        
+        # Validar datos
+        if not solicitud_id or not accion:
+            return JsonResponse({
+                'success': False, 
+                'message': 'Datos incompletos'
+            })
+        
+        if accion not in ['aprobar', 'rechazar']:
+            return JsonResponse({
+                'success': False, 
+                'message': 'Acción no válida'
+            })
+        
+        # Obtener la solicitud
+        try:
+            solicitud = SolicitudContactoPlan.objects.get(id_solicitud=solicitud_id)
+        except SolicitudContactoPlan.DoesNotExist:
+            return JsonResponse({
+                'success': False, 
+                'message': 'Solicitud no encontrada'
+            })
+        
+        # Verificar que la solicitud esté pendiente
+        if solicitud.estado != 'pendiente':
+            return JsonResponse({
+                'success': False, 
+                'message': f'La solicitud ya ha sido {solicitud.estado}'
+            })
+        
+        # Procesar según la acción
+        if accion == 'aprobar':
+            solicitud.estado = 'aprobada'
+            solicitud.fecha_contacto = timezone.now()
+            solicitud.notas_seguimiento = f"Solicitud aprobada por {request.user.username} el {timezone.now().strftime('%d/%m/%Y %H:%M')}"
+            
+            # Aquí puedes agregar lógica adicional como:
+            # - Crear usuario empresarial
+            # - Enviar email de confirmación
+            # - Crear suscripción temporal
+            
+            mensaje = f'Solicitud de {solicitud.nombre_completo} aprobada exitosamente'
+            
+        else:  # rechazar
+            solicitud.estado = 'rechazada'
+            solicitud.fecha_contacto = timezone.now()
+            motivo = f" - Motivo: {comentario}" if comentario.strip() else ""
+            solicitud.notas_seguimiento = f"Solicitud rechazada por {request.user.username} el {timezone.now().strftime('%d/%m/%Y %H:%M')}{motivo}"
+            
+            mensaje = f'Solicitud de {solicitud.nombre_completo} rechazada'
+        
+        # Guardar cambios
+        solicitud.save()
+        
+        # Log para auditoría
+        import logging
+        logger = logging.getLogger('django')
+        logger.info(f"Solicitud {solicitud_id} {accion} por {request.user.username}")
+        
+        return JsonResponse({
+            'success': True,
+            'message': mensaje,
+            'nuevo_estado': solicitud.estado
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'message': 'Error en el formato de datos'
+        })
+    except Exception as e:
+        import logging
+        logger = logging.getLogger('django')
+        logger.error(f"Error procesando solicitud {solicitud_id}: {str(e)}")
+        
+        return JsonResponse({
+            'success': False,
+            'message': 'Error interno del servidor'
+        })

@@ -102,58 +102,78 @@
 <!-- Grid de servicios dinámico desde BD -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="servicios-grid">
     {% for servicio in servicios %}
-    <div class="group service-card relative bg-white border border-gray-200 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 hover:border-blue-300 overflow-hidden">
+    <div class="group service-card relative bg-white border border-gray-200 rounded-3xl overflow-hidden hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 hover:border-blue-300 flex flex-col">
         <!-- Decorative background elements -->
         <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full -mr-16 -mt-16 opacity-50 group-hover:opacity-80 transition-opacity duration-500 floating"></div>
         <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-purple-50 to-pink-50 rounded-full -ml-12 -mb-12 opacity-30 group-hover:opacity-60 transition-opacity duration-500 floating-delayed"></div>
         
-        <!-- Icon container with enhanced design -->
-        <div class="icon-container relative z-10 w-20 h-20 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg">
-            <div class="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                <!-- Iconos dinámicos basados en el nombre del servicio -->
-                {% if 'exterior' in servicio.nombre_servicio.lower or 'lavado' in servicio.nombre_servicio.lower %}
-                    <i class="fas fa-car text-2xl text-white drop-shadow-lg"></i>
-                {% elif 'interior' in servicio.nombre_servicio.lower %}
-                    <i class="fas fa-couch text-2xl text-white drop-shadow-lg"></i>
-                {% elif 'detallado' in servicio.nombre_servicio.lower or 'premium' in servicio.nombre_servicio.lower %}
-                    <i class="fas fa-star text-2xl text-white drop-shadow-lg"></i>
-                {% elif 'ecológico' in servicio.nombre_servicio.lower or 'eco' in servicio.nombre_servicio.lower %}
-                    <i class="fas fa-leaf text-2xl text-white drop-shadow-lg"></i>
-                {% elif 'express' in servicio.nombre_servicio.lower or 'rápido' in servicio.nombre_servicio.lower %}
-                    <i class="fas fa-bolt text-2xl text-white drop-shadow-lg"></i>
-                {% elif 'mantenimiento' in servicio.nombre_servicio.lower %}
-                    <i class="fas fa-tools text-2xl text-white drop-shadow-lg"></i>
-                {% else %}
-                    <i class="fas fa-car-side text-2xl text-white drop-shadow-lg"></i>
-                {% endif %}
+        <!-- Image container with enhanced design -->
+        <div class="icon-container relative z-10 w-full h-52 overflow-hidden shadow-lg">
+            <!-- Imagen dinámica basada en el nombre del servicio -->
+            {% if 'exterior' in servicio.nombre_servicio.lower %}
+                <img src="{% static 'img/servicios/lavado_exterior.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            {% elif 'interior' in servicio.nombre_servicio.lower and 'húmedo' in servicio.nombre_servicio.lower or 'humedo' in servicio.nombre_servicio.lower %}
+                <img src="{% static 'img/servicios/limpieza_humeda.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            {% elif 'interior' in servicio.nombre_servicio.lower %}
+                <img src="{% static 'img/servicios/lavado_interior.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            {% elif 'asiento' in servicio.nombre_servicio.lower %}
+                <img src="{% static 'img/servicios/lavado_asiento.webp' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            {% elif 'aspirado' in servicio.nombre_servicio.lower or 'aspiradora' in servicio.nombre_servicio.lower %}
+                <img src="{% static 'img/servicios/limpieza_aspiradora.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            {% elif 'ventana' in servicio.nombre_servicio.lower or 'vidrio' in servicio.nombre_servicio.lower or 'cristal' in servicio.nombre_servicio.lower %}
+                <img src="{% static 'img/servicios/limpieza_ventana.webp' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            {% elif 'aceite' in servicio.nombre_servicio.lower %}
+                <img src="{% static 'img/servicios/cambio_aceite.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            {% elif 'freno' in servicio.nombre_servicio.lower %}
+                <img src="{% static 'img/servicios/reparacion_frenos.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            {% else %}
+                <!-- Imagen por defecto para servicios generales -->
+                <img src="{% static 'img/servicios/lavado_exterior.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            {% endif %}
+            
+            <!-- Overlay gradient for better text readability and depth -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent"></div>
+            
+            <!-- Badge decorativo con precio destacado -->
+            <div class="absolute top-4 right-4 bg-gradient-to-br from-blue-500 to-indigo-600 text-white px-5 py-2.5 rounded-full shadow-xl font-bold text-base transform group-hover:scale-110 transition-transform duration-300 backdrop-blur-sm bg-opacity-95">
+                <span class="flex items-center gap-1">
+                    <i class="fas fa-tag text-xs"></i>
+                    ${{ servicio.precio|floatformat:0 }}
+                </span>
             </div>
-            <!-- Small decorative dot -->
-            <div class="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full shadow-md group-hover:scale-125 transition-transform duration-300"></div>
+            
+            <!-- Category badge opcional -->
+            <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm text-slate-700 px-4 py-1.5 rounded-full shadow-lg font-semibold text-xs transform transition-all duration-300 group-hover:bg-white">
+                <i class="fas fa-star text-yellow-500 mr-1"></i>
+                Servicio Premium
+            </div>
         </div>
         
-        <!-- Service title with enhanced design -->
-        <h3 class="relative z-10 text-2xl font-bold text-slate-800 mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-indigo-600 group-hover:bg-clip-text transition-all duration-500 leading-tight">
-            {{ servicio.nombre_servicio }}
-        </h3>
-        
-        <!-- Service description with better styling -->
-        <p class="relative z-10 text-gray-600 mb-6 leading-relaxed text-sm line-clamp-3 group-hover:text-gray-700 transition-colors duration-300">
-            {{ servicio.descripcion }}
-        </p>
-        
-        <!-- Enhanced features list -->
-        <div class="relative z-10 mb-6">
-            <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center">
-                <i class="fas fa-shield-alt text-green-500 mr-2"></i>
-                Beneficios incluidos
-            </h4>
-            <ul class="space-y-2">
-                <li class="flex items-center text-gray-600 text-sm group-hover:text-gray-700 transition-colors duration-300">
-                    <div class="w-2 h-2 bg-gradient-to-r from-green-400 to-green-500 rounded-full mr-3 flex-shrink-0"></div>
-                    Servicio profesional garantizado
-                </li>
-                <li class="flex items-center text-gray-600 text-sm group-hover:text-gray-700 transition-colors duration-300">
-                    <div class="w-2 h-2 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full mr-3 flex-shrink-0"></div>
+        <!-- Content wrapper with padding -->
+        <div class="p-6 flex flex-col flex-grow">
+            <!-- Service title with enhanced design -->
+            <h3 class="relative z-10 text-2xl font-bold text-slate-800 mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-indigo-600 group-hover:bg-clip-text transition-all duration-500 leading-tight">
+                {{ servicio.nombre_servicio }}
+            </h3>
+            
+            <!-- Service description with better styling -->
+            <p class="relative z-10 text-gray-600 mb-6 leading-relaxed text-sm line-clamp-3 group-hover:text-gray-700 transition-colors duration-300">
+                {{ servicio.descripcion }}
+            </p>
+            
+            <!-- Enhanced features list -->
+            <div class="relative z-10 mb-6 flex-grow">
+                <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                    <i class="fas fa-shield-alt text-green-500 mr-2"></i>
+                    Beneficios incluidos
+                </h4>
+                <ul class="space-y-2">
+                    <li class="flex items-center text-gray-600 text-sm group-hover:text-gray-700 transition-colors duration-300">
+                        <div class="w-2 h-2 bg-gradient-to-r from-green-400 to-green-500 rounded-full mr-3 flex-shrink-0"></div>
+                        Servicio profesional garantizado
+                    </li>
+                    <li class="flex items-center text-gray-600 text-sm group-hover:text-gray-700 transition-colors duration-300">
+                        <div class="w-2 h-2 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full mr-3 flex-shrink-0"></div>
                     Productos de alta calidad
                 </li>
                 <li class="flex items-center text-gray-600 text-sm group-hover:text-gray-700 transition-colors duration-300">
@@ -167,30 +187,27 @@
             </ul>
         </div>
         
-        <!-- Price and action section with enhanced design -->
-        <div class="relative z-10 flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl border border-gray-200 group-hover:border-blue-200 transition-colors duration-300">
-            <div class="flex flex-col">
-                <span class="text-sm text-gray-500 font-medium mb-1">Precio del servicio</span>
-                <span class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                    ${{ servicio.precio|floatformat:0 }}
-                </span>
-            </div>
+        <!-- Action section with enhanced design -->
+        <div class="relative z-10 mt-auto">
             {% if request.user.is_authenticated %}
-                <a href="{% url 'reservas' %}" class="btn-enhanced group/btn px-6 py-3 text-white font-semibold rounded-xl hover:shadow-xl hover:scale-105 transition-all duration-300 relative overflow-hidden">
-                    <span class="relative z-10 flex items-center">
-                        <i class="fas fa-calendar-check mr-2 group-hover/btn:animate-pulse"></i>
+                <a href="{% url 'reservas' %}" class="btn-enhanced group/btn w-full flex items-center justify-center px-6 py-4 text-white font-bold rounded-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 relative overflow-hidden">
+                    <span class="relative z-10 flex items-center gap-2">
+                        <i class="fas fa-calendar-check group-hover/btn:animate-pulse"></i>
                         Reservar Ahora
+                        <i class="fas fa-arrow-right transform group-hover/btn:translate-x-1 transition-transform"></i>
                     </span>
                 </a>
             {% else %}
-                <a href="{% url 'login' %}" class="btn-enhanced group/btn px-6 py-3 bg-gradient-to-r from-gray-600 via-gray-700 to-gray-800 text-white font-semibold rounded-xl hover:shadow-xl hover:scale-105 transition-all duration-300 relative overflow-hidden" title="Inicia sesión para reservar este servicio">
-                    <span class="relative z-10 flex items-center">
-                        <i class="fas fa-sign-in-alt mr-2 group-hover/btn:animate-pulse"></i>
-                        Iniciar Sesión
+                <a href="{% url 'login' %}" class="btn-enhanced group/btn w-full flex items-center justify-center px-6 py-4 bg-gradient-to-r from-gray-600 via-gray-700 to-gray-800 text-white font-bold rounded-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 relative overflow-hidden" title="Inicia sesión para reservar este servicio">
+                    <span class="relative z-10 flex items-center gap-2">
+                        <i class="fas fa-sign-in-alt group-hover/btn:animate-pulse"></i>
+                        Iniciar Sesión para Reservar
                     </span>
                 </a>
             {% endif %}
         </div>
+        </div>
+        <!-- End content wrapper -->
         
         <!-- Hover effect overlay -->
         <div class="absolute inset-0 bg-gradient-to-br from-blue-50/0 to-indigo-50/0 group-hover:from-blue-50/30 group-hover:to-indigo-50/20 rounded-3xl transition-all duration-500 pointer-events-none"></div>
@@ -229,7 +246,7 @@
 
 <!-- Paginación con estilos inline para evitar conflictos CSS -->
 {% if servicios.paginator.num_pages > 1 %}
-<div style="position: static; display: block; width: 100%; margin: 40px auto; padding: 20px; background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%); border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 800px; clear: both;">
+<div class="pagination-section" style="position: static; display: block; width: 100%; margin: 40px auto; padding: 20px; background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%); border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 800px; clear: both;">
     <!-- Título -->
     <div style="text-align: center; margin-bottom: 20px;">
         <h3 style="color: #1f2937; font-size: 18px; font-weight: 600; margin-bottom: 8px;">Navegación de Servicios</h3>
@@ -240,7 +257,9 @@
     <div style="display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap;">
         <!-- Anterior -->
         {% if servicios.has_previous %}
-            <a href="#" data-page="{{ servicios.previous_page_number }}" class="servicios-pagination-link" style="display: inline-flex; align-items: center; padding: 12px 20px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; font-weight: 600; border-radius: 15px; text-decoration: none; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);">← Anterior</a>
+            <a href="?page={{ servicios.previous_page_number }}" data-page="{{ servicios.previous_page_number }}" class="servicios-pagination-link" style="display: inline-flex; align-items: center; padding: 12px 20px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; font-weight: 600; border-radius: 15px; text-decoration: none; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); cursor: pointer; transition: all 0.3s ease;">
+                <span style="pointer-events: none;">← Anterior</span>
+            </a>
         {% else %}
             <span style="display: inline-flex; align-items: center; padding: 12px 20px; background: #d1d5db; color: #9ca3af; font-weight: 600; border-radius: 15px; cursor: not-allowed;">← Anterior</span>
         {% endif %}
@@ -251,14 +270,18 @@
                 {% if servicios.number == num %}
                     <span style="display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); color: white; font-weight: bold; border-radius: 12px; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);">{{ num }}</span>
                 {% elif num > servicios.number|add:'-3' and num < servicios.number|add:'3' %}
-                    <a href="#" data-page="{{ num }}" class="servicios-pagination-link" style="display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; background: white; color: #374151; font-weight: 600; border-radius: 12px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 2px solid #e5e7eb;">{{ num }}</a>
+                    <a href="?page={{ num }}" data-page="{{ num }}" class="servicios-pagination-link" style="display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; background: white; color: #374151; font-weight: 600; border-radius: 12px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 2px solid #e5e7eb; cursor: pointer; transition: all 0.3s ease;">
+                        <span style="pointer-events: none;">{{ num }}</span>
+                    </a>
                 {% endif %}
             {% endfor %}
         </div>
 
         <!-- Siguiente -->
         {% if servicios.has_next %}
-            <a href="#" data-page="{{ servicios.next_page_number }}" class="servicios-pagination-link" style="display: inline-flex; align-items: center; padding: 12px 20px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; font-weight: 600; border-radius: 15px; text-decoration: none; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);">Siguiente →</a>
+            <a href="?page={{ servicios.next_page_number }}" data-page="{{ servicios.next_page_number }}" class="servicios-pagination-link" style="display: inline-flex; align-items: center; padding: 12px 20px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; font-weight: 600; border-radius: 15px; text-decoration: none; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); cursor: pointer; transition: all 0.3s ease;">
+                <span style="pointer-events: none;">Siguiente →</span>
+            </a>
         {% else %}
             <span style="display: inline-flex; align-items: center; padding: 12px 20px; background: #d1d5db; color: #9ca3af; font-weight: 600; border-radius: 15px; cursor: not-allowed;">Siguiente →</span>
         {% endif %}
@@ -282,6 +305,11 @@
 <!-- Enhanced JavaScript for better interactions -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Script de servicios_partial.html cargado');
+    
+    // Inicializar paginación inmediatamente
+    initializePagination();
+    
     // Enhanced hover effects for service cards
     const serviceCards = document.querySelectorAll('.service-card');
     
@@ -379,6 +407,120 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Función para inicializar la paginación
+function initializePagination() {
+    const paginationLinks = document.querySelectorAll('.servicios-pagination-link');
+    console.log('Inicializando paginación. Enlaces encontrados:', paginationLinks.length);
+    
+    paginationLinks.forEach((link, index) => {
+        const page = link.getAttribute('data-page');
+        console.log(`Link ${index + 1} con página:`, page);
+        
+        // Remover listeners anteriores si existen
+        link.replaceWith(link.cloneNode(true));
+    });
+    
+    // Volver a obtener los enlaces después de clonarlos
+    const freshLinks = document.querySelectorAll('.servicios-pagination-link');
+    
+    freshLinks.forEach((link) => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const page = this.getAttribute('data-page');
+            console.log('Click en paginación. Página solicitada:', page);
+            
+            if (!page) {
+                console.error('No se encontró data-page en el enlace');
+                return;
+            }
+            
+            // Efecto visual
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+            
+            // Llamar a la función de carga AJAX
+            loadServiciosPageAjax(page);
+        });
+    });
+}
+
+// Función para cargar página con AJAX
+function loadServiciosPageAjax(page) {
+    const container = document.getElementById('servicios-container');
+    
+    if (!container) {
+        console.error('No se encontró el contenedor servicios-container');
+        return;
+    }
+    
+    console.log('Cargando página:', page);
+    
+    // Mostrar indicador de carga
+    container.style.opacity = '0.5';
+    container.style.pointerEvents = 'none';
+    
+    // Scroll suave hacia el contenedor
+    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    
+    const url = `/ajax/servicios/?page=${page}`;
+    console.log('URL de petición:', url);
+    
+    fetch(url)
+        .then(response => {
+            console.log('Respuesta recibida:', response.status);
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(html => {
+            console.log('HTML recibido, actualizando contenedor');
+            
+            // Actualizar el contenido
+            container.innerHTML = html;
+            container.style.opacity = '1';
+            container.style.pointerEvents = 'auto';
+            
+            // Reinicializar la paginación para los nuevos enlaces
+            setTimeout(() => {
+                initializePagination();
+            }, 100);
+            
+            console.log('Página cargada exitosamente:', page);
+        })
+        .catch(error => {
+            console.error('Error al cargar servicios:', error);
+            container.style.opacity = '1';
+            container.style.pointerEvents = 'auto';
+            
+            // Mostrar mensaje de error
+            container.innerHTML = `
+                <div class="col-span-full text-center py-16">
+                    <div class="bg-red-100 rounded-3xl p-12 max-w-md mx-auto">
+                        <div class="w-20 h-20 bg-gradient-to-r from-red-400 to-red-500 rounded-full mx-auto mb-6 flex items-center justify-center">
+                            <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-red-800 mb-4">Error al cargar servicios</h3>
+                        <p class="text-red-600 mb-4">Por favor, intenta nuevamente.</p>
+                        <button onclick="location.reload()" class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                            Recargar página
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+}
+
+// Hacer la función disponible globalmente
+if (typeof window !== 'undefined') {
+    window.initializePagination = initializePagination;
+    window.loadServiciosPageAjax = loadServiciosPageAjax;
+}
+
 // Add CSS for ripple animation
 const style = document.createElement('style');
 style.textContent = `
@@ -403,6 +545,17 @@ style.textContent = `
     .service-card.in-view {
         box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.25);
     }
+    
+    /* Pagination hover effects */
+    .servicios-pagination-link:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4) !important;
+    }
+    
+    .servicios-pagination-link:active {
+        transform: scale(0.95) !important;
+    }
 `;
 document.head.appendChild(style);
 </script>
+

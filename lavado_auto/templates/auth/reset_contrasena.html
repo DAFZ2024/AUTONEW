@@ -6,42 +6,620 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
     <title>Restablecer Contraseña - AUTONEW</title>
     <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
+    <style>
+        /* Paleta de colores moderna - Fondo Blanco */
+        :root {
+            --primary-blue: #3b82f6;
+            --primary-navy: #1e3a8a;
+            --light-blue: #dbeafe;
+            --accent-blue: #60a5fa;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-600: #4b5563;
+            --gray-800: #1f2937;
+            --red-500: #ef4444;
+            --red-100: #fee2e2;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Patrón de fondo sutil */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(30, 58, 138, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(96, 165, 250, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        /* Contenedor principal */
+        .reset-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Card principal */
+        .reset-card {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.08),
+                0 0 0 1px rgba(229, 231, 235, 0.5);
+            padding: 3rem;
+            transition: all 0.3s ease;
+            border: 1px solid var(--gray-200);
+        }
+
+        .reset-card:hover {
+            box-shadow: 
+                0 25px 70px rgba(0, 0, 0, 0.12),
+                0 0 0 1px rgba(229, 231, 235, 0.8);
+            transform: translateY(-5px);
+        }
+
+        /* Icono decorativo */
+        .icon-container {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-navy) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .icon-container::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-navy));
+            opacity: 0.3;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .icon-container svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.5; }
+        }
+
+        /* Título mejorado */
+        .reset-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-navy) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+        }
+
+        .reset-subtitle {
+            color: var(--gray-600);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        /* Input mejorado con toggle de visibilidad */
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: var(--gray-600);
+            z-index: 1;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px 48px 16px 48px;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: var(--gray-50);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: #9ca3af;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--gray-600);
+            transition: color 0.2s;
+            padding: 4px;
+        }
+
+        .toggle-password:hover {
+            color: var(--primary-blue);
+        }
+
+        .toggle-password svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Indicador de fortaleza de contraseña */
+        .password-strength {
+            margin-top: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .strength-bar {
+            height: 4px;
+            background: var(--gray-200);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .strength-fill {
+            height: 100%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .strength-text {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Requisitos de contraseña */
+        .password-requirements {
+            background: var(--gray-50);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .requirements-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .requirement-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            margin-bottom: 6px;
+        }
+
+        .requirement-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .requirement-icon {
+            width: 16px;
+            height: 16px;
+            color: var(--gray-300);
+            transition: color 0.3s;
+        }
+
+        .requirement-item.valid .requirement-icon {
+            color: #10b981;
+        }
+
+        /* Botón mejorado */
+        .submit-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-navy) 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .submit-button:hover::before {
+            left: 100%;
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+        /* Link de retorno */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-blue);
+            font-weight: 500;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: var(--light-blue);
+            border-color: var(--primary-blue);
+            transform: translateX(-5px);
+            color: var(--primary-navy);
+        }
+
+        .back-link svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Mensaje de error mejorado */
+        .error-list {
+            background: linear-gradient(135deg, var(--red-100) 0%, #fecaca 100%);
+            border-left: 4px solid var(--red-500);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 1rem;
+            animation: slideDown 0.3s ease;
+        }
+
+        .error-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .error-list li {
+            color: #991b1b;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: start;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .error-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .error-list li::before {
+            content: '⚠';
+            flex-shrink: 0;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .reset-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .reset-title {
+                font-size: 1.75rem;
+            }
+
+            .icon-container {
+                width: 70px;
+                height: 70px;
+            }
+
+            .icon-container svg {
+                width: 35px;
+                height: 35px;
+            }
+        }
+    </style>
 </head>
 <body>
-<main class="relative min-h-screen flex items-center justify-center p-4 font-poppins bg-white overflow-x-hidden">
-    <div class="w-full max-w-md mx-auto flex flex-col items-center">
-        <div class="text-center mb-8">
-            <h1 class="text-gray-800 font-bold text-2xl sm:text-3xl mb-3">Restablecer Contraseña</h1>
-            <p class="text-gray-600 text-sm sm:text-base">Ingresa tu nueva contraseña.</p>
+<main class="relative min-h-screen flex items-center justify-center p-4 overflow-x-hidden">
+    <div class="w-full max-w-md mx-auto reset-container">
+        <div class="reset-card">
+            <!-- Icono decorativo -->
+            <div class="icon-container">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clip-rule="evenodd" />
+                </svg>
+            </div>
+
+            <!-- Título y descripción -->
+            <div class="text-center">
+                <h1 class="reset-title">Restablecer Contraseña</h1>
+                <p class="reset-subtitle">
+                    Crea una nueva contraseña segura para tu cuenta.
+                </p>
+            </div>
+
+            <!-- Formulario -->
+            <form method="post" id="resetForm">
+                {% csrf_token %}
+                
+                <!-- Mensajes de error -->
+                {% if form.new_password1.errors %}
+                <div class="error-list">
+                    <ul>
+                    {% for error in form.new_password1.errors %}
+                        <li>{{ error|escape|linebreaksbr|safe|default:"Error en la nueva contraseña." }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+                {% if form.new_password2.errors %}
+                <div class="error-list">
+                    <ul>
+                    {% for error in form.new_password2.errors %}
+                        <li>{{ error|escape|linebreaksbr|safe|default:"Error al confirmar la contraseña." }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- Requisitos de contraseña -->
+                <div class="password-requirements">
+                    <div class="requirements-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        Requisitos de contraseña:
+                    </div>
+                    <div class="requirement-item" id="req-length">
+                        <svg class="requirement-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>Mínimo 8 caracteres</span>
+                    </div>
+                    <div class="requirement-item" id="req-uppercase">
+                        <svg class="requirement-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>Una letra mayúscula</span>
+                    </div>
+                    <div class="requirement-item" id="req-lowercase">
+                        <svg class="requirement-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>Una letra minúscula</span>
+                    </div>
+                    <div class="requirement-item" id="req-number">
+                        <svg class="requirement-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>Un número</span>
+                    </div>
+                </div>
+                
+                <!-- Input de nueva contraseña -->
+                <div class="input-wrapper">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    <input 
+                        type="password" 
+                        name="new_password1" 
+                        id="password1"
+                        class="input-field"
+                        placeholder="Nueva contraseña" 
+                        required 
+                        autocomplete="new-password"
+                    >
+                    <button type="button" class="toggle-password" onclick="togglePassword('password1', this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Indicador de fortaleza -->
+                <div class="password-strength" id="strengthIndicator" style="display: none;">
+                    <div class="strength-bar">
+                        <div class="strength-fill" id="strengthFill" style="width: 0%; background: #ef4444;"></div>
+                    </div>
+                    <div class="strength-text" id="strengthText">
+                        <span>Débil</span>
+                    </div>
+                </div>
+
+                <!-- Input de confirmar contraseña -->
+                <div class="input-wrapper">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <input 
+                        type="password" 
+                        name="new_password2" 
+                        id="password2"
+                        class="input-field"
+                        placeholder="Confirmar contraseña" 
+                        required 
+                        autocomplete="new-password"
+                    >
+                    <button type="button" class="toggle-password" onclick="togglePassword('password2', this)">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Botón de envío -->
+                <button type="submit" class="submit-button">
+                    Restablecer contraseña
+                </button>
+            </form>
         </div>
-        <form method="post" class="space-y-5 w-full bg-white rounded-2xl shadow-custom p-6 border border-gray-100">
-            {% csrf_token %}
-            {% if form.new_password1.errors %}
-                <ul class="text-red-600 text-sm mb-2">
-                {% for error in form.new_password1.errors %}
-                    <li>{{ error|escape|linebreaksbr|safe|default:"Error en la nueva contraseña." }}</li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-            {% if form.new_password2.errors %}
-                <ul class="text-red-600 text-sm mb-2">
-                {% for error in form.new_password2.errors %}
-                    <li>{{ error|escape|linebreaksbr|safe|default:"Error al confirmar la contraseña." }}</li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-            <div class="input-group">
-                <input type="password" name="new_password1" placeholder="Nueva contraseña" required autocomplete="new-password" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm bg-white text-gray-800 focus:outline-none focus:border-primary focus:ring-4 focus:ring-blue-100 placeholder-gray-400 smooth-transition">
-            </div>
-            <div class="input-group">
-                <input type="password" name="new_password2" placeholder="Confirmar contraseña" required autocomplete="new-password" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm bg-white text-gray-800 focus:outline-none focus:border-primary focus:ring-4 focus:ring-blue-100 placeholder-gray-400 smooth-transition">
-            </div>
-            <button type="submit" class="w-full px-4 py-3 bg-gradient-primary text-white font-semibold text-sm rounded-lg cursor-pointer transition-all duration-300 mt-3 shadow-button hover:-translate-y-0.5 hover:shadow-button-hover">Restablecer contraseña</button>
-        </form>
+
+        <!-- Link de retorno -->
         <div class="text-center mt-6">
-            <a href="/login/" class="text-primary font-medium text-sm hover:text-primary-600 hover:underline">Volver al login</a>
+            <a href="/login/" class="back-link">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Volver al login
+            </a>
         </div>
     </div>
 </main>
+
+<script>
+    // Toggle visibilidad de contraseña
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        const svg = button.querySelector('svg');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />';
+        } else {
+            input.type = 'password';
+            svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />';
+        }
+    }
+
+    // Validación y fortaleza de contraseña
+    const password1 = document.getElementById('password1');
+    const strengthIndicator = document.getElementById('strengthIndicator');
+    const strengthFill = document.getElementById('strengthFill');
+    const strengthText = document.getElementById('strengthText');
+
+    password1.addEventListener('input', function() {
+        const value = this.value;
+        
+        if (value.length > 0) {
+            strengthIndicator.style.display = 'block';
+        } else {
+            strengthIndicator.style.display = 'none';
+            return;
+        }
+
+        // Validar requisitos
+        const hasLength = value.length >= 8;
+        const hasUppercase = /[A-Z]/.test(value);
+        const hasLowercase = /[a-z]/.test(value);
+        const hasNumber = /[0-9]/.test(value);
+
+        // Actualizar UI de requisitos
+        document.getElementById('req-length').classList.toggle('valid', hasLength);
+        document.getElementById('req-uppercase').classList.toggle('valid', hasUppercase);
+        document.getElementById('req-lowercase').classList.toggle('valid', hasLowercase);
+        document.getElementById('req-number').classList.toggle('valid', hasNumber);
+
+        // Calcular fortaleza
+        let strength = 0;
+        if (hasLength) strength += 25;
+        if (hasUppercase) strength += 25;
+        if (hasLowercase) strength += 25;
+        if (hasNumber) strength += 25;
+
+        // Actualizar barra de fortaleza
+        strengthFill.style.width = strength + '%';
+        
+        if (strength <= 25) {
+            strengthFill.style.background = '#ef4444';
+            strengthText.innerHTML = '<span>Débil</span>';
+        } else if (strength <= 50) {
+            strengthFill.style.background = '#f59e0b';
+            strengthText.innerHTML = '<span>Media</span>';
+        } else if (strength <= 75) {
+            strengthFill.style.background = '#3b82f6';
+            strengthText.innerHTML = '<span>Buena</span>';
+        } else {
+            strengthFill.style.background = '#10b981';
+            strengthText.innerHTML = '<span>Excelente</span>';
+        }
+    });
+</script>
 </body>
 </html>

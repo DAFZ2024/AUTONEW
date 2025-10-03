@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+<meta name="csrf-token" content="{{ csrf_token }}">
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -123,14 +124,22 @@
                             {% if solicitud.estado == 'pendiente' %}
                                 bg-yellow-100 text-yellow-800
                             {% elif solicitud.estado == 'contactado' %}
+                                bg-blue-100 text-blue-800
+                            {% elif solicitud.estado == 'aprobada' %}
                                 bg-green-100 text-green-800
+                            {% elif solicitud.estado == 'rechazada' %}
+                                bg-red-100 text-red-800
                             {% else %}
                                 bg-gray-100 text-gray-800
                             {% endif %}">
                             {% if solicitud.estado == 'pendiente' %}
                                 <i class="fas fa-clock mr-1"></i>Pendiente
                             {% elif solicitud.estado == 'contactado' %}
-                                <i class="fas fa-check mr-1"></i>Contactado
+                                <i class="fas fa-phone mr-1"></i>Contactado
+                            {% elif solicitud.estado == 'aprobada' %}
+                                <i class="fas fa-check-circle mr-1"></i>Aprobada
+                            {% elif solicitud.estado == 'rechazada' %}
+                                <i class="fas fa-times-circle mr-1"></i>Rechazada
                             {% else %}
                                 <i class="fas fa-times mr-1"></i>Cerrado
                             {% endif %}
@@ -183,11 +192,13 @@
                     
                     <div class="mt-4 flex gap-2">
                         {% if solicitud.estado == 'pendiente' %}
-                        <button class="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold py-2 px-3 rounded-lg transition-colors">
-                            <i class="fas fa-phone mr-1"></i>Contactar
+                        <button onclick="contactarWhatsApp('{{ solicitud.telefono }}', '{{ solicitud.nombre_completo }}', '{{ solicitud.plan.nombre }}', '{{ solicitud.empresa }}')" 
+                                class="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold py-2 px-3 rounded-lg transition-colors">
+                            <i class="fab fa-whatsapp mr-1"></i>Contactar
                         </button>
                         {% endif %}
-                        <button class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold py-2 px-3 rounded-lg transition-colors">
+                        <button onclick="abrirModalDetalles('{{ solicitud.id }}', '{{ solicitud.nombre_completo }}', '{{ solicitud.empresa }}', '{{ solicitud.cargo|default:"" }}', '{{ solicitud.email }}', '{{ solicitud.telefono }}', '{{ solicitud.plan.nombre }}', '{{ solicitud.cantidad_vehiculos }}', '{{ solicitud.mensaje_adicional|default:""|escapejs }}', '{{ solicitud.fecha_solicitud|date:"d/m/Y" }}', '{{ solicitud.estado }}', '{{ solicitud.fecha_contacto|date:"d/m/Y"|default:"" }}')" 
+                                class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold py-2 px-3 rounded-lg transition-colors">
                             <i class="fas fa-eye mr-1"></i>Ver
                         </button>
                     </div>
@@ -366,6 +377,105 @@
     </div>
 </div>
 
+<!-- Modal para ver detalles de solicitud de contacto -->
+<div id="modalDetallesSolicitud" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6 sm:p-8">
+            <!-- Header del modal -->
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-lg">
+                        <i class="fas fa-envelope-open-text text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                            Detalles de Solicitud
+                        </h3>
+                        <p class="text-gray-600 text-sm">Información completa del contacto</p>
+                    </div>
+                </div>
+                <button onclick="cerrarModal()" class="p-2 hover:bg-gray-100 rounded-xl transition-colors">
+                    <i class="fas fa-times text-gray-500 text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Contenido del modal -->
+            <div id="contenidoModal" class="space-y-6">
+                <!-- El contenido se llenará dinámicamente con JavaScript -->
+            </div>
+            
+            <!-- Botones de acción -->
+            <div class="space-y-4 mt-8 pt-6 border-t border-gray-200">
+                <!-- Botones de aprobación (solo para solicitudes pendientes) -->
+                <div id="botonesAprobacion" class="flex gap-3">
+                    <button id="btnAprobar" 
+                            class="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold py-3 px-6 rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-check mr-2"></i>Aprobar Solicitud
+                    </button>
+                    <button id="btnRechazar" 
+                            class="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-times mr-2"></i>Rechazar Solicitud
+                    </button>
+                </div>
+                
+                <!-- Botones de contacto y cerrar -->
+                <div class="flex gap-4">
+                    <button id="btnContactarModal" 
+                            class="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-6 rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300">
+                        <i class="fab fa-whatsapp mr-2"></i>Contactar por WhatsApp
+                    </button>
+                    <button onclick="cerrarModal()" 
+                            class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-2xl transition-colors">
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación para aprobación/rechazo -->
+<div id="modalConfirmacion" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+        <div class="p-6">
+            <!-- Header del modal de confirmación -->
+            <div class="text-center mb-6">
+                <div id="iconoConfirmacion" class="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                    <!-- El icono se cambiará dinámicamente -->
+                </div>
+                <h3 id="tituloConfirmacion" class="text-xl font-bold text-gray-900 mb-2">
+                    <!-- El título se cambiará dinámicamente -->
+                </h3>
+                <p id="mensajeConfirmacion" class="text-gray-600">
+                    <!-- El mensaje se cambiará dinámicamente -->
+                </p>
+            </div>
+            
+            <!-- Campo para comentarios (opcional, para rechazos) -->
+            <div id="campoComentarios" class="mb-6 hidden">
+                <label for="comentarioRechazo" class="block text-sm font-medium text-gray-700 mb-2">
+                    Motivo del rechazo (opcional)
+                </label>
+                <textarea id="comentarioRechazo" rows="3" 
+                          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                          placeholder="Escribe el motivo del rechazo..."></textarea>
+            </div>
+            
+            <!-- Botones de confirmación -->
+            <div class="flex gap-3">
+                <button onclick="cerrarModalConfirmacion()" 
+                        class="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors">
+                    Cancelar
+                </button>
+                <button id="btnConfirmarAccion" 
+                        class="flex-1 px-4 py-2 font-semibold rounded-lg transition-all duration-300">
+                    <!-- El texto y color se cambiarán dinámicamente -->
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- JavaScript para filtros y búsqueda -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -400,6 +510,421 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.addEventListener('input', filterTable);
     tipoFilter.addEventListener('change', filterTable);
     estadoFilter.addEventListener('change', filterTable);
+});
+
+// Variables globales para el modal
+let solicitudActual = {};
+
+// Función para abrir el modal de detalles
+function abrirModalDetalles(id, nombre, empresa, cargo, email, telefono, plan, vehiculos, mensaje, fecha, estado, fechaContacto) {
+    solicitudActual = {
+        id: id,
+        nombre: nombre,
+        empresa: empresa,
+        cargo: cargo,
+        email: email,
+        telefono: telefono,
+        plan: plan,
+        vehiculos: vehiculos,
+        mensaje: mensaje,
+        fecha: fecha,
+        estado: estado,
+        fechaContacto: fechaContacto
+    };
+    
+    // Generar el contenido del modal
+    const contenido = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Información Personal -->
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6">
+                <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-user text-blue-600 mr-2"></i>Información Personal
+                </h4>
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-user-tie text-blue-500 text-sm mt-1"></i>
+                        <div>
+                            <p class="font-semibold text-gray-700">Nombre</p>
+                            <p class="text-gray-900">${nombre}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-building text-purple-500 text-sm mt-1"></i>
+                        <div>
+                            <p class="font-semibold text-gray-700">Empresa</p>
+                            <p class="text-gray-900">${empresa}</p>
+                        </div>
+                    </div>
+                    ${cargo ? `
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-id-badge text-green-500 text-sm mt-1"></i>
+                        <div>
+                            <p class="font-semibold text-gray-700">Cargo</p>
+                            <p class="text-gray-900">${cargo}</p>
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+            
+            <!-- Información de Contacto -->
+            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6">
+                <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-phone text-green-600 mr-2"></i>Contacto
+                </h4>
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-envelope text-blue-500 text-sm mt-1"></i>
+                        <div>
+                            <p class="font-semibold text-gray-700">Email</p>
+                            <p class="text-gray-900 break-all">${email}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <i class="fab fa-whatsapp text-green-500 text-sm mt-1"></i>
+                        <div>
+                            <p class="font-semibold text-gray-700">Teléfono</p>
+                            <p class="text-gray-900">${telefono}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-calendar text-indigo-500 text-sm mt-1"></i>
+                        <div>
+                            <p class="font-semibold text-gray-700">Fecha de Solicitud</p>
+                            <p class="text-gray-900">${fecha}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Información del Plan -->
+        <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6">
+            <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-layer-group text-purple-600 mr-2"></i>Plan Solicitado
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-tag text-purple-500 text-sm mt-1"></i>
+                    <div>
+                        <p class="font-semibold text-gray-700">Plan</p>
+                        <p class="text-gray-900">${plan}</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-truck text-orange-500 text-sm mt-1"></i>
+                    <div>
+                        <p class="font-semibold text-gray-700">Cantidad de Vehículos</p>
+                        <p class="text-gray-900">${vehiculos} vehículos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Estado de la Solicitud -->
+        <div class="bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl p-6">
+            <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-info-circle text-gray-600 mr-2"></i>Estado de la Solicitud
+            </h4>
+            <div class="flex items-center gap-4">
+                <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold
+                    ${estado === 'pendiente' ? 'bg-yellow-100 text-yellow-800' : 
+                      estado === 'contactado' ? 'bg-blue-100 text-blue-800' :
+                      estado === 'aprobada' ? 'bg-green-100 text-green-800' :
+                      estado === 'rechazada' ? 'bg-red-100 text-red-800' :
+                      'bg-gray-100 text-gray-800'}">
+                    ${estado === 'pendiente' ? '<i class="fas fa-clock mr-1"></i>Pendiente' :
+                      estado === 'contactado' ? '<i class="fas fa-phone mr-1"></i>Contactado' :
+                      estado === 'aprobada' ? '<i class="fas fa-check-circle mr-1"></i>Aprobada' :
+                      estado === 'rechazada' ? '<i class="fas fa-times-circle mr-1"></i>Rechazada' :
+                      '<i class="fas fa-times mr-1"></i>Cerrado'}
+                </span>
+                ${fechaContacto && fechaContacto !== '' ? `
+                    <span class="text-sm text-gray-600">
+                        <i class="fas fa-calendar-check mr-1"></i>Contactado el ${fechaContacto}
+                    </span>
+                ` : ''}
+            </div>
+        </div>
+        
+        ${mensaje && mensaje.trim() !== '' ? `
+        <!-- Mensaje Adicional -->
+        <div class="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-2xl p-6">
+            <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-comment-alt text-amber-600 mr-2"></i>Mensaje Adicional
+            </h4>
+            <div class="bg-white rounded-xl p-4 border border-amber-200">
+                <p class="text-gray-800 leading-relaxed">${mensaje}</p>
+            </div>
+        </div>
+        ` : ''}
+    `;
+    
+    document.getElementById('contenidoModal').innerHTML = contenido;
+    
+    // Configurar los botones según el estado de la solicitud
+    const btnContactarModal = document.getElementById('btnContactarModal');
+    const botonesAprobacion = document.getElementById('botonesAprobacion');
+    const btnAprobar = document.getElementById('btnAprobar');
+    const btnRechazar = document.getElementById('btnRechazar');
+    
+    if (estado === 'pendiente') {
+        btnContactarModal.style.display = 'block';
+        botonesAprobacion.style.display = 'flex';
+        
+        btnContactarModal.onclick = function() {
+            contactarWhatsApp(telefono, nombre, plan, empresa);
+        };
+        
+        btnAprobar.onclick = function() {
+            mostrarConfirmacionAprobacion();
+        };
+        
+        btnRechazar.onclick = function() {
+            mostrarConfirmacionRechazo();
+        };
+    } else {
+        botonesAprobacion.style.display = 'none';
+        if (estado === 'contactado') {
+            btnContactarModal.style.display = 'block';
+            btnContactarModal.onclick = function() {
+                contactarWhatsApp(telefono, nombre, plan, empresa);
+            };
+        } else {
+            btnContactarModal.style.display = 'none';
+        }
+    }
+    
+    // Mostrar el modal
+    document.getElementById('modalDetallesSolicitud').classList.remove('hidden');
+}
+
+// Función para cerrar el modal
+function cerrarModal() {
+    document.getElementById('modalDetallesSolicitud').classList.add('hidden');
+}
+
+// Función para contactar por WhatsApp
+function contactarWhatsApp(telefono, nombre, plan, empresa) {
+    // Limpiar el número de teléfono
+    let numeroLimpio = telefono.replace(/\D/g, '');
+    
+    // Si no empieza con código de país, asumir que es de Colombia (+57)
+    if (!numeroLimpio.startsWith('57') && numeroLimpio.length === 10) {
+        numeroLimpio = '57' + numeroLimpio;
+    }
+    
+    // Mensaje predefinido
+    const mensaje = `Hola ${nombre}, soy del equipo de AutoNew. 
+
+Vi que estás interesado en nuestro ${plan} para ${empresa}. 
+
+Me gustaría contarte más detalles sobre los beneficios de este plan y resolver cualquier duda que tengas.
+
+¿Tienes unos minutos para conversar? 🚗✨`;
+    
+    // Crear la URL de WhatsApp
+    const urlWhatsApp = `https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`;
+    
+    // Abrir WhatsApp
+    window.open(urlWhatsApp, '_blank');
+}
+
+// Funciones para manejar aprobación/rechazo
+function mostrarConfirmacionAprobacion() {
+    const modalConfirmacion = document.getElementById('modalConfirmacion');
+    const iconoConfirmacion = document.getElementById('iconoConfirmacion');
+    const tituloConfirmacion = document.getElementById('tituloConfirmacion');
+    const mensajeConfirmacion = document.getElementById('mensajeConfirmacion');
+    const campoComentarios = document.getElementById('campoComentarios');
+    const btnConfirmarAccion = document.getElementById('btnConfirmarAccion');
+    
+    // Configurar para aprobación
+    iconoConfirmacion.className = 'mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-green-100';
+    iconoConfirmacion.innerHTML = '<i class="fas fa-check text-green-600 text-2xl"></i>';
+    tituloConfirmacion.textContent = 'Aprobar Solicitud';
+    mensajeConfirmacion.textContent = `¿Estás seguro de que deseas aprobar la solicitud de ${solicitudActual.nombre} para ${solicitudActual.empresa}?`;
+    campoComentarios.classList.add('hidden');
+    
+    btnConfirmarAccion.className = 'flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all duration-300';
+    btnConfirmarAccion.textContent = 'Sí, Aprobar';
+    btnConfirmarAccion.onclick = function() {
+        procesarAprobacion();
+    };
+    
+    modalConfirmacion.classList.remove('hidden');
+}
+
+function mostrarConfirmacionRechazo() {
+    const modalConfirmacion = document.getElementById('modalConfirmacion');
+    const iconoConfirmacion = document.getElementById('iconoConfirmacion');
+    const tituloConfirmacion = document.getElementById('tituloConfirmacion');
+    const mensajeConfirmacion = document.getElementById('mensajeConfirmacion');
+    const campoComentarios = document.getElementById('campoComentarios');
+    const btnConfirmarAccion = document.getElementById('btnConfirmarAccion');
+    
+    // Configurar para rechazo
+    iconoConfirmacion.className = 'mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-red-100';
+    iconoConfirmacion.innerHTML = '<i class="fas fa-times text-red-600 text-2xl"></i>';
+    tituloConfirmacion.textContent = 'Rechazar Solicitud';
+    mensajeConfirmacion.textContent = `¿Estás seguro de que deseas rechazar la solicitud de ${solicitudActual.nombre} para ${solicitudActual.empresa}?`;
+    campoComentarios.classList.remove('hidden');
+    
+    btnConfirmarAccion.className = 'flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-all duration-300';
+    btnConfirmarAccion.textContent = 'Sí, Rechazar';
+    btnConfirmarAccion.onclick = function() {
+        procesarRechazo();
+    };
+    
+    modalConfirmacion.classList.remove('hidden');
+}
+
+function cerrarModalConfirmacion() {
+    document.getElementById('modalConfirmacion').classList.add('hidden');
+    document.getElementById('comentarioRechazo').value = '';
+}
+
+function procesarAprobacion() {
+    // Mostrar loading
+    const btnConfirmar = document.getElementById('btnConfirmarAccion');
+    const textoOriginal = btnConfirmar.textContent;
+    btnConfirmar.textContent = 'Procesando...';
+    btnConfirmar.disabled = true;
+    
+    // Hacer petición AJAX para aprobar
+    fetch('/aprobar-solicitud-empresarial/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        },
+        body: JSON.stringify({
+            solicitud_id: solicitudActual.id,
+            accion: 'aprobar'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            mostrarNotificacion('Solicitud aprobada exitosamente', 'success');
+            cerrarModalConfirmacion();
+            cerrarModal();
+            // Recargar la página para actualizar la vista
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        } else {
+            mostrarNotificacion(data.message || 'Error al aprobar la solicitud', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarNotificacion('Error de conexión', 'error');
+    })
+    .finally(() => {
+        btnConfirmar.textContent = textoOriginal;
+        btnConfirmar.disabled = false;
+    });
+}
+
+function procesarRechazo() {
+    const comentario = document.getElementById('comentarioRechazo').value;
+    
+    // Mostrar loading
+    const btnConfirmar = document.getElementById('btnConfirmarAccion');
+    const textoOriginal = btnConfirmar.textContent;
+    btnConfirmar.textContent = 'Procesando...';
+    btnConfirmar.disabled = true;
+    
+    // Hacer petición AJAX para rechazar
+    fetch('/aprobar-solicitud-empresarial/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        },
+        body: JSON.stringify({
+            solicitud_id: solicitudActual.id,
+            accion: 'rechazar',
+            comentario: comentario
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            mostrarNotificacion('Solicitud rechazada', 'success');
+            cerrarModalConfirmacion();
+            cerrarModal();
+            // Recargar la página para actualizar la vista
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        } else {
+            mostrarNotificacion(data.message || 'Error al rechazar la solicitud', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarNotificacion('Error de conexión', 'error');
+    })
+    .finally(() => {
+        btnConfirmar.textContent = textoOriginal;
+        btnConfirmar.disabled = false;
+    });
+}
+
+// Función para obtener el token CSRF
+function getCsrfToken() {
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+           document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+}
+
+// Función para mostrar notificaciones
+function mostrarNotificacion(mensaje, tipo) {
+    // Crear notificación temporal
+    const notificacion = document.createElement('div');
+    notificacion.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg text-white font-semibold transition-all duration-300 transform translate-x-full ${
+        tipo === 'success' ? 'bg-green-500' : 'bg-red-500'
+    }`;
+    notificacion.innerHTML = `
+        <div class="flex items-center gap-2">
+            <i class="fas fa-${tipo === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+            <span>${mensaje}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notificacion);
+    
+    // Animar entrada
+    setTimeout(() => {
+        notificacion.classList.remove('translate-x-full');
+    }, 100);
+    
+    // Animar salida y eliminar
+    setTimeout(() => {
+        notificacion.classList.add('translate-x-full');
+        setTimeout(() => {
+            document.body.removeChild(notificacion);
+        }, 300);
+    }, 3000);
+}
+
+// Cerrar modal al hacer clic fuera de él
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('modalDetallesSolicitud');
+    const modalConfirmacion = document.getElementById('modalConfirmacion');
+    
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            cerrarModal();
+        }
+    });
+    
+    modalConfirmacion.addEventListener('click', function(e) {
+        if (e.target === modalConfirmacion) {
+            cerrarModalConfirmacion();
+        }
+    });
 });
 </script>
 {% endblock %}

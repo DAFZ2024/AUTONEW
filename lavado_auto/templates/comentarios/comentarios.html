@@ -893,15 +893,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Función para crear feedback háptico en móviles
     function createHapticFeedback() {
         if ('vibrate' in navigator) {
-            // Patrón de vibración: vibrar 50ms, pausa 50ms, vibrar 100ms
-            navigator.vibrate([50, 50, 100]);
+            navigator.vibrate([30, 20, 50]); // Vibración sutil y elegante
         }
     }
     
     // Función para reproducir sonido (opcional, se puede deshabilitar)
     function playSuccessSound() {
         try {
-            // Crear un sonido sintético usando Web Audio API
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
@@ -909,151 +907,218 @@ document.addEventListener('DOMContentLoaded', function() {
             oscillator.connect(gainNode);
             gainNode.connect(audioContext.destination);
             
-            // Configurar un sonido agradable
-            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-            oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.1);
-            oscillator.frequency.setValueAtTime(1200, audioContext.currentTime + 0.2);
+            // Sonido más moderno y suave
+            oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(900, audioContext.currentTime + 0.15);
             
             gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-            gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01);
-            gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.3);
+            gainNode.gain.linearRampToValueAtTime(0.08, audioContext.currentTime + 0.01);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
             
             oscillator.type = 'sine';
             oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.3);
+            oscillator.stop(audioContext.currentTime + 0.2);
         } catch (e) {
-            // Si falla la reproducción de sonido, continuar sin problemas
             console.log('Audio no disponible');
         }
     }
-    function createConfetti(x, y) {
-        const colors = ['blue', 'cyan', 'teal', 'yellow', 'pink'];
-        const particleCount = 15;
+
+    // Función para crear partículas modernas y elegantes
+    function createModernParticles(x, y) {
+        const particleCount = 20;
+        const colors = ['#3b82f6', '#06b6d4', '#14b8a6', '#10b981', '#8b5cf6'];
         
         for (let i = 0; i < particleCount; i++) {
             const particle = document.createElement('div');
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            
-            particle.className = `confetti-particle ${randomColor}`;
+            particle.style.position = 'fixed';
+            particle.style.width = Math.random() * 8 + 4 + 'px';
+            particle.style.height = particle.style.width;
+            particle.style.borderRadius = '50%';
+            particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
             particle.style.left = x + 'px';
             particle.style.top = y + 'px';
+            particle.style.pointerEvents = 'none';
+            particle.style.zIndex = '9999';
+            particle.style.opacity = '1';
+            particle.style.boxShadow = `0 0 10px ${colors[Math.floor(Math.random() * colors.length)]}80`;
             
-            // Variación en la posición inicial
-            particle.style.transform = `translateX(${(Math.random() - 0.5) * 200}px)`;
-            
-            // Duración aleatoria
-            particle.style.animationDuration = (Math.random() * 2 + 2) + 's';
-            particle.style.animationDelay = Math.random() * 0.5 + 's';
+            const angle = (Math.PI * 2 * i) / particleCount;
+            const velocity = Math.random() * 150 + 100;
+            const vx = Math.cos(angle) * velocity;
+            const vy = Math.sin(angle) * velocity;
             
             document.body.appendChild(particle);
             
-            // Eliminar después de la animación
-            setTimeout(() => {
-                if (particle.parentNode) {
-                    particle.parentNode.removeChild(particle);
+            let posX = x;
+            let posY = y;
+            let opacity = 1;
+            const startTime = Date.now();
+            
+            function animate() {
+                const elapsed = (Date.now() - startTime) / 1000;
+                
+                if (elapsed > 1.2) {
+                    particle.remove();
+                    return;
                 }
-            }, 4000);
+                
+                posX += vx * 0.016;
+                posY += vy * 0.016 + 100 * elapsed;
+                opacity = 1 - elapsed / 1.2;
+                
+                particle.style.left = posX + 'px';
+                particle.style.top = posY + 'px';
+                particle.style.opacity = opacity;
+                particle.style.transform = `scale(${1 - elapsed * 0.5})`;
+                
+                requestAnimationFrame(animate);
+            }
+            
+            requestAnimationFrame(animate);
         }
     }
     
-    // Función para crear efectos sparkle
-    function createSparkles(x, y) {
-        const sparkleCount = 8;
+    // Función para crear onda de impacto elegante
+    function createRippleEffect(x, y) {
+        const ripple = document.createElement('div');
+        ripple.style.position = 'fixed';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.style.width = '20px';
+        ripple.style.height = '20px';
+        ripple.style.borderRadius = '50%';
+        ripple.style.border = '3px solid #06b6d4';
+        ripple.style.transform = 'translate(-50%, -50%)';
+        ripple.style.pointerEvents = 'none';
+        ripple.style.zIndex = '9999';
+        ripple.style.opacity = '1';
         
-        for (let i = 0; i < sparkleCount; i++) {
-            const sparkle = document.createElement('div');
-            sparkle.className = 'sparkle';
+        document.body.appendChild(ripple);
+        
+        let scale = 1;
+        let opacity = 1;
+        const startTime = Date.now();
+        
+        function animate() {
+            const elapsed = (Date.now() - startTime) / 1000;
             
-            const offsetX = (Math.random() - 0.5) * 100;
-            const offsetY = (Math.random() - 0.5) * 100;
-            
-            sparkle.style.left = (x + offsetX) + 'px';
-            sparkle.style.top = (y + offsetY) + 'px';
-            sparkle.style.animationDelay = Math.random() * 0.5 + 's';
-            
-            document.body.appendChild(sparkle);
-            
-            setTimeout(() => {
-                if (sparkle.parentNode) {
-                    sparkle.parentNode.removeChild(sparkle);
-                }
-            }, 1500);
-        }
-    }
-
-    // Función para crear rastro de partículas detrás de la burbuja
-    function createBubbleTrail(bubble) {
-        const trailInterval = setInterval(() => {
-            if (!bubble.parentNode) {
-                clearInterval(trailInterval);
+            if (elapsed > 0.8) {
+                ripple.remove();
                 return;
             }
             
-            const rect = bubble.getBoundingClientRect();
-            const particle = document.createElement('div');
-            particle.className = 'trail-particle';
+            scale = 1 + elapsed * 15;
+            opacity = 1 - elapsed / 0.8;
             
-            // Posicionar en el centro de la burbuja con un poco de variación
-            particle.style.left = (rect.left + rect.width / 2 + (Math.random() - 0.5) * 20) + 'px';
-            particle.style.top = (rect.top + rect.height / 2 + (Math.random() - 0.5) * 20) + 'px';
+            ripple.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            ripple.style.opacity = opacity;
             
-            document.body.appendChild(particle);
-            
-            // Eliminar la partícula después de la animación
-            setTimeout(() => {
-                if (particle.parentNode) {
-                    particle.parentNode.removeChild(particle);
-                }
-            }, 1000);
-            
-        }, 100); // Crear una partícula cada 100ms
+            requestAnimationFrame(animate);
+        }
         
-        // Parar el rastro después de 4 segundos
-        setTimeout(() => {
-            clearInterval(trailInterval);
-        }, 4000);
+        requestAnimationFrame(animate);
     }
 
-    // Función para crear la burbuja de comentario flotante
+    // Función para crear burbuja de comentario moderna
     function createCommentBubble(text, startElement) {
         const bubble = document.createElement('div');
-        bubble.className = 'comment-bubble bubble-appearing';
+        bubble.style.position = 'fixed';
+        bubble.style.padding = '16px 24px';
+        bubble.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+        bubble.style.backdropFilter = 'blur(10px)';
+        bubble.style.borderRadius = '20px';
+        bubble.style.boxShadow = '0 20px 60px rgba(6, 182, 212, 0.3), 0 0 0 1px rgba(6, 182, 212, 0.1)';
+        bubble.style.maxWidth = '300px';
+        bubble.style.fontSize = '14px';
+        bubble.style.fontWeight = '500';
+        bubble.style.color = '#1e293b';
+        bubble.style.zIndex = '9999';
+        bubble.style.pointerEvents = 'none';
         bubble.textContent = text.substring(0, 100) + (text.length > 100 ? '...' : '');
         
-        // Posicionar la burbuja en la ubicación del textarea
         const rect = startElement.getBoundingClientRect();
-        const bubbleX = rect.left + rect.width / 2 - 150;
+        const bubbleX = rect.left + rect.width / 2;
         const bubbleY = rect.top + window.scrollY;
         
         bubble.style.left = bubbleX + 'px';
         bubble.style.top = bubbleY + 'px';
+        bubble.style.transform = 'translate(-50%, 0) scale(0.5)';
+        bubble.style.opacity = '0';
+        bubble.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
         
         document.body.appendChild(bubble);
         
-        // Aplicar la animación de flotación después de un breve delay
+        // Animación de entrada
+        requestAnimationFrame(() => {
+            bubble.style.transform = 'translate(-50%, -20px) scale(1)';
+            bubble.style.opacity = '1';
+        });
+        
+        // Crear partículas al aparecer
         setTimeout(() => {
-            bubble.classList.remove('bubble-appearing');
-            bubble.classList.add('floating');
+            createModernParticles(bubbleX, rect.top + window.scrollY);
+            createRippleEffect(bubbleX, rect.top + window.scrollY);
+        }, 200);
+        
+        // Animación de salida
+        setTimeout(() => {
+            bubble.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            bubble.style.transform = 'translate(-50%, -200px) scale(0.8)';
+            bubble.style.opacity = '0';
             
-            // Iniciar el rastro de partículas
-            createBubbleTrail(bubble);
-        }, 500);
+            // Efecto final de partículas
+            setTimeout(() => {
+                createModernParticles(bubbleX, window.scrollY + 100);
+            }, 300);
+        }, 1800);
         
-        // Crear efectos especiales cuando la burbuja "explota" al salir
+        // Eliminar después de la animación
         setTimeout(() => {
-            // Crear confetti en la posición donde "sale" la burbuja
-            createConfetti(bubbleX + 150, 50);
-            createSparkles(bubbleX + 150, 50);
-        }, 4000);
-        
-        // Eliminar la burbuja después de la animación
-        setTimeout(() => {
-            if (bubble.parentNode) {
-                bubble.parentNode.removeChild(bubble);
-            }
-        }, 5500);
+            bubble.remove();
+        }, 2500);
         
         return bubble;
+    }
+
+    // Función para crear rastro de luz elegante
+    function createLightTrail(x, y) {
+        const trail = document.createElement('div');
+        trail.style.position = 'fixed';
+        trail.style.left = x + 'px';
+        trail.style.top = y + 'px';
+        trail.style.width = '100px';
+        trail.style.height = '100px';
+        trail.style.background = 'radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, transparent 70%)';
+        trail.style.borderRadius = '50%';
+        trail.style.transform = 'translate(-50%, -50%)';
+        trail.style.pointerEvents = 'none';
+        trail.style.zIndex = '9998';
+        trail.style.opacity = '1';
+        
+        document.body.appendChild(trail);
+        
+        let scale = 0.5;
+        let opacity = 0.8;
+        const startTime = Date.now();
+        
+        function animate() {
+            const elapsed = (Date.now() - startTime) / 1000;
+            
+            if (elapsed > 1) {
+                trail.remove();
+                return;
+            }
+            
+            scale = 0.5 + elapsed * 2;
+            opacity = 0.8 - elapsed / 1;
+            
+            trail.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            trail.style.opacity = opacity;
+            
+            requestAnimationFrame(animate);
+        }
+        
+        requestAnimationFrame(animate);
     }
 
 
@@ -1089,13 +1154,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Crear y animar la burbuja después de un breve delay
                 setTimeout(() => {
+                    const rect = textarea.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + window.scrollY;
+                    
+                    // Crear efectos visuales modernos
+                    createLightTrail(centerX, rect.top);
                     createCommentBubble(originalText, textarea);
                     
                     // Esperar un poco más y entonces enviar el formulario real
                     setTimeout(() => {
-                        // Solo mostrar efectos de feedback, sin notificación duplicada
-                        // showSuccessNotification(); // Comentado para evitar notificación duplicada
-                        
                         // Efectos adicionales de feedback
                         createHapticFeedback();
                         playSuccessSound();

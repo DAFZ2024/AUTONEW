@@ -332,9 +332,31 @@
                             </h3>
                             
                             {% if servicios_disponibles %}
-                                <div class="space-y-4 max-h-80 overflow-y-auto">
+                                <!-- Buscador de Servicios -->
+                                <div class="mb-6">
+                                    <div class="relative">
+                                        <input type="text" 
+                                               id="buscarServicio" 
+                                               placeholder="Buscar servicio por nombre..." 
+                                               class="w-full px-5 py-3 pl-12 bg-white border-2 border-blue-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 shadow-sm hover:shadow-md">
+                                        <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-400">
+                                            <i class="fas fa-search"></i>
+                                        </div>
+                                        <div id="resultadosBusqueda" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-sm font-medium text-blue-600 hidden">
+                                            <span id="contadorResultados"></span>
+                                        </div>
+                                    </div>
+                                    <div id="mensajeNoResultados" class="hidden mt-4 text-center py-6 bg-white rounded-xl border-2 border-dashed border-blue-200">
+                                        <i class="fas fa-search text-blue-300 text-3xl mb-2"></i>
+                                        <p class="text-gray-600 font-medium">No se encontraron servicios</p>
+                                        <p class="text-gray-400 text-sm">Intenta con otro término de búsqueda</p>
+                                    </div>
+                                </div>
+                                
+                                <div id="listaServicios" class="space-y-4 max-h-80 overflow-y-auto">
                                     {% for servicio in servicios_disponibles %}
-                                        <div class="bg-white/80 backdrop-blur-sm border border-blue-200 rounded-2xl p-5 transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
+                                        <div class="servicio-item bg-white/80 backdrop-blur-sm border border-blue-200 rounded-2xl p-5 transition-all duration-200 hover:shadow-lg hover:-translate-y-1" 
+                                             data-nombre="{{ servicio.nombre_servicio|lower }}">
                                             <div class="flex items-start justify-between">
                                                 <div class="flex-1">
                                                     <h4 class="font-bold text-blue-800 text-lg mb-2">{{ servicio.nombre_servicio }}</h4>
@@ -710,6 +732,80 @@
                     }, index * 150);
                 }
             });
+
+            // Funcionalidad de búsqueda de servicios
+            const buscarInput = document.getElementById('buscarServicio');
+            const listaServicios = document.getElementById('listaServicios');
+            const mensajeNoResultados = document.getElementById('mensajeNoResultados');
+            const resultadosBusqueda = document.getElementById('resultadosBusqueda');
+            const contadorResultados = document.getElementById('contadorResultados');
+            
+            if (buscarInput && listaServicios) {
+                // Obtener todos los servicios
+                const servicioItems = listaServicios.querySelectorAll('.servicio-item');
+                const totalServicios = servicioItems.length;
+
+                buscarInput.addEventListener('input', function(e) {
+                    const searchTerm = e.target.value.toLowerCase().trim();
+                    let serviciosVisibles = 0;
+
+                    servicioItems.forEach(function(servicio) {
+                        const nombreServicio = servicio.getAttribute('data-nombre');
+                        
+                        if (nombreServicio.includes(searchTerm)) {
+                            servicio.style.display = 'block';
+                            // Animación de entrada suave
+                            servicio.style.animation = 'fadeInUp 0.3s ease-out';
+                            serviciosVisibles++;
+                        } else {
+                            servicio.style.display = 'none';
+                        }
+                    });
+
+                    // Mostrar/ocultar mensaje de no resultados
+                    if (serviciosVisibles === 0 && searchTerm !== '') {
+                        mensajeNoResultados.classList.remove('hidden');
+                        listaServicios.classList.add('hidden');
+                        resultadosBusqueda.classList.add('hidden');
+                    } else {
+                        mensajeNoResultados.classList.add('hidden');
+                        listaServicios.classList.remove('hidden');
+                        
+                        // Mostrar contador de resultados
+                        if (searchTerm !== '') {
+                            resultadosBusqueda.classList.remove('hidden');
+                            contadorResultados.textContent = `${serviciosVisibles} de ${totalServicios}`;
+                        } else {
+                            resultadosBusqueda.classList.add('hidden');
+                        }
+                    }
+                });
+
+                // Limpiar búsqueda con ESC
+                buscarInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        buscarInput.value = '';
+                        buscarInput.dispatchEvent(new Event('input'));
+                        buscarInput.blur();
+                    }
+                });
+            }
         });
+
+        // Agregar animación CSS para fadeInUp
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 {% endblock %}

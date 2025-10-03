@@ -272,6 +272,8 @@
                                 </span>
                             </a></li>
                             <li><a href="/servicios" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Servicios</a></li>
+                            <li><a href="/faq" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">FAQ</a></li>
+                            <li><a href="/blog" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Blog</a></li>
                             {% if not request.user.is_authenticated %}
                             <li><a href="/empresas" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Une tu empresa</a></li>
                             <li><a href="/logincrud" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Administrador</a></li>
@@ -403,6 +405,8 @@
                             </span>
                         </a>
                         <a href="/servicios" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">Servicios</a>
+                        <a href="/faq" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">FAQ</a>
+                        <a href="/blog" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">Blog</a>
                         {% if not request.user.is_authenticated %}
                         <a href="/empresas" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">Une tu empresa</a>
                         <a href="/logincrud" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">Administrador</a>
@@ -571,6 +575,7 @@
                         <span>Planes Empresariales</span>
                         <span class="bg-gradient-to-r from-orange-400 to-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">NUEVO</span>
                     </a></li>
+                    <li><a href="/faq" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base">FAQ</a></li>
                     {% if request.user.is_authenticated %}
                     <li><a href="/citas" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base">Tus reservas</a></li>
                     <li><a href="/reservas" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base">Reservar citas</a></li>
@@ -607,13 +612,13 @@
             <div class="flex flex-wrap justify-center items-center space-x-4 mb-4 text-xs sm:text-sm">
                 <button onclick="mostrarModal('modalPoliticaCookies')" 
                    class="text-gray-600 hover:text-cyan-600 underline hover:no-underline transition-colors duration-200 flex items-center space-x-1 bg-transparent border-0 p-0">
-                    <span>🍪</span>
+                    
                     <span>Política de Cookies</span>
                 </button>
                 <span class="text-gray-400">|</span>
                 <button onclick="mostrarModal('modalConfigCookies')" 
                         class="text-gray-600 hover:text-cyan-600 underline hover:no-underline transition-colors duration-200 flex items-center space-x-1 bg-transparent border-0 p-0">
-                    <span>⚙️</span>
+                    
                     <span>Configurar Cookies</span>
                 </button>
                 <span class="text-gray-400">|</span>
@@ -1108,13 +1113,7 @@
 
 
 <!--  librerias JavaScript -->
-<!-- model-viewer para visualizar modelos 3D (web component) -->
-<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-<!-- Polyfill para navegadores que no soportan Web Components/v1 -->
-<script nomodule src="https://unpkg.com/@webcomponents/webcomponentsjs@2.6.0/webcomponents-bundle.js"></script>
-<!-- Legacy build (para navegadores que no soportan módulos) -->
-<script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
-<!-- Verificación en consola para diagnosticar problemas de registro -->
+
 <script>
     (function() {
         function checkModelViewer() {
