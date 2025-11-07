@@ -1,0 +1,1240 @@
+{% extends "base/base_crud.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-4 sm:py-8">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
+        <!-- Header Mejorado con Responsividad -->
+        <div class="mb-6 sm:mb-10">
+            <div class="flex flex-col gap-4 sm:gap-6">
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <div class="p-2 sm:p-3 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl sm:rounded-2xl shadow-lg flex-shrink-0">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h1 class="text-2xl sm:text-3xl lg:text-5xl font-extrabold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent leading-tight">
+                            Gestión de Pagos
+                        </h1>
+                    </div>
+                    <p class="text-sm sm:text-base text-gray-600 ml-0 sm:ml-14 max-w-2xl">
+                        Administra pagos a empresas afiliadas
+                    </p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <button onclick="window.print()" class="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 sm:py-3 bg-white border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center gap-2 shadow-sm hover:shadow-md group">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 group-hover:text-gray-800 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                        </svg>
+                        <span class="font-semibold text-sm sm:text-base text-gray-700">Imprimir</span>
+                    </button>
+                    <button onclick="exportarExcel()" class="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 sm:py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <span class="font-semibold text-sm sm:text-base">Exportar Excel</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas Mejoradas con Responsividad -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-10">
+            <!-- Total Pendiente -->
+            <div class="group relative bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-red-100 hover:border-red-300 overflow-hidden">
+                <div class="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-red-500/10 to-red-600/5 rounded-full -mr-12 sm:-mr-16 -mt-12 sm:-mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-3 sm:mb-4">
+                        <div class="p-2 sm:p-3 bg-gradient-to-br from-red-500 to-red-600 rounded-lg sm:rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-2xl sm:text-4xl font-black bg-gradient-to-br from-red-600 to-red-700 bg-clip-text text-transparent">${{ stats.total_pendiente|floatformat:0 }}</span>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="text-xs sm:text-sm font-bold text-gray-900">Total por Pagar</div>
+                        <div class="flex items-center gap-2 text-xs text-gray-600">
+                            <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                            <span class="text-xs">{{ stats.total_reservas_pendientes }} reservas (88% neto)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Pagado -->
+            <div class="group relative bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-green-100 hover:border-green-300 overflow-hidden">
+                <div class="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-full -mr-12 sm:-mr-16 -mt-12 sm:-mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-3 sm:mb-4">
+                        <div class="p-2 sm:p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-lg sm:rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-2xl sm:text-4xl font-black bg-gradient-to-br from-green-600 to-green-700 bg-clip-text text-transparent">${{ stats.total_pagado|floatformat:0 }}</span>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="text-xs sm:text-sm font-bold text-gray-900">Total Pagado</div>
+                        <div class="flex items-center gap-2 text-xs text-gray-600">
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span class="text-xs">{{ stats.total_reservas_pagadas }} reservas (88% neto)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empresas Pendientes -->
+            <div class="group relative bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-orange-100 hover:border-orange-300 overflow-hidden">
+                <div class="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-orange-500/10 to-orange-600/5 rounded-full -mr-12 sm:-mr-16 -mt-12 sm:-mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-3 sm:mb-4">
+                        <div class="p-2 sm:p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg sm:rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                            </svg>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-2xl sm:text-4xl font-black bg-gradient-to-br from-orange-600 to-orange-700 bg-clip-text text-transparent">{{ stats.total_empresas_pendientes }}</span>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="text-xs sm:text-sm font-bold text-gray-900">Con Pendientes</div>
+                        <div class="flex items-center gap-2 text-xs text-gray-600">
+                            <div class="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                            <span class="text-xs">Requieren pago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empresas al Día -->
+            <div class="group relative bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-blue-100 hover:border-blue-300 overflow-hidden">
+                <div class="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-blue-500/10 to-blue-600/5 rounded-full -mr-12 sm:-mr-16 -mt-12 sm:-mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-3 sm:mb-4">
+                        <div class="p-2 sm:p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg sm:rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                            </svg>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-2xl sm:text-4xl font-black bg-gradient-to-br from-blue-600 to-blue-700 bg-clip-text text-transparent">{{ stats.total_empresas_pagadas }}</span>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="text-xs sm:text-sm font-bold text-gray-900">Empresas Pagadas</div>
+                        <div class="flex items-center gap-2 text-xs text-gray-600">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <span class="text-xs">Historial</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros Mejorados con Responsividad -->
+        <div class="bg-white rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 mb-6 sm:mb-10 border border-gray-200">
+            <div class="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                <div class="p-1.5 sm:p-2 bg-blue-100 rounded-lg">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                    </svg>
+                </div>
+                <h2 class="text-lg sm:text-xl font-bold text-gray-900">Filtros de Búsqueda</h2>
+            </div>
+            <form method="GET" class="space-y-4 sm:space-y-5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-2 text-xs sm:text-sm font-bold text-gray-700">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                            </svg>
+                            Empresa
+                        </label>
+                        <select name="empresa" class="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border-2 border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white hover:border-gray-400">
+                            <option value="">Todas las empresas</option>
+                            {% for empresa_item in pending_page_obj %}
+                                <option value="{{ empresa_item.empresa.id_empresa }}" {% if filtros.empresa == empresa_item.empresa.id_empresa|stringformat:"s" %}selected{% endif %}>
+                                    {{ empresa_item.empresa.nombre_empresa }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-2 text-xs sm:text-sm font-bold text-gray-700">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            Fecha Desde
+                        </label>
+                        <input type="date" name="fecha_desde" value="{{ filtros.fecha_desde }}" 
+                               class="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border-2 border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400">
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-2 text-xs sm:text-sm font-bold text-gray-700">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            Fecha Hasta
+                        </label>
+                        <input type="date" name="fecha_hasta" value="{{ filtros.fecha_hasta }}" 
+                               class="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border-2 border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400">
+                    </div>
+                    
+                    <div class="flex flex-col sm:items-end gap-2 sm:gap-3">
+                        <label class="text-xs sm:text-sm font-bold text-gray-700 opacity-0 hidden sm:block">Acciones</label>
+                        <div class="flex gap-2 sm:gap-3 w-full sm:w-auto">
+                            <button type="submit" class="flex-1 sm:flex-none px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg sm:rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 flex items-center justify-center gap-2 font-semibold text-sm sm:text-base shadow-md hover:shadow-lg">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                                Filtrar
+                            </button>
+                            <a href="{% url 'gestion_pagos_empresas' %}" class="px-4 py-2 sm:px-6 sm:py-3 bg-gray-200 text-gray-700 rounded-lg sm:rounded-xl hover:bg-gray-300 transition-all duration-200 font-semibold text-sm sm:text-base shadow-sm hover:shadow-md flex items-center justify-center">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabs Mejorados con Responsividad -->
+        <div class="mb-6 sm:mb-8">
+            <div class="bg-white rounded-xl sm:rounded-2xl shadow-lg p-1.5 sm:p-2">
+                <nav class="flex flex-col sm:flex-row gap-2">
+                    <button onclick="showTab('pendientes')" id="tab-pendientes" 
+                            class="tab-button flex-1 px-4 py-3 sm:px-6 sm:py-4 rounded-lg sm:rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md text-sm sm:text-base">
+                        <span class="bg-white/20 backdrop-blur-sm px-3 py-1 sm:px-4 sm:py-1.5 rounded-full text-xs sm:text-sm font-black">
+                            {{ stats.total_empresas_pendientes }}
+                        </span>
+                        <span>Pendientes</span>
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </button>
+                    <button onclick="showTab('pagadas')" id="tab-pagadas" 
+                            class="tab-button flex-1 px-4 py-3 sm:px-6 sm:py-4 rounded-lg sm:rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 bg-gray-100 text-gray-600 hover:bg-gray-200 text-sm sm:text-base">
+                        <span class="bg-green-100 text-green-800 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full text-xs sm:text-sm font-black">
+                            {{ stats.total_empresas_pagadas }}
+                        </span>
+                        <span>Pagadas</span>
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Tab Content: Pendientes -->
+        <div id="content-pendientes" class="tab-content">
+            <div class="bg-white rounded-xl sm:rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+                <div class="bg-gradient-to-r from-red-500 via-red-600 to-red-700 px-4 sm:px-8 py-4 sm:py-6">
+                    <h2 class="text-xl sm:text-3xl font-black text-white flex items-center gap-2 sm:gap-4">
+                        <div class="p-1.5 sm:p-2 bg-white/20 rounded-lg sm:rounded-xl backdrop-blur-sm">
+                            <svg class="w-5 h-5 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <span class="text-base sm:text-3xl">Reservas Pendientes</span>
+                    </h2>
+                    <p class="text-red-100 mt-2 text-xs sm:text-sm hidden sm:block">Gestiona los pagos pendientes a las empresas afiliadas</p>
+                </div>
+
+                {% if pending_page_obj %}
+                    {% for empresa_data in pending_page_obj %}
+                    <div class="border-b-2 border-gray-100 last:border-b-0 hover:bg-gray-50/50 transition-colors">
+                        <!-- Header de Empresa Mejorado para Móviles -->
+                        <div class="px-3 sm:px-8 py-4 sm:py-6 cursor-pointer" 
+                             onclick="toggleEmpresa('pendiente-{{ empresa_data.empresa.id_empresa }}')">
+                            <div class="flex flex-col gap-3 sm:gap-4">
+                                <!-- Fila Superior: Info Empresa -->
+                                <div class="flex items-start gap-3 sm:gap-4">
+                                    <div class="p-2 sm:p-4 bg-gradient-to-br from-red-500 to-red-600 rounded-xl sm:rounded-2xl shadow-lg flex-shrink-0">
+                                        <svg class="w-5 h-5 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="text-base sm:text-xl font-black text-gray-900 truncate">{{ empresa_data.empresa.nombre_empresa }}</h3>
+                                        <p class="text-xs sm:text-sm text-gray-600 mt-1 space-y-0.5">
+                                            <span class="inline-flex items-center gap-1 truncate w-full">
+                                                <svg class="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                                </svg>
+                                                <span class="truncate">{{ empresa_data.empresa.email }}</span>
+                                            </span>
+                                            <span class="hidden sm:inline mx-1">•</span>
+                                            <span class="inline-flex items-center gap-1 mt-0.5 sm:mt-0">
+                                                <svg class="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                                </svg>
+                                                {{ empresa_data.empresa.telefono }}
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <svg class="w-5 h-5 sm:w-7 sm:h-7 text-gray-400 transform transition-transform duration-300 flex-shrink-0" id="icon-pendiente-{{ empresa_data.empresa.id_empresa }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </div>
+                                
+                                <!-- Badge de Verificación Bancaria -->
+                                <div class="flex items-center justify-center sm:justify-start">
+                                    {% if empresa_data.empresa.datos_bancarios_verificados %}
+                                        <div class="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-teal-500 to-cyan-600 text-white rounded-lg sm:rounded-xl shadow-md text-xs sm:text-sm">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                            </svg>
+                                            <span class="font-bold">Verificado</span>
+                                        </div>
+                                    {% elif empresa_data.empresa.datos_bancarios_completos %}
+                                        <div class="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-lg sm:rounded-xl shadow-md text-xs sm:text-sm">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                            </svg>
+                                            <span class="font-bold">Pendiente</span>
+                                        </div>
+                                    {% else %}
+                                        <div class="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-red-400 to-pink-500 text-white rounded-lg sm:rounded-xl shadow-md text-xs sm:text-sm">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <span class="font-bold">Sin Datos</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Estadísticas y Botones -->
+                                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-6">
+                                    <div class="flex items-center justify-around sm:justify-start gap-4 sm:gap-6 bg-gray-50 rounded-lg p-3 sm:bg-transparent sm:p-0">
+                                        <div class="text-center sm:text-left flex-1 sm:flex-none">
+                                            <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Reservas</div>
+                                            <div class="text-xl sm:text-2xl font-black text-red-600 mt-1">{{ empresa_data.cantidad_pendientes }}</div>
+                                        </div>
+                                        <div class="w-px h-8 bg-gray-300 sm:hidden"></div>
+                                        <div class="text-center sm:text-left flex-1 sm:flex-none sm:pl-4 sm:border-l-2 sm:border-gray-300">
+                                            <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total a Pagar</div>
+                                            <div class="text-xl sm:text-3xl font-black bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent mt-1">${{ empresa_data.total_pendiente|floatformat:0 }}</div>
+                                            <div class="text-xs font-semibold text-green-600 mt-0.5">(88% neto)</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col sm:flex-row gap-2 sm:ml-auto">
+                                        <button type="button" 
+                                                onclick="marcarSeleccionadasComoPagadas({{ empresa_data.empresa.id_empresa }}, '{{ empresa_data.empresa.nombre_empresa }}')" 
+                                                id="btnPagarSeleccionadas-{{ empresa_data.empresa.id_empresa }}"
+                                                class="hidden px-4 py-2 sm:px-5 sm:py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg sm:rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 flex items-center justify-center gap-2 text-xs sm:text-sm font-bold shadow-md hover:shadow-lg">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            <span class="hidden sm:inline">Pagar</span> (<span id="countSeleccionadas-{{ empresa_data.empresa.id_empresa }}">0</span>)
+                                        </button>
+                                        <button type="button" onclick="marcarTodasComoPagadas({{ empresa_data.empresa.id_empresa }}, '{{ empresa_data.empresa.nombre_empresa }}')" 
+                                                class="w-full sm:w-auto px-4 py-2.5 sm:px-6 sm:py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg sm:rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all duration-200 flex items-center justify-center gap-2 font-bold text-sm shadow-md hover:shadow-lg">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            <span class="sm:hidden">Pagar Todas</span>
+                                            <span class="hidden sm:inline">Pagar Todas</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tabla de Reservas Mejorada para Móviles -->
+                        <div id="pendiente-{{ empresa_data.empresa.id_empresa }}" class="hidden bg-gray-50">
+                            <div class="overflow-x-auto">
+                                <table class="w-full min-w-[1000px] text-sm">
+                                    <thead class="bg-gradient-to-r from-gray-100 to-gray-200">
+                                        <tr>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-left w-10">
+                                                <input type="checkbox" class="w-4 h-4 rounded border-2 border-gray-400 focus:ring-2 focus:ring-blue-500" 
+                                                       id="selectAll-{{ empresa_data.empresa.id_empresa }}"
+                                                       onclick="toggleSelectAll(this, {{ empresa_data.empresa.id_empresa }})">
+                                            </th>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Número</th>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Fecha</th>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Cliente</th>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Servicios</th>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-center text-xs font-black text-gray-700 uppercase tracking-wider w-24">Tipo</th>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-right text-xs font-black text-gray-700 uppercase tracking-wider w-28">Valor</th>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-right text-xs font-black text-gray-700 uppercase tracking-wider w-24">Comisión</th>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-right text-xs font-black text-gray-700 uppercase tracking-wider w-28">A Pagar</th>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-center text-xs font-black text-gray-700 uppercase tracking-wider w-24">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y-2 divide-gray-200 bg-white">
+                                        {% for reserva in empresa_data.reservas_pendientes %}
+                                        {% with detalle=reserva.obtener_detalle_servicios %}
+                                        <tr class="hover:bg-blue-50 transition-all duration-200 group">
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3">
+                                                <input type="checkbox" 
+                                                       class="w-4 h-4 rounded border-2 border-gray-400 focus:ring-2 focus:ring-blue-500 reserva-checkbox" 
+                                                       data-empresa="{{ empresa_data.empresa.id_empresa }}"
+                                                       data-monto="{{ detalle.total }}"
+                                                       value="{{ reserva.id_reserva }}"
+                                                       onchange="actualizarContadorSeleccionadas({{ empresa_data.empresa.id_empresa }})">
+                                            </td>
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3">
+                                                <span class="font-mono text-xs font-bold text-blue-700 bg-blue-100 px-2 py-1 rounded">{{ reserva.numero_reserva }}</span>
+                                            </td>
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3">
+                                                <div class="text-xs font-semibold text-gray-900">{{ reserva.fecha|date:"d/m/Y" }}</div>
+                                                <div class="text-xs text-gray-500">{{ reserva.hora }}</div>
+                                            </td>
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3">
+                                                <div class="text-xs font-bold text-gray-900 max-w-[120px] truncate" title="{{ reserva.usuario.nombre_completo }}">{{ reserva.usuario.nombre_completo }}</div>
+                                                <div class="text-xs text-gray-500 max-w-[120px] truncate" title="{{ reserva.usuario.correo }}">{{ reserva.usuario.correo }}</div>
+                                            </td>
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3">
+                                                <div class="flex flex-wrap gap-1 max-w-[140px]">
+                                                    {% for servicio in reserva.servicios.all %}
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-gradient-to-r from-blue-500 to-indigo-500 text-white" title="{{ servicio.nombre_servicio }}">
+                                                        {{ servicio.nombre_servicio|truncatechars:12 }}
+                                                    </span>
+                                                    {% endfor %}
+                                                </div>
+                                            </td>
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3 text-center">
+                                                {% if reserva.es_reserva_empresarial %}
+                                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-black bg-purple-100 text-purple-800 border border-purple-300">
+                                                        Emp.
+                                                    </span>
+                                                {% elif reserva.suscripcion_utilizada %}
+                                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-black bg-green-100 text-green-800 border border-green-300">
+                                                        Plan
+                                                    </span>
+                                                {% else %}
+                                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-black bg-gray-100 text-gray-800 border border-gray-300">
+                                                        Indiv.
+                                                    </span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3 text-right">
+                                                <div class="text-sm font-black text-gray-900">${{ detalle.total_original|floatformat:0 }}</div>
+                                                {% if detalle.ahorro_total > 0 %}
+                                                <div class="text-xs font-semibold text-blue-600 flex items-center justify-end gap-0.5">
+                                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                                    </svg>
+                                                    -${{ detalle.ahorro_total|floatformat:0 }}
+                                                </div>
+                                                {% endif %}
+                                            </td>
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3 text-right">
+                                                {% widthratio detalle.total_original 100 12 as comision %}
+                                                <div class="text-sm font-black text-red-600">-${{ comision|floatformat:0 }}</div>
+                                                <div class="text-xs font-semibold text-red-500">12%</div>
+                                            </td>
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3 text-right">
+                                                {% widthratio detalle.total_original 100 12 as comision %}
+                                                {% widthratio detalle.total_original 100 88 as pago_empresa %}
+                                                <div class="text-base font-black text-green-700">${{ pago_empresa|floatformat:0 }}</div>
+                                                <div class="text-xs font-semibold text-gray-500">88%</div>
+                                            </td>
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3 text-center">
+                                                <button onclick="marcarComoPagada({{ reserva.id_reserva }}, '{{ reserva.numero_reserva }}')" 
+                                                        class="inline-flex items-center px-2 py-1.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white text-xs font-bold rounded hover:from-green-700 hover:to-emerald-700 transition-all duration-200 shadow-sm hover:shadow-md whitespace-nowrap">
+                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                    Pagar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endwith %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- Indicador de scroll para móviles -->
+                            <div class="sm:hidden px-4 py-2 bg-blue-50 border-t border-blue-200 text-center">
+                                <p class="text-xs text-blue-600 font-semibold">
+                                    <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
+                                    </svg>
+                                    Desliza para ver más información
+                                    <svg class="w-4 h-4 inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                    </svg>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Paginación Pendientes Optimizada para Móviles -->
+                    {% if pending_page_obj.has_other_pages %}
+                    <div class="px-3 sm:px-6 py-3 sm:py-4 bg-gray-50 border-t border-gray-200">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div class="text-xs sm:text-sm text-gray-700 text-center sm:text-left">
+                                Página <span class="font-bold">{{ pending_page_obj.number }}</span> de <span class="font-bold">{{ pending_page_obj.paginator.num_pages }}</span>
+                            </div>
+                            <div class="flex gap-2 justify-center">
+                                {% if pending_page_obj.has_previous %}
+                                <a href="?pending_page={{ pending_page_obj.previous_page_number }}" 
+                                   class="px-3 py-2 sm:px-4 sm:py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-xs sm:text-sm font-semibold whitespace-nowrap">
+                                    ← Anterior
+                                </a>
+                                {% endif %}
+                                
+                                {% if pending_page_obj.has_next %}
+                                <a href="?pending_page={{ pending_page_obj.next_page_number }}" 
+                                   class="px-3 py-2 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-sm font-semibold whitespace-nowrap">
+                                    Siguiente →
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% else %}
+                    <div class="p-12 text-center">
+                        <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-4">
+                            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">¡Todo al día!</h3>
+                        <p class="text-gray-600">No hay reservas pendientes de pago en este momento.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Tab Content: Pagadas -->
+        <div id="content-pagadas" class="tab-content hidden">
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4">
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Historial de Pagos Realizados
+                    </h2>
+                </div>
+
+                {% if paid_page_obj %}
+                    {% for empresa_data in paid_page_obj %}
+                    <div class="border-b border-gray-200 last:border-b-0">
+                        <!-- Header de Empresa -->
+                        <div class="bg-gray-50 px-6 py-4 cursor-pointer hover:bg-gray-100 transition-colors" 
+                             onclick="toggleEmpresa('pagada-{{ empresa_data.empresa.id_empresa }}')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div class="bg-green-100 p-3 rounded-xl">
+                                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-bold text-gray-900">{{ empresa_data.empresa.nombre_empresa }}</h3>
+                                        <p class="text-sm text-gray-600">{{ empresa_data.empresa.email }} • {{ empresa_data.empresa.telefono }}</p>
+                                    </div>
+                                    <!-- Badge de Verificación Bancaria -->
+                                    {% if empresa_data.empresa.datos_bancarios_verificados %}
+                                        <div class="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-full shadow-md">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                            </svg>
+                                            <span class="text-xs font-bold">Datos Bancarios Verificados</span>
+                                        </div>
+                                    {% elif empresa_data.empresa.datos_bancarios_completos %}
+                                        <div class="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-yellow-400 to-orange-400 text-white rounded-full shadow-md">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                            </svg>
+                                            <span class="text-xs font-bold">Pendiente de Verificación</span>
+                                        </div>
+                                    {% else %}
+                                        <div class="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-red-400 to-pink-400 text-white rounded-full shadow-md">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <span class="text-xs font-bold">Sin Datos Bancarios</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="flex items-center gap-6">
+                                    <div class="text-right">
+                                        <div class="text-sm text-gray-600">Reservas Pagadas</div>
+                                        <div class="text-xl font-bold text-green-600">{{ empresa_data.cantidad_pagadas }}</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-sm text-gray-600">Total Pagado</div>
+                                        <div class="text-2xl font-bold text-green-600">${{ empresa_data.total_pagado|floatformat:0 }}</div>
+                                        <div class="text-xs font-semibold text-gray-500 mt-0.5">(88% neto)</div>
+                                    </div>
+                                    <svg class="w-6 h-6 text-gray-400 transform transition-transform" id="icon-pagada-{{ empresa_data.empresa.id_empresa }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tabla de Reservas Pagadas Mejorada para Móviles -->
+                        <div id="pagada-{{ empresa_data.empresa.id_empresa }}" class="hidden bg-gray-50">
+                            <div class="overflow-x-auto">
+                                <table class="w-full min-w-[1000px] text-sm">
+                                    <thead class="bg-gradient-to-r from-green-100 to-emerald-200">
+                                        <tr>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Número</th>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Fecha</th>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Cliente</th>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Servicios</th>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-center text-xs font-black text-gray-700 uppercase tracking-wider w-24">Tipo</th>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-right text-xs font-black text-gray-700 uppercase tracking-wider w-28">Valor</th>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-right text-xs font-black text-gray-700 uppercase tracking-wider w-24">Comisión</th>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-right text-xs font-black text-gray-700 uppercase tracking-wider w-28">Pagado</th>
+                                            <th class="px-2 sm:px-3 py-2 sm:py-3 text-center text-xs font-black text-gray-700 uppercase tracking-wider w-24">Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y-2 divide-gray-200 bg-white">
+                                        {% for reserva in empresa_data.reservas_pagadas %}
+                                        {% with detalle=reserva.obtener_detalle_servicios %}
+                                        <tr class="hover:bg-green-50 transition-all duration-200">
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3">
+                                                <span class="font-mono text-xs font-bold text-green-700 bg-green-100 px-2 py-1 rounded">{{ reserva.numero_reserva }}</span>
+                                            </td>
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3">
+                                                <div class="text-xs font-semibold text-gray-900">{{ reserva.fecha|date:"d/m/Y" }}</div>
+                                                <div class="text-xs text-gray-500">{{ reserva.hora }}</div>
+                                            </td>
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3">
+                                                <div class="text-xs font-bold text-gray-900 max-w-[120px] truncate" title="{{ reserva.usuario.nombre_completo }}">{{ reserva.usuario.nombre_completo }}</div>
+                                                <div class="text-xs text-gray-500 max-w-[120px] truncate" title="{{ reserva.usuario.correo }}">{{ reserva.usuario.correo }}</div>
+                                            </td>
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3">
+                                                <div class="flex flex-wrap gap-1 max-w-[140px]">
+                                                    {% for servicio in reserva.servicios.all %}
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-gradient-to-r from-green-500 to-emerald-500 text-white" title="{{ servicio.nombre_servicio }}">
+                                                        {{ servicio.nombre_servicio|truncatechars:12 }}
+                                                    </span>
+                                                    {% endfor %}
+                                                </div>
+                                            </td>
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3 text-center">
+                                                {% if reserva.es_reserva_empresarial %}
+                                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-black bg-purple-100 text-purple-800 border border-purple-300">
+                                                        Emp.
+                                                    </span>
+                                                {% elif reserva.suscripcion_utilizada %}
+                                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-black bg-green-100 text-green-800 border border-green-300">
+                                                        Plan
+                                                    </span>
+                                                {% else %}
+                                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-black bg-gray-100 text-gray-800 border border-gray-300">
+                                                        Indiv.
+                                                    </span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3 text-right">
+                                                <div class="text-sm font-black text-green-700">${{ detalle.total_original|floatformat:0 }}</div>
+                                                {% if detalle.ahorro_total > 0 %}
+                                                <div class="text-xs font-semibold text-blue-600 flex items-center justify-end gap-0.5">
+                                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                                    </svg>
+                                                    -${{ detalle.ahorro_total|floatformat:0 }}
+                                                </div>
+                                                {% endif %}
+                                            </td>
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3 text-right">
+                                                {% widthratio detalle.total_original 100 12 as comision %}
+                                                <div class="text-sm font-black text-red-600">-${{ comision|floatformat:0 }}</div>
+                                                <div class="text-xs font-semibold text-red-500">12%</div>
+                                            </td>
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3 text-right">
+                                                {% widthratio detalle.total_original 100 12 as comision %}
+                                                {% widthratio detalle.total_original 100 88 as pago_empresa %}
+                                                <div class="text-base font-black text-green-700">${{ pago_empresa|floatformat:0 }}</div>
+                                                <div class="text-xs font-semibold text-gray-500">88%</div>
+                                            </td>
+                                            <td class="px-2 sm:px-3 py-2 sm:py-3 text-center">
+                                                <span class="inline-flex items-center px-2 py-1.5 rounded text-xs font-bold bg-green-100 text-green-800 border border-green-300">
+                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                    Pagada
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% endwith %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- Indicador de scroll para móviles -->
+                            <div class="sm:hidden px-4 py-2 bg-green-50 border-t border-green-200 text-center">
+                                <p class="text-xs text-green-600 font-semibold">
+                                    <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
+                                    </svg>
+                                    Desliza para ver más información
+                                    <svg class="w-4 h-4 inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                    </svg>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Paginación Pagadas Optimizada para Móviles -->
+                    {% if paid_page_obj.has_other_pages %}
+                    <div class="px-3 sm:px-6 py-3 sm:py-4 bg-gray-50 border-t border-gray-200">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div class="text-xs sm:text-sm text-gray-700 text-center sm:text-left">
+                                Página <span class="font-bold">{{ paid_page_obj.number }}</span> de <span class="font-bold">{{ paid_page_obj.paginator.num_pages }}</span>
+                            </div>
+                            <div class="flex gap-2 justify-center">
+                                {% if paid_page_obj.has_previous %}
+                                <a href="?paid_page={{ paid_page_obj.previous_page_number }}" 
+                                   class="px-3 py-2 sm:px-4 sm:py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-xs sm:text-sm font-semibold whitespace-nowrap">
+                                    ← Anterior
+                                </a>
+                                {% endif %}
+                                
+                                {% if paid_page_obj.has_next %}
+                                <a href="?paid_page={{ paid_page_obj.next_page_number }}" 
+                                   class="px-3 py-2 sm:px-4 sm:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs sm:text-sm font-semibold whitespace-nowrap">
+                                    Siguiente →
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% else %}
+                    <div class="p-12 text-center">
+                        <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
+                            <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Sin historial</h3>
+                        <p class="text-gray-600">No hay pagos realizados para mostrar.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Confirmar Pago Individual -->
+<div id="modalPagoIndividual" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 animate-fade-in" onclick="cerrarModal('modalPagoIndividual')">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 transform transition-all animate-slide-in" onclick="event.stopPropagation()">
+        <div class="bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 px-8 py-6 rounded-t-3xl">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-black text-white">Confirmar Pago</h3>
+            </div>
+        </div>
+        <div class="p-8">
+            <div class="flex items-center justify-center mb-8">
+                <div class="p-5 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full ring-8 ring-green-50">
+                    <svg class="w-16 h-16 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+            </div>
+            <p class="text-center text-gray-700 text-lg mb-8 leading-relaxed">
+                ¿Estás seguro de marcar la reserva <strong class="font-black text-blue-600" id="numeroReserva"></strong> como pagada?
+            </p>
+            <div class="flex gap-4">
+                <button onclick="cerrarModal('modalPagoIndividual')" 
+                        class="flex-1 px-6 py-4 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300 transition-all duration-200 font-bold text-base shadow-sm hover:shadow-md">
+                    Cancelar
+                </button>
+                <button onclick="confirmarPagoIndividual()" 
+                        class="flex-1 px-6 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all duration-200 font-bold text-base shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                    Confirmar Pago
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Confirmar Pago Masivo -->
+<div id="modalPagoMasivo" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 animate-fade-in" onclick="cerrarModal('modalPagoMasivo')">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 transform transition-all animate-slide-in" onclick="event.stopPropagation()">
+        <div class="bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 px-8 py-6 rounded-t-3xl">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-black text-white">Pago Masivo</h3>
+            </div>
+        </div>
+        <div class="p-8">
+            <div class="flex items-center justify-center mb-8">
+                <div class="p-5 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full ring-8 ring-green-50">
+                    <svg class="w-16 h-16 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                    </svg>
+                </div>
+            </div>
+            <p class="text-center text-gray-700 text-lg mb-6 leading-relaxed">
+                ¿Estás seguro de marcar todas las reservas de <strong class="font-black text-blue-600" id="nombreEmpresa"></strong> como pagadas?
+            </p>
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-5 rounded-lg mb-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">Reservas</p>
+                        <p class="text-2xl font-black text-blue-600" id="cantidadReservas"></p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">Monto Total</p>
+                        <p class="text-2xl font-black text-green-600">$<span id="montoTotal"></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="cerrarModal('modalPagoMasivo')" 
+                        class="flex-1 px-6 py-4 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300 transition-all duration-200 font-bold text-base shadow-sm hover:shadow-md">
+                    Cancelar
+                </button>
+                <button onclick="confirmarPagoMasivo()" 
+                        class="flex-1 px-6 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all duration-200 font-bold text-base shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                    Confirmar Pago
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Confirmar Pago de Seleccionadas -->
+<div id="modalPagoSeleccionadas" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 animate-fade-in" onclick="cerrarModal('modalPagoSeleccionadas')">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 transform transition-all animate-slide-in" onclick="event.stopPropagation()">
+        <div class="bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 px-8 py-6 rounded-t-3xl">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-black text-white">Pago Seleccionado</h3>
+            </div>
+        </div>
+        <div class="p-8">
+            <div class="flex items-center justify-center mb-8">
+                <div class="p-5 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full ring-8 ring-blue-50">
+                    <svg class="w-16 h-16 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                    </svg>
+                </div>
+            </div>
+            <p class="text-center text-gray-700 text-lg mb-6 leading-relaxed">
+                ¿Estás seguro de marcar las reservas seleccionadas de <strong class="font-black text-blue-600" id="nombreEmpresaSeleccionadas"></strong> como pagadas?
+            </p>
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-5 rounded-lg mb-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">Seleccionadas</p>
+                        <p class="text-2xl font-black text-blue-600" id="cantidadSeleccionadas"></p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">Monto Total</p>
+                        <p class="text-2xl font-black text-green-600">$<span id="montoTotalSeleccionadas"></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-500 p-4 rounded-lg mb-6">
+                <p class="text-xs text-yellow-800 font-semibold">
+                    <strong class="font-black">⚠️ Nota:</strong> Esta acción solo marcará como pagadas las reservas que hayas seleccionado.
+                </p>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="cerrarModal('modalPagoSeleccionadas')" 
+                        class="flex-1 px-6 py-4 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300 transition-all duration-200 font-bold text-base shadow-sm hover:shadow-md">
+                    Cancelar
+                </button>
+                <button onclick="confirmarPagoSeleccionadas()" 
+                        class="flex-1 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-bold text-base shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                    Confirmar Pago
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    
+    .animate-slide-in {
+        animation: slideIn 0.3s ease-out;
+    }
+    
+    .animate-fade-in {
+        animation: fadeIn 0.3s ease-out;
+    }
+    
+    /* Animación de pulsación para badges */
+    @keyframes pulse-slow {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.7;
+        }
+    }
+    
+    /* Transiciones suaves para hover */
+    .hover-lift {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    /* Mejora para checkboxes */
+    input[type="checkbox"]:checked {
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+    }
+    
+    /* Gradient text shimmer */
+    @keyframes shimmer {
+        0% {
+            background-position: -200% center;
+        }
+        100% {
+            background-position: 200% center;
+        }
+    }
+    
+    .shimmer {
+        background-size: 200% auto;
+        animation: shimmer 3s linear infinite;
+    }
+</style>
+
+<script>
+// Variables globales
+let reservaIdActual = null;
+let empresaIdActual = null;
+let reservasSeleccionadas = [];
+
+// Funciones para Tabs
+function showTab(tabName) {
+    // Ocultar todos los contenidos
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+    });
+    
+    // Mostrar el contenido seleccionado
+    document.getElementById('content-' + tabName).classList.remove('hidden');
+    
+    // Actualizar estilos de los botones
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('bg-gradient-to-r', 'from-red-500', 'to-red-600', 'from-green-500', 'to-green-600', 'text-white', 'shadow-md');
+        button.classList.add('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+    });
+    
+    const activeButton = document.getElementById('tab-' + tabName);
+    activeButton.classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+    
+    if (tabName === 'pendientes') {
+        activeButton.classList.add('bg-gradient-to-r', 'from-red-500', 'to-red-600', 'text-white', 'shadow-md');
+    } else {
+        activeButton.classList.add('bg-gradient-to-r', 'from-green-500', 'to-green-600', 'text-white', 'shadow-md');
+    }
+}
+
+// Toggle empresa (expandir/contraer)
+function toggleEmpresa(id) {
+    const content = document.getElementById(id);
+    const icon = document.getElementById('icon-' + id);
+    
+    if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        icon.style.transform = 'rotate(180deg)';
+    } else {
+        content.classList.add('hidden');
+        icon.style.transform = 'rotate(0deg)';
+    }
+}
+
+// Actualizar contador de reservas seleccionadas
+function actualizarContadorSeleccionadas(empresaId) {
+    const checkboxes = document.querySelectorAll(`input.reserva-checkbox[data-empresa="${empresaId}"]:checked`);
+    const count = checkboxes.length;
+    const boton = document.getElementById(`btnPagarSeleccionadas-${empresaId}`);
+    const contador = document.getElementById(`countSeleccionadas-${empresaId}`);
+    const selectAllCheckbox = document.getElementById(`selectAll-${empresaId}`);
+    
+    if (contador) {
+        contador.textContent = count;
+    }
+    
+    if (boton) {
+        if (count > 0) {
+            boton.classList.remove('hidden');
+            boton.classList.add('flex');
+        } else {
+            boton.classList.add('hidden');
+            boton.classList.remove('flex');
+        }
+    }
+    
+    // Actualizar estado del checkbox "Seleccionar todos"
+    if (selectAllCheckbox) {
+        const totalCheckboxes = document.querySelectorAll(`input.reserva-checkbox[data-empresa="${empresaId}"]`).length;
+        selectAllCheckbox.checked = count === totalCheckboxes && count > 0;
+        selectAllCheckbox.indeterminate = count > 0 && count < totalCheckboxes;
+    }
+}
+
+// Marcar reserva individual como pagada
+function marcarComoPagada(reservaId, numeroReserva) {
+    reservaIdActual = reservaId;
+    document.getElementById('numeroReserva').textContent = numeroReserva;
+    document.getElementById('modalPagoIndividual').classList.remove('hidden');
+    document.getElementById('modalPagoIndividual').classList.add('flex');
+}
+
+function confirmarPagoIndividual() {
+    if (!reservaIdActual) return;
+    
+    fetch(`/marcar-reserva-pagada/${reservaIdActual}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            mostrarNotificacion('✅ Reserva marcada como pagada exitosamente', 'success');
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            mostrarNotificacion('❌ Error: ' + data.error, 'error');
+        }
+        cerrarModal('modalPagoIndividual');
+    })
+    .catch(error => {
+        mostrarNotificacion('❌ Error al procesar la solicitud', 'error');
+        cerrarModal('modalPagoIndividual');
+    });
+}
+
+// Marcar todas las reservas de una empresa como pagadas
+function marcarTodasComoPagadas(empresaId, nombreEmpresa) {
+    empresaIdActual = empresaId;
+    
+    // Obtener información de las reservas pendientes
+    const empresaDiv = document.getElementById(`pendiente-${empresaId}`);
+    const reservas = empresaDiv.querySelectorAll('tbody tr');
+    
+    let totalMonto = 0;
+    reservas.forEach(row => {
+        const montoText = row.querySelector('td:nth-last-child(2) .text-lg').textContent;
+        const monto = parseFloat(montoText.replace('$', '').replace(',', ''));
+        totalMonto += monto;
+    });
+    
+    document.getElementById('nombreEmpresa').textContent = nombreEmpresa;
+    document.getElementById('cantidadReservas').textContent = reservas.length;
+    document.getElementById('montoTotal').textContent = totalMonto.toFixed(0);
+    
+    document.getElementById('modalPagoMasivo').classList.remove('hidden');
+    document.getElementById('modalPagoMasivo').classList.add('flex');
+}
+
+function confirmarPagoMasivo() {
+    if (!empresaIdActual) return;
+    
+    fetch(`/marcar-empresa-pagada/${empresaIdActual}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            mostrarNotificacion(`✅ ${data.cantidad_marcadas} reservas marcadas como pagadas`, 'success');
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            mostrarNotificacion('❌ Error: ' + data.error, 'error');
+        }
+        cerrarModal('modalPagoMasivo');
+    })
+    .catch(error => {
+        mostrarNotificacion('❌ Error al procesar la solicitud', 'error');
+        cerrarModal('modalPagoMasivo');
+    });
+}
+
+// Marcar reservas seleccionadas como pagadas
+function marcarSeleccionadasComoPagadas(empresaId, nombreEmpresa) {
+    const checkboxes = document.querySelectorAll(`input.reserva-checkbox[data-empresa="${empresaId}"]:checked`);
+    
+    if (checkboxes.length === 0) {
+        mostrarNotificacion('⚠️ Debes seleccionar al menos una reserva', 'error');
+        return;
+    }
+    
+    empresaIdActual = empresaId;
+    reservasSeleccionadas = [];
+    let totalMonto = 0;
+    
+    checkboxes.forEach(checkbox => {
+        reservasSeleccionadas.push(checkbox.value);
+        const monto = parseFloat(checkbox.getAttribute('data-monto'));
+        totalMonto += monto;
+    });
+    
+    document.getElementById('nombreEmpresaSeleccionadas').textContent = nombreEmpresa;
+    document.getElementById('cantidadSeleccionadas').textContent = reservasSeleccionadas.length;
+    document.getElementById('montoTotalSeleccionadas').textContent = totalMonto.toFixed(0);
+    
+    document.getElementById('modalPagoSeleccionadas').classList.remove('hidden');
+    document.getElementById('modalPagoSeleccionadas').classList.add('flex');
+}
+
+function confirmarPagoSeleccionadas() {
+    if (reservasSeleccionadas.length === 0) return;
+    
+    fetch('/marcar-reservas-seleccionadas/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            reservas_ids: reservasSeleccionadas
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            mostrarNotificacion(`✅ ${data.cantidad_marcadas} reservas marcadas como pagadas`, 'success');
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            mostrarNotificacion('❌ Error: ' + data.error, 'error');
+        }
+        cerrarModal('modalPagoSeleccionadas');
+    })
+    .catch(error => {
+        mostrarNotificacion('❌ Error al procesar la solicitud', 'error');
+        cerrarModal('modalPagoSeleccionadas');
+    });
+}
+
+// Toggle select all checkboxes
+function toggleSelectAll(checkbox, empresaId) {
+    const checkboxes = document.querySelectorAll(`input.reserva-checkbox[data-empresa="${empresaId}"]`);
+    checkboxes.forEach(cb => {
+        cb.checked = checkbox.checked;
+    });
+    actualizarContadorSeleccionadas(empresaId);
+}
+
+// Cerrar modal
+function cerrarModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+    document.getElementById(modalId).classList.remove('flex');
+}
+
+// Mostrar notificación mejorada
+function mostrarNotificacion(mensaje, tipo) {
+    const bgColor = tipo === 'success' ? 'from-green-500 to-emerald-600' : 'from-red-500 to-red-600';
+    const icon = tipo === 'success' 
+        ? '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
+        : '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+    
+    const notif = document.createElement('div');
+    notif.className = `fixed top-4 right-4 bg-gradient-to-r ${bgColor} text-white px-6 py-4 rounded-2xl shadow-2xl z-50 transform transition-all animate-slide-in max-w-md`;
+    notif.innerHTML = `
+        <div class="flex items-center gap-4">
+            <div class="flex-shrink-0 p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                ${icon}
+            </div>
+            <span class="text-base font-bold flex-1">${mensaje}</span>
+            <button onclick="this.parentElement.parentElement.remove()" class="flex-shrink-0 ml-2 text-white hover:text-gray-200 transition-colors p-1 hover:bg-white/20 rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(notif);
+    
+    setTimeout(() => {
+        notif.style.opacity = '0';
+        notif.style.transform = 'translateY(-20px)';
+        setTimeout(() => notif.remove(), 300);
+    }, 5000);
+}
+
+// Obtener CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Exportar a Excel
+function exportarExcel() {
+    mostrarNotificacion('📊 Generando archivo Excel...', 'success');
+    window.location.href = '/exportar-pagos-excel/';
+}
+</script>
+
+{% endblock %}

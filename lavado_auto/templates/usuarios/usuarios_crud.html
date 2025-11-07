@@ -304,8 +304,8 @@
         </div>
 
         <!-- Lista de usuarios -->
-        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden">
-            <div class="p-6 sm:p-8 border-b border-gray-200">
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden" id="usuarios-container">
+            <div class="p-6 sm:p-8 border-b border-gray-200" id="usuarios-header">
                 <h2 class="text-2xl font-bold text-gray-900">
                     {% if tab_actual == 'inactivos' %}
                         Usuarios Inactivos
@@ -313,14 +313,15 @@
                         Usuarios Activos
                     {% endif %}
                 </h2>
-                <p class="text-gray-600 mt-1">
+                <p class="text-gray-600 mt-1" id="usuarios-info">
                     Mostrando {{ usuarios.start_index }}-{{ usuarios.end_index }} de {{ total_filtered }} usuario{{ total_filtered|pluralize:"s" }}
                     {% if total_filtered != usuarios|length %}
                         (página {{ usuarios.number }} de {{ paginator.num_pages }})
                     {% endif %}
                 </p>
             </div>
-                
+            
+            <div id="usuarios-table-wrapper">    
             {% if usuarios %}
                 <!-- Vista de escritorio -->
                 <div class="hidden lg:block overflow-x-auto">
@@ -570,6 +571,7 @@
                     {% endfor %}
                 </div>
             {% endif %}
+            </div> <!-- fin usuarios-table-wrapper -->
         </div>
 
         <!-- Paginación con carga bajo demanda -->
@@ -913,8 +915,8 @@
         // Funciones para paginación con carga dinámica
         function loadPage(pageNumber) {
             const loadingIndicator = document.getElementById('loading-indicator');
-            const userTableBody = document.querySelector('tbody');
-            const mobileUsersList = document.querySelector('.lg\\:hidden .space-y-4');
+            const tableWrapper = document.getElementById('usuarios-table-wrapper');
+            const usuariosInfo = document.getElementById('usuarios-info');
             
             // Mostrar indicador de carga
             if (loadingIndicator) {
@@ -933,27 +935,28 @@
                     'Content-Type': 'application/json',
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
-                // Actualizar la tabla de escritorio
-                if (userTableBody && data.usuarios.length > 0) {
-                    updateDesktopTable(userTableBody, data.usuarios);
-                }
+                // Actualizar el contenido de la tabla
+                updateTableContent(data);
                 
-                // Actualizar la vista móvil
-                if (mobileUsersList && data.usuarios.length > 0) {
-                    updateMobileView(mobileUsersList, data.usuarios);
-                }
+                // Actualizar la información de paginación en el header
+                updateHeaderInfo(data);
+                
+                // Actualizar los controles de paginación
+                updatePaginationControls(data, pageNumber);
                 
                 // Actualizar la URL sin recargar la página
                 const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
                 window.history.pushState({ page: pageNumber }, '', newUrl);
                 
-                // Actualizar controles de paginación
-                updatePaginationControls(data);
-                
                 // Scroll hacia arriba suavemente
-                document.querySelector('.bg-white\\/80.backdrop-blur-xl').scrollIntoView({ 
+                document.getElementById('usuarios-container').scrollIntoView({ 
                     behavior: 'smooth', 
                     block: 'start' 
                 });
@@ -970,222 +973,364 @@
             });
         }
         
-        function updateDesktopTable(tbody, usuarios) {
-            tbody.innerHTML = '';
-            usuarios.forEach(usuario => {
-                const row = createUserRow(usuario);
-                tbody.appendChild(row);
-            });
-        }
-        
-        function updateMobileView(container, usuarios) {
-            container.innerHTML = '';
-            usuarios.forEach(usuario => {
-                const card = createUserCard(usuario);
-                container.appendChild(card);
-            });
-        }
-        
-        function createUserRow(usuario) {
-            const row = document.createElement('tr');
-            row.className = 'hover:bg-gray-50/80 transition-all duration-300';
+        function updateTableContent(data) {
+            const tableWrapper = document.getElementById('usuarios-table-wrapper');
+            if (!tableWrapper) return;
             
             const tabActual = new URLSearchParams(window.location.search).get('tab') || 'activos';
             
-            // Función para truncar texto
-            function truncateText(text, maxLength) {
-                return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
+            // Construir el HTML de la tabla de escritorio
+            let desktopTableHTML = `
+                <div class="hidden lg:block overflow-x-auto">
+                    <table class="w-full table-fixed">
+                        <thead class="bg-gray-50/80">
+                            <tr>
+                                <th class="w-60 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-user mr-2 text-blue-600"></i>Nombre Completo
+                                </th>
+                                <th class="w-40 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-at mr-2 text-blue-600"></i>Usuario
+                                </th>
+                                <th class="w-52 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-envelope mr-2 text-blue-600"></i>Correo
+                                </th>
+                                <th class="w-36 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-phone mr-2 text-blue-600"></i>Teléfono
+                                </th>
+                                <th class="w-48 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-map-marker-alt mr-2 text-blue-600"></i>Dirección
+                                </th>
+                                <th class="w-28 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-user-tag mr-2 text-blue-600"></i>Rol
+                                </th>
+                                <th class="w-32 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <i class="fas fa-cog mr-2 text-blue-600"></i>Acciones
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">`;
+            
+            if (data.usuarios && data.usuarios.length > 0) {
+                data.usuarios.forEach(usuario => {
+                    desktopTableHTML += createUserRowHTML(usuario, tabActual);
+                });
+            } else {
+                desktopTableHTML += `
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center">
+                            <div class="flex flex-col items-center justify-center space-y-4">
+                                <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-users text-4xl text-gray-400"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-semibold text-gray-600 mb-2">No hay usuarios registrados</h4>
+                                    <p class="text-gray-500">Comienza creando tu primer usuario</p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>`;
             }
             
-            row.innerHTML = `
-                <td class="px-6 py-4">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0 h-10 w-10">
-                            <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                                <i class="fas fa-user text-white text-sm"></i>
+            desktopTableHTML += `
+                        </tbody>
+                    </table>
+                </div>`;
+            
+            // Construir el HTML de la vista móvil
+            let mobileViewHTML = '<div class="lg:hidden space-y-4 p-4">';
+            
+            if (data.usuarios && data.usuarios.length > 0) {
+                data.usuarios.forEach(usuario => {
+                    mobileViewHTML += createUserCardHTML(usuario, tabActual);
+                });
+            } else {
+                mobileViewHTML += `
+                    <div class="text-center py-12">
+                        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-users text-3xl text-gray-400"></i>
+                        </div>
+                        ${tabActual === 'inactivos' ? 
+                            '<h4 class="text-lg font-semibold text-gray-600 mb-2">No hay usuarios inactivos</h4><p class="text-gray-500 text-sm">Todos los usuarios están activos en el sistema</p>' :
+                            '<h4 class="text-lg font-semibold text-gray-600 mb-2">No hay usuarios activos</h4><p class="text-gray-500 text-sm">Comienza creando tu primer usuario</p>'
+                        }
+                    </div>`;
+            }
+            
+            mobileViewHTML += '</div>';
+            
+            // Actualizar el contenido
+            tableWrapper.innerHTML = desktopTableHTML + mobileViewHTML;
+        }
+        
+        function createUserRowHTML(usuario, tabActual) {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            return `
+                <tr class="hover:bg-gray-50/80 transition-all duration-300">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                                    <i class="fas fa-user text-white text-sm"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4 overflow-hidden">
+                                <div class="text-sm font-semibold text-gray-900 truncate" title="${usuario.nombre_completo}">
+                                    ${truncateText(usuario.nombre_completo, 30)}
+                                </div>
+                                <div class="text-sm text-gray-500 truncate" title="@${usuario.nombre_usuario}">
+                                    <i class="fas fa-at mr-1"></i>${truncateText(usuario.nombre_usuario, 20)}
+                                </div>
                             </div>
                         </div>
-                        <div class="ml-4 overflow-hidden">
-                            <div class="text-sm font-semibold text-gray-900 truncate" title="${usuario.nombre_completo}">
-                                ${truncateText(usuario.nombre_completo, 30)}
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-900 truncate" title="${usuario.nombre_usuario}">
+                            ${truncateText(usuario.nombre_usuario, 15)}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-900 truncate" title="${usuario.correo}">
+                            ${truncateText(usuario.correo, 25)}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-900 truncate" title="${usuario.telefono}">
+                            <i class="fas fa-phone-alt mr-2 text-gray-400"></i>${truncateText(usuario.telefono, 12)}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-900 truncate" title="${usuario.direccion}">
+                            ${truncateText(usuario.direccion, 25)}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${usuario.rol === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}">
+                            <i class="fas ${usuario.rol === 'admin' ? 'fa-user-shield' : 'fa-user'} mr-1"></i>
+                            ${usuario.rol.charAt(0).toUpperCase() + usuario.rol.slice(1)}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex space-x-2">
+                            <a href="/editar_usuario/${usuario.id_usuario}" 
+                               class="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-all duration-300 group"
+                               title="Editar usuario">
+                                <i class="fas fa-edit group-hover:scale-110 transition-transform"></i>
+                            </a>
+                            ${tabActual === 'inactivos' ? 
+                                `<form method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de que quieres reactivar este usuario?')">
+                                    <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+                                    <button type="submit" name="reactivar" value="${usuario.id_usuario}" 
+                                            class="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-all duration-300 group"
+                                            title="Reactivar usuario">
+                                        <i class="fas fa-user-check group-hover:scale-110 transition-transform"></i>
+                                    </button>
+                                </form>` :
+                                `<form method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de que quieres inactivar este usuario?')">
+                                    <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+                                    <button type="submit" name="eliminar" value="${usuario.id_usuario}" 
+                                            class="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-all duration-300 group"
+                                            title="Inactivar usuario">
+                                        <i class="fas fa-user-slash group-hover:scale-110 transition-transform"></i>
+                                    </button>
+                                </form>`
+                            }
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+        
+        function createUserCardHTML(usuario, tabActual) {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            return `
+                <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300">
+                    <div class="flex items-start mb-4">
+                        <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-3 flex-shrink-0">
+                            <i class="fas fa-user text-white text-lg"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-gray-900 text-base leading-tight mb-1 truncate" title="${usuario.nombre_completo}">
+                                ${truncateText(usuario.nombre_completo, 22)}
+                            </h4>
+                            <span class="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${usuario.rol === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}">
+                                <i class="fas ${usuario.rol === 'admin' ? 'fa-user-shield' : 'fa-user'} mr-1"></i>
+                                ${usuario.rol === 'admin' ? 'Administrador' : 'Cliente'}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3 mb-4">
+                        <div class="flex items-center text-sm">
+                            <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-at text-blue-600 text-xs"></i>
                             </div>
-                            <div class="text-sm text-gray-500 truncate" title="@${usuario.nombre_usuario}">
-                                <i class="fas fa-at mr-1"></i>${truncateText(usuario.nombre_usuario, 20)}
+                            <div class="min-w-0 flex-1">
+                                <span class="text-gray-500 text-xs block">Usuario</span>
+                                <span class="text-gray-900 font-medium truncate block" title="${usuario.nombre_usuario}">
+                                    ${truncateText(usuario.nombre_usuario, 18)}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center text-sm">
+                            <div class="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-envelope text-green-600 text-xs"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <span class="text-gray-500 text-xs block">Email</span>
+                                <span class="text-gray-900 font-medium truncate block" title="${usuario.correo}">
+                                    ${truncateText(usuario.correo, 22)}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center text-sm">
+                            <div class="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-phone text-purple-600 text-xs"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <span class="text-gray-500 text-xs block">Teléfono</span>
+                                <span class="text-gray-900 font-medium truncate block" title="${usuario.telefono}">
+                                    ${truncateText(usuario.telefono, 15)}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center text-sm">
+                            <div class="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-map-marker-alt text-orange-600 text-xs"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <span class="text-gray-500 text-xs block">Dirección</span>
+                                <span class="text-gray-900 font-medium truncate block" title="${usuario.direccion}">
+                                    ${truncateText(usuario.direccion, 25)}
+                                </span>
                             </div>
                         </div>
                     </div>
-                </td>
-                <td class="px-6 py-4">
-                    <div class="text-sm text-gray-900 truncate" title="${usuario.nombre_usuario}">
-                        ${truncateText(usuario.nombre_usuario, 15)}
-                    </div>
-                </td>
-                <td class="px-6 py-4">
-                    <div class="text-sm text-gray-900 truncate" title="${usuario.correo}">
-                        ${truncateText(usuario.correo, 25)}
-                    </div>
-                </td>
-                <td class="px-6 py-4">
-                    <div class="text-sm text-gray-900 truncate" title="${usuario.telefono}">
-                        <i class="fas fa-phone-alt mr-2 text-gray-400"></i>${truncateText(usuario.telefono, 12)}
-                    </div>
-                </td>
-                <td class="px-6 py-4">
-                    <div class="text-sm text-gray-900 truncate" title="${usuario.direccion}">
-                        ${truncateText(usuario.direccion, 25)}
-                    </div>
-                </td>
-                <td class="px-6 py-4">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${usuario.rol === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}">
-                        <i class="fas ${usuario.rol === 'admin' ? 'fa-user-shield' : 'fa-user'} mr-1"></i>
-                        ${usuario.rol.charAt(0).toUpperCase() + usuario.rol.slice(1)}
-                    </span>
-                </td>
-                <td class="px-6 py-4">
-                    <div class="flex space-x-2">
+                    
+                    <div class="flex space-x-2 pt-3 border-t border-gray-100">
                         <a href="/editar_usuario/${usuario.id_usuario}" 
-                           class="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-all duration-300 group"
-                           title="Editar usuario">
-                            <i class="fas fa-edit group-hover:scale-110 transition-transform"></i>
+                           class="flex-1 bg-blue-500 text-white text-center py-2.5 rounded-lg hover:bg-blue-600 transition-colors font-medium text-sm flex items-center justify-center">
+                            <i class="fas fa-edit mr-2"></i>Editar
                         </a>
                         ${tabActual === 'inactivos' ? 
-                            `<form method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de que quieres reactivar este usuario?')">
-                                <input type="hidden" name="csrfmiddlewaretoken" value="${document.querySelector('[name=csrfmiddlewaretoken]').value}">
+                            `<form method="POST" class="flex-1" onsubmit="return confirm('¿Estás seguro de que quieres reactivar este usuario?')">
+                                <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
                                 <button type="submit" name="reactivar" value="${usuario.id_usuario}" 
-                                        class="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-all duration-300 group"
-                                        title="Reactivar usuario">
-                                    <i class="fas fa-user-check group-hover:scale-110 transition-transform"></i>
+                                        class="w-full bg-green-500 text-white py-2.5 rounded-lg hover:bg-green-600 transition-colors font-medium text-sm flex items-center justify-center">
+                                    <i class="fas fa-user-check mr-2"></i>Reactivar
                                 </button>
                             </form>` :
-                            `<form method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de que quieres inactivar este usuario?')">
-                                <input type="hidden" name="csrfmiddlewaretoken" value="${document.querySelector('[name=csrfmiddlewaretoken]').value}">
+                            `<form method="POST" class="flex-1" onsubmit="return confirm('¿Estás seguro de que quieres inactivar este usuario?')">
+                                <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
                                 <button type="submit" name="eliminar" value="${usuario.id_usuario}" 
-                                        class="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-all duration-300 group"
-                                        title="Inactivar usuario">
-                                    <i class="fas fa-user-slash group-hover:scale-110 transition-transform"></i>
+                                        class="w-full bg-red-500 text-white py-2.5 rounded-lg hover:bg-red-600 transition-colors font-medium text-sm flex items-center justify-center">
+                                    <i class="fas fa-user-slash mr-2"></i>Inactivar
                                 </button>
                             </form>`
                         }
                     </div>
-                </td>
+                </div>
             `;
-            
-            return row;
         }
         
-        function createUserCard(usuario) {
-            const card = document.createElement('div');
-            card.className = 'bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300';
+        function truncateText(text, maxLength) {
+            if (!text) return '';
+            return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
+        }
+        
+        function updateHeaderInfo(data) {
+            const usuariosInfo = document.getElementById('usuarios-info');
+            if (!usuariosInfo) return;
             
-            const tabActual = new URLSearchParams(window.location.search).get('tab') || 'activos';
+            const urlParams = new URLSearchParams(window.location.search);
+            const totalFiltered = data.usuarios.length; // Esto debería venir del servidor
             
-            // Función para truncar texto
-            function truncateText(text, maxLength) {
-                return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
+            usuariosInfo.innerHTML = `
+                Mostrando página ${data.current_page} de ${data.total_pages}
+            `;
+        }
+        
+        function updatePaginationControls(data, currentPage) {
+            // Buscar el contenedor de paginación
+            const paginationContainer = document.querySelector('.bg-white\\/80.backdrop-blur-xl.rounded-3xl.shadow-xl.border.border-white\\/20.p-6.mt-6');
+            if (!paginationContainer) return;
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Generar botones de páginas
+            let pageButtons = '';
+            for (let i = 1; i <= data.total_pages; i++) {
+                if (i === currentPage) {
+                    pageButtons += `
+                        <button class="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-bold shadow-lg">
+                            ${i}
+                        </button>`;
+                } else if (i > currentPage - 3 && i < currentPage + 3) {
+                    pageButtons += `
+                        <button onclick="loadPage(${i})" 
+                                class="w-10 h-10 bg-white text-gray-700 rounded-xl font-medium hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 border border-gray-200">
+                            ${i}
+                        </button>`;
+                } else if (i === 1 || i === data.total_pages) {
+                    pageButtons += `
+                        <button onclick="loadPage(${i})" 
+                                class="w-10 h-10 bg-white text-gray-700 rounded-xl font-medium hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 border border-gray-200">
+                            ${i}
+                        </button>`;
+                    if (i === 1 && currentPage > 4) {
+                        pageButtons += '<span class="text-gray-400 px-2">...</span>';
+                    } else if (i === data.total_pages && currentPage < data.total_pages - 3) {
+                        pageButtons = '<span class="text-gray-400 px-2">...</span>' + pageButtons;
+                    }
+                }
             }
             
-            card.innerHTML = `
-                <!-- Header con avatar y datos básicos -->
-                <div class="flex items-start mb-4">
-                    <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-3 flex-shrink-0">
-                        <i class="fas fa-user text-white text-lg"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="font-bold text-gray-900 text-base leading-tight mb-1 truncate" title="${usuario.nombre_completo}">
-                            ${truncateText(usuario.nombre_completo, 22)}
-                        </h4>
-                        <span class="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${usuario.rol === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}">
-                            <i class="fas ${usuario.rol === 'admin' ? 'fa-user-shield' : 'fa-user'} mr-1"></i>
-                            ${usuario.rol === 'admin' ? 'Administrador' : 'Cliente'}
-                        </span>
-                    </div>
-                </div>
-                
-                <!-- Información de contacto -->
-                <div class="space-y-3 mb-4">
-                    <div class="flex items-center text-sm">
-                        <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
-                            <i class="fas fa-at text-blue-600 text-xs"></i>
-                        </div>
-                        <div class="min-w-0 flex-1">
-                            <span class="text-gray-500 text-xs block">Usuario</span>
-                            <span class="text-gray-900 font-medium truncate block" title="${usuario.nombre_usuario}">
-                                ${truncateText(usuario.nombre_usuario, 18)}
-                            </span>
-                        </div>
+            const paginationHTML = `
+                <div class="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+                    <div class="text-sm text-gray-700">
+                        Página ${currentPage} de ${data.total_pages}
                     </div>
                     
-                    <div class="flex items-center text-sm">
-                        <div class="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
-                            <i class="fas fa-envelope text-green-600 text-xs"></i>
+                    <div class="flex items-center space-x-2">
+                        ${data.has_previous ? 
+                            `<button onclick="loadPage(${currentPage - 1})" 
+                                    class="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg">
+                                <i class="fas fa-chevron-left mr-1"></i> Anterior
+                            </button>` :
+                            `<button disabled 
+                                    class="px-4 py-2 bg-gray-200 text-gray-400 rounded-xl font-medium cursor-not-allowed">
+                                <i class="fas fa-chevron-left mr-1"></i> Anterior
+                            </button>`
+                        }
+                        
+                        <div class="flex items-center space-x-1">
+                            ${pageButtons}
                         </div>
-                        <div class="min-w-0 flex-1">
-                            <span class="text-gray-500 text-xs block">Email</span>
-                            <span class="text-gray-900 font-medium truncate block" title="${usuario.correo}">
-                                ${truncateText(usuario.correo, 22)}
-                            </span>
-                        </div>
+                        
+                        ${data.has_next ? 
+                            `<button onclick="loadPage(${currentPage + 1})" 
+                                    class="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg">
+                                Siguiente <i class="fas fa-chevron-right ml-1"></i>
+                            </button>` :
+                            `<button disabled 
+                                    class="px-4 py-2 bg-gray-200 text-gray-400 rounded-xl font-medium cursor-not-allowed">
+                                Siguiente <i class="fas fa-chevron-right ml-1"></i>
+                            </button>`
+                        }
                     </div>
-                    
-                    <div class="flex items-center text-sm">
-                        <div class="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
-                            <i class="fas fa-phone text-purple-600 text-xs"></i>
-                        </div>
-                        <div class="min-w-0 flex-1">
-                            <span class="text-gray-500 text-xs block">Teléfono</span>
-                            <span class="text-gray-900 font-medium truncate block" title="${usuario.telefono}">
-                                ${truncateText(usuario.telefono, 15)}
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center text-sm">
-                        <div class="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
-                            <i class="fas fa-map-marker-alt text-orange-600 text-xs"></i>
-                        </div>
-                        <div class="min-w-0 flex-1">
-                            <span class="text-gray-500 text-xs block">Dirección</span>
-                            <span class="text-gray-900 font-medium truncate block" title="${usuario.direccion}">
-                                ${truncateText(usuario.direccion, 25)}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Botones de acción -->
-                <div class="flex space-x-2 pt-3 border-t border-gray-100">
-                    <a href="/editar_usuario/${usuario.id_usuario}" 
-                       class="flex-1 bg-blue-500 text-white text-center py-2.5 rounded-lg hover:bg-blue-600 transition-colors font-medium text-sm flex items-center justify-center">
-                        <i class="fas fa-edit mr-2"></i>Editar
-                    </a>
-                    ${tabActual === 'inactivos' ? 
-                        `<form method="POST" class="flex-1" onsubmit="return confirm('¿Estás seguro de que quieres reactivar este usuario?')">
-                            <input type="hidden" name="csrfmiddlewaretoken" value="${document.querySelector('[name=csrfmiddlewaretoken]').value}">
-                            <button type="submit" name="reactivar" value="${usuario.id_usuario}" 
-                                    class="w-full bg-green-500 text-white py-2.5 rounded-lg hover:bg-green-600 transition-colors font-medium text-sm flex items-center justify-center">
-                                <i class="fas fa-user-check mr-2"></i>Reactivar
-                            </button>
-                        </form>` :
-                        `<form method="POST" class="flex-1" onsubmit="return confirm('¿Estás seguro de que quieres inactivar este usuario?')">
-                            <input type="hidden" name="csrfmiddlewaretoken" value="${document.querySelector('[name=csrfmiddlewaretoken]').value}">
-                            <button type="submit" name="eliminar" value="${usuario.id_usuario}" 
-                                    class="w-full bg-red-500 text-white py-2.5 rounded-lg hover:bg-red-600 transition-colors font-medium text-sm flex items-center justify-center">
-                                <i class="fas fa-user-slash mr-2"></i>Inactivar
-                            </button>
-                        </form>`
-                    }
                 </div>
             `;
             
-            return card;
-        }
-        
-        function updatePaginationControls(data) {
-            // Esta función podría actualizarse para cambiar los controles de paginación
-            // Por ahora, recargamos la página para mantener la consistencia
-            setTimeout(() => {
-                window.location.reload();
-            }, 100);
+            // Actualizar solo el contenido de la paginación sin el indicador de carga
+            const loadingIndicator = paginationContainer.querySelector('#loading-indicator');
+            paginationContainer.innerHTML = paginationHTML;
+            if (loadingIndicator) {
+                paginationContainer.appendChild(loadingIndicator);
+            }
         }
 
         // Funciones mejoradas para modales

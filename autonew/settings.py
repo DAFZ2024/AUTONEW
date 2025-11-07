@@ -241,7 +241,7 @@ SESSION_SAVE_EVERY_REQUEST = True  # Actualiza la sesión en cada request (reini
 
 # Configuración de seguridad para cookies CSRF
 CSRF_COOKIE_SECURE = not DEBUG  # Solo HTTPS en producción
-CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = False  # Permitir acceso desde JavaScript para peticiones AJAX
 CSRF_COOKIE_SAMESITE = 'Lax'
 
 # Orígenes confiables para CSRF (para acceso desde internet)

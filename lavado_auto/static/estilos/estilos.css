@@ -87,6 +87,24 @@ body{font-family:Inter,Segoe UI,Roboto,Arial,sans-serif}
     }
 }
 
+/* Prevenir animaciones no deseadas en la carga de página */
+.no-initial-animation,
+.no-initial-animation * {
+    animation-duration: 0s !important;
+    transition-duration: 0s !important;
+}
+
+/* Aplicar a body durante la carga inicial */
+body.loading {
+    animation: none !important;
+    transition: none !important;
+}
+
+body.loading * {
+    animation: none !important;
+    transition: none !important;
+}
+
 /* Estilos modernos para botones de navegación 2025 */
 .scale-98 {
     transform: scale(0.98);

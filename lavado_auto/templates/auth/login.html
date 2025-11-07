@@ -3,11 +3,12 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
     <meta name="theme-color" content="#667eea">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Iniciar Sesión - AUTONEW</title>
     
     <!-- Preconnect para mejorar rendimiento -->
@@ -183,6 +184,47 @@
     position: relative;
 }
 
+/* Estilos para indicador de fortaleza de contraseña */
+#passwordStrengthContainer {
+    margin-top: 0.5rem;
+}
+
+#passwordStrengthBar {
+    transition: all 0.3s ease;
+}
+
+/* Estilos para requisitos de contraseña */
+#passwordRequirements {
+    margin-top: 0.75rem;
+}
+
+#passwordRequirements .req-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    background-color: rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+}
+
+#passwordRequirements li.valid .req-icon {
+    background-color: rgba(34, 197, 94, 0.3);
+    color: #22c55e;
+}
+
+#passwordRequirements li.valid .req-icon::before {
+    content: '✓';
+}
+
+#passwordRequirements li:not(.valid) .req-icon::before {
+    content: '✕';
+}
+
 /* Clases utilitarias móviles */
 .mobile-container {
     width: 100vw;
@@ -212,27 +254,126 @@
     }
 }
 
-/* Mejoras de contraste para móviles */
+/* Mejoras de contraste para móviles - Paleta consistente con PC */
 @media (max-width: 767px) {
     .text-gray-600 {
         color: #4b5563 !important;
     }
     
-    .placeholder-white\/70::placeholder {
-        color: rgba(255, 255, 255, 0.8) !important;
+    /* Cambiar inputs del formulario de registro a estilo PC */
+    .register-section .input-group input {
+        background-color: #ffffff !important;
+        color: #1e40af !important;
+        border-color: #93c5fd !important;
     }
     
-    .border-white\/30 {
-        border-color: rgba(255, 255, 255, 0.4) !important;
+    .register-section .input-group input::placeholder {
+        color: #60a5fa !important;
+        opacity: 0.7 !important;
     }
     
-    /* Mejorar visibilidad de inputs en móvil */
-    .bg-white\/15 {
-        background-color: rgba(255, 255, 255, 0.2) !important;
+    .register-section .input-group input:focus {
+        background-color: #ffffff !important;
+        border-color: #3b82f6 !important;
+        color: #1e40af !important;
     }
     
-    .focus\:bg-white\/20:focus {
-        background-color: rgba(255, 255, 255, 0.25) !important;
+    /* Cambiar fondo del formulario de registro a blanco */
+    .register-section {
+        background: #ffffff !important;
+        color: #1f2937 !important;
+    }
+    
+    .register-section h1 {
+        background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%) !important;
+        -webkit-background-clip: text !important;
+        background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+    }
+    
+    .register-section p {
+        color: #1e40af !important;
+    }
+    
+    /* Ajustar botones del formulario de registro */
+    .register-section button[type="submit"] {
+        background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%) !important;
+        border-color: transparent !important;
+        color: #ffffff !important;
+    }
+    
+    .register-section button[type="submit"]:hover {
+        background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%) !important;
+    }
+    
+    /* Botón de Google en registro */
+    .register-section button[type="button"]:not(#showLogin) {
+        background-color: #ffffff !important;
+        border-color: #93c5fd !important;
+        color: #1e40af !important;
+    }
+    
+    .register-section button[type="button"]:not(#showLogin):hover {
+        background-color: #eff6ff !important;
+        border-color: #3b82f6 !important;
+    }
+    
+    /* Botón "Iniciar Sesión" en registro */
+    .register-section #showLogin {
+        background-color: transparent !important;
+        border-color: #2563eb !important;
+        color: #2563eb !important;
+    }
+    
+    .register-section #showLogin:hover {
+        background-color: #2563eb !important;
+        color: #ffffff !important;
+    }
+    
+    /* Divisor en registro */
+    .register-section .flex.items-center .border-t {
+        border-color: #cbd5e1 !important;
+    }
+    
+    .register-section .flex.items-center span {
+        color: #64748b !important;
+    }
+    
+    /* Texto de "¿Ya tienes cuenta?" */
+    .register-section .text-center p {
+        color: #64748b !important;
+    }
+    
+    /* Validación de contraseña */
+    .register-section .validation-message {
+        color: #059669 !important;
+    }
+    
+    .register-section .validation-message.text-red-300 {
+        color: #dc2626 !important;
+    }
+    
+    /* Requisitos de contraseña */
+    .register-section #passwordRequirements {
+        background-color: #eff6ff !important;
+        color: #1e40af !important;
+    }
+    
+    .register-section #passwordRequirements p {
+        color: #1e40af !important;
+    }
+    
+    .register-section #passwordRequirements li span {
+        color: #475569 !important;
+    }
+    
+    /* Indicador de fortaleza */
+    .register-section #passwordStrengthContainer {
+        color: #1e40af !important;
+    }
+    
+    .register-section #passwordStrengthText {
+        color: #1e40af !important;
     }
 }
 
@@ -244,105 +385,169 @@
     }
     
     main {
-        padding: 0.75rem !important;
+        padding: 0.5rem !important;
         min-height: 100vh;
         align-items: flex-start;
-        padding-top: 2rem !important;
+        padding-top: 1rem !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
     }
     
     .auth-container-mobile {
-        margin: 0.5rem !important;
-        border-radius: 1rem !important;
+        margin: 0.5rem auto !important;
+        border-radius: 1.25rem !important;
         max-width: none !important;
-        width: calc(100vw - 1rem) !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+        width: calc(100% - 1rem) !important;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12) !important;
     }
     
     .form-section-mobile {
-        padding: 1.25rem 1rem !important;
+        padding: 1.5rem 1.25rem !important;
     }
     
     .input-row-mobile {
         flex-direction: column !important;
-        gap: 0.75rem !important;
+        gap: 0.875rem !important;
     }
     
     .title-mobile {
-        margin: 0.5rem 0 1.5rem 0 !important;
-        padding: 0 0.5rem !important;
+        margin: 0.75rem 0 1.25rem 0 !important;
+        padding: 0 0.25rem !important;
     }
     
     .title-mobile h1 {
-        font-size: 1.5rem !important;
-        line-height: 1.3 !important;
-        margin-bottom: 0.5rem !important;
+        font-size: 1.625rem !important;
+        line-height: 1.25 !important;
+        margin-bottom: 0.625rem !important;
     }
     
     .title-mobile p {
-        font-size: 0.8rem !important;
-        line-height: 1.4 !important;
+        font-size: 0.875rem !important;
+        line-height: 1.5 !important;
         margin-bottom: 0.75rem !important;
     }
     
     .title-mobile .w-16 {
-        width: 2.5rem !important;
+        width: 3rem !important;
         height: 3px !important;
     }
     
     /* Formularios móviles pequeños */
     .login-section h1,
     .register-section h1 {
-        font-size: 1.375rem !important;
-        margin-bottom: 0.5rem !important;
+        font-size: 1.5rem !important;
+        margin-bottom: 0.625rem !important;
+        font-weight: 700 !important;
     }
     
     .login-section p,
     .register-section p {
-        font-size: 0.8rem !important;
-        margin-bottom: 1rem !important;
+        font-size: 0.875rem !important;
+        margin-bottom: 1.25rem !important;
     }
     
-    /* Inputs más compactos */
+    /* Inputs más accesibles en móvil */
     .input-group input {
-        padding: 0.75rem !important;
-        font-size: 0.875rem !important;
-        border-radius: 0.5rem !important;
-        border-width: 1px !important;
+        padding: 0.875rem 1rem !important;
+        font-size: 16px !important; /* Previene zoom en iOS */
+        border-radius: 0.75rem !important;
+        border-width: 2px !important;
+        min-height: 48px !important; /* Tamaño mínimo recomendado para touch */
     }
     
-    /* Botones más compactos */
+    /* Botones más accesibles */
     button {
-        padding: 0.75rem 1rem !important;
-        font-size: 0.875rem !important;
-        border-radius: 0.5rem !important;
+        padding: 0.875rem 1.25rem !important;
+        font-size: 0.9375rem !important;
+        border-radius: 0.75rem !important;
+        min-height: 48px !important; /* Tamaño mínimo recomendado para touch */
+        font-weight: 600 !important;
     }
     
     /* Espaciado reducido */
     .space-y-4 > * + * {
-        margin-top: 0.75rem !important;
-    }
-    
-    .space-y-5 > * + * {
         margin-top: 0.875rem !important;
     }
     
-    /* Botón volver más pequeño */
-    .fixed.top-5.left-5 {
-        top: 0.75rem !important;
-        left: 0.75rem !important;
-        padding: 0.5rem 0.75rem !important;
-        font-size: 0.8rem !important;
-        border-radius: 1rem !important;
+    .space-y-5 > * + * {
+        margin-top: 1rem !important;
+    }
+    
+    /* Botón volver mejorado */
+    .login-section > a:first-child,
+    .register-section > a:first-child {
+        padding: 0.625rem 1rem !important;
+        font-size: 0.875rem !important;
+        border-radius: 0.75rem !important;
+        margin-bottom: 1rem !important;
+        min-height: 40px !important;
+        display: inline-flex !important;
+        align-items: center !important;
     }
     
     /* Mensajes de alerta más compactos */
     .animate-slideIn {
         margin-bottom: 1rem !important;
-        padding: 0.75rem 1rem !important;
-        font-size: 0.8rem !important;
-        border-radius: 0.5rem !important;
-        margin-left: 0.5rem !important;
-        margin-right: 0.5rem !important;
+        padding: 0.875rem 1rem !important;
+        font-size: 0.875rem !important;
+        border-radius: 0.75rem !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        line-height: 1.5 !important;
+    }
+    
+    /* Divisores más compactos */
+    .flex.items-center.my-6,
+    .flex.items-center.my-4 {
+        margin-top: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .flex.items-center.my-6 span,
+    .flex.items-center.my-4 span {
+        font-size: 0.8125rem !important;
+        padding: 0 0.75rem !important;
+    }
+    
+    /* Requisitos de contraseña más compactos */
+    #passwordRequirements {
+        padding: 0.875rem !important;
+        margin-top: 0.5rem !important;
+    }
+    
+    #passwordRequirements p {
+        font-size: 0.8125rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    #passwordRequirements ul {
+        gap: 0.375rem !important;
+    }
+    
+    #passwordRequirements li {
+        font-size: 0.75rem !important;
+    }
+    
+    /* Indicador de fortaleza */
+    #passwordStrengthContainer {
+        margin-top: 0.5rem !important;
+    }
+    
+    #passwordStrengthText {
+        font-size: 0.75rem !important;
+    }
+    
+    /* Enlaces más legibles */
+    a {
+        font-size: 0.875rem !important;
+        line-height: 1.5 !important;
+    }
+    
+    /* Texto de validación */
+    .validation-message {
+        font-size: 0.75rem !important;
+        margin-top: 0.375rem !important;
     }
 }
 
@@ -354,18 +559,22 @@
     
     main {
         padding: 1rem !important;
-        padding-top: 1.5rem !important;
+        padding-top: 1.25rem !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
     }
     
     .auth-container-mobile {
-        margin: 0.75rem !important;
-        border-radius: 1.25rem !important;
-        max-width: none !important;
-        width: calc(100vw - 1.5rem) !important;
+        margin: 0.75rem auto !important;
+        border-radius: 1.5rem !important;
+        max-width: 540px !important;
+        width: calc(100% - 1.5rem) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
     }
     
     .form-section-mobile {
-        padding: 2rem 1.5rem !important;
+        padding: 2rem 1.75rem !important;
     }
     
     .input-row-mobile {
@@ -374,33 +583,48 @@
     }
     
     .title-mobile {
-        margin: 1rem 0 1.75rem 0 !important;
-        padding: 0 0.75rem !important;
+        margin: 1rem 0 1.5rem 0 !important;
+        padding: 0 0.5rem !important;
     }
     
     .title-mobile h1 {
-        font-size: 1.75rem !important;
-        line-height: 1.25 !important;
+        font-size: 1.875rem !important;
+        line-height: 1.2 !important;
         margin-bottom: 0.75rem !important;
     }
     
     .title-mobile p {
-        font-size: 0.875rem !important;
-        line-height: 1.4 !important;
+        font-size: 0.9375rem !important;
+        line-height: 1.5 !important;
     }
     
     /* Inputs tamaño medio */
     .input-group input {
-        padding: 0.875rem !important;
-        font-size: 0.9rem !important;
-        border-radius: 0.75rem !important;
+        padding: 1rem 1.125rem !important;
+        font-size: 16px !important; /* Previene zoom en iOS */
+        border-radius: 0.875rem !important;
+        min-height: 50px !important;
     }
     
     /* Botones tamaño medio */
     button {
-        padding: 0.875rem 1.25rem !important;
-        font-size: 0.9rem !important;
-        border-radius: 0.75rem !important;
+        padding: 1rem 1.5rem !important;
+        font-size: 0.9375rem !important;
+        border-radius: 0.875rem !important;
+        min-height: 50px !important;
+    }
+    
+    /* Mejor espaciado para textos */
+    .login-section h1,
+    .register-section h1 {
+        font-size: 1.75rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .login-section p,
+    .register-section p {
+        font-size: 0.9375rem !important;
+        margin-bottom: 1.5rem !important;
     }
 }
 
@@ -481,84 +705,6 @@
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Estilos para modo oscuro en móvil */
-@media (prefers-color-scheme: dark) and (max-width: 767px) {
-    .bg-white {
-        background-color: rgba(17, 24, 39, 0.95) !important;
-        color: #f9fafb !important;
-    }
-    
-    .text-gray-800 {
-        color: #f9fafb !important;
-    }
-    
-    .text-gray-600 {
-        color: #d1d5db !important;
-    }
-    
-    .border-gray-200 {
-        border-color: rgba(75, 85, 99, 0.3) !important;
-    }
-    
-    .shadow-custom {
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
-    }
-}
-
-/* Estilos para dispositivos con alta densidad de píxeles */
-@media (-webkit-min-device-pixel-ratio: 2) and (max-width: 767px),
-       (min-resolution: 192dpi) and (max-width: 767px) {
-    .shadow-custom {
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
-    }
-    
-    .border {
-        border-width: 0.5px !important;
-    }
-}
-
-/* Optimización para dispositivos con pantalla OLED */
-@media (color-gamut: p3) and (max-width: 767px) {
-    .bg-gradient-primary {
-        background: linear-gradient(135deg, color(display-p3 0.4 0.49 0.92) 0%, color(display-p3 0.46 0.29 0.64) 100%);
-    }
-}
-
-/* Estilos para mejorar accesibilidad en móvil */
-@media (max-width: 767px) {
-    /* Mejorar contraste para usuarios con baja visión */
-    .text-primary {
-        color: #4f46e5 !important; /* Color más contrastante */
-    }
-    
-    /* Indicadores visuales más claros */
-    input:focus {
-        outline: 2px solid #4f46e5 !important;
-        outline-offset: 2px !important;
-    }
-    
-    button:focus {
-        outline: 2px solid #ffffff !important;
-        outline-offset: 2px !important;
-    }
-    
-    /* Mejorar legibilidad de enlaces */
-    a {
-        text-decoration: underline !important;
-        text-underline-offset: 2px !important;
-    }
-}
-
-/* Soporte para notch en iPhone X y posteriores */
-@supports (padding: max(0px)) {
-    .mobile-safe-area {
-        padding-left: max(1rem, env(safe-area-inset-left)) !important;
-        padding-right: max(1rem, env(safe-area-inset-right)) !important;
-        padding-top: max(1rem, env(safe-area-inset-top)) !important;
-        padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
-    }
-}
-
 /* Optimización de rendimiento para dispositivos de gama baja */
 @media (max-width: 767px) and (hover: none) {
     /* Simplificar efectos para dispositivos táctiles de gama baja */
@@ -576,11 +722,122 @@
     }
 }
 
+/* Estilos para mejorar accesibilidad en móvil */
+@media (max-width: 767px) {
+    /* Mejorar contraste para usuarios con baja visión */
+    .text-primary {
+        color: #4f46e5 !important; /* Color más contrastante */
+    }
+    
+    /* Indicadores visuales más claros */
+    input:focus {
+        outline: 2px solid #4f46e5 !important;
+        outline-offset: 2px !important;
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1) !important;
+    }
+    
+    button:focus {
+        outline: 2px solid #2563eb !important;
+        outline-offset: 2px !important;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2) !important;
+    }
+    
+    /* Mejorar legibilidad de enlaces */
+    a {
+        text-decoration: underline !important;
+        text-underline-offset: 2px !important;
+        min-height: 44px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+    }
+}
+
+/* Modo landscape en móvil */
+@media (max-width: 767px) and (orientation: landscape) {
+    main.landscape-mode {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+        background-color: #ffffff !important;
+    }
+    
+    .title-mobile {
+        margin: 0.5rem 0 0.75rem 0 !important;
+    }
+    
+    .title-mobile h1 {
+        font-size: 1.25rem !important;
+        margin-bottom: 0.25rem !important;
+    }
+    
+    .title-mobile p {
+        font-size: 0.75rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .title-mobile .w-16 {
+        display: none !important;
+    }
+    
+    .form-section-mobile {
+        padding: 1rem !important;
+        max-height: calc(100vh - 2rem) !important;
+        background-color: #ffffff !important;
+    }
+    
+    .login-section h1,
+    .register-section h1 {
+        font-size: 1.25rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .login-section p,
+    .register-section p {
+        font-size: 0.75rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .input-group input,
+    button {
+        padding: 0.625rem 1rem !important;
+        min-height: 40px !important;
+    }
+    
+    .space-y-4 > * + *,
+    .space-y-5 > * + * {
+        margin-top: 0.5rem !important;
+    }
+    
+    .flex.items-center.my-6,
+    .flex.items-center.my-4 {
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    #passwordRequirements {
+        padding: 0.5rem !important;
+        font-size: 0.625rem !important;
+    }
+}
+
 /* Fix para teclados virtuales en móvil */
 @media (max-width: 767px) {
+    /* Ajustar viewport cuando el teclado está abierto */
     .keyboard-open {
         height: calc(100vh - env(keyboard-inset-height, 0px)) !important;
         transition: height 0.3s ease !important;
+    }
+    
+    /* Prevenir que el formulario se esconda detrás del teclado */
+    .form-section-mobile {
+        position: relative;
+        max-height: calc(100vh - 4rem);
+        overflow-y: auto;
+    }
+    
+    /* Scroll automático al hacer focus en input */
+    input:focus {
+        scroll-margin-top: 80px;
+        scroll-margin-bottom: 80px;
     }
 }
 
@@ -609,7 +866,13 @@
 /* Estilos generales */
 @media (max-width: 767px) {
     * {
-        max-width: 100% !important;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    
+    /* FORZAR FONDO BLANCO EN MÓVIL */
+    body, html, main {
+        background-color: #ffffff !important;
     }
     
     .w-full {
@@ -621,11 +884,13 @@
     body, html {
         overflow-x: hidden !important;
         position: relative !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
     
     /* Mejorar legibilidad */
     .text-white {
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
     }
     
     /* Optimizar fondos para móvil */
@@ -636,24 +901,26 @@
     /* Mejorar contraste en inputs móviles */
     input {
         -webkit-appearance: none !important;
-        -webkit-border-radius: 0 !important;
-        border-radius: 0.5rem !important;
+        appearance: none !important;
+        border-radius: 0.75rem !important;
     }
     
-    /* Mejorar zoom en iOS */
+    /* CRÍTICO: Prevenir zoom en iOS - El tamaño de fuente debe ser 16px o mayor */
     input[type="text"],
     input[type="email"],
     input[type="tel"],
     input[type="password"] {
-        font-size: 16px !important; /* Prevenir zoom en iOS */
+        font-size: 16px !important;
         -webkit-text-size-adjust: 100% !important;
+        text-size-adjust: 100% !important;
     }
     
     /* Mejorar botones touch */
-    button, .btn {
-        -webkit-tap-highlight-color: transparent !important;
+    button, .btn, a {
+        -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2) !important;
         user-select: none !important;
         -webkit-user-select: none !important;
+        touch-action: manipulation !important;
     }
     
     /* Scroll suave en móvil */
@@ -664,17 +931,56 @@
     
     /* Safe area para dispositivos con notch */
     main {
-        padding-top: max(1rem, env(safe-area-inset-top)) !important;
-        padding-left: max(1rem, env(safe-area-inset-left)) !important;
-        padding-right: max(1rem, env(safe-area-inset-right)) !important;
-        padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+        padding-top: max(0.5rem, env(safe-area-inset-top)) !important;
+        padding-left: max(0.5rem, env(safe-area-inset-left)) !important;
+        padding-right: max(0.5rem, env(safe-area-inset-right)) !important;
+        padding-bottom: max(0.5rem, env(safe-area-inset-bottom)) !important;
+        background-color: #ffffff !important;
     }
     
     /* Mejorar visibilidad de elementos decorativos en móvil */
-    .fixed.top-0.right-0,
-    .fixed.bottom-0.left-0 {
-        opacity: 0.05 !important;
-        pointer-events: none !important;
+    .pointer-events-none.select-none > div {
+        opacity: 0.08 !important;
+    }
+    
+    /* Mejora de contraste para mejor legibilidad */
+    .text-blue-700 {
+        color: rgb(29 78 216) !important; /* Color más oscuro para mejor contraste */
+    }
+    
+    .placeholder-blue-400::placeholder {
+        color: rgb(96 165 250) !important;
+        opacity: 0.8 !important;
+    }
+    
+    /* Mejorar interacción con formularios */
+    .input-group {
+        position: relative;
+        width: 100% !important;
+    }
+    
+    /* Evitar que el contenedor se expanda más allá de la pantalla */
+    .auth-container-mobile {
+        overflow: hidden !important;
+        background-color: #ffffff !important;
+    }
+    
+    /* Login y registro con fondo blanco */
+    .login-section,
+    .register-section {
+        background-color: #ffffff !important;
+    }
+    
+    /* Asegurar que los SVG no se desborden */
+    svg {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+    
+    /* Mejora en la visualización de mensajes */
+    .animate-slideIn {
+        width: calc(100% - 1rem) !important;
+        max-width: 100% !important;
     }
 }
 </style>
@@ -797,10 +1103,10 @@
             </div>
 
             <!-- Sección de Registro -->
-            <div class="hidden flex-1 px-6 py-6 sm:px-12 sm:py-10 bg-gradient-primary text-white justify-center flex-col transition-all duration-700 register-section form-section-mobile">
+            <div class="hidden flex-1 px-6 py-6 sm:px-12 sm:py-10 bg-white md:bg-gradient-primary text-gray-800 md:text-white justify-center flex-col transition-all duration-700 register-section form-section-mobile">
                 <div class="text-center mb-6 sm:mb-8">
-                    <h1 class="text-2xl sm:text-4xl font-bold text-white mb-3">Crear Cuenta</h1>
-                    <p class="text-white/90 text-sm sm:text-base">Completa el formulario para registrarte</p>
+                    <h1 class="text-2xl sm:text-4xl font-bold mb-3 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 bg-clip-text text-transparent md:text-white md:bg-none">Crear Cuenta</h1>
+                    <p class="text-blue-700 md:text-white/90 text-sm sm:text-base">Completa el formulario para registrarte</p>
                 </div>
                 
                 <form action="/login/" method="POST" id="registerForm" class="space-y-4 sm:space-y-5">
@@ -818,7 +1124,7 @@
                                    autocapitalize="words"
                                    aria-label="Nombre completo"
                                    value="{% if form_data.nombre_completo %}{{ form_data.nombre_completo }}{% endif %}"
-                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white/15 text-white placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-white/60 focus:bg-white/20 focus:ring-4 focus:ring-white/10 smooth-transition">
+                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-blue-200 md:border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white md:bg-white/15 text-blue-900 md:text-white placeholder-blue-400 md:placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-blue-500 md:focus:border-white/60 focus:bg-white md:focus:bg-white/20 focus:ring-4 focus:ring-blue-200 md:focus:ring-white/10 smooth-transition">
                         </div>
                         <div class="flex-1 input-group">
                             <input type="text" 
@@ -831,7 +1137,7 @@
                                    autocapitalize="none"
                                    aria-label="Nombre de usuario"
                                    value="{% if form_data.nombre_usuario %}{{ form_data.nombre_usuario }}{% endif %}"
-                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white/15 text-white placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-white/60 focus:bg-white/20 focus:ring-4 focus:ring-white/10 smooth-transition">
+                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-blue-200 md:border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white md:bg-white/15 text-blue-900 md:text-white placeholder-blue-400 md:placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-blue-500 md:focus:border-white/60 focus:bg-white md:focus:bg-white/20 focus:ring-4 focus:ring-blue-200 md:focus:ring-white/10 smooth-transition">
                         </div>
                     </div>
                     
@@ -846,7 +1152,7 @@
                                autocapitalize="none"
                                aria-label="Correo electrónico"
                                value="{% if form_data.correo %}{{ form_data.correo }}{% endif %}"
-                               class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white/15 text-white placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-white/60 focus:bg-white/20 focus:ring-4 focus:ring-white/10 smooth-transition">
+                               class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-blue-200 md:border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white md:bg-white/15 text-blue-900 md:text-white placeholder-blue-400 md:placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-blue-500 md:focus:border-white/60 focus:bg-white md:focus:bg-white/20 focus:ring-4 focus:ring-blue-200 md:focus:ring-white/10 smooth-transition">
                     </div>
                     
                     <div class="flex gap-3 sm:gap-4 flex-col sm:flex-row input-row-mobile">
@@ -861,7 +1167,7 @@
                                    maxlength="10"
                                    aria-label="Número de teléfono"
                                    value="{% if form_data.telefono %}{{ form_data.telefono }}{% endif %}"
-                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white/15 text-white placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-white/60 focus:bg-white/20 focus:ring-4 focus:ring-white/10 smooth-transition">
+                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-blue-200 md:border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white md:bg-white/15 text-blue-900 md:text-white placeholder-blue-400 md:placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-blue-500 md:focus:border-white/60 focus:bg-white md:focus:bg-white/20 focus:ring-4 focus:ring-blue-200 md:focus:ring-white/10 smooth-transition">
                         </div>
                         <div class="flex-1 input-group">
                             <input type="text" 
@@ -874,7 +1180,7 @@
                                    autocapitalize="words"
                                    aria-label="Dirección"
                                    value="{% if form_data.direccion %}{{ form_data.direccion }}{% endif %}"
-                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white/15 text-white placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-white/60 focus:bg-white/20 focus:ring-4 focus:ring-white/10 smooth-transition">
+                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-blue-200 md:border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white md:bg-white/15 text-blue-900 md:text-white placeholder-blue-400 md:placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-blue-500 md:focus:border-white/60 focus:bg-white md:focus:bg-white/20 focus:ring-4 focus:ring-blue-200 md:focus:ring-white/10 smooth-transition">
                         </div>
                     </div>
                     
@@ -889,7 +1195,18 @@
                                    minlength="8"
                                    aria-label="Nueva contraseña"
                                    id="password1"
-                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white/15 text-white placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-white/60 focus:bg-white/20 focus:ring-4 focus:ring-white/10 smooth-transition">
+                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-blue-200 md:border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white md:bg-white/15 text-blue-900 md:text-white placeholder-blue-400 md:placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-blue-500 md:focus:border-white/60 focus:bg-white md:focus:bg-white/20 focus:ring-4 focus:ring-blue-200 md:focus:ring-white/10 smooth-transition">
+                            
+                            <!-- Indicador de fortaleza de contraseña -->
+                            <div class="mt-2 hidden" id="passwordStrengthContainer">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-xs text-blue-700 md:text-white/80">Fortaleza:</span>
+                                    <span class="text-xs font-semibold text-blue-700 md:text-white" id="passwordStrengthText"></span>
+                                </div>
+                                <div class="w-full h-1.5 bg-blue-100 md:bg-white/20 rounded-full overflow-hidden">
+                                    <div class="h-full transition-all duration-300 rounded-full" id="passwordStrengthBar" style="width: 0%"></div>
+                                </div>
+                            </div>
                         </div>
                         <div class="flex-1 input-group">
                             <input type="password" 
@@ -901,25 +1218,56 @@
                                    minlength="8"
                                    aria-label="Confirmar contraseña"
                                    id="password2"
-                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white/15 text-white placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-white/60 focus:bg-white/20 focus:ring-4 focus:ring-white/10 smooth-transition">
+                                   class="w-full px-4 py-3 sm:px-5 sm:py-4 border-2 border-blue-200 md:border-white/30 rounded-lg sm:rounded-xl text-sm sm:text-base bg-white md:bg-white/15 text-blue-900 md:text-white placeholder-blue-400 md:placeholder-white/70 transition-all duration-300 focus:outline-none focus:border-blue-500 md:focus:border-white/60 focus:bg-white md:focus:bg-white/20 focus:ring-4 focus:ring-blue-200 md:focus:ring-white/10 smooth-transition">
                             <div class="validation-message text-xs mt-1 pl-1" id="passwordMatch" role="status" aria-live="polite"></div>
                         </div>
                     </div>
                     
-                    <button type="submit" class="w-full px-4 py-3 sm:py-4 bg-transparent border-2 border-white/30 text-white font-semibold text-sm sm:text-base rounded-lg sm:rounded-xl cursor-pointer transition-all duration-300 mt-3 hover:bg-white/10 hover:border-white/50 hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed smooth-transition" aria-label="Crear nueva cuenta en AUTONEW">
+                    <!-- Requisitos de contraseña -->
+                    <div class="bg-blue-50 md:bg-white/10 rounded-lg p-3 sm:p-4 text-xs sm:text-sm hidden" id="passwordRequirements">
+                        <p class="text-blue-900 md:text-white font-semibold mb-2">Tu contraseña debe contener:</p>
+                        <ul class="space-y-1.5">
+                            <li class="flex items-center gap-2" id="req-length">
+                                <span class="req-icon">✕</span>
+                                <span class="text-blue-800 md:text-white/80">Mínimo 8 caracteres (recomendado 12+)</span>
+                            </li>
+                            <li class="flex items-center gap-2" id="req-lowercase">
+                                <span class="req-icon">✕</span>
+                                <span class="text-blue-800 md:text-white/80">Al menos una letra minúscula</span>
+                            </li>
+                            <li class="flex items-center gap-2" id="req-uppercase">
+                                <span class="req-icon">✕</span>
+                                <span class="text-blue-800 md:text-white/80">Al menos una letra mayúscula</span>
+                            </li>
+                            <li class="flex items-center gap-2" id="req-number">
+                                <span class="req-icon">✕</span>
+                                <span class="text-blue-800 md:text-white/80">Al menos un número</span>
+                            </li>
+                            <li class="flex items-center gap-2" id="req-special">
+                                <span class="req-icon">✕</span>
+                                <span class="text-blue-800 md:text-white/80">Al menos un carácter especial (!@#$%...)</span>
+                            </li>
+                            <li class="flex items-center gap-2" id="req-not-common">
+                                <span class="req-icon">✕</span>
+                                <span class="text-blue-800 md:text-white/80">No debe ser una contraseña común</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <button type="submit" class="w-full px-4 py-3 sm:py-4 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 md:bg-transparent border-2 border-transparent md:border-white/30 text-white font-semibold text-sm sm:text-base rounded-lg sm:rounded-xl cursor-pointer transition-all duration-300 mt-3 shadow-button md:shadow-none hover:shadow-button-hover md:hover:bg-white/10 md:hover:border-white/50 hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed smooth-transition" aria-label="Crear nueva cuenta en AUTONEW">
                         Crear Cuenta
                     </button>
                 </form>
                 
                 <!-- Divisor para registro -->
                 <div class="flex items-center my-4 sm:my-6">
-                    <div class="flex-1 border-t border-white/30"></div>
-                    <span class="px-4 text-white/80 text-sm font-medium">o regístrate con</span>
-                    <div class="flex-1 border-t border-white/30"></div>
+                    <div class="flex-1 border-t border-blue-200 md:border-white/30"></div>
+                    <span class="px-4 text-blue-600 md:text-white/80 text-sm font-medium">o regístrate con</span>
+                    <div class="flex-1 border-t border-blue-200 md:border-white/30"></div>
                 </div>
                 
                 <!-- Botón Google para registro -->
-                <button type="button" class="w-full flex items-center justify-center px-4 py-3 sm:py-4 bg-white/10 border-2 border-white/30 text-white font-semibold text-sm sm:text-base rounded-lg sm:rounded-xl cursor-pointer transition-all duration-300 hover:bg-white/20 hover:border-white/50 hover:-translate-y-0.5 smooth-transition group backdrop-blur-sm" aria-label="Registrarse con Google">
+                <button type="button" class="w-full flex items-center justify-center px-4 py-3 sm:py-4 bg-white md:bg-white/10 border-2 border-blue-200 md:border-white/30 text-blue-700 md:text-white font-semibold text-sm sm:text-base rounded-lg sm:rounded-xl cursor-pointer transition-all duration-300 hover:bg-blue-50 md:hover:bg-white/20 hover:border-blue-300 md:hover:border-white/50 hover:-translate-y-0.5 smooth-transition group backdrop-blur-sm" aria-label="Registrarse con Google">
                     <svg class="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -930,9 +1278,9 @@
                 </button>
                 
                 <div class="text-center mt-4 sm:mt-6">
-                    <p class="text-white/80 text-sm mb-2 sm:mb-3">¿Ya tienes cuenta?</p>
+                    <p class="text-blue-600 md:text-white/80 text-sm mb-2 sm:mb-3">¿Ya tienes cuenta?</p>
                     <button type="button" 
-                            class="bg-transparent border-2 border-white/50 text-white/90 px-6 py-2 sm:px-8 sm:py-3 rounded-full font-medium cursor-pointer transition-all duration-300 hover:bg-white/10 hover:border-white hover:text-white hover:-translate-y-0.5 text-sm sm:text-base" 
+                            class="bg-transparent border-2 border-blue-600 md:border-white/50 text-blue-700 md:text-white/90 px-6 py-2 sm:px-8 sm:py-3 rounded-full font-medium cursor-pointer transition-all duration-300 hover:bg-blue-600 md:hover:bg-white/10 hover:text-white md:hover:border-white md:hover:text-white hover:-translate-y-0.5 text-sm sm:text-base" 
                             id="showLogin"
                             onclick="showLoginForm()">
                         Iniciar Sesión
@@ -1064,6 +1412,148 @@ document.addEventListener('DOMContentLoaded', function() {
         password2.addEventListener('input', validatePasswords);
     }
 
+    // Validación de fortaleza de contraseña en tiempo real
+    if (password1) {
+        const strengthContainer = document.getElementById('passwordStrengthContainer');
+        const strengthBar = document.getElementById('passwordStrengthBar');
+        const strengthText = document.getElementById('passwordStrengthText');
+        const requirementsDiv = document.getElementById('passwordRequirements');
+        
+        // Función para calcular la fortaleza de la contraseña
+        function calculatePasswordStrength(password) {
+            if (!password) {
+                return {
+                    score: 0,
+                    level: 'muy-debil',
+                    percentage: 0,
+                    message: 'Ingresa una contraseña',
+                    color: '#ef4444',
+                    requirements: {}
+                };
+            }
+            
+            let score = 0;
+            const requirements = {
+                length: password.length >= 8,
+                lengthRecommended: password.length >= 12,
+                lowercase: /[a-z]/.test(password),
+                uppercase: /[A-Z]/.test(password),
+                number: /\d/.test(password),
+                special: /[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/~`]/.test(password),
+                notOnlyNumbers: !/^\d+$/.test(password),
+                notCommon: !['12345678', 'password', 'contraseña', '123456789', 'qwerty',
+                            'abc123', 'password123', 'admin', 'letmein', 'welcome',
+                            '123123', 'password1', '1234567890'].includes(password.toLowerCase())
+            };
+            
+            // Calcular puntuación
+            if (requirements.length) score += 1;
+            if (requirements.lengthRecommended) score += 1;
+            if (requirements.lowercase) score += 0.5;
+            if (requirements.uppercase) score += 0.5;
+            if (requirements.number) score += 0.5;
+            if (requirements.special) score += 1;
+            if (requirements.notOnlyNumbers) score += 0.5;
+            if (requirements.notCommon) score += 0.5;
+            
+            // Bonificación por longitud extra
+            if (password.length >= 16) score += 0.5;
+            
+            // Determinar nivel
+            let level, message, color;
+            if (score < 2) {
+                level = 'muy-debil';
+                message = 'Muy débil';
+                color = '#ef4444'; // rojo
+            } else if (score < 3) {
+                level = 'debil';
+                message = 'Débil';
+                color = '#f97316'; // naranja
+            } else if (score < 4) {
+                level = 'media';
+                message = 'Media';
+                color = '#eab308'; // amarillo
+            } else if (score < 4.5) {
+                level = 'fuerte';
+                message = 'Fuerte';
+                color = '#84cc16'; // verde-amarillo
+            } else {
+                level = 'muy-fuerte';
+                message = 'Muy fuerte';
+                color = '#22c55e'; // verde
+            }
+            
+            const percentage = Math.min(100, Math.round((score / 5) * 100));
+            
+            return {
+                score: score,
+                level: level,
+                percentage: percentage,
+                message: message,
+                color: color,
+                requirements: requirements
+            };
+        }
+        
+        // Actualizar UI de fortaleza
+        function updatePasswordStrength() {
+            const password = password1.value;
+            const strength = calculatePasswordStrength(password);
+            
+            if (password.length > 0) {
+                // Mostrar indicador de fortaleza
+                strengthContainer.classList.remove('hidden');
+                requirementsDiv.classList.remove('hidden');
+                
+                // Actualizar barra de progreso
+                strengthBar.style.width = strength.percentage + '%';
+                strengthBar.style.backgroundColor = strength.color;
+                
+                // Actualizar texto
+                strengthText.textContent = strength.message;
+                strengthText.style.color = strength.color;
+                
+                // Actualizar requisitos
+                updateRequirements(strength.requirements);
+            } else {
+                // Ocultar cuando no hay contraseña
+                strengthContainer.classList.add('hidden');
+                requirementsDiv.classList.add('hidden');
+            }
+        }
+        
+        // Actualizar lista de requisitos
+        function updateRequirements(requirements) {
+            const reqElements = {
+                'req-length': requirements.length || requirements.lengthRecommended,
+                'req-lowercase': requirements.lowercase,
+                'req-uppercase': requirements.uppercase,
+                'req-number': requirements.number,
+                'req-special': requirements.special,
+                'req-not-common': requirements.notCommon
+            };
+            
+            for (const [id, isValid] of Object.entries(reqElements)) {
+                const element = document.getElementById(id);
+                if (element) {
+                    if (isValid) {
+                        element.classList.add('valid');
+                    } else {
+                        element.classList.remove('valid');
+                    }
+                }
+            }
+        }
+        
+        // Escuchar cambios en el campo de contraseña
+        password1.addEventListener('input', updatePasswordStrength);
+        password1.addEventListener('focus', function() {
+            if (password1.value.length > 0) {
+                requirementsDiv.classList.remove('hidden');
+            }
+        });
+    }
+
     // Validación de teléfono
     const phoneInput = document.querySelector('input[name="telefono"]');
     if (phoneInput) {
@@ -1122,25 +1612,62 @@ document.addEventListener('DOMContentLoaded', function() {
     if ('ontouchstart' in window) {
         document.body.style.touchAction = 'manipulation';
         
-        // Prevenir zoom en iOS
+        // Prevenir zoom en iOS y ajuste cuando aparece el teclado
         const viewport = document.querySelector('meta[name=viewport]');
         const originalViewport = viewport ? viewport.getAttribute('content') : '';
         
         const inputs = document.querySelectorAll('input');
         inputs.forEach(input => {
             input.addEventListener('focus', function() {
+                // Scroll al input cuando se hace focus (para móviles)
+                setTimeout(() => {
+                    this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+                
+                // Marcar que el teclado está abierto
+                document.body.classList.add('keyboard-open');
+                
+                // Para iOS, ajustar viewport temporalmente
                 if (/iPad|iPhone|iPod/.test(navigator.userAgent) && viewport) {
                     viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
                 }
             });
             
             input.addEventListener('blur', function() {
+                // Remover marca de teclado abierto
+                document.body.classList.remove('keyboard-open');
+                
+                // Restaurar viewport original en iOS
                 if (/iPad|iPhone|iPod/.test(navigator.userAgent) && viewport) {
                     viewport.setAttribute('content', originalViewport);
                 }
             });
         });
+        
+        // Mejorar performance de scroll en dispositivos touch
+        const scrollableElements = document.querySelectorAll('.form-section-mobile');
+        scrollableElements.forEach(el => {
+            el.style.webkitOverflowScrolling = 'touch';
+        });
     }
+    
+    // Detectar orientación y ajustar layout si es necesario
+    function handleOrientationChange() {
+        const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+        const isMobile = window.matchMedia('(max-width: 767px)').matches;
+        
+        if (isMobile && isLandscape) {
+            // Ajustes específicos para modo landscape en móvil
+            document.querySelector('main')?.classList.add('landscape-mode');
+        } else {
+            document.querySelector('main')?.classList.remove('landscape-mode');
+        }
+    }
+    
+    // Escuchar cambios de orientación
+    window.addEventListener('orientationchange', handleOrientationChange);
+    window.addEventListener('resize', handleOrientationChange);
+    handleOrientationChange(); // Ejecutar al cargar
     
     console.log('Inicialización completada');
 });

@@ -16,6 +16,25 @@ body::before, body::after {
     display: none !important;
 }
 
+/* Efecto de máquina de escribir */
+.typewriter {
+    display: inline-block;
+    overflow: hidden;
+    border-right: 3px solid #3b82f6;
+    white-space: nowrap;
+    animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: #3b82f6 }
+}
+
 /* Paleta de colores moderna - Premium Clean */
 :root {
     --navy: #1e3a8a;
@@ -98,6 +117,36 @@ body::before, body::after {
     height: 2px;
     background: linear-gradient(90deg, transparent, var(--electric-blue), transparent);
     transition: left 0.5s;
+}
+
+/* Animación de scroll reveal */
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(80px) scale(0.85);
+    transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: opacity, transform;
+}
+
+.scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Delays para animaciones escalonadas */
+.scroll-reveal.delay-100 {
+    transition-delay: 0.1s;
+}
+
+.scroll-reveal.delay-200 {
+    transition-delay: 0.2s;
+}
+
+.scroll-reveal.delay-300 {
+    transition-delay: 0.3s;
+}
+
+.scroll-reveal.delay-400 {
+    transition-delay: 0.4s;
 }
 
 .border-animated:hover::before {
@@ -255,115 +304,135 @@ body::before, body::after {
 <div class="relative min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 overflow-hidden mt-16">
     <!-- Elementos decorativos de fondo -->
     <div class="absolute inset-0">
-        <div class="absolute top-20 left-20 w-96 h-96 bg-gradient-to-r from-blue-200/60 to-slate-200/60 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-pulse"></div>
-        <div class="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-slate-200/60 to-gray-200/60 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-pulse animation-delay-2000"></div>
-        <div class="absolute top-1/2 left-1/4 w-64 h-64 bg-gradient-to-r from-blue-200/40 to-slate-200/40 rounded-full mix-blend-multiply filter blur-2xl opacity-40 animate-pulse animation-delay-4000"></div>
+        <div class="absolute top-20 left-10 md:left-20 w-72 h-72 md:w-96 md:h-96 bg-gradient-to-r from-blue-200/60 to-slate-200/60 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-pulse"></div>
+        <div class="absolute bottom-20 right-10 md:right-20 w-64 h-64 md:w-80 md:h-80 bg-gradient-to-r from-slate-200/60 to-gray-200/60 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-pulse animation-delay-2000"></div>
+        <div class="absolute top-1/2 left-1/4 w-48 h-48 md:w-64 md:h-64 bg-gradient-to-r from-blue-200/40 to-slate-200/40 rounded-full mix-blend-multiply filter blur-2xl opacity-40 animate-pulse animation-delay-4000"></div>
     </div>
     <!-- Contenido principal del hero -->
-    <div class="relative z-10 min-h-screen flex items-center pt-16">
+    <div class="relative z-10 min-h-screen flex items-center pt-8 md:pt-16 pb-16 md:pb-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <div class="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
                 <!-- Contenido del texto -->
-                <div class="space-y-8">
+                <div class="space-y-6 md:space-y-8 order-2 lg:order-1">
                     <!-- Badge de bienvenida -->
-                    <div class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-100 to-slate-100 rounded-full shadow-lg">
-                        <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="inline-flex items-center px-4 md:px-8 py-3 md:py-4 bg-gradient-to-r from-blue-100 to-slate-100 rounded-full shadow-2xl">
+                        <svg class="w-6 h-6 md:w-8 md:h-8 text-blue-600 mr-2 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
-                        <span class="text-blue-600 font-semibold text-sm uppercase tracking-wide">Bienvenido a AutoNew</span>
+                        <span class="text-blue-600 font-bold text-lg md:text-2xl uppercase tracking-wide typewriter">
+                            Bienvenido a <span class="bg-gradient-to-r from-blue-600 via-blue-700 to-slate-800 bg-clip-text text-transparent font-extrabold">AutoNew</span>
+                        </span>
                     </div>
                     <!-- Título principal -->
-                    <div class="space-y-4">
-                        <h1 class="text-5xl lg:text-7xl font-bold text-gray-900 leading-tight">
+                    <div class="space-y-3 md:space-y-4">
+                        <h1 class="text-4xl sm:text-5xl lg:text-7xl font-bold text-gray-900 leading-tight">
                             El mejor 
                             <span class="bg-gradient-to-r from-blue-600 via-blue-700 to-slate-600 bg-clip-text text-transparent">
                                 lavado
                             </span>
                             para tu vehículo
                         </h1>
-                        <p class="text-xl lg:text-2xl text-gray-600 leading-relaxed max-w-2xl">
+                        <p class="text-lg sm:text-xl lg:text-2xl text-gray-600 leading-relaxed max-w-2xl">
                             Servicios profesionales de lavado y detallado. <span class="font-semibold text-blue-600">Tu auto merece lo mejor.</span>
                         </p>
                     </div>
                     <!-- Características destacadas simplificadas -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                         <div class="flex items-center space-x-3">
-                            <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-green-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                                <svg class="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="font-semibold text-gray-900">Servicio Express</h3>
-                                <p class="text-gray-600 text-sm">Lavado en 30 minutos</p>
+                                <h3 class="font-semibold text-gray-900 text-sm md:text-base">Servicio Express</h3>
+                                <p class="text-gray-600 text-xs md:text-sm">Lavado en 30 minutos</p>
                             </div>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <div class="w-12 h-12 bg-gradient-to-r from-blue-400 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-blue-400 to-blue-500 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                                <svg class="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="font-semibold text-gray-900">Ubicaciones</h3>
-                                <p class="text-gray-600 text-sm">En toda la ciudad</p>
+                                <h3 class="font-semibold text-gray-900 text-sm md:text-base">Ubicaciones</h3>
+                                <p class="text-gray-600 text-xs md:text-sm">En toda la ciudad</p>
                             </div>
                         </div>
                     </div>
-                    <!-- Botón de acción principal -->
-                    <div class="flex flex-col sm:flex-row gap-4 pt-8">
-                        <a href="{% url 'servicios' %}" 
-                           class="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-blue-500/25 btn-modern">
-                            <span>Explorar Servicios</span>
-                            <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                            </svg>
-                        </a>
+                    <!-- Botón de acción principal: reservar si está logueado, sino pedir login -->
+                    {% url 'reservas' as reservas_url %}
+                    <div class="flex flex-col sm:flex-row gap-3 md:gap-4 pt-4 md:pt-8">
+                        {% if user.is_authenticated %}
+                            <a href="{{ reservas_url }}" 
+                               class="inline-flex items-center justify-center px-6 md:px-8 py-3 md:py-4 text-sm md:text-base bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl btn-modern shine-effect">
+                                <svg class="-ml-1 mr-2 w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6m-6 0h6"/>
+                                </svg>
+                                <span>Reservar Ahora</span>
+                                <svg class="ml-2 md:ml-3 w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                </svg>
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}?next={{ reservas_url }}" 
+                               class="inline-flex items-center justify-center px-6 md:px-8 py-3 md:py-4 text-sm md:text-base bg-white text-emerald-600 font-bold rounded-full border-2 border-emerald-200 transition-all duration-300 transform hover:scale-105 hover:shadow-lg btn-modern">
+                                <svg class="-ml-1 mr-2 w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H3m0 0l4-4m-4 4l4 4m6-8v8"/>
+                                </svg>
+                                <span class="hidden sm:inline">Iniciar sesión para reservar</span>
+                                <span class="sm:hidden">Iniciar sesión</span>
+                                <svg class="ml-2 md:ml-3 w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                </svg>
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
                 <!-- Imagen del lado derecho -->
-                <div class="relative">
+                <div class="relative order-1 lg:order-2">
                     <div class="relative z-10">
                         <!-- Imagen principal -->
                         <div class="relative overflow-hidden rounded-3xl shadow-2xl transform hover:scale-105 transition-transform duration-700">
                             <img src="{% static 'img/hero-car-wash.jpg' %}" 
                                  alt="Lavado de auto profesional AutoNew" 
-                                 class="w-full h-96 lg:h-[600px] object-cover"
+                                 class="w-full h-64 sm:h-80 md:h-96 lg:h-[600px] object-cover"
                                  onerror="this.src='https://images.unsplash.com/photo-1601362840469-51e4d8d58785?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
                             <!-- Overlay con gradiente -->
                             <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
                             <!-- Badge flotante -->
-                            <div class="absolute top-6 right-6 bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-lg">
+                            <div class="absolute top-4 right-4 md:top-6 md:right-6 bg-white/95 backdrop-blur-md rounded-2xl p-3 md:p-4 shadow-lg">
                                 <div class="flex items-center space-x-2">
-                                    <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                                    <span class="text-sm font-semibold text-gray-900">Disponible Ahora</span>
+                                    <div class="w-2 h-2 md:w-3 md:h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                    <span class="text-xs md:text-sm font-semibold text-gray-900">Disponible Ahora</span>
                                 </div>
                             </div>
                         </div>
-                        <!-- Tarjetas flotantes decorativas -->
-                        <div class="absolute -bottom-8 -left-8 bg-white/95 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/20 float-animation">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <!-- Tarjetas flotantes decorativas - Ocultas en móvil pequeño, visibles desde md -->
+                        <div class="hidden md:block absolute -bottom-6 md:-bottom-8 -left-6 md:-left-8 bg-white/95 backdrop-blur-md rounded-2xl p-4 md:p-6 shadow-xl border border-white/20 float-animation">
+                            <div class="flex items-center space-x-3 md:space-x-4">
+                                <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                 </div>
                                 <div>
-                                    <div class="text-sm font-semibold text-gray-900">Servicio Express</div>
+                                    <div class="text-xs md:text-sm font-semibold text-gray-900">Servicio Express</div>
                                     <div class="text-xs text-gray-600">30 min promedio</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="absolute -top-8 -right-8 bg-white/95 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/20 float-animation animation-delay-2000">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-12 h-12 bg-gradient-to-r from-slate-500 to-gray-500 rounded-xl flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="hidden md:block absolute -top-6 md:-top-8 -right-6 md:-right-8 bg-white/95 backdrop-blur-md rounded-2xl p-4 md:p-6 shadow-xl border border-white/20 float-animation animation-delay-2000">
+                            <div class="flex items-center space-x-3 md:space-x-4">
+                                <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-slate-500 to-gray-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                 </div>
                                 <div>
-                                    <div class="text-sm font-semibold text-gray-900">Eco-Friendly</div>
+                                    <div class="text-xs md:text-sm font-semibold text-gray-900">Eco-Friendly</div>
                                     <div class="text-xs text-gray-600">100% Ecológico</div>
                                 </div>
                             </div>
@@ -371,19 +440,19 @@ body::before, body::after {
                     </div>
                     <!-- Elementos decorativos del fondo -->
                     <div class="absolute inset-0 -z-10">
-                        <div class="absolute top-1/4 left-1/4 w-32 h-32 bg-gradient-to-r from-blue-300 to-slate-300 rounded-full opacity-20 animate-pulse"></div>
-                        <div class="absolute bottom-1/4 right-1/4 w-24 h-24 bg-gradient-to-r from-slate-300 to-gray-300 rounded-full opacity-20 animate-pulse animation-delay-2000"></div>
+                        <div class="absolute top-1/4 left-1/4 w-24 h-24 md:w-32 md:h-32 bg-gradient-to-r from-blue-300 to-slate-300 rounded-full opacity-20 animate-pulse"></div>
+                        <div class="absolute bottom-1/4 right-1/4 w-20 h-20 md:w-24 md:h-24 bg-gradient-to-r from-slate-300 to-gray-300 rounded-full opacity-20 animate-pulse animation-delay-2000"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- Scroll indicator -->
-    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
+    <div class="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 z-20">
         <div class="flex flex-col items-center space-y-2">
-            <span class="text-sm text-gray-500 font-medium">Desliza para ver más</span>
-            <div class="w-6 h-10 border-2 border-gray-300 rounded-full flex justify-center">
-                <div class="w-1 h-3 bg-gray-400 rounded-full mt-2 animate-bounce"></div>
+            <span class="text-xs md:text-sm text-gray-500 font-medium">Desliza para ver más</span>
+            <div class="w-5 h-8 md:w-6 md:h-10 border-2 border-gray-300 rounded-full flex justify-center">
+                <div class="w-1 h-2 md:h-3 bg-gray-400 rounded-full mt-2 animate-bounce"></div>
             </div>
         </div>
     </div>
@@ -392,16 +461,16 @@ body::before, body::after {
 
 <!-- Invitación de Autenticación - Solo para usuarios no logueados -->
 {% if not user.is_authenticated %}
-<div class="relative py-16 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 overflow-hidden">
+<div class="relative py-12 md:py-16 lg:py-20 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 overflow-hidden">
     <!-- Elementos decorativos de fondo -->
     <div class="absolute inset-0">
-        <div class="absolute top-0 left-1/4 w-64 h-64 bg-white/10 rounded-full mix-blend-overlay filter blur-3xl animate-pulse"></div>
-        <div class="absolute bottom-0 right-1/4 w-80 h-80 bg-white/5 rounded-full mix-blend-overlay filter blur-3xl animate-pulse animation-delay-2000"></div>
-        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-400/10 rounded-full mix-blend-overlay filter blur-3xl animate-pulse animation-delay-4000"></div>
+        <div class="absolute top-0 left-10 md:left-1/4 w-48 h-48 md:w-64 md:h-64 bg-white/10 rounded-full mix-blend-overlay filter blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-0 right-10 md:right-1/4 w-56 h-56 md:w-80 md:h-80 bg-white/5 rounded-full mix-blend-overlay filter blur-3xl animate-pulse animation-delay-2000"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-96 md:h-96 bg-indigo-400/10 rounded-full mix-blend-overlay filter blur-3xl animate-pulse animation-delay-4000"></div>
     </div>
 
     <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row items-center justify-center gap-12">
+        <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
             <!-- Imagen lado izquierdo solo en md+ -->
             <div class="hidden md:flex md:w-1/2 items-center justify-center">
                 <img src="{% static 'img/1.png' %}" alt="Lavado de auto" class="w-[500px] max-w-full rounded-3xl object-cover" loading="lazy">
@@ -409,74 +478,74 @@ body::before, body::after {
             <!-- Bloque de texto y acciones -->
             <div class="w-full md:w-1/2 text-center">
                 <!-- Icono principal -->
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl mb-8 shadow-xl">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="inline-flex items-center justify-center w-14 h-14 md:w-16 md:h-16 bg-white/20 backdrop-blur-sm rounded-2xl mb-6 md:mb-8 shadow-xl">
+                    <svg class="w-7 h-7 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 4h8m-8 0a2 2 0 00-2 2v6a2 2 0 002 2h8a2 2 0 002-2v-6a2 2 0 00-2-2m-8 0V9a2 2 0 012-2h4a2 2 0 012 2v2"/>
                     </svg>
                 </div>
                 <!-- Título y descripción -->
-                <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4 leading-tight">
+                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 md:mb-4 leading-tight px-4">
                     ¿Listo para reservar tu cita?
                 </h2>
-                <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
+                <p class="text-base sm:text-lg md:text-xl text-blue-100 mb-6 md:mb-8 max-w-2xl mx-auto leading-relaxed px-4">
                     Únete a miles de usuarios que ya disfrutan de nuestros servicios premium de lavado de vehículos
                 </p>
                 <!-- Características destacadas -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 max-w-4xl mx-auto">
-                    <div class="flex items-center justify-center space-x-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                        <div class="w-10 h-10 bg-green-400/20 rounded-lg flex items-center justify-center">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-10 max-w-4xl mx-auto">
+                    <div class="flex items-center justify-center sm:justify-start space-x-3 bg-white/10 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-white/20">
+                        <div class="w-10 h-10 bg-green-400/20 rounded-lg flex items-center justify-center flex-shrink-0">
                             <svg class="w-5 h-5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
                         <div class="text-left">
-                            <div class="font-semibold text-white text-sm">Reserva Rápida</div>
+                            <div class="font-semibold text-white text-xs md:text-sm">Reserva Rápida</div>
                             <div class="text-blue-200 text-xs">En menos de 2 minutos</div>
                         </div>
                     </div>
-                    <div class="flex items-center justify-center space-x-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                        <div class="w-10 h-10 bg-blue-400/20 rounded-lg flex items-center justify-center">
+                    <div class="flex items-center justify-center sm:justify-start space-x-3 bg-white/10 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-white/20">
+                        <div class="w-10 h-10 bg-blue-400/20 rounded-lg flex items-center justify-center flex-shrink-0">
                             <svg class="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
                         </div>
                         <div class="text-left">
-                            <div class="font-semibold text-white text-sm">Ubicaciones Cercanas</div>
+                            <div class="font-semibold text-white text-xs md:text-sm">Ubicaciones Cercanas</div>
                             <div class="text-blue-200 text-xs">En toda la ciudad</div>
                         </div>
                     </div>
-                    <div class="flex items-center justify-center space-x-3 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                        <div class="w-10 h-10 bg-purple-400/20 rounded-lg flex items-center justify-center">
+                    <div class="flex items-center justify-center sm:justify-start space-x-3 bg-white/10 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-white/20">
+                        <div class="w-10 h-10 bg-purple-400/20 rounded-lg flex items-center justify-center flex-shrink-0">
                             <svg class="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
                         <div class="text-left">
-                            <div class="font-semibold text-white text-sm">Servicio Garantizado</div>
+                            <div class="font-semibold text-white text-xs md:text-sm">Servicio Garantizado</div>
                             <div class="text-blue-200 text-xs">100% Satisfacción</div>
                         </div>
                     </div>
                 </div>
                 <!-- Botones de acción -->
-                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 max-w-md mx-auto px-4">
                     <a href="{% url 'login' %}?register=true" 
-                       class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-white text-blue-700 font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-white/25 shine-effect">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="w-full sm:w-auto inline-flex items-center justify-center px-6 md:px-8 py-3 md:py-4 text-sm md:text-base bg-white text-blue-700 font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-white/25 shine-effect">
+                        <svg class="w-4 h-4 md:w-5 md:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                         </svg>
                         <span>Crear Cuenta</span>
                     </a>
                     <a href="{% url 'login' %}" 
-                       class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:bg-white hover:text-blue-700 hover:shadow-xl">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="w-full sm:w-auto inline-flex items-center justify-center px-6 md:px-8 py-3 md:py-4 text-sm md:text-base bg-transparent border-2 border-white text-white font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:bg-white hover:text-blue-700 hover:shadow-xl">
+                        <svg class="w-4 h-4 md:w-5 md:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                         </svg>
                         <span>Iniciar Sesión</span>
                     </a>
                 </div>
                 <!-- Texto adicional -->
-                <p class="text-blue-200 text-sm mt-6">
+                <p class="text-blue-200 text-xs md:text-sm mt-5 md:mt-6 px-4">
                     ¿Ya tienes cuenta? 
                     <a href="{% url 'login' %}" class="text-white font-semibold hover:underline transition-all duration-300">
                         Inicia sesión aquí
@@ -486,27 +555,13 @@ body::before, body::after {
         </div>
     </div>
     <!-- Línea decorativa animada -->
-    <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 opacity-50"></div>
+    <div class="absolute bottom-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 opacity-50"></div>
 </div>
 {% endif %}
 <!-- Fin Invitación de Autenticación -->
 
-<!-- Inicio Carousel con Tailwind -->
-{% load custom_tags %}
-<div class="container mx-auto mt-8 lg:mt-10 px-4">
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert rounded-xl p-4 mb-4 backdrop-blur-md border
-                {% if message.tags == 'success' %}bg-green-500/20 border-green-500/40 text-green-100
-                {% elif message.tags == 'error' %}bg-red-500/20 border-red-500/40 text-red-100
-                {% elif message.tags == 'warning' %}bg-yellow-500/20 border-yellow-500/40 text-yellow-100
-                {% else %}bg-blue-500/20 border-blue-500/40 text-blue-100
-                {% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-</div>
+
+
 
 <!-- Fin Sección Hero -->
 
@@ -611,26 +666,26 @@ body::before, body::after {
 
 
 <!-- Inicio servicios - Diseño Ultra Moderno -->
-<div id="servicios" class="relative py-24 bg-white overflow-hidden">
+<div id="servicios" class="relative py-16 md:py-20 lg:py-24 bg-white overflow-hidden">
     <!-- Fondo decorativo animado -->
     <div class="absolute inset-0">
-        <div class="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-pulse"></div>
-        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-r from-pink-100 to-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-pulse animation-delay-2000"></div>
+        <div class="absolute top-0 left-10 md:left-1/4 w-64 h-64 md:w-96 md:h-96 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-pulse"></div>
+        <div class="absolute bottom-0 right-10 md:right-1/4 w-64 h-64 md:w-96 md:h-96 bg-gradient-to-r from-pink-100 to-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-pulse animation-delay-2000"></div>
     </div>
     
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header de la sección -->
-        <div class="text-center mb-20">
-            <div class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-100 to-slate-100 rounded-full mb-6">
-                <span class="text-blue-600 font-semibold text-sm uppercase tracking-wide">Servicios Premium</span>
+        <div class="text-center mb-12 md:mb-16 lg:mb-20">
+            <div class="inline-flex items-center px-3 md:px-4 py-2 bg-gradient-to-r from-blue-100 to-slate-100 rounded-full mb-4 md:mb-6">
+                <span class="text-blue-600 font-semibold text-xs md:text-sm uppercase tracking-wide">Servicios Premium</span>
             </div>
-            <h2 class="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+            <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-4 md:mb-6 px-4">
                 Servicios que 
                 <span class="bg-gradient-to-r from-blue-600 via-blue-700 to-slate-600 bg-clip-text text-transparent">
                     encontrarás
                 </span>
             </h2>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p class="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-4">
                 Tecnología avanzada y cuidado profesional para mantener tu vehículo en perfectas condiciones
             </p>
         </div>
@@ -641,10 +696,10 @@ body::before, body::after {
         </div>
         
         <!-- CTA final -->
-        <div class="text-center mt-16">
-            <a href="{% url 'servicios' %}" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-blue-500/25">
+        <div class="text-center mt-12 md:mt-16 px-4">
+            <a href="{% url 'servicios' %}" class="inline-flex items-center px-6 md:px-8 py-3 md:py-4 text-sm md:text-base bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-blue-500/25">
                 <span>Ver todos los servicios</span>
-                <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="ml-2 w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                 </svg>
             </a>
@@ -655,45 +710,45 @@ body::before, body::after {
 
 
 <!-- Sección de datos - Diseño Ultra Moderno -->
-<div class="relative py-20 bg-gradient-to-br from-indigo-50 via-white to-purple-50 overflow-hidden">
+<div class="relative py-16 md:py-20 bg-gradient-to-br from-indigo-50 via-white to-purple-50 overflow-hidden">
     <!-- Elementos decorativos de fondo -->
     <div class="absolute inset-0">
-        <div class="absolute top-10 right-10 w-64 h-64 bg-gradient-to-r from-indigo-200 to-purple-200 rounded-full mix-blend-multiply filter blur-2xl opacity-60 animate-pulse"></div>
-        <div class="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-r from-blue-200 to-cyan-200 rounded-full mix-blend-multiply filter blur-2xl opacity-60 animate-pulse animation-delay-2000"></div>
+        <div class="absolute top-10 right-5 md:right-10 w-48 h-48 md:w-64 md:h-64 bg-gradient-to-r from-indigo-200 to-purple-200 rounded-full mix-blend-multiply filter blur-2xl opacity-60 animate-pulse"></div>
+        <div class="absolute bottom-10 left-5 md:left-10 w-56 h-56 md:w-80 md:h-80 bg-gradient-to-r from-blue-200 to-cyan-200 rounded-full mix-blend-multiply filter blur-2xl opacity-60 animate-pulse animation-delay-2000"></div>
     </div>
     
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header de la sección -->
-        <div class="text-center mb-16">
-            <div class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full mb-6">
-                <span class="text-blue-600 font-semibold text-sm uppercase tracking-wide">Nuestros Números</span>
+        <div class="text-center mb-12 md:mb-16">
+            <div class="inline-flex items-center px-3 md:px-4 py-2 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full mb-4 md:mb-6">
+                <span class="text-blue-600 font-semibold text-xs md:text-sm uppercase tracking-wide">Nuestros Números</span>
             </div>
-            <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-6">
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4 md:mb-6 px-4">
                 Resultados que 
                 <span class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
                     hablan por sí solos
                 </span>
             </h2>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p class="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-4">
                 Miles de clientes confían en nosotros para el cuidado de sus vehículos
             </p>
         </div>
         
         <!-- Grid de estadísticas -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             <!-- Stat 1 -->
             <div class="group relative">
                 <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-3xl opacity-0 group-hover:opacity-10 transition-all duration-500"></div>
-                <div class="relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-blue-200 transform hover:-translate-y-4">
+                <div class="relative bg-white rounded-3xl p-6 md:p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-blue-200 transform hover:-translate-y-4">
                     <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-4 md:mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-7 h-7 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                             </svg>
                         </div>
-                        <h3 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-300" data-toggle="counter-up">40</h3>
-                        <p class="text-gray-600 text-lg font-medium group-hover:text-gray-800 transition-colors duration-300">Puntos de servicio</p>
+                        <h3 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-300" data-toggle="counter-up">40</h3>
+                        <p class="text-gray-600 text-base md:text-lg font-medium group-hover:text-gray-800 transition-colors duration-300">Puntos de servicio</p>
                         <!-- Línea decorativa -->
                         <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 group-hover:w-20 transition-all duration-500 rounded-full"></div>
                     </div>
@@ -703,15 +758,15 @@ body::before, body::after {
             <!-- Stat 2 -->
             <div class="group relative">
                 <div class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl opacity-0 group-hover:opacity-10 transition-all duration-500"></div>
-                <div class="relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-emerald-200 transform hover:-translate-y-4">
+                <div class="relative bg-white rounded-3xl p-6 md:p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-emerald-200 transform hover:-translate-y-4">
                     <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-4 md:mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-7 h-7 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
                         </div>
-                        <h3 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors duration-300" data-toggle="counter-up">1000</h3>
-                        <p class="text-gray-600 text-lg font-medium group-hover:text-gray-800 transition-colors duration-300">Trabajadores</p>
+                        <h3 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors duration-300" data-toggle="counter-up">1000</h3>
+                        <p class="text-gray-600 text-base md:text-lg font-medium group-hover:text-gray-800 transition-colors duration-300">Trabajadores</p>
                         <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 group-hover:w-20 transition-all duration-500 rounded-full"></div>
                     </div>
                 </div>
@@ -720,15 +775,15 @@ body::before, body::after {
             <!-- Stat 3 -->
             <div class="group relative">
                 <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl opacity-0 group-hover:opacity-10 transition-all duration-500"></div>
-                <div class="relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-purple-200 transform hover:-translate-y-4">
+                <div class="relative bg-white rounded-3xl p-6 md:p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-purple-200 transform hover:-translate-y-4">
                     <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4 md:mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-7 h-7 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                             </svg>
                         </div>
-                        <h3 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors duration-300" data-toggle="counter-up">23000</h3>
-                        <p class="text-gray-600 text-lg font-medium group-hover:text-gray-800 transition-colors duration-300">Clientes Satisfechos</p>
+                        <h3 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors duration-300" data-toggle="counter-up">23000</h3>
+                        <p class="text-gray-600 text-base md:text-lg font-medium group-hover:text-gray-800 transition-colors duration-300">Clientes Satisfechos</p>
                         <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500 group-hover:w-20 transition-all duration-500 rounded-full"></div>
                     </div>
                 </div>
@@ -737,14 +792,15 @@ body::before, body::after {
             <!-- Stat 4 -->
             <div class="group relative">
                 <div class="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl opacity-0 group-hover:opacity-10 transition-all duration-500"></div>
-                <div class="relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-amber-200 transform hover:-translate-y-4">
+                <div class="relative bg-white rounded-3xl p-6 md:p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 group-hover:border-amber-200 transform hover:-translate-y-4">
                     <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4 md:mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-7 h-7 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
                         </div>
-                        <h3 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors duration-300" data-toggle="counter-up">74000</h3>
-                        <p class="text-gray-600 text-lg font-medium group-hover:text-gray-800 transition-colors duration-300">Servicios completados</p>
+                        <h3 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors duration-300" data-toggle="counter-up">74000</h3>
+                        <p class="text-gray-600 text-base md:text-lg font-medium group-hover:text-gray-800 transition-colors duration-300">Servicios completados</p>
                         <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500 group-hover:w-20 transition-all duration-500 rounded-full"></div>
                     </div>
                 </div>
@@ -752,34 +808,34 @@ body::before, body::after {
         </div>
         
         <!-- Elementos adicionales -->
-        <div class="mt-20 text-center">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-                <div class="flex flex-col items-center space-y-4 p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-gray-100">
-                    <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-emerald-500 rounded-xl flex items-center justify-center">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="mt-12 md:mt-16 lg:mt-20 text-center">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-4xl mx-auto">
+                <div class="flex flex-col items-center space-y-3 md:space-y-4 p-5 md:p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-gray-100">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-green-400 to-emerald-500 rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
                     </div>
-                    <span class="text-gray-700 font-semibold">Servicio rápido</span>
-                    <span class="text-gray-500 text-sm text-center">Atención inmediata y eficiente</span>
+                    <span class="text-gray-700 font-semibold text-sm md:text-base">Servicio rápido</span>
+                    <span class="text-gray-500 text-xs md:text-sm text-center">Atención inmediata y eficiente</span>
                 </div>
-                <div class="flex flex-col items-center space-y-4 p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-gray-100">
-                    <div class="w-12 h-12 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex flex-col items-center space-y-3 md:space-y-4 p-5 md:p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-gray-100">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
                         </svg>
                     </div>
-                    <span class="text-gray-700 font-semibold">Calidad garantizada</span>
-                    <span class="text-gray-500 text-sm text-center">Los mejores productos y técnicas</span>
+                    <span class="text-gray-700 font-semibold text-sm md:text-base">Calidad garantizada</span>
+                    <span class="text-gray-500 text-xs md:text-sm text-center">Los mejores productos y técnicas</span>
                 </div>
-                <div class="flex flex-col items-center space-y-4 p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-gray-100">
-                    <div class="w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-500 rounded-xl flex items-center justify-center">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex flex-col items-center space-y-3 md:space-y-4 p-5 md:p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-gray-100">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-purple-400 to-pink-500 rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                         </svg>
                     </div>
-                    <span class="text-gray-700 font-semibold">Clientes felices</span>
-                    <span class="text-gray-500 text-sm text-center">Tu satisfacción es nuestra prioridad</span>
+                    <span class="text-gray-700 font-semibold text-sm md:text-base">Clientes felices</span>
+                    <span class="text-gray-500 text-xs md:text-sm text-center">Tu satisfacción es nuestra prioridad</span>
                 </div>
             </div>
         </div>
@@ -1630,7 +1686,8 @@ document.addEventListener('DOMContentLoaded', function() {
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+// Función para inicializar la funcionalidad del mapa (reutilizable después de AJAX)
+function initializeMapFunctionality() {
     console.log('Inicializando funcionalidad del mapa interactivo...');
     
     // Manejar clicks en las cards de empresas para actualizar el mapa
@@ -1642,7 +1699,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (empresaCards.length > 0 && mapFrame) {
         empresaCards.forEach((card, index) => {
-            card.addEventListener('click', function(e) {
+            // Remover event listeners previos para evitar duplicados
+            const newCard = card.cloneNode(true);
+            card.parentNode.replaceChild(newCard, card);
+            
+            newCard.addEventListener('click', function(e) {
                 e.preventDefault();
                 console.log(`Click en card ${index + 1}`);
                 
@@ -1661,17 +1722,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         const direccionCompleta = `${direccion}, Bogotá, Colombia`;
                         const direccionCodificada = encodeURIComponent(direccionCompleta);
                         
-                        // URL de Google Maps Embed API usando búsqueda por dirección
-                        const newMapUrl = `https://www.google.com/maps/embed/v1/place?key=&q=${direccionCodificada}&zoom=15&language=es&region=CO`;
-                        
-                        // Como fallback, usar la URL estándar de embed
-                        const fallbackUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976!2d-74.0758!3d4.5981!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z${encodeURIComponent(direccionCompleta)}!5e0!3m2!1ses-419!2sco!4v${Date.now()}!5m2!1ses-419!2sco`;
+                        // Usar URL de Google Maps que funciona sin API key (búsqueda por query)
+                        const mapUrl = `https://maps.google.com/maps?q=${direccionCodificada}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
                         
                         console.log('Actualizando mapa con dirección:', direccionCompleta);
-                        mapFrame.src = fallbackUrl;
+                        console.log('URL del mapa:', mapUrl);
+                        mapFrame.src = mapUrl;
                         
                         // Efecto visual para indicar que se seleccionó la empresa
-                        empresaCards.forEach(c => {
+                        const allCards = document.querySelectorAll('.empresa-card');
+                        allCards.forEach(c => {
                             c.style.transform = '';
                             c.style.boxShadow = '';
                             c.style.borderColor = '';
@@ -1747,13 +1807,13 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             // Cambiar cursor para indicar que es clickeable
-            card.style.cursor = 'pointer';
+            newCard.style.cursor = 'pointer';
             
             // Agregar atributo title para accesibilidad
-            const parentDiv = card.closest('[data-empresa]');
+            const parentDiv = newCard.closest('[data-empresa]');
             if (parentDiv) {
                 const empresa = parentDiv.getAttribute('data-empresa');
-                card.title = `Click para ver ${empresa} en el mapa`;
+                newCard.title = `Click para ver ${empresa} en el mapa`;
             }
         });
     } else {
@@ -1773,6 +1833,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     console.log('Funcionalidad del mapa inicializada correctamente');
+}
+
+// Inicializar cuando se carga la página
+document.addEventListener('DOMContentLoaded', function() {
+    initializeMapFunctionality();
 });
 </script>
 
@@ -1935,6 +2000,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Re-inicializar event listeners para los nuevos enlaces de paginación
             initEmpresasPaginationListeners();
+            
+            // Re-inicializar la funcionalidad del mapa para las nuevas cards
+            initializeMapFunctionality();
             
             console.log('Empresas cargadas exitosamente para la página:', page);
         })

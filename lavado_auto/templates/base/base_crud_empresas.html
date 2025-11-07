@@ -214,15 +214,15 @@
     </style>
 
     <!-- Navbar Específico para Empresas -->
-    <nav class="navbar-empresa-glass shadow-xl px-4 sm:px-6 lg:px-8 py-3 sm:py-4 fixed top-0 left-0 right-0 z-50">
+    <nav class="navbar-empresa-glass shadow-xl px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 lg:py-4 fixed top-0 left-0 right-0 z-50">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <!-- Logo y marca de empresa -->
             <div class="flex items-center space-x-2 sm:space-x-3">
                 <div class="logo-container">
-                    <i class="fas fa-building logo-img w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-lg sm:text-2xl text-white bg-gradient-to-r from-cyan-600 to-blue-600 rounded-full"></i>
+                    <i class="fas fa-building logo-img w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex items-center justify-center text-base sm:text-lg lg:text-2xl text-white bg-gradient-to-r from-cyan-600 to-blue-600 rounded-full"></i>
                 </div>
                 <div class="flex flex-col">
-                    <h1 class="text-lg sm:text-xl lg:text-2xl font-black tracking-tight bg-gradient-to-r from-cyan-600 via-blue-600 to-cyan-700 bg-clip-text text-transparent hover:from-cyan-500 hover:via-blue-500 hover:to-cyan-600 transition-all duration-300">
+                    <h1 class="text-base sm:text-lg lg:text-2xl font-black tracking-tight bg-gradient-to-r from-cyan-600 via-blue-600 to-cyan-700 bg-clip-text text-transparent hover:from-cyan-500 hover:via-blue-500 hover:to-cyan-600 transition-all duration-300">
                         AUTO<span class="text-blue-800 font-extrabold">NEW</span>
                     </h1>
                     <span class="text-xs font-semibold text-cyan-600/70 tracking-wider uppercase hidden lg:block">Panel Empresarial</span>
@@ -249,6 +249,10 @@
                         <i class="fas fa-chart-bar text-sm text-orange-500 group-hover:scale-110 transition-transform duration-300"></i>
                         <span>Reportes</span>
                     </a>
+                    <a href="{% url 'empresa_mis_pagos' %}" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-green-600 hover:bg-green-50/70 transition-all duration-300 flex items-center space-x-2">
+                        <i class="fas fa-dollar-sign text-sm text-green-500 group-hover:scale-110 transition-transform duration-300"></i>
+                        <span>Mis Pagos</span>
+                    </a>
                     <a href="{% url 'perfil_empresa' %}" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-purple-600 hover:bg-purple-50/70 transition-all duration-300 flex items-center space-x-2">
                         <i class="fas fa-user-cog text-sm text-purple-500 group-hover:scale-110 transition-transform duration-300"></i>
                         <span>Perfil</span>
@@ -257,101 +261,114 @@
             </div>
 
             <!-- Usuario y opciones de empresa -->
-            <div class="flex items-center space-x-2 sm:space-x-4">
+            <div class="flex items-center space-x-2 sm:space-x-3 lg:space-x-4">
                 <!-- Información de la empresa (visible en pantallas medianas y grandes) -->
                 <div class="hidden md:block text-right">
                     {% if empresa %}
-                        <p class="text-gray-800 font-semibold text-sm lg:text-base truncate max-w-32 lg:max-w-none">{{ empresa.nombre_empresa }}</p>
+                        <p class="text-gray-800 font-semibold text-xs sm:text-sm lg:text-base truncate max-w-32 lg:max-w-none">{{ empresa.nombre_empresa }}</p>
                         <p class="text-gray-600 text-xs lg:text-sm">Administrador</p>
                     {% else %}
-                        <p class="text-gray-800 font-semibold text-sm lg:text-base">Empresa</p>
+                        <p class="text-gray-800 font-semibold text-xs sm:text-sm lg:text-base">Empresa</p>
                         <p class="text-gray-600 text-xs lg:text-sm">Panel</p>
                     {% endif %}
                 </div>
 
                 <!-- Avatar de empresa -->
                 <div class="relative group">
-                    <button onclick="toggleProfileMenuEmpresa()" class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold shadow-lg hover:shadow-xl transition-all">
-                        <i class="fas fa-building text-sm sm:text-base"></i>
+                    <button onclick="toggleProfileMenuEmpresa()" class="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95">
+                        <i class="fas fa-building text-xs sm:text-sm lg:text-base"></i>
                     </button>
                     
                     <!-- Dropdown Menu de empresa -->
-                    <div id="profileDropdownEmpresa" class="hidden absolute right-0 top-full mt-3 w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/60 z-50 overflow-hidden ring-1 ring-gray-900/5">
+                    <div id="profileDropdownEmpresa" class="hidden absolute right-0 top-full mt-2 w-64 sm:w-72 bg-white/95 backdrop-blur-xl rounded-xl sm:rounded-2xl shadow-2xl border border-gray-200/60 z-50 overflow-hidden ring-1 ring-gray-900/5">
                         <!-- Header del dropdown -->
-                        <div class="p-5 bg-gradient-to-r from-cyan-50 to-blue-50 border-b border-gray-100">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-12 h-12 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                                    <i class="fas fa-building"></i>
+                        <div class="p-3 sm:p-5 bg-gradient-to-r from-cyan-50 to-blue-50 border-b border-gray-100">
+                            <div class="flex items-center space-x-2 sm:space-x-3">
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg flex-shrink-0">
+                                    <i class="fas fa-building text-sm sm:text-base"></i>
                                 </div>
-                                <div>
+                                <div class="min-w-0 flex-1">
                                     {% if empresa %}
-                                        <h3 class="font-semibold text-gray-800">{{ empresa.nombre_empresa }}</h3>
-                                        <p class="text-sm text-gray-600">Panel Empresarial</p>
+                                        <h3 class="font-semibold text-gray-800 text-sm sm:text-base truncate">{{ empresa.nombre_empresa }}</h3>
+                                        <p class="text-xs sm:text-sm text-gray-600">Panel Empresarial</p>
                                     {% else %}
-                                        <h3 class="font-semibold text-gray-800">Empresa</h3>
-                                        <p class="text-sm text-gray-600">Panel de Control</p>
+                                        <h3 class="font-semibold text-gray-800 text-sm sm:text-base">Empresa</h3>
+                                        <p class="text-xs sm:text-sm text-gray-600">Panel de Control</p>
                                     {% endif %}
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Opciones del menú -->
-                        <div class="py-2">
-                            <a href="{% url 'perfil_empresa' %}" class="flex items-center space-x-3 px-5 py-3 text-gray-700 hover:bg-cyan-50 hover:text-cyan-600 transition-colors">
-                                <i class="fas fa-user-edit w-5 h-5 text-gray-400"></i>
-                                <span class="font-medium">Configurar Perfil</span>
+                        <div class="py-1 sm:py-2">
+                            <a href="{% url 'perfil_empresa' %}" class="flex items-center space-x-2 sm:space-x-3 px-3 sm:px-5 py-2.5 sm:py-3 text-gray-700 hover:bg-cyan-50 hover:text-cyan-600 transition-colors active:bg-cyan-100">
+                                <i class="fas fa-user-edit w-4 h-4 sm:w-5 sm:h-5 text-gray-400 flex-shrink-0"></i>
+                                <span class="font-medium text-sm sm:text-base">Configurar Perfil</span>
                             </a>
-                            <a href="{% url 'reportes_empresa' %}" class="flex items-center space-x-3 px-5 py-3 text-gray-700 hover:bg-cyan-50 hover:text-cyan-600 transition-colors">
-                                <i class="fas fa-chart-line w-5 h-5 text-gray-400"></i>
-                                <span class="font-medium">Ver Reportes</span>
+                            <a href="{% url 'reportes_empresa' %}" class="flex items-center space-x-2 sm:space-x-3 px-3 sm:px-5 py-2.5 sm:py-3 text-gray-700 hover:bg-cyan-50 hover:text-cyan-600 transition-colors active:bg-cyan-100">
+                                <i class="fas fa-chart-line w-4 h-4 sm:w-5 sm:h-5 text-gray-400 flex-shrink-0"></i>
+                                <span class="font-medium text-sm sm:text-base">Ver Reportes</span>
                             </a>
-                            <div class="border-t border-gray-100 my-2"></div>
-                            <button onclick="logoutEmpresa()" class="w-full flex items-center space-x-3 px-5 py-3 text-red-600 hover:bg-red-50 transition-colors">
-                                <i class="fas fa-sign-out-alt w-5 h-5"></i>
-                                <span class="font-medium">Cerrar Sesión</span>
+                            <a href="{% url 'empresa_mis_pagos' %}" class="flex items-center space-x-2 sm:space-x-3 px-3 sm:px-5 py-2.5 sm:py-3 text-gray-700 hover:bg-green-50 hover:text-green-600 transition-colors active:bg-green-100">
+                                <i class="fas fa-dollar-sign w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0"></i>
+                                <span class="font-medium text-sm sm:text-base">Mis Pagos</span>
+                            </a>
+                            <div class="border-t border-gray-100 my-1 sm:my-2"></div>
+                            <button onclick="logoutEmpresa()" class="w-full flex items-center space-x-2 sm:space-x-3 px-3 sm:px-5 py-2.5 sm:py-3 text-red-600 hover:bg-red-50 transition-colors active:bg-red-100">
+                                <i class="fas fa-sign-out-alt w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"></i>
+                                <span class="font-medium text-sm sm:text-base">Cerrar Sesión</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Menú hamburguesa para móvil -->
-                <button onclick="toggleMobileMenuEmpresa()" class="lg:hidden text-gray-600 hover:text-blue-500 transition-colors p-2" title="Menú">
-                    <i class="fas fa-bars text-lg"></i>
+                <button onclick="toggleMobileMenuEmpresa()" class="lg:hidden text-gray-600 hover:text-blue-500 transition-colors p-1.5 active:scale-95" title="Menú">
+                    <i class="fas fa-bars text-base sm:text-lg"></i>
                 </button>
 
-                <!-- Botón de cerrar sesión (visible solo en pantallas sm y mayores) -->
-                <button onclick="logoutEmpresa()" class="hidden sm:block lg:hidden text-gray-600 hover:text-red-500 transition-colors p-2" title="Cerrar Sesión">
-                    <i class="fas fa-sign-out-alt text-lg sm:text-xl"></i>
+                <!-- Botón de cerrar sesión (visible en móvil y tablet, oculto en desktop) -->
+                <button onclick="logoutEmpresa()" class="lg:hidden text-gray-600 hover:text-red-500 transition-colors p-1.5 active:scale-95" title="Cerrar Sesión">
+                    <i class="fas fa-sign-out-alt text-base sm:text-lg"></i>
                 </button>
             </div>
         </div>
         
         <!-- Menú móvil para empresas -->
-        <div id="mobile-menu-empresa" class="hidden lg:hidden bg-white/95 backdrop-blur-sm border-t border-gray-200 mt-3 -mx-4 px-4 py-4">
-            <div class="space-y-3">
-                <a href="{% url 'home_empresas' %}" class="flex items-center text-gray-700 hover:text-blue-600 font-medium transition-colors py-2">
-                    <i class="fas fa-tachometer-alt mr-3 w-5"></i>Dashboard
+        <div id="mobile-menu-empresa" class="hidden lg:hidden bg-white/95 backdrop-blur-sm border-t border-gray-200 mt-2 sm:mt-3 -mx-3 sm:-mx-4 px-3 sm:px-4 py-3 sm:py-4">
+            <div class="space-y-2 sm:space-y-3">
+                <a href="{% url 'home_empresas' %}" class="flex items-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium transition-all py-2.5 px-3 rounded-lg active:bg-blue-100">
+                    <i class="fas fa-tachometer-alt mr-3 w-4 sm:w-5 text-sm sm:text-base flex-shrink-0"></i>
+                    <span class="text-sm sm:text-base">Dashboard</span>
                 </a>
-                <a href="{% url 'citas_empresa' %}" class="flex items-center text-gray-700 hover:text-emerald-600 font-medium transition-colors py-2">
-                    <i class="fas fa-calendar-alt mr-3 w-5"></i>Citas
+                <a href="{% url 'citas_empresa' %}" class="flex items-center text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 font-medium transition-all py-2.5 px-3 rounded-lg active:bg-emerald-100">
+                    <i class="fas fa-calendar-alt mr-3 w-4 sm:w-5 text-sm sm:text-base flex-shrink-0"></i>
+                    <span class="text-sm sm:text-base">Citas</span>
                 </a>
-                <a href="{% url 'reportes_empresa' %}" class="flex items-center text-gray-700 hover:text-orange-600 font-medium transition-colors py-2">
-                    <i class="fas fa-chart-bar mr-3 w-5"></i>Reportes
+                <a href="{% url 'reportes_empresa' %}" class="flex items-center text-gray-700 hover:text-orange-600 hover:bg-orange-50 font-medium transition-all py-2.5 px-3 rounded-lg active:bg-orange-100">
+                    <i class="fas fa-chart-bar mr-3 w-4 sm:w-5 text-sm sm:text-base flex-shrink-0"></i>
+                    <span class="text-sm sm:text-base">Reportes</span>
                 </a>
-                <a href="{% url 'perfil_empresa' %}" class="flex items-center text-gray-700 hover:text-purple-600 font-medium transition-colors py-2">
-                    <i class="fas fa-user-cog mr-3 w-5"></i>Perfil
+                <a href="{% url 'empresa_mis_pagos' %}" class="flex items-center text-gray-700 hover:text-green-600 hover:bg-green-50 font-medium transition-all py-2.5 px-3 rounded-lg active:bg-green-100">
+                    <i class="fas fa-dollar-sign mr-3 w-4 sm:w-5 text-sm sm:text-base flex-shrink-0"></i>
+                    <span class="text-sm sm:text-base">Mis Pagos</span>
                 </a>
-                <div class="border-t border-gray-200 pt-3 mt-3">
-                    <div class="md:hidden mb-3">
+                <a href="{% url 'perfil_empresa' %}" class="flex items-center text-gray-700 hover:text-purple-600 hover:bg-purple-50 font-medium transition-all py-2.5 px-3 rounded-lg active:bg-purple-100">
+                    <i class="fas fa-user-cog mr-3 w-4 sm:w-5 text-sm sm:text-base flex-shrink-0"></i>
+                    <span class="text-sm sm:text-base">Perfil</span>
+                </a>
+                <div class="border-t border-gray-200 pt-2 sm:pt-3 mt-2 sm:mt-3">
+                    <div class="md:hidden mb-2 sm:mb-3 px-3 py-2 bg-gray-50 rounded-lg">
                         {% if empresa %}
-                            <p class="text-gray-800 font-semibold text-sm">{{ empresa.nombre_empresa }}</p>
+                            <p class="text-gray-800 font-semibold text-xs sm:text-sm truncate">{{ empresa.nombre_empresa }}</p>
                             <p class="text-gray-600 text-xs">Administrador</p>
                         {% else %}
-                            <p class="text-gray-800 font-semibold text-sm">Panel Empresarial</p>
+                            <p class="text-gray-800 font-semibold text-xs sm:text-sm">Panel Empresarial</p>
                         {% endif %}
                     </div>
-                    <button onclick="logoutEmpresa()" class="flex items-center text-red-600 hover:text-red-800 font-medium transition-colors py-2 w-full text-left">
-                        <i class="fas fa-sign-out-alt mr-3 w-5"></i>Cerrar Sesión
+                    <button onclick="logoutEmpresa()" class="flex items-center text-red-600 hover:text-red-800 hover:bg-red-50 font-medium transition-all py-2.5 px-3 rounded-lg w-full text-left active:bg-red-100">
+                        <i class="fas fa-sign-out-alt mr-3 w-4 sm:w-5 text-sm sm:text-base flex-shrink-0"></i>
+                        <span class="text-sm sm:text-base">Cerrar Sesión</span>
                     </button>
                 </div>
             </div>
@@ -365,24 +382,24 @@
     </main>
 
     <!-- Footer Específico para Empresas -->
-    <footer class="bg-gradient-to-br from-slate-50 to-purple-50 border-t border-gray-200 mt-16">
-        <div class="max-w-7xl mx-auto px-6 py-12">
+    <footer class="bg-gradient-to-br from-slate-50 to-purple-50 border-t border-gray-200 mt-12 sm:mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
             <!-- Contenido principal del footer -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-6 sm:mb-8">
                 <!-- Información de la empresa -->
                 <div class="text-center md:text-left">
-                    <div class="flex items-center justify-center md:justify-start space-x-3 mb-4">
-                        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                            <i class="fas fa-building text-white text-lg"></i>
+                    <div class="flex items-center justify-center md:justify-start space-x-2 sm:space-x-3 mb-3 sm:mb-4">
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-building text-white text-base sm:text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                            <h3 class="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                                 AUTONEW
                             </h3>
                             <p class="text-xs text-gray-600">Panel Empresarial</p>
                         </div>
                     </div>
-                    <p class="text-gray-600 leading-relaxed">
+                    <p class="text-sm sm:text-base text-gray-600 leading-relaxed px-4 md:px-0">
                         Plataforma integral para la gestión de servicios de lavado de autos. 
                         Optimiza tu negocio con nuestras herramientas empresariales.
                     </p>
@@ -390,49 +407,49 @@
                 
                 <!-- Enlaces rápidos para empresas -->
                 <div class="text-center">
-                    <h4 class="text-lg font-semibold text-slate-800 mb-4">Funcionalidades</h4>
-                    <div class="space-y-2">
-                        <a href="{% url 'home_empresas' %}" class="block text-gray-600 hover:text-blue-600 transition-colors">
-                            <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                    <h4 class="text-base sm:text-lg font-semibold text-slate-800 mb-3 sm:mb-4">Funcionalidades</h4>
+                    <div class="space-y-1.5 sm:space-y-2">
+                        <a href="{% url 'home_empresas' %}" class="block text-sm sm:text-base text-gray-600 hover:text-blue-600 transition-colors py-1">
+                            <i class="fas fa-tachometer-alt mr-2 text-xs sm:text-sm"></i>Dashboard
                         </a>
-                        <a href="{% url 'citas_empresa' %}" class="block text-gray-600 hover:text-emerald-600 transition-colors">
-                            <i class="fas fa-calendar-alt mr-2"></i>Gestión de Citas
+                        <a href="{% url 'citas_empresa' %}" class="block text-sm sm:text-base text-gray-600 hover:text-emerald-600 transition-colors py-1">
+                            <i class="fas fa-calendar-alt mr-2 text-xs sm:text-sm"></i>Gestión de Citas
                         </a>
-                        <a href="{% url 'reportes_empresa' %}" class="block text-gray-600 hover:text-orange-600 transition-colors">
-                            <i class="fas fa-chart-bar mr-2"></i>Reportes
+                        <a href="{% url 'reportes_empresa' %}" class="block text-sm sm:text-base text-gray-600 hover:text-orange-600 transition-colors py-1">
+                            <i class="fas fa-chart-bar mr-2 text-xs sm:text-sm"></i>Reportes
                         </a>
-                        <a href="{% url 'perfil_empresa' %}" class="block text-gray-600 hover:text-purple-600 transition-colors">
-                            <i class="fas fa-user-cog mr-2"></i>Configuración
+                        <a href="{% url 'perfil_empresa' %}" class="block text-sm sm:text-base text-gray-600 hover:text-purple-600 transition-colors py-1">
+                            <i class="fas fa-user-cog mr-2 text-xs sm:text-sm"></i>Configuración
                         </a>
                     </div>
                 </div>
                 
                 <!-- Información de soporte -->
                 <div class="text-center md:text-right">
-                    <h4 class="text-lg font-semibold text-slate-800 mb-4">Soporte Empresarial</h4>
-                    <div class="space-y-2">
-                        <p class="text-gray-600 flex items-center justify-center md:justify-end">
-                            <i class="fas fa-envelope mr-2 text-blue-500"></i>
-                            soporte.empresas@autonew.com
+                    <h4 class="text-base sm:text-lg font-semibold text-slate-800 mb-3 sm:mb-4">Soporte Empresarial</h4>
+                    <div class="space-y-1.5 sm:space-y-2">
+                        <p class="text-xs sm:text-sm text-gray-600 flex items-center justify-center md:justify-end">
+                            <i class="fas fa-envelope mr-2 text-blue-500 text-xs sm:text-sm flex-shrink-0"></i>
+                            <span class="truncate">soporte.empresas@autonew.com</span>
                         </p>
-                        <p class="text-gray-600 flex items-center justify-center md:justify-end">
-                            <i class="fas fa-phone mr-2 text-green-500"></i>
-                            +57 3114996440
+                        <p class="text-xs sm:text-sm text-gray-600 flex items-center justify-center md:justify-end">
+                            <i class="fas fa-phone mr-2 text-green-500 text-xs sm:text-sm flex-shrink-0"></i>
+                            <span>+57 3114996440</span>
                         </p>
-                        <p class="text-gray-600 flex items-center justify-center md:justify-end">
-                            <i class="fas fa-clock mr-2 text-orange-500"></i>
-                            24/7 Soporte Técnico
+                        <p class="text-xs sm:text-sm text-gray-600 flex items-center justify-center md:justify-end">
+                            <i class="fas fa-clock mr-2 text-orange-500 text-xs sm:text-sm flex-shrink-0"></i>
+                            <span>24/7 Soporte Técnico</span>
                         </p>
                     </div>
                 </div>
             </div>
             
             <!-- Línea divisoria -->
-            <div class="border-t border-gray-300 pt-8">
+            <div class="border-t border-gray-300 pt-6 sm:pt-8">
                 <div class="text-center">
-                    <p class="text-gray-600 text-lg">
+                    <p class="text-gray-600 text-sm sm:text-base lg:text-lg px-4">
                         © 2024 <span class="font-semibold text-blue-600">AUTONEW</span> - Panel Empresarial. 
-                        <span class="text-gray-500">Todos los derechos reservados.</span>
+                        <span class="text-gray-500 block sm:inline mt-1 sm:mt-0">Todos los derechos reservados.</span>
                     </p>
                 </div>
             </div>
@@ -471,9 +488,7 @@
         
         // Función para cerrar sesión de empresa
         function logoutEmpresa() {
-            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-                window.location.href = '{% url "logout_view" %}';
-            }
+            window.location.href = '{% url "logout_view" %}';
         }
         
         // Cerrar menús al hacer click fuera
@@ -540,5 +555,7 @@
             });
         });
     </script>
+    <!-- Bloque para scripts adicionales por plantilla hija -->
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

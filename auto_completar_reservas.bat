@@ -9,11 +9,9 @@ if exist "venvautonew\Scripts\activate.bat" (
     call venvautonew\Scripts\activate.bat
 )
 
-REM Ejecutar el comando de Django
+REM Ejecutar el comando de Django (sin confirmación interactiva)
 echo [%date% %time%] Ejecutando comando para marcar reservas completadas...
-python manage.py marcar_completadas --horas=4
+python manage.py marcar_completadas --horas=4 --yes >> logs\auto_completar_reservas.log 2>&1
 
-REM Log de la ejecución
+REM Comando ejecutado (no pause para ejecución automática)
 echo [%date% %time%] Comando ejecutado >> logs\auto_completar_reservas.log
-
-pause

@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
+from django.views.generic import RedirectView
 
 from django.contrib.auth import views as auth_views
 from lavado_auto.forms import CustomPasswordResetForm
@@ -25,8 +26,10 @@ from lavado_auto import views
 from lavado_auto.views import get_horas, cambiar_estado_reserva
 from lavado_auto.cookie_views import CookieConsentView, cookie_status, UserPreferencesView
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('admin/pagos/', views.gestion_pagos_empresas, name='admin_pagos'),
     path('',views.home, name = 'home'),
     path('ajax/servicios/', views.servicios_page_ajax, name='servicios_page_ajax'),
     path('ajax/servicios-home/', views.servicios_ajax, name='servicios_home_ajax'),
@@ -39,10 +42,12 @@ urlpatterns = [
     path('solicitar-contacto-plan/', views.solicitar_contacto_plan, name='solicitar_contacto_plan'),
     path('reservas/',views.reservas, name = 'reservas'),
     path('obtener-servicios/', views.obtener_servicios, name='obtener_servicios'),
+    path('obtener_servicios_plan/', views.obtener_servicios_plan, name='obtener_servicios_plan'),
     path('obtener-empresas-por-servicios/', views.obtener_empresas_por_servicios, name='obtener_empresas_por_servicios'),
     path('obtener-info-empresa/', views.obtener_info_empresa, name='obtener_info_empresa'),
     path('obtener-info-servicio/', views.obtener_info_servicio, name='obtener_info_servicio'),
     path('get-horas/', views.get_horas, name='get_horas'),
+    path('get-horas-edicion/', views.get_horas_edicion, name='get_horas_edicion'),
     path('obtener-horas/', views.get_horas, name='obtener_horas'),
     path('contacto/',views.contacto, name = 'contacto'),
     path('faq/',views.faq, name = 'faq'),
@@ -93,6 +98,11 @@ urlpatterns = [
     path("desbloquear-usuario/<int:usuario_id>/",views.desbloquear_usuario, name="desbloquear_usuario"),
     path("citascrud/",views.citas_crud, name="citascrud"),
     path("crear-cita-admin/",views.crear_cita_admin, name="crear_cita_admin"),
+    path("analisis-reservas-empresas/",views.analisis_reservas_empresas, name="analisis_reservas_empresas"),
+    
+    # URL para gestión de pagos de empresas
+    path('mis-pagos/', views.empresa_mis_pagos, name='empresa_mis_pagos'),
+    
     # NUEVAS URLs AJAX para CRUD de citas
     path('ajax/obtener-servicios-empresa/', views.obtener_servicios_empresa, name='obtener_servicios_empresa'),
     path('ajax/obtener-horas-disponibles/', views.obtener_horas_disponibles, name='obtener_horas_disponibles'),
@@ -119,6 +129,7 @@ urlpatterns = [
     path('crear-plan/', views.crear_plan, name='crear_plan'),
     path('editar-plan/<int:plan_id>/', views.editar_plan, name='editar_plan'),
     path('eliminar-plan/<int:plan_id>/', views.eliminar_plan, name='eliminar_plan'),
+    path('toggle-plan-estado/<int:plan_id>/', views.toggle_plan_estado, name='toggle_plan_estado'),
     path('suscripciones-individuales-crud/', views.suscripciones_individuales_crud, name='suscripciones_individuales_crud'),
     path('crear-suscripcion-individual/', views.crear_suscripcion_individual, name='crear_suscripcion_individual'),
     path('editar-suscripcion-individual/<int:suscripcion_id>/', views.editar_suscripcion_individual, name='editar_suscripcion_individual'),
@@ -147,7 +158,33 @@ urlpatterns = [
     path('perfil-empresa/',views.perfil_empresa, name='perfil_empresa'),
     path('solicitar-servicio-empresa/',views.solicitar_servicio_empresa, name='solicitar_servicio_empresa'),
     path('actualizar-estado-cita/', views.actualizar_estado_cita, name='actualizar_estado_cita'),
+    path('generar-qr-reserva/<int:reserva_id>/', views.generar_codigo_qr_reserva, name='generar_codigo_qr_reserva'),
+    # Endpoint público para completar reserva (si alguien abre el QR desde el navegador)
+    path('completar-reserva/<str:numero_reserva>/', views.completar_reserva, name='completar_reserva'),
+    # Endpoint AJAX para que la app cliente envíe el número escaneado y marque la reserva como completada
+    path('ajax/completar-reserva/', views.ajax_completar_reserva, name='ajax_completar_reserva'),
     path('logout-empresa/', views.logout_empresa, name='logout_empresa'),
+    
+    # =================================
+    # URLs PARA GESTIÓN DE PAGOS A EMPRESAS
+    # =================================
+    path('pagos-empresas/', views.gestion_pagos_empresas, name='gestion_pagos_empresas'),
+    path('pagos-empresas/dashboard/', views.dashboard_pagos, name='dashboard_pagos'),
+    path('pagos-empresas/detalle/<uuid:periodo_id>/', views.detalle_periodo_liquidacion, name='detalle_periodo_liquidacion'),
+    path('pagos-empresas/empresa/<int:empresa_id>/', views.detalle_pagos_empresa, name='detalle_pagos_empresa'),
+    path('pagos-empresas/exportar-empresa/<int:empresa_id>/', views.exportar_empresa_csv, name='exportar_empresa_csv'),
+    path('pagos-empresas/marcar-reservas/<int:empresa_id>/', views.marcar_reservas_empresa, name='marcar_reservas_empresa'),
+    path('pagos-empresas/cerrar-periodo/<uuid:periodo_id>/', views.cerrar_periodo_liquidacion, name='cerrar_periodo_liquidacion'),
+    path('pagos-empresas/marcar-pagado/<uuid:periodo_id>/', views.marcar_como_pagado, name='marcar_como_pagado'),
+    path('pagos-empresas/generar-periodos/', views.generar_periodos_faltantes, name='generar_periodos_faltantes'),
+    path('pagos-empresas/exportar-csv/<uuid:periodo_id>/', views.exportar_periodo_csv, name='exportar_periodo_csv'),
+    path('pagos-empresas/api/graficos/', views.api_datos_grafico_pagos, name='api_datos_grafico_pagos'),
+    
+    # Nuevas URLs para marcar pagos individuales y masivos
+    path('marcar-reserva-pagada/<int:reserva_id>/', views.marcar_reserva_pagada, name='marcar_reserva_pagada'),
+    path('marcar-empresa-pagada/<int:empresa_id>/', views.marcar_empresa_pagada, name='marcar_empresa_pagada'),
+    path('marcar-reservas-seleccionadas/', views.marcar_reservas_seleccionadas, name='marcar_reservas_seleccionadas'),
+    path('exportar-pagos-excel/', views.exportar_pagos_excel, name='exportar_pagos_excel'),
     
     # =================================
     # URLs PARA GESTIÓN DE COOKIES

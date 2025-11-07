@@ -1,5 +1,6 @@
 {% extends 'base/base_crud.html' %}
 {% load static %}
+{% load custom_tags %}
 
 {% block content %}
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-8">
@@ -8,14 +9,14 @@
         <!-- Header -->
         <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
             <div class="flex items-center space-x-4">
-                <div class="p-3 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl shadow-lg">
-                    <i class="fas fa-plus text-white text-2xl"></i>
+                <div class="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg">
+                    <i class="fas fa-edit text-white text-2xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
-                        Crear Nuevo Plan
+                    <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                        Editar Plan
                     </h1>
-                    <p class="text-gray-600 mt-1">Define los detalles del plan de suscripción</p>
+                    <p class="text-gray-600 mt-1">Modifica los detalles del plan "{{ plan.nombre }}"</p>
                 </div>
             </div>
             
@@ -31,7 +32,7 @@
                     <li>
                         <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
                     </li>
-                    <li class="text-gray-900 font-medium">Crear Plan</li>
+                    <li class="text-gray-900 font-medium">Editar Plan</li>
                 </ol>
             </nav>
         </div>
@@ -40,7 +41,7 @@
         <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden">
             <div class="p-6 sm:p-8 border-b border-gray-200">
                 <h2 class="text-2xl font-bold text-gray-900">Información del Plan</h2>
-                <p class="text-gray-600 mt-1">Completa todos los campos para crear el nuevo plan</p>
+                <p class="text-gray-600 mt-1">Modifica los campos que desees actualizar</p>
             </div>
             
             <form method="post" class="p-6 sm:p-8">
@@ -63,6 +64,7 @@
                                    id="nombre" 
                                    name="nombre" 
                                    required
+                                   value="{{ plan.nombre }}"
                                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
                                    placeholder="Ej: Plan Premium">
                         </div>
@@ -77,9 +79,9 @@
                                     required
                                     class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
                                 <option value="">Selecciona un tipo</option>
-                                <option value="basico">Lavado Básico</option>
-                                <option value="premium">Limpieza Premium</option>
-                                <option value="completo">Limpieza Completa</option>
+                                <option value="basico" {% if plan.tipo == 'basico' %}selected{% endif %}>Lavado Básico</option>
+                                <option value="premium" {% if plan.tipo == 'premium' %}selected{% endif %}>Limpieza Premium</option>
+                                <option value="completo" {% if plan.tipo == 'completo' %}selected{% endif %}>Limpieza Completa</option>
                             </select>
                         </div>
                         
@@ -94,8 +96,11 @@
                                    required
                                    min="0"
                                    step="0.01"
-                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
+                                   readonly
+                                   value="{{ plan.precio_mensual }}"
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
                                    placeholder="0.00">
+                            <p class="text-xs text-gray-500 mt-1">Se calcula automáticamente según los servicios seleccionados</p>
                         </div>
                         
                         <!-- Cantidad de Servicios por Mes -->
@@ -107,7 +112,7 @@
                                    id="cantidad_servicios_mes" 
                                    name="cantidad_servicios_mes" 
                                    min="0"
-                                   value="0"
+                                   value="{{ plan.cantidad_servicios_mes }}"
                                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
                                    placeholder="0 = Ilimitado">
                             <p class="text-xs text-gray-500 mt-1">0 significa servicios ilimitados</p>
@@ -124,7 +129,7 @@
                                   required
                                   rows="4"
                                   class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
-                                  placeholder="Describe los beneficios y características del plan..."></textarea>
+                                  placeholder="Describe los beneficios y características del plan...">{{ plan.descripcion }}</textarea>
                     </div>
                 </div>
 
@@ -141,7 +146,7 @@
                             <input type="checkbox" 
                                    id="incluye_lavado_asientos" 
                                    name="incluye_lavado_asientos"
-                                   checked
+                                   {% if plan.incluye_lavado_asientos %}checked{% endif %}
                                    class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                             <label for="incluye_lavado_asientos" class="ml-3 text-sm font-medium text-gray-700">
                                 <i class="fas fa-couch mr-2 text-blue-600"></i>
@@ -154,7 +159,7 @@
                             <input type="checkbox" 
                                    id="incluye_aspirado" 
                                    name="incluye_aspirado"
-                                   checked
+                                   {% if plan.incluye_aspirado %}checked{% endif %}
                                    class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                             <label for="incluye_aspirado" class="ml-3 text-sm font-medium text-gray-700">
                                 <i class="fas fa-wind mr-2 text-green-600"></i>
@@ -167,7 +172,7 @@
                             <input type="checkbox" 
                                    id="incluye_lavado_exterior" 
                                    name="incluye_lavado_exterior"
-                                   checked
+                                   {% if plan.incluye_lavado_exterior %}checked{% endif %}
                                    class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                             <label for="incluye_lavado_exterior" class="ml-3 text-sm font-medium text-gray-700">
                                 <i class="fas fa-car mr-2 text-cyan-600"></i>
@@ -180,6 +185,7 @@
                             <input type="checkbox" 
                                    id="incluye_lavado_interior_humedo" 
                                    name="incluye_lavado_interior_humedo"
+                                   {% if plan.incluye_lavado_interior_humedo %}checked{% endif %}
                                    class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                             <label for="incluye_lavado_interior_humedo" class="ml-3 text-sm font-medium text-gray-700">
                                 <i class="fas fa-tint mr-2 text-blue-600"></i>
@@ -192,6 +198,7 @@
                             <input type="checkbox" 
                                    id="incluye_encerado" 
                                    name="incluye_encerado"
+                                   {% if plan.incluye_encerado %}checked{% endif %}
                                    class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                             <label for="incluye_encerado" class="ml-3 text-sm font-medium text-gray-700">
                                 <i class="fas fa-star mr-2 text-yellow-600"></i>
@@ -204,6 +211,7 @@
                             <input type="checkbox" 
                                    id="incluye_detallado_completo" 
                                    name="incluye_detallado_completo"
+                                   {% if plan.incluye_detallado_completo %}checked{% endif %}
                                    class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                             <label for="incluye_detallado_completo" class="ml-3 text-sm font-medium text-gray-700">
                                 <i class="fas fa-gem mr-2 text-purple-600"></i>
@@ -218,34 +226,179 @@
                 <div class="mb-8">
                     <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
                         <i class="fas fa-list-check mr-2 text-orange-600"></i>
-                        Servicios Incluidos
+                        Servicios Incluidos con Descuentos
                     </h3>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-4">
                         {% for servicio in servicios %}
-                        <div class="flex items-center p-4 bg-gray-50/50 rounded-xl">
-                            <input type="checkbox" 
-                                   id="servicio_{{ servicio.id_servicio }}" 
-                                   name="servicios_incluidos"
-                                   value="{{ servicio.id_servicio }}"
-                                   class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                            <label for="servicio_{{ servicio.id_servicio }}" class="ml-3 text-sm font-medium text-gray-700">
-                                <i class="fas fa-wrench mr-2 text-gray-600"></i>
-                                {{ servicio.nombre_servicio }}
-                                <span class="text-xs text-gray-500 block">${{ servicio.precio }}</span>
-                            </label>
+                        <div class="flex items-center gap-4 p-4 bg-gray-50/50 rounded-xl hover:bg-gray-100/50 transition-colors duration-200 servicio-item">
+                            <div class="flex items-center flex-1">
+                                <input type="checkbox" 
+                                       id="servicio_{{ servicio.id_servicio }}" 
+                                       name="servicios_incluidos"
+                                       value="{{ servicio.id_servicio }}"
+                                       {% if servicio.id_servicio in servicios_plan %}checked{% endif %}
+                                       class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded servicio-checkbox"
+                                       data-servicio-id="{{ servicio.id_servicio }}"
+                                       data-precio="{{ servicio.precio }}">
+                                <label for="servicio_{{ servicio.id_servicio }}" class="ml-3 text-sm font-medium text-gray-700 flex-1">
+                                    <i class="fas fa-wrench mr-2 text-gray-600"></i>
+                                    {{ servicio.nombre_servicio }}
+                                    <span class="text-xs text-gray-500 block">Precio base: ${{ servicio.precio }}</span>
+                                </label>
+                            </div>
+                            
+                            <!-- Campo de descuento -->
+                            <div class="flex items-center gap-2" id="descuento_container_{{ servicio.id_servicio }}" 
+                                 {% if servicio.id_servicio not in servicios_plan %}style="display: none;"{% else %}style="display: flex;"{% endif %}>
+                                <label for="descuento_{{ servicio.id_servicio }}" class="text-sm font-medium text-gray-700 whitespace-nowrap">
+                                    <i class="fas fa-percent text-green-600 mr-1"></i>
+                                    Descuento:
+                                </label>
+                                <input type="number" 
+                                       id="descuento_{{ servicio.id_servicio }}" 
+                                       name="descuento_{{ servicio.id_servicio }}"
+                                       min="0"
+                                       max="100"
+                                       step="0.01"
+                                       value="{{ servicios_plan|get_item:servicio.id_servicio|default:'0' }}"
+                                       placeholder="0.00"
+                                       class="w-24 px-3 py-2 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-300 text-sm descuento-input"
+                                       data-servicio-id="{{ servicio.id_servicio }}">
+                                <span class="text-sm text-gray-600">%</span>
+                            </div>
+                            
+                            <!-- Precio con descuento (oculto inicialmente) -->
+                            <div class="precio-servicio-calculado {% if servicio.id_servicio not in servicios_plan %}hidden{% endif %}" id="precio_calculado_{{ servicio.id_servicio }}">
+                                <span class="text-sm font-semibold text-green-600">
+                                    <i class="fas fa-tag mr-1"></i>
+                                    $<span class="valor-calculado">0.00</span>
+                                </span>
+                            </div>
                         </div>
                         {% endfor %}
                     </div>
+                    
+                    <!-- Resumen de cálculo del plan -->
+                    <div class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border-2 border-blue-200" id="resumen_calculo">
+                        <h4 class="text-md font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-calculator mr-2 text-blue-600"></i>
+                            Resumen del Valor del Plan
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Valor base de servicios:</span>
+                                <span class="text-sm font-semibold text-gray-800">$<span id="total_base">0.00</span></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Descuentos aplicados:</span>
+                                <span class="text-sm font-semibold text-red-600">-$<span id="total_descuentos">0.00</span></span>
+                            </div>
+                            <div class="border-t-2 border-blue-300 pt-2 mt-2"></div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-base font-bold text-gray-900">Precio mensual del plan:</span>
+                                <span class="text-lg font-bold text-blue-600">$<span id="precio_final">0.00</span></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                
+                <script>
+                    // Mostrar/ocultar campos de descuento cuando se selecciona un servicio
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const checkboxes = document.querySelectorAll('.servicio-checkbox');
+                        const descuentoInputs = document.querySelectorAll('.descuento-input');
+                        
+                        // Función para calcular el precio total del plan
+                        function calcularPrecioTotal() {
+                            let totalBase = 0;
+                            let totalDescuentos = 0;
+                            let precioFinal = 0;
+                            
+                            // Iterar sobre todos los checkboxes de servicios
+                            checkboxes.forEach(checkbox => {
+                                if (checkbox.checked) {
+                                    const servicioId = checkbox.dataset.servicioId;
+                                    const precioBase = parseFloat(checkbox.dataset.precio) || 0;
+                                    const descuentoInput = document.getElementById(`descuento_${servicioId}`);
+                                    const descuento = parseFloat(descuentoInput.value) || 0;
+                                    
+                                    // Calcular precio con descuento
+                                    const montoDescuento = (precioBase * descuento) / 100;
+                                    const precioConDescuento = precioBase - montoDescuento;
+                                    
+                                    // Acumular totales
+                                    totalBase += precioBase;
+                                    totalDescuentos += montoDescuento;
+                                    precioFinal += precioConDescuento;
+                                    
+                                    // Mostrar precio calculado para este servicio
+                                    const precioCalculadoDiv = document.getElementById(`precio_calculado_${servicioId}`);
+                                    const valorCalculado = precioCalculadoDiv.querySelector('.valor-calculado');
+                                    valorCalculado.textContent = precioConDescuento.toFixed(2);
+                                    precioCalculadoDiv.classList.remove('hidden');
+                                } else {
+                                    // Ocultar precio calculado si no está seleccionado
+                                    const servicioId = checkbox.dataset.servicioId;
+                                    const precioCalculadoDiv = document.getElementById(`precio_calculado_${servicioId}`);
+                                    precioCalculadoDiv.classList.add('hidden');
+                                }
+                            });
+                            
+                            // Actualizar resumen
+                            document.getElementById('total_base').textContent = totalBase.toFixed(2);
+                            document.getElementById('total_descuentos').textContent = totalDescuentos.toFixed(2);
+                            document.getElementById('precio_final').textContent = precioFinal.toFixed(2);
+                            
+                            // Actualizar el campo de precio mensual
+                            document.getElementById('precio_mensual').value = precioFinal.toFixed(2);
+                        }
+                        
+                        // Evento para mostrar/ocultar descuento y recalcular
+                        checkboxes.forEach(checkbox => {
+                            checkbox.addEventListener('change', function() {
+                                const servicioId = this.dataset.servicioId;
+                                const descuentoContainer = document.getElementById(`descuento_container_${servicioId}`);
+                                const descuentoInput = document.getElementById(`descuento_${servicioId}`);
+                                
+                                if (this.checked) {
+                                    descuentoContainer.style.display = 'flex';
+                                } else {
+                                    descuentoContainer.style.display = 'none';
+                                    descuentoInput.value = '0';
+                                }
+                                
+                                // Recalcular precio total
+                                calcularPrecioTotal();
+                            });
+                        });
+                        
+                        // Evento para recalcular cuando cambia el descuento
+                        descuentoInputs.forEach(input => {
+                            input.addEventListener('input', function() {
+                                // Validar que el descuento esté entre 0 y 100
+                                let valor = parseFloat(this.value) || 0;
+                                if (valor < 0) valor = 0;
+                                if (valor > 100) valor = 100;
+                                this.value = valor;
+                                
+                                // Recalcular precio total
+                                calcularPrecioTotal();
+                            });
+                        });
+                        
+                        // Calcular precio inicial al cargar la página
+                        calcularPrecioTotal();
+                    });
+                </script>
                 {% endif %}
 
                 <!-- Botones de Acción -->
                 <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
                     <button type="submit" 
-                            class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white font-semibold rounded-2xl shadow-lg hover:from-emerald-700 hover:to-green-700 transform hover:scale-105 transition-all duration-300">
+                            class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-2xl shadow-lg hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-300">
                         <i class="fas fa-save mr-2"></i>
-                        Crear Plan
+                        Actualizar Plan
                     </button>
                     
                     <a href="{% url 'planes_crud' %}" 
@@ -333,6 +486,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 parent.classList.add('bg-gray-50/50');
             }
         });
+        
+        // Aplicar estilo inicial si está marcado
+        if (checkbox.checked) {
+            const parent = checkbox.closest('.flex');
+            parent.classList.add('bg-blue-50', 'border-blue-200');
+            parent.classList.remove('bg-gray-50/50');
+        }
     });
 });
 </script>

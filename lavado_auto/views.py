@@ -5,19 +5,23 @@ import uuid
 from django.shortcuts import render,redirect, get_object_or_404
 from django.http import HttpResponse,JsonResponse
 from django.contrib import messages
-from django.db.models import Avg, Q
+from django.db.models import Avg, Q, Sum, Count
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.views.decorators.http import require_http_methods
-from .models import Usuario,Comentario,MensajeQueja,Reserva,Servicio,Empresa,EmpresaServicio, ReservaServicio, Plan, SuscripcionUsuario, HistorialPagosSuscripcion, PlanEmpresarial, SuscripcionEmpresarial, SolicitudServicioEmpresa, HistorialPagosSuscripcionEmpresarial, SolicitudContactoPlan
+from django.views.decorators.http import require_http_methods, require_POST
+from django.views.decorators.csrf import ensure_csrf_cookie
+from .models import Usuario,Comentario,MensajeQueja,Reserva,Servicio,Empresa,EmpresaServicio, ReservaServicio, Plan, SuscripcionUsuario, HistorialPagosSuscripcion, PlanEmpresarial, SuscripcionEmpresarial, SolicitudServicioEmpresa, HistorialPagosSuscripcionEmpresarial, SolicitudContactoPlan, PlanServicio, PeriodoLiquidacion, DetalleLiquidacion, ConfiguracionPagos
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from .forms import ComentarioForm, ReservaForm, UsuariosForm,ComentarioClienteForm,QuejaForm,ServicioForm,EmpresaForm,ProfileUserForm,EmpresaRegistroForm, EmpresaPerfilForm, AdminProfileForm, SolicitudContactoPlanForm
 from datetime import datetime,timedelta
+import csv
 from django.utils import timezone
 from functools import wraps
 from django.core.mail import send_mail
 from django.conf import settings
+from django.urls import reverse
+from django.contrib import messages
 
 
 # Decorador personalizado para verificar autenticación de empresa
@@ -28,13 +32,18 @@ def empresa_required(function):
         
         # Verificar si la empresa está autenticada en la sesión
         if not request.session.get('es_empresa', False):
-            print(f"❌ Empresa no autenticada")
-            messages.error(request, 'Debes iniciar sesión como empresa para acceder a esta sección.')
-            return redirect('logincrud')
+                print(f"❌ Empresa no autenticada")
+                # Si la petición es AJAX, devolver JSON en lugar de redirigir
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({'success': False, 'error': 'Empresa no autenticada'}, status=403)
+                messages.error(request, 'Debes iniciar sesión como empresa para acceder a esta sección.')
+                return redirect('logincrud')
         
         empresa_id = request.session.get('empresa_id')
         if not empresa_id:
             print(f"❌ No se encontró ID de empresa en sesión")
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': 'Sesión de empresa inválida'}, status=403)
             messages.error(request, 'Error: Sesión de empresa inválida.')
             return redirect('logincrud')
         
@@ -44,6 +53,8 @@ def empresa_required(function):
             return function(request, *args, **kwargs)
         except Empresa.DoesNotExist:
             print(f"❌ Empresa no encontrada con ID: {empresa_id}")
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': 'Empresa no encontrada'}, status=404)
             messages.error(request, 'Error: Empresa no encontrada.')
             return redirect('logincrud')
     return wrap
@@ -85,7 +96,7 @@ def admin_required(function):
 
 
 # Función auxiliar para enviar correo de confirmación de reserva profesional
-def enviar_correo_confirmacion_reserva(usuario, empresa, servicios, fecha, hora, precio_total):
+def enviar_correo_confirmacion_reserva(usuario, empresa, servicios, fecha, hora, precio_total, numero_reserva=None):
     import logging
     from django.conf import settings  # Importar al inicio para evitar UnboundLocalError
     logger = logging.getLogger('lavado_auto.views')
@@ -106,15 +117,18 @@ def enviar_correo_confirmacion_reserva(usuario, empresa, servicios, fecha, hora,
             print(f"❌ No se encontró email para el usuario {nombre_usuario}")
             return False
 
-        # Generar número de reserva único
-        numero_reserva = f"ANW-{str(uuid.uuid4())[:8].upper()}"
+        # Si no se recibió un número de reserva (pasado por la vista), generar uno temporal
+        if not numero_reserva:
+            numero_reserva = f"ANW-{str(uuid.uuid4())[:8].upper()}"
         fecha_actual = datetime.now().strftime("%d de %B de %Y")
         
         # Obtener información de la empresa
-        nombre_empresa = getattr(empresa, 'nombre', 'AutoNew')
-        direccion_empresa = getattr(empresa, 'direccion', '')
-        telefono_empresa = getattr(empresa, 'telefono', '')
-        
+        # Preferir el campo `nombre_empresa` (modelo Empresa usa ese nombre); fallback a `nombre` por compatibilidad
+        nombre_empresa = getattr(empresa, 'nombre_empresa', None) or getattr(empresa, 'nombre', 'AutoNew')
+        # Direccion y telefono: usar los campos disponibles en el modelo con fallback a cadena vacía
+        direccion_empresa = getattr(empresa, 'direccion', '') or getattr(empresa, 'direccion_empresa', '')
+        telefono_empresa = getattr(empresa, 'telefono', '') or getattr(empresa, 'telefono_empresa', '')
+
         # Construir lista de servicios profesional
         servicios_html = ""
         servicios_text = ""
@@ -165,6 +179,11 @@ def enviar_correo_confirmacion_reserva(usuario, empresa, servicios, fecha, hora,
                     </p>
                 </div>
 
+                <!-- Nombre de la Empresa (destacado) -->
+                <div style="text-align: center; padding: 18px 20px;">
+                    <h3 style="margin: 0; font-size: 20px; color: #0c4a6e; font-weight: 700;">{nombre_empresa}</h3>
+                </div>
+
                 <!-- Información de la Reserva -->
                 <div style="padding: 30px 20px;">
                     <div style="background-color: #f1f5f9; border-left: 4px solid #3b82f6; padding: 20px; border-radius: 0 8px 8px 0; margin-bottom: 25px;">
@@ -186,7 +205,7 @@ def enviar_correo_confirmacion_reserva(usuario, empresa, servicios, fecha, hora,
                             </tr>
                             <tr>
                                 <td style="padding: 8px 0; color: #64748b; font-weight: 500;">Empresa:</td>
-                                <td style="padding: 8px 0; color: #1e293b; font-weight: 600;">{nombre_empresa}</td>
+                                    <td style="padding: 8px 0; color: #1e293b; font-weight: 600;">{nombre_empresa}</td>
                             </tr>
                         </table>
                     </div>
@@ -216,6 +235,8 @@ def enviar_correo_confirmacion_reserva(usuario, empresa, servicios, fecha, hora,
                             <li style="margin-bottom: 8px;">Presenta este correo o el <strong>número de reserva</strong></li>
                             <li style="margin-bottom: 8px;">En caso de cancelación, hazlo con <strong>24 horas de anticipación</strong></li>
                         </ul>
+                        {f'<div style="margin-top:12px;color: #075985; font-weight: 600;">📍 UBICACIÓN: {direccion_empresa}</div>' if direccion_empresa else ''}
+                        {f'<div style="margin-top:6px;color: #075985; font-weight: 600;">📞 TELÉFONO: {telefono_empresa}</div>' if telefono_empresa else ''}
                     </div>
 
                     <!-- Ubicación -->
@@ -260,12 +281,14 @@ def enviar_correo_confirmacion_reserva(usuario, empresa, servicios, fecha, hora,
         # Versión texto plano profesional
         plain_message = f"""
 ========================================
-     CONFIRMACIÓN DE RESERVA - AUTONEW
+    CONFIRMACIÓN DE RESERVA - AUTONEW
 ========================================
 
 ¡Hola {nombre_usuario}!
 
 Tu reserva ha sido confirmada exitosamente.
+
+========== {nombre_empresa} ==========
 
 DETALLES DE LA CITA:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -377,6 +400,7 @@ def home(request):
     
     # Paginación para empresas - 4 por página
     empresas_paginator = Paginator(empresas_list, 4)  # Mostrar 4 empresas por página
+    
     empresas_page = request.GET.get('empresas_page')
     
     try:
@@ -393,6 +417,31 @@ def home(request):
         'servicios': servicios,
         'empresas': empresas
     })
+
+
+@admin_required
+@require_POST
+def marcar_reservas_empresa(request, empresa_id):
+    """Marcar como pagadas las reservas seleccionadas para una empresa.
+    Espera un POST con 'reservas' conteniendo IDs separados por comas o múltiples valores.
+    Devuelve redirect al detalle de la empresa con un mensaje.
+    """
+    # Leer lista de ids desde POST (puede venir como reservas[]=1&reservas[]=2 o como texto csv)
+    reservas_ids = request.POST.getlist('reservas')
+    if not reservas_ids:
+        reservas_csv = request.POST.get('reservas_csv', '')
+        if reservas_csv:
+            reservas_ids = [s.strip() for s in reservas_csv.split(',') if s.strip()]
+
+    if not reservas_ids:
+        messages.warning(request, 'No se seleccionaron reservas para marcar como pagadas.')
+        return redirect('detalle_pagos_empresa', empresa_id=empresa_id)
+
+    # Filtrar reservas que pertenezcan a la empresa y estén en estado completado y no pagadas a empresa
+    qs = Reserva.objects.filter(pk__in=reservas_ids, empresa__id_empresa=empresa_id).filter(Q(estado='completado')).filter(Q(pagado_empresa=False) | Q(pagado_empresa__isnull=True))
+    updated = qs.update(pagado_empresa=True)
+    messages.success(request, f'Se marcaron {updated} reserva(s) como pagadas a la empresa.')
+    return redirect('detalle_pagos_empresa', empresa_id=empresa_id)
 
 def faq(request):
     """Vista para la página de Preguntas Frecuentes (FAQ)"""
@@ -557,7 +606,7 @@ def login(request):
                 if not usuario_check.can_attempt_login():
                     if usuario_check.lockout_time:
                         time_since_lockout = timezone.now() - usuario_check.lockout_time
-                        remaining_minutes = max(0, 30 - int(time_since_lockout.total_seconds() / 60))
+                        remaining_minutes = max(0, 15 - int(time_since_lockout.total_seconds() / 60))
                         messages.error(request, f'Tu cuenta está temporalmente bloqueada por seguridad debido a múltiples intentos fallidos. Intenta nuevamente en {remaining_minutes} minutos.')
                     else:
                         messages.error(request, 'Tu cuenta está temporalmente bloqueada por seguridad. Contacta al administrador.')
@@ -594,8 +643,8 @@ def login(request):
                     # Mostrar mensaje específico según los intentos restantes
                     remaining_attempts = usuario_fallido.get_remaining_attempts()
                     
-                    if usuario_fallido.is_locked_out:
-                        messages.error(request, 'Has excedido el número máximo de intentos de login (6). Tu cuenta ha sido bloqueada temporalmente por 30 minutos por seguridad.')
+                    if usuario_fallido.lockout_time:  # Si tiene tiempo de bloqueo activo
+                        messages.error(request, 'Has excedido el número máximo de intentos de login. Tu cuenta ha sido bloqueada temporalmente por 15 minutos por seguridad.')
                     elif remaining_attempts <= 3 and remaining_attempts > 0:
                         messages.warning(request, f'Usuario o contraseña incorrectos. Te quedan {remaining_attempts} intentos antes de que tu cuenta sea bloqueada temporalmente.')
                     else:
@@ -896,6 +945,8 @@ def reservas(request):
         tiene_suscripcion = False
         usar_suscripcion = False
         
+        print(f"🔍 Verificando suscripción para usuario: {usuario.nombre_usuario if usuario else 'Anónimo'}")
+        
         try:
             from .models import SuscripcionUsuario
             suscripcion_activa = SuscripcionUsuario.objects.filter(
@@ -903,17 +954,38 @@ def reservas(request):
                 estado='activa'
             ).first()
             
-            if suscripcion_activa and suscripcion_activa.esta_activa():
+            print(f"🔍 Suscripción encontrada: {suscripcion_activa}")
+            
+            if suscripcion_activa:
+                # Usar la misma lógica que mi_suscripcion
+                suscripcion_activa.reiniciar_contador_mensual()
+                
+                print(f"📋 Plan: {suscripcion_activa.plan.nombre}")
+                print(f"📊 Servicios utilizados: {suscripcion_activa.servicios_utilizados_mes}")
+                print(f"📊 Servicios totales permitidos: {suscripcion_activa.plan.cantidad_servicios_mes}")
+                print(f"⏰ Fecha fin: {suscripcion_activa.fecha_fin}")
+                print(f"✅ ¿Puede usar servicio?: {suscripcion_activa.puede_usar_servicio()}")
+                
                 tiene_suscripcion = True
+                print(f"✅ Usuario tiene suscripción activa (estado='activa')")
+                
                 # Verificar si puede usar servicios de la suscripción
                 if suscripcion_activa.puede_usar_servicio():
                     usar_suscripcion = True
+                    print(f"✅ Usuario puede usar suscripción. Servicios seleccionados: {len(servicios_seleccionados)}")
                 else:
                     print(f"⚠️ Usuario {usuario.nombre_usuario} ha agotado sus servicios del mes. Servicios restantes: {suscripcion_activa.servicios_restantes()}")
                     # No bloquear, solo usar pago individual
                     usar_suscripcion = False
+            else:
+                print(f"❌ Usuario no tiene suscripción activa o está vencida")
+                
         except Exception as e:
-            print(f"Error verificando suscripción: {e}")
+            print(f"❌ Error verificando suscripción: {e}")
+            import traceback
+            traceback.print_exc()
+        
+        print(f"🎯 Resultado: usar_suscripcion = {usar_suscripcion}, tiene_suscripcion = {tiene_suscripcion}")
         
         # Crear la reserva
         reserva = Reserva(
@@ -926,19 +998,98 @@ def reservas(request):
         )
         reserva.save()
         
-        # Crear las relaciones entre reserva y servicios (múltiples)
+        # Separar servicios incluidos en el plan de los servicios adicionales
+        servicios_incluidos_plan = []
+        servicios_adicionales = []
         precio_total = 0
         servicios_nombres = []
+        
+        # Diccionario para almacenar descuentos de PlanServicio
+        descuentos_plan = {}
+        
+        if usar_suscripcion and suscripcion_activa:
+            # Obtener los servicios incluidos en el plan del usuario
+            from .models import PlanServicio
+            servicios_del_plan = suscripcion_activa.plan.servicios_incluidos.all()
+            servicios_del_plan_ids = list(servicios_del_plan.values_list('id_servicio', flat=True))
+            
+            # Obtener los descuentos de cada servicio desde PlanServicio
+            plan_servicios = PlanServicio.objects.filter(
+                plan=suscripcion_activa.plan,
+                servicio__in=servicios_seleccionados
+            ).select_related('servicio')
+            
+            for plan_servicio in plan_servicios:
+                descuentos_plan[plan_servicio.servicio.id_servicio] = plan_servicio.porcentaje_descuento
+                print(f"🔍 Descuento para {plan_servicio.servicio.nombre_servicio}: {plan_servicio.porcentaje_descuento}%")
+            
+            print(f"🔍 Servicios incluidos en el plan {suscripcion_activa.plan.nombre}: {servicios_del_plan_ids}")
+            
+            # Separar servicios seleccionados entre incluidos y adicionales
+            for servicio in servicios_seleccionados:
+                if servicio.id_servicio in servicios_del_plan_ids:
+                    servicios_incluidos_plan.append(servicio)
+                    print(f"✅ Servicio incluido en plan: {servicio.nombre_servicio}")
+                else:
+                    servicios_adicionales.append(servicio)
+                    precio_total += servicio.precio
+                    print(f"💰 Servicio adicional (se cobrará): {servicio.nombre_servicio} - ${servicio.precio}")
+            
+            # VALIDACIÓN: Verificar que no se excedan los servicios restantes del plan
+            servicios_restantes = suscripcion_activa.servicios_restantes()
+            if len(servicios_incluidos_plan) > servicios_restantes:
+                error_msg = f"Has seleccionado {len(servicios_incluidos_plan)} servicios del plan, pero solo tienes {servicios_restantes} servicios disponibles. Por favor, reduce tu selección."
+                print(f"❌ {error_msg}")
+                if is_ajax:
+                    return JsonResponse({'success': False, 'message': error_msg})
+                messages.error(request, error_msg)
+                return redirect('reservas')
+        else:
+            # Si no usa suscripción, todos los servicios son adicionales
+            servicios_adicionales = list(servicios_seleccionados)
+        
+        # Crear las relaciones entre reserva y servicios (múltiples)
         for servicio in servicios_seleccionados:
-            ReservaServicio.objects.create(reserva=reserva, servicio=servicio)
-            precio_total += servicio.precio
+            # Determinar si es servicio del plan y obtener descuento
+            es_servicio_plan = servicio in servicios_incluidos_plan and usar_suscripcion
+            descuento_plan = descuentos_plan.get(servicio.id_servicio, 0) if es_servicio_plan else 0
+            precio_original = servicio.precio
+            
+            # Calcular precio con descuento si aplica
+            if es_servicio_plan and descuento_plan > 0:
+                precio_con_descuento = float(precio_original) * (1 - float(descuento_plan) / 100)
+                precio_aplicado = precio_con_descuento
+                print(f"💵 {servicio.nombre_servicio}: Precio original ${precio_original} -> Con descuento {descuento_plan}% -> ${precio_aplicado:.2f}")
+            elif es_servicio_plan:
+                # Servicio incluido sin descuento especial (precio completo cubierto por plan)
+                precio_aplicado = 0
+                print(f"✅ {servicio.nombre_servicio}: Incluido en plan (sin costo)")
+            else:
+                # Servicio adicional (sin descuento)
+                precio_aplicado = precio_original
+                print(f"💰 {servicio.nombre_servicio}: Servicio adicional ${precio_aplicado}")
+            
+            ReservaServicio.objects.create(
+                reserva=reserva,
+                servicio=servicio,
+                es_servicio_plan=es_servicio_plan,
+                descuento_plan_individual=descuento_plan,
+                precio_original=precio_original,
+                precio_aplicado=precio_aplicado
+            )
             servicios_nombres.append(servicio.nombre_servicio)
         
-        # Si usa suscripción, incrementar el contador de servicios utilizados
-        if usar_suscripcion and suscripcion_activa:
-            suscripcion_activa.servicios_utilizados_mes += len(servicios_seleccionados)
+        # Calcular precio total usando el método del modelo que suma todos los precio_aplicado
+        precio_total = reserva.calcular_total_reserva()
+        
+        # Si usa suscripción, incrementar el contador solo con los servicios incluidos en el plan
+        if usar_suscripcion and suscripcion_activa and len(servicios_incluidos_plan) > 0:
+            servicios_del_plan_utilizados = len(servicios_incluidos_plan)
+            suscripcion_activa.servicios_utilizados_mes += servicios_del_plan_utilizados
             suscripcion_activa.save()
-            print(f"✅ Servicios utilizados actualizados: {suscripcion_activa.servicios_utilizados_mes}/{suscripcion_activa.plan.cantidad_servicios_mes if suscripcion_activa.plan.cantidad_servicios_mes > 0 else 'Ilimitado'}")
+            print(f"✅ Servicios del plan utilizados: {servicios_del_plan_utilizados}")
+            print(f"✅ Servicios adicionales cobrados: {len(servicios_adicionales)} (${precio_total})")
+            print(f"✅ Contador actualizado: {suscripcion_activa.servicios_utilizados_mes}/{suscripcion_activa.plan.cantidad_servicios_mes if suscripcion_activa.plan.cantidad_servicios_mes > 0 else 'Ilimitado'}")
         else:
             print(f"💰 Reserva creada con pago individual. Precio total: ${precio_total}")
         
@@ -947,11 +1098,12 @@ def reservas(request):
         try:
             correo_enviado = enviar_correo_confirmacion_reserva(
                 usuario=usuario,
-                empresa=empresa,
+                empresa=reserva.empresa,
                 servicios=servicios_seleccionados,
                 fecha=fecha_seleccionada,
                 hora=hora_seleccionada,
-                precio_total=precio_total
+                precio_total=precio_total,
+                numero_reserva=reserva.numero_reserva
             )
             if correo_enviado:
                 # El número de reserva se genera dentro de la función de correo
@@ -963,16 +1115,31 @@ def reservas(request):
         except Exception as e:
             print(f"❌ Excepción enviando correo: {e}")
         
-        # Crear mensaje de éxito personalizado
+        # Crear mensaje de éxito personalizado más detallado
         if len(servicios_nombres) == 1:
             base_msg = f"Tu cita para {servicios_nombres[0]} ha sido reservada para el {fecha_seleccionada} a las {hora_seleccionada}."
         else:
             base_msg = f"Tu cita para {len(servicios_nombres)} servicios ha sido reservada para el {fecha_seleccionada} a las {hora_seleccionada}."
         
-        # Agregar información sobre el tipo de pago
-        if usar_suscripcion:
+        # Agregar información detallada sobre el tipo de pago
+        if usar_suscripcion and len(servicios_incluidos_plan) > 0:
             servicios_restantes = suscripcion_activa.servicios_restantes()
-            success_msg = f"{base_msg} ✅ Pagado con tu suscripción. Te quedan {servicios_restantes} servicios este mes."
+            
+            if len(servicios_adicionales) > 0:
+                # Hay servicios incluidos y adicionales
+                servicios_incluidos_nombres = [s.nombre_servicio for s in servicios_incluidos_plan]
+                servicios_adicionales_nombres = [s.nombre_servicio for s in servicios_adicionales]
+                
+                success_msg = f"{base_msg}\n"
+                success_msg += f"✅ Servicios incluidos en tu plan: {', '.join(servicios_incluidos_nombres)}\n"
+                success_msg += f"💰 Servicios adicionales (${precio_total}): {', '.join(servicios_adicionales_nombres)}\n"
+                success_msg += f"Te quedan {servicios_restantes} servicios en tu plan este mes."
+            else:
+                # Solo servicios incluidos
+                success_msg = f"{base_msg} ✅ Todos los servicios están incluidos en tu plan. Te quedan {servicios_restantes} servicios este mes."
+        elif usar_suscripcion and len(servicios_incluidos_plan) == 0:
+            # Tiene suscripción pero ningún servicio está incluido
+            success_msg = f"{base_msg} 💰 Ninguno de estos servicios está incluido en tu plan actual, por lo que se cobrará individualmente (${precio_total})."
         else:
             if tiene_suscripcion:
                 success_msg = f"{base_msg} 💰 Has agotado tus servicios del mes, por lo que esta reserva se cobrará individualmente (${precio_total})."
@@ -980,23 +1147,49 @@ def reservas(request):
                 success_msg = f"{base_msg} 💰 Total a pagar: ${precio_total}."
         
         if is_ajax:
+            # Obtener detalles de servicios desde el modelo
+            detalle_servicios = reserva.obtener_detalle_servicios()
+            
             response = JsonResponse({
-                'success': True, 
+                'success': True,
                 'message': success_msg,
                 'reserva': {
                     'id': reserva.id_reserva,
-                    'numero_reserva': numero_reserva or f"ANW-{reserva.id_reserva:08d}",
+                    # Priorizar el número almacenado en el modelo (generado en save())
+                    'numero_reserva': reserva.numero_reserva if getattr(reserva, 'numero_reserva', None) else (numero_reserva or f"ANW-{reserva.id_reserva:08d}"),
                     'empresa': empresa.nombre_empresa,
                     'servicios': servicios_nombres,
                     'precio_total': str(precio_total),
                     'fecha': fecha_seleccionada,
                     'hora': hora_seleccionada,
+                    'servicios_incluidos_plan': [
+                        {
+                            'nombre': item['nombre'],
+                            'precio_original': str(item['precio_original']),
+                            'precio_aplicado': str(item['precio_aplicado']),
+                            'descuento': str(item['descuento']),
+                            'ahorro': str(item['ahorro']),
+                            'es_gratis': item['precio_aplicado'] == 0
+                        } for item in detalle_servicios['servicios_plan']
+                    ],
+                    'servicios_adicionales': [
+                        {
+                            'nombre': item['nombre'],
+                            'precio_original': str(item['precio_original']),
+                            'precio_aplicado': str(item['precio_aplicado']),
+                            'es_gratis': False
+                        } for item in detalle_servicios['servicios_adicionales']
+                    ],
                     'servicios_detalle': [
                         {
                             'nombre': servicio.nombre_servicio,
-                            'precio': str(servicio.precio)
+                            'precio_original': str(servicio.precio),
+                            'precio_aplicado': str(descuentos_plan.get(servicio.id_servicio, 0) if servicio in servicios_incluidos_plan else servicio.precio),
+                            'descuento': str(descuentos_plan.get(servicio.id_servicio, 0)) if servicio in servicios_incluidos_plan else '0',
+                            'es_plan': servicio in servicios_incluidos_plan
                         } for servicio in servicios_seleccionados
-                    ]
+                    ],
+                    'ahorro_total': str(detalle_servicios['ahorro_total'])
                 }
             })
             # Asegurar que el Content-Type sea correcto
@@ -1029,6 +1222,7 @@ def reservas(request):
     # Obtener información de la suscripción del usuario si está autenticado
     suscripcion_info = None
     if usuario and usuario.is_authenticated:
+        print(f"🔍 Obteniendo información de suscripción para: {usuario.nombre_usuario}")
         try:
             from .models import SuscripcionUsuario
             suscripcion_activa = SuscripcionUsuario.objects.filter(
@@ -1036,21 +1230,38 @@ def reservas(request):
                 estado='activa'
             ).first()
             
-            if suscripcion_activa and suscripcion_activa.esta_activa():
+            print(f"🔍 Suscripción encontrada en GET: {suscripcion_activa}")
+            
+            if suscripcion_activa:
+                # Usar la misma lógica que mi_suscripcion - solo verificar estado='activa'
+                # Reiniciar contador mensual como en mi_suscripcion
+                suscripcion_activa.reiniciar_contador_mensual()
+                
+                servicios_restantes = suscripcion_activa.servicios_restantes()
                 suscripcion_info = {
                     'tiene_suscripcion': True,
                     'plan_nombre': suscripcion_activa.plan.nombre,
-                    'servicios_restantes': suscripcion_activa.servicios_restantes(),
+                    'plan_id': suscripcion_activa.plan.id_plan,
+                    'servicios_restantes': servicios_restantes,
                     'servicios_utilizados': suscripcion_activa.servicios_utilizados_mes,
                     'servicios_totales': suscripcion_activa.plan.cantidad_servicios_mes,
                     'fecha_fin': suscripcion_activa.fecha_fin,
-                    'puede_usar_servicio': suscripcion_activa.puede_usar_servicio()
+                    'puede_usar_servicio': suscripcion_activa.puede_usar_servicio(),
+                    'esta_activa': True,  # Si está en BD con estado='activa', considerarlo activo
+                    'suscripcion_id': suscripcion_activa.id_suscripcion
                 }
+                print(f"✅ Info suscripción: Plan={suscripcion_activa.plan.nombre}, Restantes={servicios_restantes}, Utilizados={suscripcion_activa.servicios_utilizados_mes}")
             else:
                 suscripcion_info = {'tiene_suscripcion': False}
+                print(f"❌ No hay suscripción con estado='activa'")
         except Exception as e:
-            print(f"Error obteniendo información de suscripción: {e}")
+            print(f"❌ Error obteniendo información de suscripción: {e}")
+            import traceback
+            traceback.print_exc()
             suscripcion_info = {'tiene_suscripcion': False}
+    else:
+        suscripcion_info = {'tiene_suscripcion': False}
+        print(f"🔍 Usuario no autenticado, sin suscripción")
     
     return render(request, 'reservas/reservas.html', {
         'ocupadas': ocupadas,
@@ -1094,6 +1305,64 @@ def obtener_servicios(request):
     return JsonResponse({'servicios': [], 'empresa': None})
 
 # Nueva vista para obtener empresas filtradas por servicios (AJAX)
+@usuario_required
+def obtener_servicios_plan(request):
+    """
+    Obtiene los servicios incluidos en el plan del usuario y los servicios adicionales
+    """
+    try:
+        # Obtener la suscripción activa del usuario
+        suscripcion = SuscripcionUsuario.objects.filter(
+            usuario=request.user,
+            estado='activa'
+        ).first()
+        
+        if not suscripcion:
+            return JsonResponse({
+                'success': False,
+                'message': 'No tienes una suscripción activa'
+            })
+        
+        # Obtener servicios incluidos en el plan
+        servicios_plan = suscripcion.plan.servicios_incluidos.all()
+        servicios_plan_data = [
+            {
+                'id_servicio': servicio.id_servicio,
+                'nombre_servicio': servicio.nombre_servicio,
+                'descripcion': servicio.descripcion,
+                'precio': float(servicio.precio)
+            } for servicio in servicios_plan
+        ]
+        
+        # Obtener todos los servicios disponibles (para los adicionales)
+        todos_los_servicios = Servicio.objects.all()
+        servicios_ids_del_plan = set(servicios_plan.values_list('id_servicio', flat=True))
+        
+        servicios_adicionales = todos_los_servicios.exclude(id_servicio__in=servicios_ids_del_plan)
+        servicios_adicionales_data = [
+            {
+                'id_servicio': servicio.id_servicio,
+                'nombre_servicio': servicio.nombre_servicio,
+                'descripcion': servicio.descripcion,
+                'precio': float(servicio.precio)
+            } for servicio in servicios_adicionales
+        ]
+        
+        return JsonResponse({
+            'success': True,
+            'servicios_plan': servicios_plan_data,
+            'servicios_adicionales': servicios_adicionales_data,
+            'puede_usar_servicio': suscripcion.puede_usar_servicio(),
+            'servicios_restantes': suscripcion.servicios_restantes()
+        })
+        
+    except Exception as e:
+        print(f"Error obteniendo servicios del plan: {e}")
+        return JsonResponse({
+            'success': False,
+            'message': 'Error interno del servidor'
+        })
+
 @usuario_required
 def obtener_empresas_por_servicios(request):
     """
@@ -1293,6 +1562,157 @@ def get_horas(request):
     except ValueError as e:
         print(f"❌ Error de formato de fecha: {e}")
         return JsonResponse({'success': False, 'horas_disponibles': [], 'error': 'Formato de fecha inválido'})
+
+
+def get_horas_edicion(request):
+    """
+    Obtiene horas disponibles para edición de citas.
+    Verifica que haya al menos 12 horas entre ahora y la hora original de la cita.
+    Si se cumple, muestra todas las horas disponibles del día en esa empresa.
+    """
+    empresa_id = request.GET.get('empresa_id')
+    fecha_str = request.GET.get('fecha')
+    hora_original_str = request.GET.get('hora_original')  # Formato HH:MM:SS o HH:MM
+    
+    print(f"🕐 get_horas_edicion llamado con empresa_id={empresa_id}, fecha={fecha_str}, hora_original={hora_original_str}")
+    
+    if not empresa_id or not fecha_str or not hora_original_str:
+        print(f"❌ Parámetros faltantes")
+        return JsonResponse({
+            'success': False, 
+            'horas': [], 
+            'error': 'Parámetros faltantes'
+        })
+    
+    try:
+        # Verificar que la empresa existe
+        empresa = Empresa.objects.get(id_empresa=empresa_id, verificada=True)
+        fecha_obj = datetime.strptime(fecha_str, '%Y-%m-%d').date()
+        
+        # Parsear la hora original (puede venir en formato HH:MM:SS o HH:MM)
+        if len(hora_original_str.split(':')) == 3:
+            hora_original = datetime.strptime(hora_original_str, '%H:%M:%S').time()
+        else:
+            hora_original = datetime.strptime(hora_original_str, '%H:%M').time()
+        
+        print(f"📅 Fecha: {fecha_obj}, Hora original: {hora_original}")
+        
+        # Crear datetime de la cita original
+        from django.utils import timezone
+        fecha_hora_original = timezone.make_aware(
+            datetime.combine(fecha_obj, hora_original)
+        )
+        
+        # Obtener la hora actual
+        ahora = timezone.now()
+        
+        # Calcular cuántas horas faltan para la cita original
+        tiempo_hasta_cita = fecha_hora_original - ahora
+        horas_hasta_cita = tiempo_hasta_cita.total_seconds() / 3600
+        
+        print(f"⏰ Ahora: {ahora}")
+        print(f"📍 Cita original: {fecha_hora_original}")
+        print(f"⏳ Horas hasta la cita: {horas_hasta_cita:.2f} horas")
+        
+        # Verificar que haya al menos 12 horas de anticipación
+        if horas_hasta_cita < 12:
+            print(f"❌ No hay 12 horas de anticipación (solo {horas_hasta_cita:.2f} horas)")
+            return JsonResponse({
+                'success': False,
+                'horas': [],
+                'error': f'Solo se puede editar con al menos 12 horas de anticipación. Faltan {horas_hasta_cita:.2f} horas para tu cita.',
+                'mensaje': 'No puedes editar esta cita porque no hay 12 horas de anticipación.',
+                'horas_faltantes': round(horas_hasta_cita, 2)
+            })
+        
+        print(f"✅ Hay suficiente tiempo para editar ({horas_hasta_cita:.2f} horas >= 12 horas)")
+        
+        # Obtener todas las reservas existentes para esta empresa y fecha
+        reservas_existentes = Reserva.objects.filter(
+            empresa=empresa,
+            fecha=fecha_obj
+        )
+        
+        print(f"🔍 Reservas existentes: {reservas_existentes.count()}")
+        
+        # Obtener todas las horas ocupadas (excluyendo la reserva actual si existe)
+        reserva_id_actual = request.GET.get('reserva_id')
+        horas_ocupadas = set()
+        for reserva in reservas_existentes:
+            # No incluir la hora de la reserva que se está editando
+            if reserva_id_actual and str(reserva.id_reserva) == str(reserva_id_actual):
+                continue
+            hora_str = reserva.hora.strftime('%H:%M')
+            horas_ocupadas.add(hora_str)
+        
+        print(f"🚫 Horas ocupadas: {horas_ocupadas}")
+        
+        horas_disponibles = []
+        
+        # Generar horas de 8:00 AM a 6:00 PM (horario comercial)
+        for h in range(8, 19):  # 8:00 a 18:00 (6:00 PM)
+            hora_formateada_24h = f"{h:02d}:00"
+            
+            # Crear datetime para esta hora
+            fecha_hora_candidata = timezone.make_aware(
+                datetime.combine(fecha_obj, datetime.strptime(hora_formateada_24h, '%H:%M').time())
+            )
+            
+            # VALIDACIÓN 1: Si la hora candidata ya pasó, no mostrarla
+            if fecha_hora_candidata <= ahora:
+                print(f"⏳ Hora {hora_formateada_24h} ya pasó")
+                continue
+            
+            # VALIDACIÓN 2: Verificar que haya al menos 12 horas hasta esta nueva hora
+            tiempo_hasta_nueva_hora = fecha_hora_candidata - ahora
+            horas_hasta_nueva_hora = tiempo_hasta_nueva_hora.total_seconds() / 3600
+            
+            if horas_hasta_nueva_hora < 12:
+                print(f"⏳ Hora {hora_formateada_24h} no tiene 12h de anticipación ({horas_hasta_nueva_hora:.2f}h)")
+                continue
+            
+            # VALIDACIÓN 3: La hora no debe estar ocupada
+            if hora_formateada_24h in horas_ocupadas:
+                print(f"❌ Hora {hora_formateada_24h} ocupada")
+                continue
+            
+            # Si pasa todas las validaciones, agregar
+            horas_disponibles.append(hora_formateada_24h)
+            print(f"✅ Hora disponible: {hora_formateada_24h} ({horas_hasta_nueva_hora:.2f}h de anticipación)")
+        
+        print(f"📋 Total horas disponibles: {len(horas_disponibles)}")
+        
+        if not horas_disponibles:
+            return JsonResponse({
+                'success': False,
+                'horas': [],
+                'mensaje': 'No hay horas disponibles que cumplan con el requisito de 12 horas de anticipación.',
+                'info': 'Todas las horas disponibles deben tener al menos 12 horas de anticipación desde ahora.'
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'horas': horas_disponibles,
+            'fecha': fecha_str,
+            'empresa': empresa.nombre_empresa,
+            'hora_original': hora_original_str,
+            'horas_hasta_cita_original': round(horas_hasta_cita, 2)
+        })
+
+    except Empresa.DoesNotExist:
+        print(f"❌ Empresa no encontrada: {empresa_id}")
+        return JsonResponse({
+            'success': False, 
+            'horas': [], 
+            'error': 'Empresa no encontrada'
+        })
+    except ValueError as e:
+        print(f"❌ Error de formato: {e}")
+        return JsonResponse({
+            'success': False, 
+            'horas': [], 
+            'error': f'Formato de datos inválido: {str(e)}'
+        })
     except Exception as e:
         print(f"❌ Error inesperado: {e}")
         return JsonResponse({'success': False, 'horas_disponibles': [], 'error': 'Error interno del servidor'})
@@ -1437,12 +1857,12 @@ def citas(request):
     reservas_pendientes = Reserva.objects.filter(
         estado='pendiente', 
         usuario=request.user
-    ).prefetch_related('servicios', 'empresa')
+    ).prefetch_related('servicios', 'empresa', 'reservaservicio_set')
     
     reservas_completadas = Reserva.objects.filter(
         estado='completado', 
         usuario=request.user
-    ).prefetch_related('servicios', 'empresa')
+    ).prefetch_related('servicios', 'empresa', 'reservaservicio_set')
     
     # Obtener todas las reservas del usuario para el total
     total_reservas = Reserva.objects.filter(usuario=request.user)
@@ -1454,6 +1874,21 @@ def citas(request):
     print(f"Total reservas: {total_reservas.count()}")
     for reserva in reservas_completadas:
         print(f"  - ID: {reserva.id_reserva}, Empresa: {reserva.empresa.nombre_empresa}, Usuario: {reserva.usuario.nombre_usuario}")
+
+    # Asegurarse de que cada reserva tenga un atributo legible numero_reserva_display
+    def asegurar_numero_display(qs):
+        for r in qs:
+            nr = getattr(r, 'numero_reserva', None)
+            if nr:
+                r.numero_reserva_display = nr
+            else:
+                try:
+                    r.numero_reserva_display = f"ANW-{r.id_reserva:08d}"
+                except Exception:
+                    r.numero_reserva_display = str(getattr(r, 'id_reserva', ''))
+
+    asegurar_numero_display(reservas_pendientes)
+    asegurar_numero_display(reservas_completadas)
     
     servicios = Servicio.objects.all() 
     empresas = Empresa.objects.all()
@@ -1476,7 +1911,7 @@ def citas(request):
         horas_disponibles[fecha] = []
 
         for h in range(8, 16):  # De 08:00 a 15:00
-            hora_formateada_24h = f"{h:01}:00"
+            hora_formateada_24h = f"{h:02d}:00"
 
             # Si la fecha es hoy, verifica que la hora no haya pasado
             if fecha == hoy and h < ahora.hour:
@@ -1601,16 +2036,44 @@ def obtener_detalles_reserva(request, reserva_id):
     try:
         reserva = get_object_or_404(Reserva, id_reserva=reserva_id, usuario=request.user)
         
-        # Obtener los servicios asociados
+        # Obtener los servicios asociados con su precio aplicado
         servicios_data = []
         total_precio = 0
-        for servicio in reserva.servicios.all():
+        total_servicios_adicionales = 0  # Solo servicios que NO son del plan
+        
+        # Obtener las relaciones ReservaServicio para acceder al precio_aplicado
+        reserva_servicios = ReservaServicio.objects.filter(reserva=reserva).select_related('servicio')
+        
+        for rs in reserva_servicios:
+            # Manejar precio_aplicado que puede ser None en la BD
+            precio_aplicado_val = rs.precio_aplicado if rs.precio_aplicado is not None else 0
+            try:
+                precio_aplicado_float = float(precio_aplicado_val)
+            except Exception:
+                precio_aplicado_float = 0.0
+
+            precio_original_float = float(rs.servicio.precio) if getattr(rs.servicio, 'precio', None) is not None else 0.0
+
+            # Un servicio es gratis si es del plan O si el precio aplicado es 0
+            es_gratis = bool(rs.es_servicio_plan) or precio_aplicado_float == 0.0
+
             servicios_data.append({
-                'nombre': servicio.nombre_servicio,
-                'descripcion': servicio.descripcion,
-                'precio': float(servicio.precio)
+                'nombre': rs.servicio.nombre_servicio,
+                'descripcion': rs.servicio.descripcion,
+                'precio': precio_original_float,
+                'precio_aplicado': precio_aplicado_float,
+                'es_gratis': es_gratis,
+                'es_servicio_plan': rs.es_servicio_plan  # Agregamos este campo también
             })
-            total_precio += float(servicio.precio)
+
+            total_precio += precio_aplicado_float
+
+            # Solo sumar si NO es servicio del plan
+            if not rs.es_servicio_plan:
+                total_servicios_adicionales += precio_aplicado_float
+        
+        # Verificar si todos los servicios son del plan
+        todos_servicios_son_plan = all(rs.es_servicio_plan for rs in reserva_servicios)
         
         # Formatear fecha en español
         dias_semana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
@@ -1625,6 +2088,7 @@ def obtener_detalles_reserva(request, reserva_id):
         reserva_data = {
             'id': reserva.id_reserva,
             'empresa': {
+                'id': reserva.empresa.id_empresa,  # Agregado: ID de la empresa
                 'nombre': reserva.empresa.nombre_empresa,
                 'direccion': reserva.empresa.direccion,
                 'telefono': reserva.empresa.telefono,
@@ -1637,7 +2101,10 @@ def obtener_detalles_reserva(request, reserva_id):
             'estado': reserva.estado,
             'servicios': servicios_data,
             'total': total_precio,
+            'total_servicios_adicionales': total_servicios_adicionales,  # Solo servicios adicionales
+            'todos_servicios_son_plan': todos_servicios_son_plan,  # Flag para saber si todos son del plan
             'es_pago_individual': reserva.es_pago_individual,
+            'tiene_plan': reserva.suscripcion_utilizada is not None,
             'suscripcion_info': {
                 'utilizada': reserva.suscripcion_utilizada is not None,
                 'plan_nombre': reserva.suscripcion_utilizada.plan.nombre if reserva.suscripcion_utilizada else None
@@ -1655,6 +2122,9 @@ def obtener_detalles_reserva(request, reserva_id):
             'message': 'Reserva no encontrada'
         })
     except Exception as e:
+        import traceback
+        traceback.print_exc()
+        print(f"❌ Error en obtener_detalles_reserva: {e}")
         return JsonResponse({
             'success': False,
             'message': f'Error al obtener detalles: {str(e)}'
@@ -1728,7 +2198,7 @@ def cancelar_reserva(request, reserva_id):
 
 @login_required
 def editar_reserva(request, reserva_id):
-    """Vista para editar una reserva existente"""
+    """Vista para editar una reserva existente - Solo permite cambio de hora con 12h de anticipación"""
     try:
         reserva = get_object_or_404(Reserva, id_reserva=reserva_id, usuario=request.user)
         
@@ -1737,61 +2207,99 @@ def editar_reserva(request, reserva_id):
             messages.error(request, 'Solo se pueden editar reservas pendientes')
             return redirect('citas')
         
-        # Verificar que la edición sea con al menos 24 horas de anticipación
+        # Verificar que la edición sea con al menos 12 horas de anticipación
         from django.utils import timezone
         ahora = timezone.now()
         fecha_hora_reserva = timezone.make_aware(
             datetime.combine(reserva.fecha, reserva.hora)
         )
         
-        if fecha_hora_reserva <= ahora + timedelta(hours=24):
-            messages.error(request, 'Las reservas deben editarse con al menos 24 horas de anticipación')
+        # Calcular cuántas horas faltan para la cita original
+        tiempo_hasta_cita = fecha_hora_reserva - ahora
+        horas_hasta_cita = tiempo_hasta_cita.total_seconds() / 3600
+        
+        # Verificar que haya al menos 12 horas hasta la cita original
+        if horas_hasta_cita < 12:
+            messages.error(
+                request, 
+                f'Las reservas deben editarse con al menos 12 horas de anticipación. '
+                f'Tu cita es en {horas_hasta_cita:.1f} horas. '
+                f'Si deseas cambiar la fecha, lugar o servicios, debes cancelar esta cita y crear una nueva.'
+            )
             return redirect('citas')
         
         if request.method == 'POST':
-            # Procesar la edición de la reserva
-            nueva_fecha = request.POST.get('fecha')
-            nueva_hora_12h = request.POST.get('hora')
-            nueva_empresa_id = request.POST.get('empresa')
+            # Solo se permite cambiar la hora, no la fecha ni la empresa
+            nueva_hora_str = request.POST.get('hora')
             
             # Validaciones
-            if not nueva_fecha or not nueva_hora_12h or not nueva_empresa_id:
-                messages.error(request, 'Todos los campos son obligatorios')
-                return redirect('editar_reserva', reserva_id=reserva_id)
+            if not nueva_hora_str:
+                messages.error(request, 'Debes seleccionar una nueva hora')
+                return redirect('citas')
             
             try:
-                nueva_empresa = Empresa.objects.get(id_empresa=nueva_empresa_id)
-                nueva_hora_24h = convertir_hora_24h(nueva_hora_12h)
-                fecha_obj = datetime.strptime(nueva_fecha, '%Y-%m-%d').date()
+                # Parsear la nueva hora (puede venir en formato HH:MM:SS o HH:MM)
+                if len(nueva_hora_str.split(':')) == 3:
+                    nueva_hora = datetime.strptime(nueva_hora_str, '%H:%M:%S').time()
+                else:
+                    nueva_hora = datetime.strptime(nueva_hora_str, '%H:%M').time()
                 
-                # Verificar disponibilidad de la nueva fecha/hora
+                # Verificar que la nueva hora sea diferente a la actual
+                if nueva_hora == reserva.hora:
+                    messages.warning(request, 'La hora seleccionada es la misma que la actual')
+                    return redirect('citas')
+                
+                # Crear datetime para la nueva hora (mismo día y empresa)
+                nueva_fecha_hora = timezone.make_aware(
+                    datetime.combine(reserva.fecha, nueva_hora)
+                )
+                
+                # Verificar que la nueva hora no haya pasado ya
+                if nueva_fecha_hora <= ahora:
+                    messages.error(request, 'No puedes seleccionar una hora que ya pasó')
+                    return redirect('citas')
+                
+                # Verificar que haya al menos 12 horas hasta la nueva hora
+                tiempo_hasta_nueva_hora = nueva_fecha_hora - ahora
+                horas_hasta_nueva_hora = tiempo_hasta_nueva_hora.total_seconds() / 3600
+                
+                if horas_hasta_nueva_hora < 12:
+                    messages.error(
+                        request,
+                        f'La nueva hora debe tener al menos 12 horas de anticipación. '
+                        f'La hora seleccionada solo tiene {horas_hasta_nueva_hora:.1f} horas de anticipación.'
+                    )
+                    return redirect('citas')
+                
+                # Verificar disponibilidad de la nueva hora (misma fecha y empresa)
                 reserva_existente = Reserva.objects.filter(
-                    empresa=nueva_empresa,
-                    fecha=fecha_obj,
-                    hora=nueva_hora_24h
+                    empresa=reserva.empresa,
+                    fecha=reserva.fecha,
+                    hora=nueva_hora
                 ).exclude(id_reserva=reserva_id).exists()
                 
                 if reserva_existente:
-                    messages.error(request, 'La fecha y hora seleccionadas ya están ocupadas')
-                    return redirect('editar_reserva', reserva_id=reserva_id)
+                    messages.error(request, 'La hora seleccionada ya está ocupada')
+                    return redirect('citas')
                 
-                # Actualizar la reserva
-                reserva.empresa = nueva_empresa
-                reserva.fecha = fecha_obj
-                reserva.hora = nueva_hora_24h
+                # Actualizar solo la hora de la reserva
+                hora_anterior = reserva.hora.strftime("%H:%M")
+                reserva.hora = nueva_hora
                 reserva.save()
                 
-                messages.success(request, 'Reserva actualizada exitosamente')
+                messages.success(
+                    request, 
+                    f'¡Cita actualizada exitosamente! Cambiaste de {hora_anterior} a {nueva_hora.strftime("%H:%M")}'
+                )
                 return redirect('citas')
                 
-            except (Empresa.DoesNotExist, ValueError) as e:
-                messages.error(request, 'Datos inválidos proporcionados')
-                return redirect('editar_reserva', reserva_id=reserva_id)
+            except ValueError as e:
+                messages.error(request, f'Hora inválida proporcionada: {str(e)}')
+                return redirect('citas')
         
         # GET request: mostrar formulario de edición
         context = {
             'reserva': reserva,
-            'empresas': Empresa.objects.filter(verificada=True),
         }
         return render(request, 'reservas/editar_reserva.html', context)
         
@@ -2020,37 +2528,10 @@ def login_crud(request):
         print(f"🔍 Intento de login - Tipo: {tipo_usuario}, Usuario: {nombre_usuario}")
         
         if tipo_usuario == 'admin':
-            # Verificar si el usuario existe
-            try:
-                usuario_check = Usuario.objects.get(nombre_usuario=nombre_usuario)
-                
-                # Verificar si el usuario está activo
-                if not usuario_check.is_active:
-                    messages.error(request, 'Tu cuenta de administrador ha sido desactivada. Contacta al superadministrador.')
-                    return redirect('logincrud')
-                
-                # Verificar si puede intentar hacer login (no está bloqueado)
-                if not usuario_check.can_attempt_login():
-                    if usuario_check.lockout_time:
-                        time_since_lockout = timezone.now() - usuario_check.lockout_time
-                        remaining_minutes = max(0, 30 - int(time_since_lockout.total_seconds() / 60))
-                        messages.error(request, f'Tu cuenta de administrador está temporalmente bloqueada por seguridad debido a múltiples intentos fallidos. Intenta nuevamente en {remaining_minutes} minutos.')
-                    else:
-                        messages.error(request, 'Tu cuenta de administrador está temporalmente bloqueada por seguridad. Contacta al superadministrador.')
-                    return redirect('logincrud')
-                
-            except Usuario.DoesNotExist:
-                # Si el usuario no existe, mostrar mensaje genérico
-                messages.error(request, 'Usuario o contraseña de administrador incorrectos.')
-                return redirect('logincrud')
-            
-            # Autenticación del administrador
+            # Autenticación del administrador (sin sistema de bloqueo por intentos)
             usuario = authenticate(request, username=nombre_usuario, password=contrasena)
             
             if usuario is not None:
-                # Login exitoso - resetear intentos fallidos
-                usuario.reset_failed_attempts()
-                
                 # Verificar si el usuario tiene rol de admin y está activo
                 if hasattr(usuario, 'rol') and usuario.rol == 'admin' and usuario.is_active:
                     auth_login(request, usuario)  # Iniciar sesión con el usuario autenticado
@@ -2063,25 +2544,8 @@ def login_crud(request):
                     messages.error(request, 'Acceso denegado. Solo los administradores pueden acceder.')
                     return redirect('logincrud')
             else:
-                # Login fallido - incrementar intentos fallidos
-                try:
-                    usuario_fallido = Usuario.objects.get(nombre_usuario=nombre_usuario)
-                    usuario_fallido.increment_failed_attempts()
-                    
-                    # Mostrar mensaje específico según los intentos restantes
-                    remaining_attempts = usuario_fallido.get_remaining_attempts()
-                    
-                    if usuario_fallido.is_locked_out:
-                        messages.error(request, 'Has excedido el número máximo de intentos de login de administrador (6). Tu cuenta ha sido bloqueada temporalmente por 30 minutos por seguridad.')
-                    elif remaining_attempts <= 3 and remaining_attempts > 0:
-                        messages.warning(request, f'Usuario o contraseña de administrador incorrectos. Te quedan {remaining_attempts} intentos antes de que tu cuenta sea bloqueada temporalmente.')
-                    else:
-                        messages.error(request, 'Usuario o contraseña de administrador incorrectos.')
-                        
-                except Usuario.DoesNotExist:
-                    # Si el usuario no existe, mostrar mensaje genérico
-                    messages.error(request, 'Usuario o contraseña de administrador incorrectos.')
-                
+                # Login fallido - solo mostrar mensaje genérico (sin contar intentos)
+                messages.error(request, 'Usuario o contraseña de administrador incorrectos.')
                 return redirect('logincrud')
                 
         elif tipo_usuario == 'empresa':
@@ -2090,8 +2554,26 @@ def login_crud(request):
                 # Buscar la empresa por email (usando nombre_usuario como email)
                 empresa = Empresa.objects.get(email=nombre_usuario)
                 
+                # Verificar si la cuenta está activa
+                if not empresa.is_active:
+                    messages.error(request, 'Su cuenta empresarial ha sido desactivada. Contacte al administrador para más información.')
+                    return redirect('logincrud')
+                
+                # Verificar si puede intentar hacer login (no está bloqueada)
+                if not empresa.can_attempt_login():
+                    if empresa.lockout_time:
+                        time_since_lockout = timezone.now() - empresa.lockout_time
+                        remaining_minutes = max(0, 15 - int(time_since_lockout.total_seconds() / 60))
+                        messages.error(request, f'Su cuenta empresarial está temporalmente bloqueada por seguridad debido a múltiples intentos fallidos. Intente nuevamente en {remaining_minutes} minutos.')
+                    else:
+                        messages.error(request, 'Su cuenta empresarial está temporalmente bloqueada por seguridad. Contacte al administrador.')
+                    return redirect('logincrud')
+                
                 # Verificar la contraseña
                 if check_password(contrasena, empresa.contrasena):
+                    # Resetear intentos fallidos en login exitoso
+                    empresa.reset_failed_attempts()
+                    
                     # Verificar si la empresa está verificada
                     if empresa.verificada:
                         # Guardar información de la empresa en la sesión
@@ -2114,7 +2596,19 @@ def login_crud(request):
                         messages.warning(request, mensaje_verificacion)
                         return redirect('logincrud')
                 else:
-                    messages.error(request, 'Contraseña de empresa incorrecta.')
+                    # Login fallido - incrementar intentos fallidos
+                    empresa.increment_failed_attempts()
+                    
+                    # Mostrar mensaje específico según los intentos restantes
+                    remaining_attempts = empresa.get_remaining_attempts()
+                    
+                    if empresa.lockout_time:  # Si tiene tiempo de bloqueo activo
+                        messages.error(request, 'Ha excedido el número máximo de intentos de login empresarial. Su cuenta ha sido bloqueada temporalmente por 15 minutos por seguridad.')
+                    elif remaining_attempts <= 3 and remaining_attempts > 0:
+                        messages.warning(request, f'Contraseña de empresa incorrecta. Le quedan {remaining_attempts} intentos antes de que su cuenta sea bloqueada temporalmente.')
+                    else:
+                        messages.error(request, 'Contraseña de empresa incorrecta.')
+                    
                     return redirect('logincrud')
                     
             except Empresa.DoesNotExist:
@@ -2283,7 +2777,7 @@ def empresa_password_reset_confirm(request, token):
             empresa.token_reset = None  # Invalidar el token
             empresa.save()
             
-            messages.success(request, '¡Contraseña restablecida exitosamente! Ya puedes iniciar sesión.')
+            # No agregar mensaje aquí porque la página de éxito ya muestra la confirmación
             return redirect('empresa_password_reset_complete')
         
         return render(request, 'auth/empresa/reset_contrasena.html', {'token': token, 'empresa': empresa})
@@ -2437,7 +2931,7 @@ def usuarios_crud(request):
     if tab == 'inactivos':
         usuarios = Usuario.objects.filter(is_active=False)
     elif tab == 'bloqueados':
-        usuarios = Usuario.objects.filter(is_locked_out=True)
+        usuarios = Usuario.objects.filter(lockout_time__isnull=False)  # Usuarios con bloqueo temporal activo
     else:
         usuarios = Usuario.objects.filter(is_active=True)
     
@@ -2449,7 +2943,7 @@ def usuarios_crud(request):
     total_usuarios_inactivos = todos_usuarios.filter(is_active=False).count()
     total_admins = todos_usuarios.filter(rol='admin', is_active=True).count()
     total_clientes = todos_usuarios.filter(rol='cliente', is_active=True).count()
-    total_usuarios_bloqueados = todos_usuarios.filter(is_locked_out=True).count()
+    total_usuarios_bloqueados = todos_usuarios.filter(lockout_time__isnull=False).count()  # Bloqueados temporalmente
     usuarios_con_intentos_fallidos = todos_usuarios.filter(failed_login_attempts__gt=0).count()
 
     # Filtrar según los parámetros de búsqueda
@@ -2512,7 +3006,7 @@ def usuarios_crud(request):
             usuario.is_active = True
             usuario.save()
             messages.success(request, 'El usuario ha sido reactivado.')
-            return redirect('usuarioscrud?tab=activos')
+            return redirect('/usuarioscrud/?tab=activos')
         
         # Manejar la creación de nuevos usuarios
         if 'nombre_completo' in request.POST and 'id_usuario' not in request.POST:
@@ -2944,7 +3438,9 @@ def citas_crud(request):
                 'id_reserva': reserva.id_reserva,
                 'usuario_nombre': reserva.usuario.nombre_completo,
                 'usuario_username': reserva.usuario.nombre_usuario,
+                'usuario_telefono': reserva.usuario.telefono or '',
                 'empresa_nombre': reserva.empresa.nombre_empresa if reserva.empresa else 'Sin empresa',
+                'empresa_id': reserva.empresa.id_empresa if reserva.empresa else None,
                 'fecha': reserva.fecha.strftime('%d/%m/%Y'),
                 'hora': reserva.hora.strftime('%H:%M'),
                 'estado': reserva.estado,
@@ -2953,7 +3449,6 @@ def citas_crud(request):
                 'tipo_vehiculo': reserva.tipo_vehiculo or '',
                 'placa_vehiculo': reserva.placa_vehiculo or '',
                 'conductor_asignado': reserva.conductor_asignado or '',
-                'descuento_empresarial': float(reserva.descuento_empresarial) if reserva.descuento_empresarial else 0,
                 'servicios': servicios_lista,
                 'total_precio': sum(float(rs.servicio.precio) for rs in reserva.reservaservicio_set.all()),
             })
@@ -3158,8 +3653,8 @@ def servicios_crud(request):
     busqueda = request.GET.get('busqueda', '').strip()
     estado_filtro = request.GET.get('estado', '').strip()
     
-    # Base queryset con optimización
-    servicios_qs = Servicio.objects.all().prefetch_related('empresaservicio_set__empresa')
+    # Base queryset con optimización y orden
+    servicios_qs = Servicio.objects.all().prefetch_related('empresaservicio_set__empresa').order_by('-id_servicio')
     
     # Aplicar filtros
     if busqueda:
@@ -3376,6 +3871,9 @@ def eliminar_servicio(request, servicio_id):
 @admin_required
 def gestionar_asignaciones_servicios(request):
     """Vista para gestionar las asignaciones de servicios a empresas"""
+    from django.core.paginator import Paginator
+    from django.http import JsonResponse
+    
     empresas = Empresa.objects.all().order_by('nombre_empresa')
     servicios = Servicio.objects.all().order_by('nombre_servicio')
     asignaciones = EmpresaServicio.objects.select_related('empresa', 'servicio').all()
@@ -3399,7 +3897,56 @@ def gestionar_asignaciones_servicios(request):
     
     # Procesar formulario de asignación masiva
     if request.method == 'POST':
-        if 'asignacion_masiva' in request.POST:
+        # Asignación masiva: Empresa → Servicios
+        if 'asignacion_masiva_empresa' in request.POST:
+            empresa_id = request.POST.get('empresa_id')
+            servicios_ids = request.POST.getlist('servicios')
+            
+            if empresa_id and servicios_ids:
+                empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+                
+                # Eliminar asignaciones actuales
+                EmpresaServicio.objects.filter(empresa=empresa).delete()
+                
+                # Crear nuevas asignaciones
+                count = 0
+                for servicio_id in servicios_ids:
+                    servicio = get_object_or_404(Servicio, id_servicio=servicio_id)
+                    EmpresaServicio.objects.create(empresa=empresa, servicio=servicio)
+                    count += 1
+                
+                messages.success(request, f'✓ {count} servicio(s) asignado(s) exitosamente a {empresa.nombre_empresa}.')
+                return redirect('gestionar_asignaciones_servicios')
+            else:
+                messages.error(request, 'Debes seleccionar una empresa y al menos un servicio.')
+                return redirect('gestionar_asignaciones_servicios')
+        
+        # Asignación masiva inversa: Servicio → Empresas
+        elif 'asignacion_masiva_servicio' in request.POST:
+            servicio_id = request.POST.get('servicio_id')
+            empresas_ids = request.POST.getlist('empresas')
+            
+            if servicio_id and empresas_ids:
+                servicio = get_object_or_404(Servicio, id_servicio=servicio_id)
+                
+                # Eliminar asignaciones actuales de este servicio
+                EmpresaServicio.objects.filter(servicio=servicio).delete()
+                
+                # Crear nuevas asignaciones
+                count = 0
+                for empresa_id in empresas_ids:
+                    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+                    EmpresaServicio.objects.create(empresa=empresa, servicio=servicio)
+                    count += 1
+                
+                messages.success(request, f'✓ El servicio "{servicio.nombre_servicio}" ha sido asignado a {count} empresa(s).')
+                return redirect('gestionar_asignaciones_servicios')
+            else:
+                messages.error(request, 'Debes seleccionar un servicio y al menos una empresa.')
+                return redirect('gestionar_asignaciones_servicios')
+        
+        # Compatibilidad con versión anterior
+        elif 'asignacion_masiva' in request.POST:
             empresa_id = request.POST.get('empresa_id')
             servicios_ids = request.POST.getlist('servicios')
             
@@ -3430,10 +3977,38 @@ def gestionar_asignaciones_servicios(request):
     total_asignaciones = EmpresaServicio.objects.count()
     empresas_sin_servicios = empresas.exclude(id_empresa__in=asignaciones_dict.keys()).count()
     
+    # Paginación de asignaciones
+    page = request.GET.get('page', 1)
+    paginator = Paginator(asignaciones, 10)  # 10 asignaciones por página
+    asignaciones_paginadas = paginator.get_page(page)
+    
+    # Si es una petición AJAX, devolver solo los datos de la tabla
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        asignaciones_html = []
+        for asignacion in asignaciones_paginadas:
+            asignaciones_html.append({
+                'empresa_nombre': asignacion.empresa.nombre_empresa,
+                'empresa_direccion': asignacion.empresa.direccion,
+                'empresa_id': asignacion.empresa.id_empresa,
+                'servicio_nombre': asignacion.servicio.nombre_servicio,
+                'servicio_id': asignacion.servicio.id_servicio,
+                'servicio_precio': float(asignacion.servicio.precio),
+                'empresa_verificada': asignacion.empresa.verificada,
+            })
+        
+        return JsonResponse({
+            'asignaciones': asignaciones_html,
+            'has_previous': asignaciones_paginadas.has_previous(),
+            'has_next': asignaciones_paginadas.has_next(),
+            'page_number': asignaciones_paginadas.number,
+            'num_pages': paginator.num_pages,
+            'total_asignaciones': paginator.count,
+        })
+    
     context = {
         'empresas': empresas,
         'servicios': servicios,
-        'asignaciones': asignaciones,
+        'asignaciones': asignaciones_paginadas,
         'asignaciones_dict': asignaciones_dict,
         'total_empresas': total_empresas,
         'total_servicios': total_servicios,
@@ -3443,7 +4018,8 @@ def gestionar_asignaciones_servicios(request):
         'servicio_filtro': servicio_filtro,
     }
     
-    return render(request, 'empresas/gestionar_asignaciones_servicios.html', context)
+    return render(request, 'servicios/gestionar_asignaciones_servicios.html', context)
+
 
 
 @admin_required
@@ -3473,7 +4049,7 @@ def asignar_servicio_empresa(request, empresa_id):
         'servicios_asignados': list(servicios_asignados),
     }
     
-    return render(request, 'servicios/asignar_servicio_empresa.html', context)
+    return render(request, 'empresas/asignar_servicio_empresa.html', context)
 
 
 @admin_required
@@ -3507,9 +4083,16 @@ def empresas_crud(request):
     nombre_empresa = request.GET.get('nombre_empresa', '')
     verificacion = request.GET.get('verificacion', '')
     busqueda = request.GET.get('busqueda', '')
+    estado = request.GET.get('estado', 'activas')  # Nuevo filtro para estado (activas/desactivadas)
 
     # Aplicar filtros
     empresas_filtradas = todas_empresas
+
+    # Filtro de estado (activas o desactivadas)
+    if estado == 'activas':
+        empresas_filtradas = empresas_filtradas.filter(is_active=True)
+    elif estado == 'desactivadas':
+        empresas_filtradas = empresas_filtradas.filter(is_active=False)
 
     if nombre_empresa:
         empresas_filtradas = empresas_filtradas.filter(nombre_empresa__icontains=nombre_empresa)
@@ -3535,6 +4118,24 @@ def empresas_crud(request):
             empresa_a_eliminar = get_object_or_404(Empresa, id_empresa=empresa_id)
             empresa_a_eliminar.delete()
             messages.error(request, 'La empresa ha sido eliminada.')
+            return redirect('empresascrud')
+
+        # Manejar la activación de empresas
+        if 'activar' in request.POST:
+            empresa_id = request.POST.get('activar')
+            empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+            empresa.is_active = True
+            empresa.save()
+            messages.success(request, f'La empresa "{empresa.nombre_empresa}" ha sido activada exitosamente.')
+            return redirect('empresascrud')
+
+        # Manejar la desactivación de empresas
+        if 'desactivar' in request.POST:
+            empresa_id = request.POST.get('desactivar')
+            empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+            empresa.is_active = False
+            empresa.save()
+            messages.warning(request, f'La empresa "{empresa.nombre_empresa}" ha sido desactivada.')
             return redirect('empresascrud')
 
         # Manejar el cambio de estado de verificación
@@ -3649,6 +4250,8 @@ def empresas_crud(request):
     # Calcular estadísticas basadas en todas las empresas
     empresas_verificadas_total = todas_empresas.filter(verificada=True).count()
     empresas_sin_verificar_total = todas_empresas.filter(verificada=False).count()
+    empresas_activas_total = todas_empresas.filter(is_active=True).count()
+    empresas_desactivadas_total = todas_empresas.filter(is_active=False).count()
     
     # Calcular empresas con servicios asignados
     empresas_con_servicios_total = todas_empresas.filter(
@@ -3663,12 +4266,15 @@ def empresas_crud(request):
         'empresas_sin_verificar': empresas_sin_verificar_total,
         'empresas_pendientes': empresas_sin_verificar_total,  # Las pendientes son las sin verificar
         'empresas_con_servicios': empresas_con_servicios_total,
+        'empresas_activas': empresas_activas_total,
+        'empresas_desactivadas': empresas_desactivadas_total,
         'total_empresas': todas_empresas.count(),
         'empresas_nuevas_24h': empresas_nuevas_24h,  # Nuevas empresas en últimas 24 horas
         'filtros_activos': {
             'nombre_empresa': nombre_empresa,
             'verificacion': verificacion,
             'busqueda': busqueda,
+            'estado': estado,
         }
     })
 
@@ -3679,7 +4285,7 @@ def editar_empresa(request, empresa_id):
     empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
     
     if request.method == "POST":
-        # Obtener los datos del formulario
+        # Obtener los datos básicos del formulario
         nombre_empresa = request.POST.get('nombre_empresa')
         direccion = request.POST.get('direccion')
         telefono = request.POST.get('telefono')
@@ -3687,8 +4293,40 @@ def editar_empresa(request, empresa_id):
         # La plantilla usa 'nueva_contrasena' y 'confirmar_contrasena'
         nueva_contrasena = request.POST.get('nueva_contrasena')
         confirmar_contrasena = request.POST.get('confirmar_contrasena')
+        
+        # Obtener datos fiscales
+        nit_empresa = request.POST.get('nit_empresa')
+        razon_social = request.POST.get('razon_social')
+        regimen_tributario = request.POST.get('regimen_tributario')
+        
+        # Obtener datos del titular de la cuenta
+        titular_cuenta = request.POST.get('titular_cuenta')
+        tipo_documento_titular = request.POST.get('tipo_documento_titular')
+        numero_documento_titular = request.POST.get('numero_documento_titular')
+        
+        # Obtener datos bancarios
+        banco = request.POST.get('banco')
+        tipo_cuenta = request.POST.get('tipo_cuenta')
+        numero_cuenta = request.POST.get('numero_cuenta')
+        swift_code = request.POST.get('swift_code')
+        iban = request.POST.get('iban')
+        
+        # Obtener datos de contacto para facturación
+        email_facturacion = request.POST.get('email_facturacion')
+        telefono_facturacion = request.POST.get('telefono_facturacion')
+        responsable_pagos = request.POST.get('responsable_pagos')
+        
+        # Obtener notas bancarias
+        notas_bancarias = request.POST.get('notas_bancarias')
+        
+        # Obtener verificación de datos bancarios (solo admins)
+        datos_bancarios_verificados = request.POST.get('datos_bancarios_verificados') == '1'
+        
+        # Obtener estados
+        verificada = request.POST.get('verificada') == '1'
+        activa = request.POST.get('activa') == '1'
 
-        # Actualizar los campos de la empresa
+        # Actualizar los campos básicos de la empresa
         if nombre_empresa:
             empresa.nombre_empresa = nombre_empresa
         if direccion:
@@ -3697,6 +4335,50 @@ def editar_empresa(request, empresa_id):
             empresa.telefono = telefono
         if email:
             empresa.email = email
+        
+        # Actualizar datos fiscales
+        empresa.nit_empresa = nit_empresa if nit_empresa else None
+        empresa.razon_social = razon_social if razon_social else None
+        empresa.regimen_tributario = regimen_tributario if regimen_tributario else None
+        
+        # Actualizar datos del titular
+        empresa.titular_cuenta = titular_cuenta if titular_cuenta else None
+        empresa.tipo_documento_titular = tipo_documento_titular if tipo_documento_titular else None
+        empresa.numero_documento_titular = numero_documento_titular if numero_documento_titular else None
+        
+        # Actualizar datos bancarios
+        empresa.banco = banco if banco else None
+        empresa.tipo_cuenta = tipo_cuenta if tipo_cuenta else None
+        empresa.numero_cuenta = numero_cuenta if numero_cuenta else None
+        empresa.swift_code = swift_code if swift_code else None
+        empresa.iban = iban if iban else None
+        
+        # Actualizar contacto de facturación
+        empresa.email_facturacion = email_facturacion if email_facturacion else None
+        empresa.telefono_facturacion = telefono_facturacion if telefono_facturacion else None
+        empresa.responsable_pagos = responsable_pagos if responsable_pagos else None
+        
+        # Actualizar notas bancarias
+        empresa.notas_bancarias = notas_bancarias if notas_bancarias else None
+        
+        # Actualizar verificación de datos bancarios (solo si es admin/staff)
+        if request.user.is_staff or request.user.rol == 'admin':
+            # Si se está marcando como verificado y antes no lo estaba
+            if datos_bancarios_verificados and not empresa.datos_bancarios_verificados:
+                empresa.datos_bancarios_verificados = True
+                empresa.fecha_verificacion_bancaria = timezone.now()
+                empresa.verificado_por = request.user
+                messages.success(request, 'Los datos bancarios han sido marcados como verificados.')
+            # Si se está desmarcando la verificación
+            elif not datos_bancarios_verificados and empresa.datos_bancarios_verificados:
+                empresa.datos_bancarios_verificados = False
+                empresa.fecha_verificacion_bancaria = None
+                empresa.verificado_por = None
+                messages.warning(request, 'Se ha removido la verificación de datos bancarios.')
+        
+        # Actualizar estados
+        empresa.verificada = verificada
+        empresa.is_active = activa
 
         # Si se quiere cambiar la contraseña, validar y guardar
         if nueva_contrasena or confirmar_contrasena:
@@ -3713,6 +4395,16 @@ def editar_empresa(request, empresa_id):
             empresa.contrasena = make_password(nueva_contrasena)
 
         empresa.save()
+        
+        # Mensajes informativos sobre datos bancarios
+        if empresa.datos_bancarios_completos():
+            if empresa.datos_bancarios_verificados:
+                messages.success(request, f'La empresa "{empresa.nombre_empresa}" está lista para recibir pagos.')
+            else:
+                messages.info(request, f'La empresa "{empresa.nombre_empresa}" tiene datos bancarios completos pero aún no verificados.')
+        else:
+            messages.warning(request, f'La empresa "{empresa.nombre_empresa}" no tiene datos bancarios completos para recibir pagos.')
+        
         messages.success(request, f'La empresa "{empresa.nombre_empresa}" ha sido actualizada exitosamente.')
         return redirect('empresascrud')
     
@@ -3809,6 +4501,57 @@ def home_crud(request):
     except:
         ingresos_estimados_mes = 0
     
+    # Ingresos reales con descuentos aplicados (TODAS las reservas completadas)
+    try:
+        # Obtener TODAS las reservas completadas (sin filtro de fecha)
+        reservas_completadas_todas = Reserva.objects.filter(
+            estado='completado'
+        )
+        
+        ingresos_reales_totales = 0
+        ingresos_sin_descuento_totales = 0
+        total_descuentos_otorgados = 0
+        reservas_con_descuento = 0
+        
+        for reserva in reservas_completadas_todas:
+            # Obtener todos los servicios de esta reserva
+            reserva_servicios = reserva.reservaservicio_set.all()
+            
+            for rs in reserva_servicios:
+                # Solo contar si tiene precio_aplicado Y precio_original definidos
+                if rs.precio_aplicado is not None and rs.precio_original is not None:
+                    precio_con_descuento = float(rs.precio_aplicado)
+                    precio_sin_descuento = float(rs.precio_original)
+                    
+                    ingresos_reales_totales += precio_con_descuento
+                    ingresos_sin_descuento_totales += precio_sin_descuento
+                    
+                    # Solo contar descuento si hay diferencia
+                    if precio_sin_descuento > precio_con_descuento:
+                        total_descuentos_otorgados += (precio_sin_descuento - precio_con_descuento)
+                        reservas_con_descuento += 1
+                
+                # Si no tiene precios guardados, usar el precio actual del servicio
+                elif rs.precio_aplicado is None and rs.precio_original is None:
+                    precio_servicio = float(rs.servicio.precio)
+                    ingresos_reales_totales += precio_servicio
+                    ingresos_sin_descuento_totales += precio_servicio
+        
+        # Calcular el porcentaje de descuento promedio
+        porcentaje_descuento_promedio = 0
+        if ingresos_sin_descuento_totales > 0:
+            porcentaje_descuento_promedio = round((total_descuentos_otorgados / ingresos_sin_descuento_totales) * 100, 1)
+        
+    except Exception as e:
+        print(f"Error calculando ingresos reales: {e}")
+        import traceback
+        traceback.print_exc()
+        ingresos_reales_totales = 0
+        ingresos_sin_descuento_totales = 0
+        total_descuentos_otorgados = 0
+        porcentaje_descuento_promedio = 0
+        reservas_con_descuento = 0
+    
     # === DATOS PARA GRÁFICOS ===
     # Reservas por día en la última semana
     reservas_por_dia = []
@@ -3824,6 +4567,22 @@ def home_crud(request):
     empresas_activas = Empresa.objects.annotate(
         total_reservas=Count('reserva')
     ).filter(total_reservas__gt=0).order_by('-total_reservas')[:5]
+    
+    # === RANKINGS Y PREMIOS ===
+    # Top 3 clientes más frecuentes (por número de reservas)
+    top_clientes = Usuario.objects.filter(rol='cliente').annotate(
+        total_reservas=Count('reserva')
+    ).filter(total_reservas__gt=0).order_by('-total_reservas')[:3]
+    
+    # Top 3 empresas del mes (por reservas del mes actual)
+    top_empresas_mes = Empresa.objects.annotate(
+        reservas_mes=Count('reserva', filter=Q(reserva__fecha__gte=inicio_mes))
+    ).filter(reservas_mes__gt=0).order_by('-reservas_mes')[:3]
+    
+    # Servicios mejor valorados (por número de reservas completadas)
+    servicios_mejor_valorados = Servicio.objects.annotate(
+        total_reservas=Count('reserva', filter=Q(reserva__estado='completado'))
+    ).filter(total_reservas__gt=0).order_by('-total_reservas')[:3]
     
     context = {
         # Estadísticas principales
@@ -3865,6 +4624,14 @@ def home_crud(request):
         'porcentaje_pendientes': porcentaje_pendientes,
         'ingresos_estimados_mes': round(ingresos_estimados_mes, 2),
         
+        # Nuevas métricas de ingresos con descuentos (TOTALES)
+        'ingresos_reales_totales': round(ingresos_reales_totales, 2),
+        'ingresos_sin_descuento_totales': round(ingresos_sin_descuento_totales, 2),
+        'total_descuentos_otorgados': round(total_descuentos_otorgados, 2),
+        'porcentaje_descuento_promedio': porcentaje_descuento_promedio,
+        'reservas_completadas': reservas_completadas,
+        'reservas_con_descuento': reservas_con_descuento,
+        
         # Datos para actividad reciente
         'reservas_recientes': reservas_recientes,
         'comentarios_recientes': comentarios_recientes,
@@ -3874,6 +4641,11 @@ def home_crud(request):
         'reservas_por_dia': reservas_por_dia,
         'reservas_por_estado': list(reservas_por_estado),
         'empresas_activas': empresas_activas,
+        
+        # Rankings y Premios
+        'top_clientes': top_clientes,
+        'top_empresas_mes': top_empresas_mes,
+        'servicios_mejor_valorados': servicios_mejor_valorados,
         
         # Información adicional
         'fecha_hoy': hoy,
@@ -4008,8 +4780,15 @@ def citas_empresa(request):
         reservas_con_servicios = []
         for reserva in reservas:
             servicios = reserva.servicios.all()
+            # Preparar un número legible para la reserva: usar campo numero_reserva si existe, sino formatear con prefijo
+            numero_reserva = getattr(reserva, 'numero_reserva', None)
+            if not numero_reserva:
+                # Formato ANW-00000001 (padding 8)
+                numero_reserva = f"ANW-{reserva.id_reserva:08d}"
+
             reservas_con_servicios.append({
                 'reserva': reserva,
+                'numero_reserva': numero_reserva,
                 'servicios': servicios,
                 'total_servicios': servicios.count(),
                 'precio_total': sum(servicio.precio for servicio in servicios)
@@ -4103,6 +4882,139 @@ def actualizar_estado_cita(request):
             messages.error(request, 'Error al actualizar el estado de la cita.')
     
     return redirect('citas_empresa')
+
+@empresa_required
+def generar_codigo_qr_reserva(request, reserva_id):
+    """Vista para generar y mostrar el código QR de una reserva"""
+    try:
+        import qrcode
+        import qrcode.image.svg
+        from io import BytesIO
+        import base64
+        
+        empresa_id = request.session.get('empresa_id')
+        empresa = Empresa.objects.get(id_empresa=empresa_id)
+        
+        # Verificar que la reserva pertenece a la empresa
+        reserva = Reserva.objects.get(id_reserva=reserva_id, empresa=empresa)
+        
+        # Crear los datos para el código QR
+        qr_data = {
+            'numero_reserva': reserva.numero_reserva,
+            'reserva_id': reserva.id_reserva,
+            'empresa_id': empresa.id_empresa,
+            'usuario_id': reserva.usuario.id_usuario,
+            'accion': 'completar_reserva'
+        }
+        
+        # Crear la URL que el cliente escaneará
+        qr_url = f"{request.build_absolute_uri('/')[:-1]}/completar-reserva/{reserva.numero_reserva}/"
+        
+        # Generar el código QR
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(qr_url)
+        qr.make(fit=True)
+        
+        # Crear imagen del QR
+        img = qr.make_image(fill_color="black", back_color="white")
+        
+        # Convertir a base64 para mostrar en el template
+        buffer = BytesIO()
+        img.save(buffer, format='PNG')
+        buffer.seek(0)
+        qr_image_base64 = base64.b64encode(buffer.getvalue()).decode()
+        
+        # Obtener información de servicios
+        servicios_nombres = []
+        try:
+            servicios_reserva = ReservaServicio.objects.filter(reserva=reserva)
+            servicios_nombres = [rs.servicio.nombre_servicio for rs in servicios_reserva]
+        except:
+            servicios_nombres = ['No especificado']
+        
+        # Retornar datos JSON para el modal
+        response_data = {
+            'success': True,
+            'qr_image': qr_image_base64,
+            'qr_url': qr_url,
+            'numero_reserva': reserva.numero_reserva,
+            'reserva_id': reserva.id_reserva,
+            'cliente_nombre': reserva.usuario.nombre_completo,
+            'servicio_nombre': ', '.join(servicios_nombres),
+            'fecha_reserva': f"{reserva.fecha.strftime('%d/%m/%Y')} {reserva.hora.strftime('%H:%M')}",
+            'empresa_nombre': empresa.nombre_empresa
+        }
+        
+        return JsonResponse(response_data)
+        
+    except Reserva.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Reserva no encontrada o no pertenece a tu empresa.'
+        })
+    except Exception as e:
+        print(f"❌ Error al generar código QR: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'error': 'Error al generar el código QR.'
+        })
+
+
+def completar_reserva(request, numero_reserva):
+    """Vista pública que muestra información mínima sobre el proceso de completado.
+    Si se accede desde el navegador, mostramos una página simple con instrucciones.
+    """
+    try:
+        reserva = Reserva.objects.get(numero_reserva=numero_reserva)
+        # Mostrar una página sencilla indicando que el usuario debe escanear desde la app
+        return render(request, 'reservas/completar_reserva.html', {'numero_reserva': numero_reserva, 'reserva': reserva})
+    except Reserva.DoesNotExist:
+        messages.error(request, 'Reserva no encontrada.')
+        return redirect('citas')
+
+
+@login_required
+def ajax_completar_reserva(request):
+    """Endpoint AJAX que recibe JSON { numero_reserva: 'ANW-00000001' }
+    Verifica que la reserva exista y pertenezca al usuario autenticado, marca como completada.
+    Retorna JSON { success: True/False, message: '...' }
+    """
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Método no permitido.'}, status=405)
+
+    try:
+        import json
+        data = json.loads(request.body.decode('utf-8'))
+        numero_reserva = data.get('numero_reserva')
+        if not numero_reserva:
+            return JsonResponse({'success': False, 'message': 'Número de reserva faltante.'}, status=400)
+
+        try:
+            reserva = Reserva.objects.get(numero_reserva=numero_reserva)
+        except Reserva.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Reserva no encontrada.'}, status=404)
+
+        # Verificar que la reserva pertenece al usuario que realiza la petición
+        if reserva.usuario != request.user:
+            return JsonResponse({'success': False, 'message': 'No tienes permiso para completar esta reserva.'}, status=403)
+
+        # Sólo permitir completar si está en estado pendiente
+        if reserva.estado == 'completado':
+            return JsonResponse({'success': True, 'message': 'Reserva ya estaba completada.'})
+
+        reserva.estado = 'completado'
+        reserva.save()
+
+        return JsonResponse({'success': True, 'message': 'Reserva marcada como completada.'})
+
+    except Exception as e:
+        print(f"❌ Error en ajax_completar_reserva: {e}")
+        return JsonResponse({'success': False, 'message': 'Error interno.'}, status=500)
 
 @empresa_required
 def detalle_reserva_empresa(request, reserva_id):
@@ -4683,10 +5595,27 @@ def mi_suscripcion(request):
     ).first()
     
     historial_pagos = []
+    servicios_restantes = 0
+    
     if suscripcion:
+        # Asegurar que se reinicie el contador mensual antes de mostrar la información
+        suscripcion.reiniciar_contador_mensual()
+        
         historial_pagos = HistorialPagosSuscripcion.objects.filter(
             suscripcion=suscripcion
         ).order_by('-fecha_pago')[:5]
+        
+        servicios_restantes = suscripcion.servicios_restantes()
+        
+        # Debug para verificar los cálculos
+        print(f"🔍 Mi Suscripción - Usuario: {request.user.nombre_usuario}")
+        print(f"📊 Plan: {suscripcion.plan.nombre}")
+        print(f"📊 Servicios utilizados este mes: {suscripcion.servicios_utilizados_mes}")
+        print(f"📊 Servicios totales permitidos: {suscripcion.plan.cantidad_servicios_mes}")
+        print(f"📊 Servicios restantes: {servicios_restantes}")
+        print(f"📅 Último reinicio contador: {suscripcion.ultimo_reinicio_contador}")
+        print(f"⏰ Fecha fin suscripción: {suscripcion.fecha_fin}")
+        print(f"✅ ¿Puede usar servicio?: {suscripcion.puede_usar_servicio()}")
     
     # Obtener reservas recientes relacionadas con la suscripción
     reservas_recientes = Reserva.objects.filter(
@@ -4698,7 +5627,7 @@ def mi_suscripcion(request):
         'suscripcion': suscripcion,
         'historial_pagos': historial_pagos,
         'reservas_recientes': reservas_recientes,
-        'servicios_restantes': suscripcion.servicios_restantes() if suscripcion else 0,
+        'servicios_restantes': servicios_restantes,
     }
     return render(request, 'planes/mi_suscripcion.html', context)
 
@@ -4768,6 +5697,7 @@ def verificar_disponibilidad_suscripcion(usuario):
     return True, suscripcion
 
 @admin_required
+@ensure_csrf_cookie
 def planes_crud(request):
     """Vista CRUD para gestionar planes (solo admin)"""
     planes = Plan.objects.all().order_by('precio_mensual')
@@ -4801,11 +5731,20 @@ def crear_plan(request):
             incluye_detallado_completo=request.POST.get('incluye_detallado_completo') == 'on',
         )
         
-        # Agregar servicios incluidos
+        # Agregar servicios incluidos con sus descuentos
         servicios_ids = request.POST.getlist('servicios_incluidos')
         for servicio_id in servicios_ids:
             servicio = Servicio.objects.get(id_servicio=servicio_id)
-            plan.servicios_incluidos.add(servicio)
+            # Obtener el descuento específico para este servicio
+            descuento_key = f'descuento_{servicio_id}'
+            descuento = request.POST.get(descuento_key, 0)
+            
+            # Crear la relación con el descuento
+            PlanServicio.objects.create(
+                plan=plan,
+                servicio=servicio,
+                porcentaje_descuento=descuento if descuento else 0
+            )
         
         messages.success(request, f'Plan "{plan.nombre}" creado exitosamente.')
         return redirect('planes_crud')
@@ -4814,7 +5753,7 @@ def crear_plan(request):
     context = {
         'servicios': servicios,
     }
-    return render(request, 'planes/crear_plan.html', context)
+    return render(request, 'planes/planes_individuales/crear_plan.html', context)
 
 @admin_required
 def editar_plan(request, plan_id):
@@ -4835,22 +5774,41 @@ def editar_plan(request, plan_id):
         plan.incluye_detallado_completo = request.POST.get('incluye_detallado_completo') == 'on'
         plan.save()
         
-        # Actualizar servicios incluidos
-        plan.servicios_incluidos.clear()
+        # Actualizar servicios incluidos con descuentos
+        # Eliminar todas las relaciones existentes
+        PlanServicio.objects.filter(plan=plan).delete()
+        
+        # Crear nuevas relaciones con descuentos
         servicios_ids = request.POST.getlist('servicios_incluidos')
         for servicio_id in servicios_ids:
             servicio = Servicio.objects.get(id_servicio=servicio_id)
-            plan.servicios_incluidos.add(servicio)
+            # Obtener el descuento específico para este servicio
+            descuento_key = f'descuento_{servicio_id}'
+            descuento = request.POST.get(descuento_key, 0)
+            
+            # Crear la relación con el descuento
+            PlanServicio.objects.create(
+                plan=plan,
+                servicio=servicio,
+                porcentaje_descuento=descuento if descuento else 0
+            )
         
         messages.success(request, f'Plan "{plan.nombre}" actualizado exitosamente.')
         return redirect('planes_crud')
     
     servicios = Servicio.objects.all()
+    # Obtener los servicios ya asignados al plan con sus descuentos
+    servicios_plan = {
+        ps.servicio.id_servicio: ps.porcentaje_descuento 
+        for ps in PlanServicio.objects.filter(plan=plan)
+    }
+    
     context = {
         'plan': plan,
         'servicios': servicios,
+        'servicios_plan': servicios_plan,
     }
-    return render(request, 'planes/editar_plan.html', context)
+    return render(request, 'planes/planes_individuales/editar_plan.html', context)
 
 @admin_required
 def eliminar_plan(request, plan_id):
@@ -4863,10 +5821,34 @@ def eliminar_plan(request, plan_id):
         messages.success(request, f'Plan "{plan.nombre}" desactivado exitosamente.')
         return redirect('planes_crud')
     
+    # Verificar si hay suscripciones activas
+    suscripciones_activas = SuscripcionUsuario.objects.filter(
+        plan=plan, 
+        estado='activa'
+    ).count()
+    
     context = {
         'plan': plan,
+        'suscripciones_activas': suscripciones_activas,
     }
-    return render(request, 'eliminar_plan.html', context)
+    return render(request, 'planes/planes_individuales/eliminar_plan.html', context)
+
+@admin_required
+@require_POST
+def toggle_plan_estado(request, plan_id):
+    """Vista para activar/desactivar un plan (AJAX)"""
+    plan = get_object_or_404(Plan, id_plan=plan_id)
+    plan.activo = not plan.activo
+    plan.save()
+    
+    estado_texto = 'activado' if plan.activo else 'desactivado'
+    messages.success(request, f'Plan "{plan.nombre}" {estado_texto} exitosamente.')
+    
+    return JsonResponse({
+        'success': True,
+        'activo': plan.activo,
+        'mensaje': f'Plan {estado_texto} exitosamente'
+    })
 
 @admin_required
 def suscripciones_crud(request):
@@ -4889,7 +5871,30 @@ def perfil_empresa(request):
             form = EmpresaPerfilForm(request.POST, instance=empresa)
             if form.is_valid():
                 # Guardar los datos básicos de la empresa
-                empresa_actualizada = form.save()
+                empresa_actualizada = form.save(commit=False)
+                
+                # Procesar datos bancarios adicionales del POST
+                empresa_actualizada.nit_empresa = request.POST.get('nit_empresa') or None
+                empresa_actualizada.razon_social = request.POST.get('razon_social') or None
+                empresa_actualizada.regimen_tributario = request.POST.get('regimen_tributario') or None
+                
+                empresa_actualizada.titular_cuenta = request.POST.get('titular_cuenta') or None
+                empresa_actualizada.tipo_documento_titular = request.POST.get('tipo_documento_titular') or None
+                empresa_actualizada.numero_documento_titular = request.POST.get('numero_documento_titular') or None
+                
+                empresa_actualizada.banco = request.POST.get('banco') or None
+                empresa_actualizada.tipo_cuenta = request.POST.get('tipo_cuenta') or None
+                empresa_actualizada.numero_cuenta = request.POST.get('numero_cuenta') or None
+                empresa_actualizada.swift_code = request.POST.get('swift_code') or None
+                empresa_actualizada.iban = request.POST.get('iban') or None
+                
+                empresa_actualizada.email_facturacion = request.POST.get('email_facturacion') or None
+                empresa_actualizada.telefono_facturacion = request.POST.get('telefono_facturacion') or None
+                empresa_actualizada.responsable_pagos = request.POST.get('responsable_pagos') or None
+                empresa_actualizada.notas_bancarias = request.POST.get('notas_bancarias') or None
+                
+                # Guardar la empresa actualizada
+                empresa_actualizada.save()
                 
                 # Manejar cambio de contraseña si se proporcionó
                 contrasena_actual = form.cleaned_data.get('contrasena_actual')
@@ -4901,12 +5906,21 @@ def perfil_empresa(request):
                         # Actualizar con la nueva contraseña
                         empresa_actualizada.contrasena = make_password(nueva_contrasena)
                         empresa_actualizada.save()
-                        messages.success(request, 'Perfil y contraseña actualizados exitosamente.')
+                        messages.success(request, 'Perfil, datos bancarios y contraseña actualizados exitosamente.')
                     else:
                         messages.error(request, 'La contraseña actual es incorrecta.')
                         return render(request, 'perfil_empresa.html', {'form': form, 'empresa': empresa})
                 else:
-                    messages.success(request, 'Perfil actualizado exitosamente.')
+                    # Verificar el estado de los datos bancarios
+                    if empresa_actualizada.datos_bancarios_completos():
+                        if empresa_actualizada.datos_bancarios_verificados:
+                            messages.success(request, 'Perfil actualizado. Tus datos bancarios están verificados y listos para recibir pagos.')
+                        else:
+                            messages.success(request, 'Perfil actualizado. Tus datos bancarios están completos y serán verificados pronto.')
+                    else:
+                        messages.success(request, 'Perfil actualizado.')
+                        if any([empresa_actualizada.banco, empresa_actualizada.numero_cuenta, empresa_actualizada.titular_cuenta]):
+                            messages.info(request, 'Completa todos los datos bancarios requeridos para poder recibir pagos.')
                 
                 # Actualizar datos en la sesión
                 request.session['empresa_nombre'] = empresa_actualizada.nombre_empresa
@@ -5318,7 +6332,7 @@ def crear_plan_empresarial(request):
     context = {
         'servicios': servicios,
     }
-    return render(request, 'planes/crear_plan_empresarial.html', context)
+    return render(request, 'planes/planes_empresariales/crear_plan_empresarial.html', context)
 
 @admin_required
 def editar_plan_empresarial(request, plan_id):
@@ -5366,7 +6380,7 @@ def editar_plan_empresarial(request, plan_id):
         'plan': plan,
         'servicios': servicios,
     }
-    return render(request, 'planes/editar_plan_empresarial.html', context)
+    return render(request, 'planes/planes_empresariales/editar_plan_empresarial.html', context)
 
 @admin_required
 def eliminar_plan_empresarial(request, plan_id):
@@ -5390,7 +6404,7 @@ def eliminar_plan_empresarial(request, plan_id):
                 plan.delete()
                 messages.success(request, f'Plan empresarial "{plan_nombre}" eliminado exitosamente.')
 
-            return redirect('planes/planes_empresariales_crud')
+            return redirect('planes/planes_empresariales/planes_empresariales_crud')
 
         except Exception as e:
             messages.error(request, f'Error al eliminar el plan empresarial: {str(e)}')
@@ -5425,7 +6439,7 @@ def detalle_plan_empresarial(request, plan_id):
         'total_suscripciones': total_suscripciones,
         'suscripciones_activas': suscripciones_activas,
     }
-    return render(request, 'planes/detalle_plan_empresarial.html', context)
+    return render(request, 'planes/planes_empresariales/detalle_plan_empresarial.html', context)
 
 @admin_required
 def suscripciones_empresariales_crud(request):
@@ -5627,7 +6641,7 @@ def crear_suscripcion_individual(request):
         'usuarios': usuarios,
         'planes': planes,
     }
-    return render(request, 'planes/crear_suscripcion_individual.html', context)
+    return render(request, 'planes/suscripcion_individual/crear_suscripcion_individual.html', context)
 
 @admin_required
 def editar_suscripcion_individual(request, suscripcion_id):
@@ -5663,7 +6677,7 @@ def editar_suscripcion_individual(request, suscripcion_id):
     context = {
         'suscripcion': suscripcion,
     }
-    return render(request, 'planes/editar_suscripcion_individual.html', context)
+    return render(request, 'planes/suscripcion_individual/editar_suscripcion_individual.html', context)
 
 @admin_required
 def eliminar_suscripcion_individual(request, suscripcion_id):
@@ -5683,7 +6697,7 @@ def eliminar_suscripcion_individual(request, suscripcion_id):
     context = {
         'suscripcion': suscripcion,
     }
-    return render(request, 'planes/eliminar_suscripcion_individual.html', context)
+    return render(request, 'planes/suscripcion_individual/eliminar_suscripcion_individual.html', context)
 
 @admin_required
 def pausar_suscripcion_individual(request, suscripcion_id):
@@ -5718,7 +6732,7 @@ def historial_pagos_suscripcion(request, suscripcion_id):
         'suscripcion': suscripcion,
         'pagos': pagos,
     }
-    return render(request, 'planes/historial_pagos_suscripcion.html', context)
+    return render(request, 'planes/suscripcion_individual/historial_pagos_suscripcion.html', context)
 
 
 @admin_required
@@ -5889,6 +6903,9 @@ def obtener_horas_disponibles(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+
+##### suscripciones empresariales #####
+
 @admin_required
 def detalle_suscripcion_empresarial(request, suscripcion_id):
     """Vista para ver detalles de una suscripción empresarial"""
@@ -5911,7 +6928,7 @@ def detalle_suscripcion_empresarial(request, suscripcion_id):
         'servicios_plan': servicios_plan,
         'servicios_count': servicios_plan.count(),
     }
-    return render(request, 'planes/detalle_suscripcion_empresarial.html', context)
+    return render(request, 'planes/suscripcion_empresarial/detalle_suscripcion_empresarial.html', context)
 
 @admin_required
 def editar_suscripcion_empresarial(request, suscripcion_id):
@@ -5934,7 +6951,7 @@ def editar_suscripcion_empresarial(request, suscripcion_id):
     context = {
         'suscripcion': suscripcion,
     }
-    return render(request, 'planes/editar_suscripcion_empresarial.html', context)
+    return render(request, 'planes/suscripcion_empresarial/editar_suscripcion_empresarial.html', context)
 
 @admin_required
 @require_http_methods(["POST"])
@@ -6029,3 +7046,1196 @@ def aprobar_solicitud_empresarial(request):
             'success': False,
             'message': 'Error interno del servidor'
         })
+
+
+@login_required
+def analisis_reservas_empresas(request):
+    """
+    Vista para mostrar el análisis de reservas por empresa.
+    Separa servicios con plan y sin plan, agrupa por servicio y calcula totales.
+    Incluye filtrado por mes y año con paginación.
+    """
+    from django.db.models import Count, Sum, F, Case, When, DecimalField, Value
+    from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+    from decimal import Decimal
+    from datetime import datetime, date
+    import calendar
+    
+    # Obtener filtros de mes y año
+    mes_filtro = request.GET.get('mes')
+    ano_filtro = request.GET.get('ano')
+    
+    # Si no se especifica año, usar el año actual
+    if not ano_filtro:
+        ano_filtro = datetime.now().year
+    else:
+        ano_filtro = int(ano_filtro)
+    
+    # Obtener todas las empresas con sus reservas
+    empresas_data = []
+    datos_mensuales = {}
+    
+    # Generar datos para todos los meses si no hay filtro específico
+    if not mes_filtro:
+        meses_a_procesar = range(1, 13)
+    else:
+        meses_a_procesar = [int(mes_filtro)]
+    
+    for empresa in Empresa.objects.all().order_by('nombre_empresa'):
+        empresa_datos = {
+            'empresa': empresa,
+            'datos_por_mes': {},
+            'total_ano': {
+                'reservas': 0,
+                'servicios_sin_plan': 0,
+                'servicios_con_plan': 0,
+                'valor_sin_plan': Decimal('0.00'),
+                'valor_con_plan': Decimal('0.00'),
+                'valor_total': Decimal('0.00')
+            }
+        }
+        
+        for mes_num in meses_a_procesar:
+            # Filtrar reservas por mes y año
+            reservas_mes = Reserva.objects.filter(
+                empresa=empresa,
+                fecha__year=ano_filtro,
+                fecha__month=mes_num
+            )
+            
+            if not reservas_mes.exists():
+                continue
+            
+            # Obtener servicios de este mes
+            reservas_servicios_mes = ReservaServicio.objects.filter(
+                reserva__empresa=empresa,
+                reserva__fecha__year=ano_filtro,
+                reserva__fecha__month=mes_num
+            )
+            
+            # Separar servicios con plan y sin plan
+            servicios_con_plan = reservas_servicios_mes.filter(es_servicio_plan=True)
+            servicios_sin_plan = reservas_servicios_mes.filter(es_servicio_plan=False)
+            
+            # Agrupar servicios sin plan por nombre
+            servicios_sin_plan_agrupados = {}
+            for rs in servicios_sin_plan:
+                nombre_servicio = rs.servicio.nombre_servicio
+                if nombre_servicio not in servicios_sin_plan_agrupados:
+                    servicios_sin_plan_agrupados[nombre_servicio] = {
+                        'nombre': nombre_servicio,
+                        'cantidad': 0,
+                        'total_valor': Decimal('0.00')
+                    }
+                servicios_sin_plan_agrupados[nombre_servicio]['cantidad'] += 1
+                if rs.precio_aplicado:
+                    servicios_sin_plan_agrupados[nombre_servicio]['total_valor'] += Decimal(str(rs.precio_aplicado))
+            
+            # Agrupar servicios con plan por nombre y plan específico
+            servicios_con_plan_detallados = []
+            for rs in servicios_con_plan:
+                # Obtener información del plan de forma más detallada
+                plan_info = "Sin Plan Específico"  # Por defecto
+                
+                try:
+                    # Verificar primero si tiene suscripción individual
+                    if rs.reserva.suscripcion_utilizada and hasattr(rs.reserva.suscripcion_utilizada, 'plan'):
+                        if rs.reserva.suscripcion_utilizada.plan and hasattr(rs.reserva.suscripcion_utilizada.plan, 'nombre'):
+                            plan_info = f"{rs.reserva.suscripcion_utilizada.plan.nombre}"
+                        else:
+                            plan_info = "Plan Individual (Sin Nombre)"
+                    
+                    # Verificar si tiene suscripción empresarial
+                    elif rs.reserva.suscripcion_empresarial and hasattr(rs.reserva.suscripcion_empresarial, 'plan_empresarial'):
+                        if rs.reserva.suscripcion_empresarial.plan_empresarial and hasattr(rs.reserva.suscripcion_empresarial.plan_empresarial, 'nombre'):
+                            plan_info = f"Plan Empresarial: {rs.reserva.suscripcion_empresarial.plan_empresarial.nombre}"
+                        else:
+                            plan_info = "Plan Empresarial (Sin Nombre)"
+                    
+                    # Si es servicio de plan pero no tiene suscripción asociada
+                    elif rs.es_servicio_plan:
+                        plan_info = "Servicio de Plan (Sin Suscripción Asociada)"
+                    
+                    else:
+                        plan_info = "Servicio Sin Plan Definido"
+                        
+                except Exception as e:
+                    # En caso de error, incluir información del error para depuración
+                    plan_info = f"Error al obtener plan: {str(e)}"
+                
+                # Calcular valores
+                precio_original = Decimal(str(rs.precio_original)) if rs.precio_original else Decimal('0.00')
+                precio_aplicado = Decimal(str(rs.precio_aplicado)) if rs.precio_aplicado else Decimal('0.00')
+                ahorro = precio_original - precio_aplicado
+                porcentaje_descuento = 0
+                if precio_original > 0:
+                    porcentaje_descuento = round(float((ahorro / precio_original) * 100), 1)
+                
+                servicios_con_plan_detallados.append({
+                    'nombre_servicio': rs.servicio.nombre_servicio,
+                    'plan': plan_info,
+                    'precio_original': precio_original,
+                    'precio_con_descuento': precio_aplicado,
+                    'ahorro': ahorro,
+                    'porcentaje_descuento': porcentaje_descuento,
+                    'reserva_id': rs.reserva.id_reserva
+                })
+            
+            # Agrupar por servicio y plan para totales
+            servicios_con_plan_agrupados = {}
+            for servicio in servicios_con_plan_detallados:
+                clave = f"{servicio['nombre_servicio']} - {servicio['plan']}"
+                if clave not in servicios_con_plan_agrupados:
+                    servicios_con_plan_agrupados[clave] = {
+                        'nombre': servicio['nombre_servicio'],
+                        'plan': servicio['plan'],
+                        'cantidad': 0,
+                        'total_valor_original': Decimal('0.00'),
+                        'total_valor_con_descuento': Decimal('0.00'),
+                        'total_ahorro': Decimal('0.00'),
+                        'porcentaje_descuento_promedio': 0
+                    }
+                
+                servicios_con_plan_agrupados[clave]['cantidad'] += 1
+                servicios_con_plan_agrupados[clave]['total_valor_original'] += servicio['precio_original']
+                servicios_con_plan_agrupados[clave]['total_valor_con_descuento'] += servicio['precio_con_descuento']
+                servicios_con_plan_agrupados[clave]['total_ahorro'] += servicio['ahorro']
+            
+            # Calcular porcentajes promedio de descuento
+            for servicio_data in servicios_con_plan_agrupados.values():
+                if servicio_data['total_valor_original'] > 0:
+                    porcentaje = (servicio_data['total_ahorro'] / servicio_data['total_valor_original']) * 100
+                    servicio_data['porcentaje_descuento_promedio'] = round(float(porcentaje), 1)
+            
+            # Calcular totales del mes
+            total_reservas_mes = reservas_mes.count()
+            total_servicios_sin_plan_mes = sum([data['cantidad'] for data in servicios_sin_plan_agrupados.values()])
+            total_servicios_con_plan_mes = sum([data['cantidad'] for data in servicios_con_plan_agrupados.values()])
+            total_valor_sin_plan_mes = sum([data['total_valor'] for data in servicios_sin_plan_agrupados.values()])
+            total_valor_con_plan_mes = sum([data['total_valor_con_descuento'] for data in servicios_con_plan_agrupados.values()])
+            total_valor_original_con_plan_mes = sum([data['total_valor_original'] for data in servicios_con_plan_agrupados.values()])
+            total_ahorro_con_plan_mes = sum([data['total_ahorro'] for data in servicios_con_plan_agrupados.values()])
+            total_general_mes = total_valor_sin_plan_mes + total_valor_con_plan_mes
+            
+            # Guardar datos del mes (en español)
+            meses_espanol = {
+                1: 'Enero', 2: 'Febrero', 3: 'Marzo', 4: 'Abril',
+                5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Agosto',
+                9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre', 12: 'Diciembre'
+            }
+            nombre_mes = meses_espanol[mes_num]
+            empresa_datos['datos_por_mes'][mes_num] = {
+                'nombre_mes': nombre_mes,
+                'total_reservas': total_reservas_mes,
+                'servicios_sin_plan': list(servicios_sin_plan_agrupados.values()),
+                'servicios_con_plan': list(servicios_con_plan_agrupados.values()),
+                'total_servicios_sin_plan': total_servicios_sin_plan_mes,
+                'total_servicios_con_plan': total_servicios_con_plan_mes,
+                'total_valor_sin_plan': total_valor_sin_plan_mes,
+                'total_valor_con_plan': total_valor_con_plan_mes,
+                'total_valor_original_con_plan': total_valor_original_con_plan_mes,
+                'total_ahorro_con_plan': total_ahorro_con_plan_mes,
+                'total_general': total_general_mes
+            }
+            
+            # Sumar a totales anuales
+            empresa_datos['total_ano']['reservas'] += total_reservas_mes
+            empresa_datos['total_ano']['servicios_sin_plan'] += total_servicios_sin_plan_mes
+            empresa_datos['total_ano']['servicios_con_plan'] += total_servicios_con_plan_mes
+            empresa_datos['total_ano']['valor_sin_plan'] += total_valor_sin_plan_mes
+            empresa_datos['total_ano']['valor_con_plan'] += total_valor_con_plan_mes
+            empresa_datos['total_ano']['valor_total'] += total_general_mes
+        
+        # Solo agregar empresas que tienen datos
+        if empresa_datos['datos_por_mes']:
+            empresas_data.append(empresa_datos)
+    
+    # Calcular totales globales
+    total_empresas = len(empresas_data)
+    total_reservas_global = sum([data['total_ano']['reservas'] for data in empresas_data])
+    total_servicios_sin_plan_global = sum([data['total_ano']['servicios_sin_plan'] for data in empresas_data])
+    total_servicios_con_plan_global = sum([data['total_ano']['servicios_con_plan'] for data in empresas_data])
+    total_valor_global = sum([data['total_ano']['valor_total'] for data in empresas_data])
+    
+    # Generar lista de años disponibles
+    anos_disponibles = list(range(2020, datetime.now().year + 2))
+    
+    # Lista de meses
+    meses_disponibles = [
+        (1, 'Enero'), (2, 'Febrero'), (3, 'Marzo'), (4, 'Abril'),
+        (5, 'Mayo'), (6, 'Junio'), (7, 'Julio'), (8, 'Agosto'),
+        (9, 'Septiembre'), (10, 'Octubre'), (11, 'Noviembre'), (12, 'Diciembre')
+    ]
+    
+    # Implementar paginación (2 empresas por página)
+    paginator = Paginator(empresas_data, 2)
+    page_number = request.GET.get('page')
+    
+    try:
+        page_obj = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+    
+    context = {
+        'empresas_data': page_obj,
+        'page_obj': page_obj,
+        'totales_globales': {
+            'total_empresas': total_empresas,
+            'total_reservas': total_reservas_global,
+            'total_servicios_sin_plan': total_servicios_sin_plan_global,
+            'total_servicios_con_plan': total_servicios_con_plan_global,
+            'total_valor': total_valor_global
+        },
+        'filtros': {
+            'mes_actual': int(mes_filtro) if mes_filtro else None,
+            'ano_actual': ano_filtro,
+            'meses_disponibles': meses_disponibles,
+            'anos_disponibles': anos_disponibles
+        }
+    }
+    
+    return render(request, 'reservas/analisis_reservas_empresas.html', context)
+
+
+# ======================================================================
+# VISTAS PARA GESTIÓN DE PAGOS A EMPRESAS  
+# ======================================================================
+
+@admin_required
+def gestion_pagos_empresas(request):
+    """
+    Vista principal para la gestión de pagos a empresas
+    """
+    # Obtener filtros
+    empresa_filtro = request.GET.get('empresa', '')
+    estado_filtro = request.GET.get('estado', '')
+    fecha_desde = request.GET.get('fecha_desde', '')
+    fecha_hasta = request.GET.get('fecha_hasta', '')
+    
+    # Nueva lógica: mostrar resumen de empresas con reservas pendientes (no pagadas)
+    # Consideramos reservas completadas y que no estén marcadas como pagadas a la empresa
+    empresas_qs = Empresa.objects.filter(is_active=True)
+
+    # Si hay filtro por empresa, limitar
+    if empresa_filtro:
+        empresas_qs = empresas_qs.filter(id_empresa=empresa_filtro)
+
+    empresas_pendientes = []
+    empresas_pagadas = []
+
+    # Construir lista de empresas con reservas pendientes
+    for empresa in empresas_qs.order_by('nombre_empresa'):
+        reservas_pendientes = Reserva.objects.filter(
+            empresa=empresa,
+            estado='completado',
+        ).filter(Q(pagado_empresa=False) | Q(pagado_empresa__isnull=True))
+
+        if reservas_pendientes.exists():
+            total_pendiente = 0
+            for r in reservas_pendientes:
+                detalle = r.obtener_detalle_servicios()
+                # Usar total_original y descontar el 12% de comisión de AutoNEW
+                total_original = detalle.get('total_original', 0)
+                pago_empresa = total_original * 0.88  # 88% para la empresa (100% - 12% comisión)
+                total_pendiente += pago_empresa
+
+            empresas_pendientes.append({
+                'empresa': empresa,
+                'reservas_pendientes': reservas_pendientes,
+                'cantidad_pendientes': reservas_pendientes.count(),
+                'total_pendiente': total_pendiente,
+            })
+
+    # Construir lista de empresas con reservas pagadas
+    # Iteramos todas las empresas activas (no solo filtradas por pendiente)
+    empresas_all = Empresa.objects.filter(is_active=True).order_by('nombre_empresa')
+    if empresa_filtro:
+        empresas_all = empresas_all.filter(id_empresa=empresa_filtro)
+
+    for empresa in empresas_all:
+        reservas_pagadas = Reserva.objects.filter(
+            empresa=empresa,
+            estado='completado',
+            pagado_empresa=True
+        )
+
+        if reservas_pagadas.exists():
+            total_pagado = 0
+            for r in reservas_pagadas:
+                detalle = r.obtener_detalle_servicios()
+                # Usar total_original y descontar el 12% de comisión de AutoNEW
+                total_original = detalle.get('total_original', 0)
+                pago_empresa = total_original * 0.88  # 88% para la empresa (100% - 12% comisión)
+                total_pagado += pago_empresa
+
+            empresas_pagadas.append({
+                'empresa': empresa,
+                'reservas_pagadas': reservas_pagadas,
+                'cantidad_pagadas': reservas_pagadas.count(),
+                'total_pagado': total_pagado,
+            })
+
+    # Paginación para pendientes y pagadas (uso de parámetros independientes)
+    pending_page_no = request.GET.get('pending_page')
+    paid_page_no = request.GET.get('paid_page')
+
+    pending_paginator = Paginator(empresas_pendientes, 20)
+    paid_paginator = Paginator(empresas_pagadas, 20)
+
+    pending_page_obj = pending_paginator.get_page(pending_page_no)
+    paid_page_obj = paid_paginator.get_page(paid_page_no)
+
+    stats = {
+        'total_empresas_pendientes': len(empresas_pendientes),
+        'total_empresas_pagadas': len(empresas_pagadas),
+        'total_reservas_pendientes': sum(e['cantidad_pendientes'] for e in empresas_pendientes),
+        'total_pendiente': sum(e['total_pendiente'] for e in empresas_pendientes),
+        'total_reservas_pagadas': sum(e['cantidad_pagadas'] for e in empresas_pagadas),
+        'total_pagado': sum(e['total_pagado'] for e in empresas_pagadas),
+    }
+
+    context = {
+        'pending_page_obj': pending_page_obj,
+        'paid_page_obj': paid_page_obj,
+        'stats': stats,
+        'filtros': {
+            'empresa': empresa_filtro,
+            'estado': estado_filtro,
+            'fecha_desde': fecha_desde,
+            'fecha_hasta': fecha_hasta,
+        }
+    }
+
+    return render(request, 'admin/gestion_pagos_empresas.html', context)
+
+
+@admin_required
+def detalle_periodo_liquidacion(request, periodo_id):
+    """
+    Vista para ver el detalle de un período de liquidación específico
+    """
+    periodo = get_object_or_404(PeriodoLiquidacion, id_periodo=periodo_id)
+    
+    # Si el período está activo, calcular totales actualizados
+    if periodo.estado == 'activo':
+        periodo.calcular_totales()
+    
+    # Obtener reservas del período
+    reservas = periodo.reservas_incluidas.all().select_related('usuario', 'empresa')
+    
+    # Si no hay reservas asignadas pero el período está activo, mostrar las potenciales
+    if not reservas.exists() and periodo.estado == 'activo':
+        reservas = Reserva.objects.filter(
+            empresa=periodo.empresa,
+            estado='completado',
+            fecha__range=[periodo.fecha_inicio, periodo.fecha_fin]
+        ).select_related('usuario', 'empresa')
+    
+    # Calcular detalles de cada reserva
+    detalles_reservas = []
+    for reserva in reservas:
+        detalle_servicios = reserva.obtener_detalle_servicios()
+        
+        valor_bruto = detalle_servicios.get('total', 0)
+        valor_descuentos = detalle_servicios.get('ahorro_total', 0)
+        valor_neto = valor_bruto - valor_descuentos
+        valor_comision = (valor_neto * periodo.comision_autonew) / 100
+        valor_empresa = valor_neto - valor_comision
+        
+        detalles_reservas.append({
+            'reserva': reserva,
+            'detalle_servicios': detalle_servicios,
+            'valor_bruto': valor_bruto,
+            'valor_descuentos': valor_descuentos,
+            'valor_neto': valor_neto,
+            'valor_comision': valor_comision,
+            'valor_empresa': valor_empresa,
+        })
+    
+    context = {
+        'periodo': periodo,
+        'detalles_reservas': detalles_reservas,
+        'puede_cerrar': periodo.estado == 'activo',
+        'puede_pagar': periodo.estado == 'cerrado',
+    }
+    
+    return render(request, 'admin/detalle_periodo_liquidacion.html', context)
+
+
+@admin_required
+def cerrar_periodo_liquidacion(request, periodo_id):
+    """
+    Vista para cerrar un período de liquidación
+    """
+    periodo = get_object_or_404(PeriodoLiquidacion, id_periodo=periodo_id)
+    
+    if request.method == 'POST':
+        if periodo.cerrar_periodo(request.user):
+            messages.success(request, f'Período de liquidación cerrado correctamente. Total a pagar: ${periodo.total_neto:,.0f}')
+            
+            # Crear detalles de liquidación
+            for reserva in periodo.reservas_incluidas.all():
+                detalle, created = DetalleLiquidacion.objects.get_or_create(
+                    periodo=periodo,
+                    reserva=reserva
+                )
+                if created:
+                    detalle.calcular_valores()
+            
+        else:
+            messages.error(request, 'No se pudo cerrar el período. Verifique el estado actual.')
+        
+        return redirect('detalle_periodo_liquidacion', periodo_id=periodo.id_periodo)
+    
+    return redirect('gestion_pagos_empresas')
+
+
+@admin_required
+def marcar_como_pagado(request, periodo_id):
+    """
+    Vista para marcar un período como pagado
+    """
+    periodo = get_object_or_404(PeriodoLiquidacion, id_periodo=periodo_id)
+    
+    if request.method == 'POST':
+        metodo_pago = request.POST.get('metodo_pago', '')
+        referencia_pago = request.POST.get('referencia_pago', '')
+        observaciones = request.POST.get('observaciones', '')
+        
+        if metodo_pago:
+            if periodo.marcar_como_pagado(request.user, metodo_pago, referencia_pago, observaciones):
+                messages.success(request, f'Período marcado como pagado correctamente. Monto: ${periodo.total_neto:,.0f}')
+            else:
+                messages.error(request, 'No se pudo marcar como pagado. Verifique el estado del período.')
+        else:
+            messages.error(request, 'Debe seleccionar un método de pago.')
+        
+        return redirect('detalle_periodo_liquidacion', periodo_id=periodo.id_periodo)
+    
+    return redirect('gestion_pagos_empresas')
+
+
+@admin_required
+def generar_periodos_faltantes(request):
+    """
+    Vista para generar períodos de liquidación faltantes
+    """
+    if request.method == 'POST':
+        periodos_creados = 0
+        empresas_activas = Empresa.objects.filter(is_active=True)
+        
+        for empresa in empresas_activas:
+            # Verificar si ya tiene un período activo
+            periodo_activo = PeriodoLiquidacion.objects.filter(
+                empresa=empresa,
+                estado='activo'
+            ).exists()
+            
+            if not periodo_activo:
+                # Buscar el último período para esta empresa
+                ultimo_periodo = PeriodoLiquidacion.objects.filter(
+                    empresa=empresa
+                ).order_by('-fecha_fin').first()
+                
+                if ultimo_periodo:
+                    # Crear período desde donde terminó el último
+                    inicio = ultimo_periodo.fecha_fin
+                else:
+                    # Si es la primera vez, empezar desde hace 15 días
+                    inicio = timezone.now() - timedelta(days=15)
+                
+                inicio = inicio.replace(hour=0, minute=0, second=0, microsecond=0)
+                fin = inicio + timedelta(days=15)
+                
+                # Si el período termina en el futuro, ajustar al presente
+                if fin > timezone.now():
+                    fin = timezone.now()
+                
+                if inicio < fin:  # Solo crear si hay un rango válido
+                    PeriodoLiquidacion.objects.create(
+                        empresa=empresa,
+                        fecha_inicio=inicio,
+                        fecha_fin=fin,
+                        comision_autonew=15.0  # Comisión por defecto
+                    )
+                    periodos_creados += 1
+        
+        messages.success(request, f'Se crearon {periodos_creados} períodos de liquidación.')
+        
+    return redirect('gestion_pagos_empresas')
+
+
+@admin_required
+def dashboard_pagos(request):
+    """
+    Dashboard con estadísticas de pagos
+    """
+    # Estadísticas generales
+    ahora = timezone.now()
+    inicio_mes = ahora.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    
+    stats = {
+        # Períodos
+        'total_periodos_activos': PeriodoLiquidacion.objects.filter(estado='activo').count(),
+        'total_periodos_cerrados': PeriodoLiquidacion.objects.filter(estado='cerrado').count(),
+        'periodos_vencidos': PeriodoLiquidacion.objects.filter(
+            estado='activo', fecha_fin__lt=ahora
+        ).count(),
+        
+        # Montos
+        'monto_pendiente_pago': PeriodoLiquidacion.objects.filter(
+            estado='cerrado'
+        ).aggregate(total=Sum('total_neto'))['total'] or 0,
+        
+        'monto_pagado_mes_actual': PeriodoLiquidacion.objects.filter(
+            estado='pagado',
+            fecha_pago__gte=inicio_mes
+        ).aggregate(total=Sum('total_neto'))['total'] or 0,
+        
+        # Empresas
+        'empresas_con_pendientes': PeriodoLiquidacion.objects.filter(
+            estado='cerrado'
+        ).values('empresa').distinct().count(),
+        
+        'reservas_sin_liquidar': Reserva.objects.filter(
+            estado='completado',
+            periodos_liquidacion__isnull=True,
+            fecha__gte=ahora - timedelta(days=30)
+        ).count(),
+    }
+    
+    # Top 5 empresas por monto pendiente
+    top_empresas_pendientes = PeriodoLiquidacion.objects.filter(
+        estado='cerrado'
+    ).values(
+        'empresa__nombre_empresa',
+        'empresa__id_empresa'
+    ).annotate(
+        total_pendiente=Sum('total_neto'),
+        periodos_pendientes=Count('id_periodo')
+    ).order_by('-total_pendiente')[:5]
+    
+    # Períodos por estado para gráfico
+    periodos_por_estado = PeriodoLiquidacion.objects.values('estado').annotate(
+        cantidad=Count('id_periodo'),
+        monto_total=Sum('total_neto')
+    ).order_by('estado')
+    
+    context = {
+        'stats': stats,
+        'top_empresas_pendientes': top_empresas_pendientes,
+        'periodos_por_estado': periodos_por_estado,
+    }
+    
+    return render(request, 'admin/dashboard_pagos.html', context)
+
+
+@admin_required
+def detalle_pagos_empresa(request, empresa_id):
+    """
+    Muestra el detalle de reservas no pagadas para una empresa
+    """
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    # Permitir mostrar reservas 'pendientes' (por defecto) o 'pagadas'
+    show = request.GET.get('show', 'pendientes')
+
+    if show == 'pagadas':
+        reservas_qs = Reserva.objects.filter(
+            empresa=empresa,
+            estado='completado',
+            pagado_empresa=True
+        ).select_related('usuario')
+    else:
+        reservas_qs = Reserva.objects.filter(
+            empresa=empresa,
+            estado='completado',
+        ).filter(Q(pagado_empresa=False) | Q(pagado_empresa__isnull=True)).select_related('usuario')
+
+    detalles = []
+    total = 0
+    for r in reservas_qs:
+        detalle_servicios = r.obtener_detalle_servicios()
+        valor = detalle_servicios.get('total', 0) - detalle_servicios.get('ahorro_total', 0)
+        total += valor
+        detalles.append({
+            'reserva': r,
+            'detalle_servicios': detalle_servicios,
+            'valor': valor,
+        })
+
+    context = {
+        'empresa': empresa,
+        'detalles': detalles,
+        'total': total,
+        'show': show,
+    }
+
+    return render(request, 'admin/detalle_pagos_empresa.html', context)
+
+
+@admin_required
+def exportar_periodo_csv(request, periodo_id):
+    """
+    Exportar detalles de un período a CSV
+    """
+    periodo = get_object_or_404(PeriodoLiquidacion, id_periodo=periodo_id)
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="periodo_{periodo.empresa.nombre_empresa}_{periodo.fecha_inicio.strftime("%Y%m%d")}.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow([
+        'Reserva ID', 'Fecha Servicio', 'Cliente', 'Servicios',
+        'Valor Bruto', 'Descuentos', 'Valor Neto', 
+        'Comisión %', 'Valor Comisión', 'Total Empresa'
+    ])
+    
+    for reserva in periodo.reservas_incluidas.all():
+        detalle = reserva.obtener_detalle_servicios()
+        
+        servicios_nombres = []
+        for categoria in ['servicios_plan', 'servicios_adicionales', 'servicios_empresariales']:
+            for servicio in detalle.get(categoria, []):
+                servicios_nombres.append(servicio['nombre'])
+        
+        valor_bruto = detalle.get('total', 0)
+        valor_descuentos = detalle.get('ahorro_total', 0)
+        valor_neto = valor_bruto - valor_descuentos
+        valor_comision = (valor_neto * periodo.comision_autonew) / 100
+        valor_empresa = valor_neto - valor_comision
+        
+        writer.writerow([
+            reserva.id_reserva,
+            reserva.fecha.strftime('%Y-%m-%d'),
+            reserva.usuario.nombre_completo,
+            ', '.join(servicios_nombres),
+            f'{valor_bruto:.2f}',
+            f'{valor_descuentos:.2f}',
+            f'{valor_neto:.2f}',
+            f'{periodo.comision_autonew:.1f}%',
+            f'{valor_comision:.2f}',
+            f'{valor_empresa:.2f}',
+        ])
+    
+    return response
+
+
+@admin_required
+def exportar_empresa_csv(request, empresa_id):
+    """
+    Exporta a CSV las reservas pendientes (no pagadas) de una empresa
+    """
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+
+    reservas = Reserva.objects.filter(
+        empresa=empresa,
+        estado='completado',
+    ).filter(Q(pagado_empresa=False) | Q(pagado_empresa__isnull=True)).select_related('usuario')
+
+    response = HttpResponse(content_type='text/csv')
+    filename = f'empresa_{empresa.nombre_empresa}_{timezone.now().strftime("%Y%m%d")}.csv'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+    writer = csv.writer(response)
+    writer.writerow(['numero_reserva', 'fecha', 'hora', 'usuario', 'valor_bruto', 'descuentos', 'valor_neto', 'pagado_empresa'])
+
+    for r in reservas:
+        detalle = r.obtener_detalle_servicios()
+        valor_bruto = detalle.get('total', 0)
+        descuentos = detalle.get('ahorro_total', 0)
+        valor_neto = valor_bruto - descuentos
+        writer.writerow([
+            r.numero_reserva or '',
+            r.fecha.strftime('%Y-%m-%d') if r.fecha else '',
+            r.hora.strftime('%H:%M:%S') if r.hora else '',
+            getattr(r.usuario, 'nombre_usuario', ''),
+            f'{valor_bruto:.2f}',
+            f'{descuentos:.2f}',
+            f'{valor_neto:.2f}',
+            str(bool(r.pagado_empresa)),
+        ])
+
+    return response
+
+
+@admin_required
+def api_datos_grafico_pagos(request):
+    """
+    API para obtener datos para gráficos de pagos
+    """
+    tipo_grafico = request.GET.get('tipo', 'montos_mensuales')
+    
+    if tipo_grafico == 'montos_mensuales':
+        # Últimos 6 meses de montos pagados
+        datos = []
+        for i in range(6):
+            fecha = timezone.now() - timedelta(days=30*i)
+            inicio_mes = fecha.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            if fecha.month == 12:
+                fin_mes = inicio_mes.replace(year=fecha.year + 1, month=1) - timedelta(seconds=1)
+            else:
+                fin_mes = inicio_mes.replace(month=fecha.month + 1) - timedelta(seconds=1)
+            
+            monto = PeriodoLiquidacion.objects.filter(
+                estado='pagado',
+                fecha_pago__range=[inicio_mes, fin_mes]
+            ).aggregate(total=Sum('total_neto'))['total'] or 0
+            
+            datos.append({
+                'mes': fecha.strftime('%B %Y'),
+                'monto': float(monto)
+            })
+        
+        return JsonResponse({'datos': list(reversed(datos))})
+    
+    elif tipo_grafico == 'empresas_top':
+        # Top 10 empresas por monto total pagado
+        datos = PeriodoLiquidacion.objects.filter(
+            estado='pagado'
+        ).values(
+            'empresa__nombre_empresa'
+        ).annotate(
+            total_pagado=Sum('total_neto')
+        ).order_by('-total_pagado')[:10]
+        
+        return JsonResponse({'datos': list(datos)})
+    
+    return JsonResponse({'error': 'Tipo de gráfico no válido'}, status=400)
+
+
+@admin_required
+def marcar_reserva_pagada(request, reserva_id):
+    """
+    Vista para marcar una reserva individual como pagada a la empresa
+    """
+    if request.method == 'POST':
+        try:
+            reserva = get_object_or_404(Reserva, id_reserva=reserva_id)
+            
+            # Verificar que la reserva esté completada
+            if reserva.estado != 'completado':
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Solo se pueden marcar como pagadas las reservas completadas'
+                }, status=400)
+            
+            # Verificar que no esté ya marcada como pagada
+            if reserva.pagado_empresa:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Esta reserva ya está marcada como pagada'
+                }, status=400)
+            
+            # Marcar como pagada
+            reserva.pagado_empresa = True
+            reserva.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': f'Reserva {reserva.numero_reserva} marcada como pagada exitosamente',
+                'reserva_id': reserva.id_reserva,
+                'numero_reserva': reserva.numero_reserva
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            }, status=500)
+    
+    return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
+
+
+@admin_required
+def marcar_empresa_pagada(request, empresa_id):
+    """
+    Vista para marcar todas las reservas pendientes de una empresa como pagadas
+    """
+    if request.method == 'POST':
+        try:
+            empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+            
+            # Obtener todas las reservas pendientes de pago
+            reservas_pendientes = Reserva.objects.filter(
+                empresa=empresa,
+                estado='completado',
+                pagado_empresa=False
+            )
+            
+            cantidad_inicial = reservas_pendientes.count()
+            
+            if cantidad_inicial == 0:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'No hay reservas pendientes para esta empresa'
+                }, status=400)
+            
+            # Marcar todas como pagadas
+            reservas_actualizadas = reservas_pendientes.update(pagado_empresa=True)
+            
+            return JsonResponse({
+                'success': True,
+                'message': f'{reservas_actualizadas} reservas de {empresa.nombre_empresa} marcadas como pagadas',
+                'cantidad_marcadas': reservas_actualizadas,
+                'empresa': empresa.nombre_empresa
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            }, status=500)
+    
+    return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
+
+
+@admin_required
+def marcar_reservas_seleccionadas(request):
+    """
+    Vista para marcar múltiples reservas seleccionadas como pagadas
+    """
+    if request.method == 'POST':
+        try:
+            import json
+            data = json.loads(request.body)
+            reservas_ids = data.get('reservas_ids', [])
+            
+            if not reservas_ids:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'No se enviaron reservas para marcar como pagadas'
+                }, status=400)
+            
+            # Validar que todas las reservas existan y estén completadas
+            reservas = Reserva.objects.filter(
+                id_reserva__in=reservas_ids,
+                estado='completado',
+                pagado_empresa=False
+            )
+            
+            cantidad_encontradas = reservas.count()
+            
+            if cantidad_encontradas == 0:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'No se encontraron reservas válidas para marcar como pagadas'
+                }, status=400)
+            
+            if cantidad_encontradas != len(reservas_ids):
+                return JsonResponse({
+                    'success': False,
+                    'error': f'Solo {cantidad_encontradas} de {len(reservas_ids)} reservas son válidas para marcar como pagadas'
+                }, status=400)
+            
+            # Marcar todas como pagadas
+            cantidad_actualizadas = reservas.update(pagado_empresa=True)
+            
+            return JsonResponse({
+                'success': True,
+                'message': f'{cantidad_actualizadas} reservas marcadas como pagadas exitosamente',
+                'cantidad_marcadas': cantidad_actualizadas
+            })
+            
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'success': False,
+                'error': 'Error al decodificar los datos JSON'
+            }, status=400)
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            }, status=500)
+    
+    return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
+
+
+@admin_required
+def exportar_pagos_excel(request):
+    """
+    Vista para exportar el reporte de pagos a Excel
+    """
+    try:
+        import openpyxl
+        from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+        from openpyxl.utils import get_column_letter
+        
+        # Crear workbook
+        wb = openpyxl.Workbook()
+        
+        # Hoja 1: Resumen General
+        ws_resumen = wb.active
+        ws_resumen.title = "Resumen General"
+        
+        # Estilos
+        header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+        header_font = Font(bold=True, color="FFFFFF", size=12)
+        border = Border(
+            left=Side(style='thin'),
+            right=Side(style='thin'),
+            top=Side(style='thin'),
+            bottom=Side(style='thin')
+        )
+        
+        # Título
+        ws_resumen['A1'] = 'REPORTE DE PAGOS A EMPRESAS'
+        ws_resumen['A1'].font = Font(bold=True, size=16)
+        ws_resumen.merge_cells('A1:F1')
+        
+        ws_resumen['A2'] = f'Generado: {timezone.now().strftime("%d/%m/%Y %H:%M")}'
+        ws_resumen.merge_cells('A2:F2')
+        
+        # Estadísticas
+        empresas_qs = Empresa.objects.filter(is_active=True)
+        
+        total_pendiente = 0
+        total_pagado = 0
+        total_reservas_pendientes = 0
+        total_reservas_pagadas = 0
+        
+        for empresa in empresas_qs:
+            # Pendientes
+            reservas_pend = Reserva.objects.filter(
+                empresa=empresa,
+                estado='completado',
+                pagado_empresa=False
+            )
+            
+            for r in reservas_pend:
+                detalle = r.obtener_detalle_servicios()
+                total_pendiente += detalle.get('total', 0)
+            total_reservas_pendientes += reservas_pend.count()
+            
+            # Pagadas
+            reservas_pag = Reserva.objects.filter(
+                empresa=empresa,
+                estado='completado',
+                pagado_empresa=True
+            )
+            
+            for r in reservas_pag:
+                detalle = r.obtener_detalle_servicios()
+                total_pagado += detalle.get('total', 0)
+            total_reservas_pagadas += reservas_pag.count()
+        
+        # Escribir estadísticas
+        ws_resumen['A4'] = 'ESTADÍSTICAS GENERALES'
+        ws_resumen['A4'].font = Font(bold=True, size=14)
+        
+        stats_data = [
+            ['Total Pendiente de Pago:', f'${total_pendiente:,.0f}'],
+            ['Total Pagado:', f'${total_pagado:,.0f}'],
+            ['Reservas Pendientes:', total_reservas_pendientes],
+            ['Reservas Pagadas:', total_reservas_pagadas],
+        ]
+        
+        row = 6
+        for label, value in stats_data:
+            ws_resumen[f'A{row}'] = label
+            ws_resumen[f'A{row}'].font = Font(bold=True)
+            ws_resumen[f'B{row}'] = value
+            row += 1
+        
+        # Hoja 2: Reservas Pendientes
+        ws_pendientes = wb.create_sheet("Pendientes de Pago")
+        
+        headers_pendientes = [
+            'Empresa', 'Número Reserva', 'Fecha', 'Hora', 'Cliente', 
+            'Email Cliente', 'Servicios', 'Tipo', 'Total', 'Estado Pago'
+        ]
+        
+        for col, header in enumerate(headers_pendientes, 1):
+            cell = ws_pendientes.cell(1, col)
+            cell.value = header
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.alignment = Alignment(horizontal='center', vertical='center')
+            cell.border = border
+        
+        row = 2
+        for empresa in empresas_qs:
+            reservas_pendientes = Reserva.objects.filter(
+                empresa=empresa,
+                estado='completado',
+                pagado_empresa=False
+            ).select_related('usuario')
+            
+            for reserva in reservas_pendientes:
+                detalle = reserva.obtener_detalle_servicios()
+                servicios = ', '.join([s.nombre_servicio for s in reserva.servicios.all()])
+                
+                tipo_reserva = 'Individual'
+                if reserva.es_reserva_empresarial:
+                    tipo_reserva = 'Empresarial'
+                elif reserva.suscripcion_utilizada:
+                    tipo_reserva = 'Plan'
+                
+                data = [
+                    empresa.nombre_empresa,
+                    reserva.numero_reserva,
+                    reserva.fecha.strftime('%d/%m/%Y'),
+                    str(reserva.hora),
+                    reserva.usuario.nombre_completo,
+                    reserva.usuario.correo,
+                    servicios,
+                    tipo_reserva,
+                    detalle.get('total', 0),
+                    'PENDIENTE'
+                ]
+                
+                for col, value in enumerate(data, 1):
+                    cell = ws_pendientes.cell(row, col)
+                    cell.value = value
+                    cell.border = border
+                    if col == 9:  # Columna de total
+                        cell.number_format = '"$"#,##0.00'
+                
+                row += 1
+        
+        # Ajustar anchos de columna
+        for col in range(1, len(headers_pendientes) + 1):
+            ws_pendientes.column_dimensions[get_column_letter(col)].width = 15
+        
+        # Hoja 3: Reservas Pagadas
+        ws_pagadas = wb.create_sheet("Pagadas")
+        
+        for col, header in enumerate(headers_pendientes, 1):
+            cell = ws_pagadas.cell(1, col)
+            cell.value = header
+            cell.fill = PatternFill(start_color="70AD47", end_color="70AD47", fill_type="solid")
+            cell.font = header_font
+            cell.alignment = Alignment(horizontal='center', vertical='center')
+            cell.border = border
+        
+        row = 2
+        for empresa in empresas_qs:
+            reservas_pagadas = Reserva.objects.filter(
+                empresa=empresa,
+                estado='completado',
+                pagado_empresa=True
+            ).select_related('usuario')
+            
+            for reserva in reservas_pagadas:
+                detalle = reserva.obtener_detalle_servicios()
+                servicios = ', '.join([s.nombre_servicio for s in reserva.servicios.all()])
+                
+                tipo_reserva = 'Individual'
+                if reserva.es_reserva_empresarial:
+                    tipo_reserva = 'Empresarial'
+                elif reserva.suscripcion_utilizada:
+                    tipo_reserva = 'Plan'
+                
+                data = [
+                    empresa.nombre_empresa,
+                    reserva.numero_reserva,
+                    reserva.fecha.strftime('%d/%m/%Y'),
+                    str(reserva.hora),
+                    reserva.usuario.nombre_completo,
+                    reserva.usuario.correo,
+                    servicios,
+                    tipo_reserva,
+                    detalle.get('total', 0),
+                    'PAGADA'
+                ]
+                
+                for col, value in enumerate(data, 1):
+                    cell = ws_pagadas.cell(row, col)
+                    cell.value = value
+                    cell.border = border
+                    if col == 9:  # Columna de total
+                        cell.number_format = '"$"#,##0.00'
+                
+                row += 1
+        
+        # Ajustar anchos de columna
+        for col in range(1, len(headers_pendientes) + 1):
+            ws_pagadas.column_dimensions[get_column_letter(col)].width = 15
+        
+        # Crear respuesta HTTP
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename="Reporte_Pagos_Empresas_{timezone.now().strftime("%Y%m%d_%H%M")}.xlsx"'
+        
+        wb.save(response)
+        return response
+        
+    except Exception as e:
+        messages.error(request, f'Error al generar el archivo Excel: {str(e)}')
+        return redirect('gestion_pagos_empresas')
+
+@empresa_required
+def empresa_mis_pagos(request):
+    """
+    Vista para que las empresas vean sus pagos de reservas
+    """
+    empresa_id = request.session.get('empresa_id')
+    empresa = get_object_or_404(Empresa, id_empresa=empresa_id)
+    
+    # Obtener filtros
+    estado_filtro = request.GET.get('estado', 'pendientes')  # pendientes o pagadas
+    fecha_desde = request.GET.get('fecha_desde', '')
+    fecha_hasta = request.GET.get('fecha_hasta', '')
+    
+    # Query base - solo reservas completadas de esta empresa
+    reservas_base = Reserva.objects.filter(
+        empresa=empresa,
+        estado='completado'
+    ).select_related('usuario').prefetch_related('servicios')
+    
+    # Aplicar filtro de fechas
+    if fecha_desde:
+        reservas_base = reservas_base.filter(fecha__gte=fecha_desde)
+    if fecha_hasta:
+        reservas_base = reservas_base.filter(fecha__lte=fecha_hasta)
+    
+    # Separar entre pendientes y pagadas
+    if estado_filtro == 'pagadas':
+        reservas = reservas_base.filter(pagado_empresa=True).order_by('-fecha', '-hora')
+    else:
+        reservas = reservas_base.filter(Q(pagado_empresa=False) | Q(pagado_empresa__isnull=True)).order_by('-fecha', '-hora')
+    
+    # Calcular totales
+    total_pendiente = 0
+    total_pagado = 0
+    
+    for r in reservas_base.filter(Q(pagado_empresa=False) | Q(pagado_empresa__isnull=True)):
+        detalle = r.obtener_detalle_servicios()
+        total_original = detalle.get('total_original', 0)
+        pago_empresa = total_original * 0.88  # 88% para la empresa
+        total_pendiente += pago_empresa
+    
+    for r in reservas_base.filter(pagado_empresa=True):
+        detalle = r.obtener_detalle_servicios()
+        total_original = detalle.get('total_original', 0)
+        pago_empresa = total_original * 0.88  # 88% para la empresa
+        total_pagado += pago_empresa
+    
+    # Paginaci�n
+    paginator = Paginator(reservas, 20)
+    page = request.GET.get('page')
+    reservas_page = paginator.get_page(page)
+    
+    # Estad�sticas
+    stats = {
+        'total_reservas_pendientes': reservas_base.filter(Q(pagado_empresa=False) | Q(pagado_empresa__isnull=True)).count(),
+        'total_pendiente': total_pendiente,
+        'total_reservas_pagadas': reservas_base.filter(pagado_empresa=True).count(),
+        'total_pagado': total_pagado,
+    }
+    
+    context = {
+        'empresa': empresa,
+        'reservas': reservas_page,
+        'stats': stats,
+        'estado_filtro': estado_filtro,
+        'filtros': {
+            'fecha_desde': fecha_desde,
+            'fecha_hasta': fecha_hasta,
+        }
+    }
+    
+    return render(request, 'empresas/mis_pagos.html', context)

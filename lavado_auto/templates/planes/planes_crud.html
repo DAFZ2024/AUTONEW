@@ -1,33 +1,159 @@
 {% extends 'base/base_crud.html' %}
 {% load static %}
 
+{% block extra_head %}
+<style>
+    /* SOLUCIÓN CRÍTICA: Prevenir efecto de zoom en carga inicial */
+    html, body {
+        animation: none !important;
+        transform: none !important;
+    }
+    
+    /* Desactivar TODAS las animaciones hasta que la página cargue */
+    html:not(.page-loaded) * {
+        animation: none !important;
+        transition: none !important;
+        transform: none !important;
+    }
+    
+    /* Reactivar transiciones suaves después de la carga */
+    html.page-loaded a,
+    html.page-loaded button,
+    html.page-loaded input,
+    html.page-loaded select,
+    html.page-loaded textarea {
+        transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    
+    /* Prevenir cualquier animación de entrada */
+    @media (prefers-reduced-motion: no-preference) {
+        html:not(.page-loaded) * {
+            animation-play-state: paused !important;
+        }
+    }
+    
+    /* ESTILOS PARA VISTA MÓVIL MEJORADA */
+    
+    /* Ocultar tabla en móviles */
+    @media (max-width: 1024px) {
+        .desktop-table {
+            display: none;
+        }
+        
+        .mobile-cards {
+            display: block;
+        }
+    }
+    
+    @media (min-width: 1025px) {
+        .desktop-table {
+            display: block;
+        }
+        
+        .mobile-cards {
+            display: none;
+        }
+    }
+    
+    /* Tarjetas móviles mejoradas */
+    .plan-card {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .plan-card:hover {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    /* Animación para notificaciones */
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .animate-fade-in-down {
+        animation: fadeInDown 0.3s ease-out;
+    }
+    
+    /* Mejoras para botones táctiles en móvil */
+    @media (max-width: 768px) {
+        .action-button {
+            min-width: 44px;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+</style>
+
+<script>
+    // EJECUTAR INMEDIATAMENTE - Antes de que cualquier cosa se renderice
+    (function() {
+        // Prevenir animaciones del navbar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Desactivar la animación del navbar del base_crud.html
+            const navbar = document.querySelector('nav');
+            if (navbar) {
+                navbar.style.transform = 'translateY(0)';
+                navbar.style.transition = 'none';
+            }
+            
+            // Marcar como cargada después de un breve delay
+            setTimeout(function() {
+                document.documentElement.classList.add('page-loaded');
+                
+                // Reactivar transiciones del navbar si es necesario
+                if (navbar) {
+                    setTimeout(function() {
+                        navbar.style.transition = '';
+                    }, 50);
+                }
+            }, 100);
+        });
+    })();
+</script>
+{% endblock %}
+
 {% block content %}
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+{% csrf_token %}
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-4 sm:py-8">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
         
         <!-- Header mejorado -->
-        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div class="flex items-center space-x-4">
-                    <div class="p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl shadow-lg">
-                        <i class="fas fa-layer-group text-white text-2xl"></i>
+        <div class="bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-xl border border-white/20 p-4 sm:p-6 lg:p-8 mb-4 sm:mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                    <div class="p-2 sm:p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl sm:rounded-2xl shadow-lg">
+                        <i class="fas fa-layer-group text-white text-xl sm:text-2xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
                             Gestión de Planes
                         </h1>
-                        <p class="text-gray-600 mt-1">Administra los planes de suscripción individuales</p>
+                        <p class="text-sm sm:text-base text-gray-600 mt-1">Administra los planes de suscripción individuales</p>
                     </div>
                 </div>
                 
-                <div class="flex flex-col sm:flex-row gap-3">
+                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
                     <a href="{% url 'crear_plan' %}" 
-                       class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-2xl shadow-lg hover:from-blue-700 hover:to-cyan-700 transform hover:scale-105 transition-all duration-300">
+                       class="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-xl sm:rounded-2xl shadow-lg hover:from-blue-700 hover:to-cyan-700 transform hover:scale-105 transition-all duration-300">
                         <i class="fas fa-plus mr-2"></i>
                         Nuevo Plan
                     </a>
                     <a href="{% url 'suscripciones_individuales_crud' %}" 
-                       class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white font-semibold rounded-2xl shadow-lg hover:from-emerald-700 hover:to-green-700 transform hover:scale-105 transition-all duration-300">
+                       class="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-emerald-600 to-green-600 text-white font-semibold rounded-xl sm:rounded-2xl shadow-lg hover:from-emerald-700 hover:to-green-700 transform hover:scale-105 transition-all duration-300">
                         <i class="fas fa-users mr-2"></i>
                         Suscripciones
                     </a>
@@ -36,76 +162,76 @@
         </div>
 
         <!-- Estadísticas rápidas -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-4 sm:mb-8">
+            <div class="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-2xl shadow-lg border border-white/20 p-3 sm:p-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Total Planes</p>
-                        <p class="text-3xl font-bold text-blue-600">{{ planes|length }}</p>
+                        <p class="text-xs sm:text-sm font-medium text-gray-600">Total Planes</p>
+                        <p class="text-xl sm:text-3xl font-bold text-blue-600">{{ planes|length }}</p>
                     </div>
-                    <div class="p-3 bg-blue-100 rounded-xl">
-                        <i class="fas fa-layer-group text-blue-600 text-xl"></i>
+                    <div class="p-2 sm:p-3 bg-blue-100 rounded-lg sm:rounded-xl">
+                        <i class="fas fa-layer-group text-blue-600 text-base sm:text-xl"></i>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+            <div class="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-2xl shadow-lg border border-white/20 p-3 sm:p-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Planes Activos</p>
-                        <p class="text-3xl font-bold text-emerald-600">{{ planes_activos|default:0 }}</p>
+                        <p class="text-xs sm:text-sm font-medium text-gray-600">Activos</p>
+                        <p class="text-xl sm:text-3xl font-bold text-emerald-600">{{ planes_activos|default:0 }}</p>
                     </div>
-                    <div class="p-3 bg-emerald-100 rounded-xl">
-                        <i class="fas fa-check-circle text-emerald-600 text-xl"></i>
+                    <div class="p-2 sm:p-3 bg-emerald-100 rounded-lg sm:rounded-xl">
+                        <i class="fas fa-check-circle text-emerald-600 text-base sm:text-xl"></i>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+            <div class="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-2xl shadow-lg border border-white/20 p-3 sm:p-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Tipos de Plan</p>
-                        <p class="text-3xl font-bold text-purple-600">3</p>
+                        <p class="text-xs sm:text-sm font-medium text-gray-600">Tipos</p>
+                        <p class="text-xl sm:text-3xl font-bold text-purple-600">3</p>
                     </div>
-                    <div class="p-3 bg-purple-100 rounded-xl">
-                        <i class="fas fa-tags text-purple-600 text-xl"></i>
+                    <div class="p-2 sm:p-3 bg-purple-100 rounded-lg sm:rounded-xl">
+                        <i class="fas fa-tags text-purple-600 text-base sm:text-xl"></i>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+            <div class="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-2xl shadow-lg border border-white/20 p-3 sm:p-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Precio Promedio</p>
-                        <p class="text-2xl font-bold text-indigo-600">${{ precio_promedio|default:"0"|floatformat:0 }}</p>
+                        <p class="text-xs sm:text-sm font-medium text-gray-600">Promedio</p>
+                        <p class="text-lg sm:text-2xl font-bold text-indigo-600">${{ precio_promedio|default:"0"|floatformat:0 }}</p>
                     </div>
-                    <div class="p-3 bg-indigo-100 rounded-xl">
-                        <i class="fas fa-dollar-sign text-indigo-600 text-xl"></i>
+                    <div class="p-2 sm:p-3 bg-indigo-100 rounded-lg sm:rounded-xl">
+                        <i class="fas fa-dollar-sign text-indigo-600 text-base sm:text-xl"></i>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Filtros y búsqueda -->
-        <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6 mb-8">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div class="flex-1 max-w-md">
+        <div class="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-2xl shadow-lg border border-white/20 p-4 sm:p-6 mb-4 sm:mb-8">
+            <div class="flex flex-col gap-3 sm:gap-4">
+                <div class="w-full">
                     <div class="relative">
                         <input type="text" id="searchInput" placeholder="Buscar planes..." 
-                               class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
-                        <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                               class="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+                        <i class="fas fa-search absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm sm:text-base"></i>
                     </div>
                 </div>
                 
-                <div class="flex gap-3">
-                    <select id="tipoFilter" class="px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+                <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                    <select id="tipoFilter" class="px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
                         <option value="">Todos los tipos</option>
                         <option value="basico">Lavado Básico</option>
                         <option value="premium">Limpieza Premium</option>
                         <option value="completo">Limpieza Completa</option>
                     </select>
                     
-                    <select id="estadoFilter" class="px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+                    <select id="estadoFilter" class="px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
                         <option value="">Todos los estados</option>
                         <option value="activo">Activos</option>
                         <option value="inactivo">Inactivos</option>
@@ -115,28 +241,28 @@
         </div>
 
         <!-- Lista de planes -->
-        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden">
-            <div class="p-6 sm:p-8 border-b border-gray-200">
-                <h2 class="text-2xl font-bold text-gray-900">Planes de Suscripción</h2>
-                <p class="text-gray-600 mt-1">Total: {{ planes|length }} plan{{ planes|length|pluralize:"es" }}</p>
+        <div class="bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-xl border border-white/20 overflow-hidden">
+            <div class="p-4 sm:p-6 lg:p-8 border-b border-gray-200">
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Planes de Suscripción</h2>
+                <p class="text-sm sm:text-base text-gray-600 mt-1">Total: {{ planes|length }} plan{{ planes|length|pluralize:"es" }}</p>
             </div>
             {% if planes %}
-                <div class="overflow-x-auto">
+                <!-- Vista de Escritorio (Tabla) -->
+                <div class="desktop-table overflow-x-auto">
                     <table class="w-full">
                         <thead class="bg-gray-50/80">
                             <tr>
                                 <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
                                 <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
                                 <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Servicios/Mes</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Características</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Servicios Incluidos</th>
                                 <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
                                 <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
                             {% for plan in planes %}
-                                <tr class="hover:bg-gray-50/50 transition-colors duration-200" data-tipo="{{ plan.tipo }}" data-estado="{% if plan.activo %}activo{% else %}inactivo{% endif %}">
+                                <tr class="hover:bg-gray-50/50 transition-colors duration-200 plan-row-{{ plan.id_plan }}" data-tipo="{{ plan.tipo }}" data-estado="{% if plan.activo %}activo{% else %}inactivo{% endif %}">
                                     <td class="px-6 py-4">
                                         <div class="flex items-center space-x-3">
                                             <div class="flex-shrink-0">
@@ -146,7 +272,14 @@
                                             </div>
                                             <div>
                                                 <div class="text-lg font-semibold text-gray-900">{{ plan.nombre }}</div>
-                                                <div class="text-sm text-gray-500">{{ plan.descripcion|truncatechars:60 }}</div>
+                                                <div class="text-sm text-gray-500">{{ plan.descripcion|truncatechars:40 }}</div>
+                                                <div class="text-xs text-gray-400 mt-1">
+                                                    {% if plan.cantidad_servicios_mes == 0 %}
+                                                        <i class="fas fa-infinity mr-1"></i>Servicios ilimitados/mes
+                                                    {% else %}
+                                                        <i class="fas fa-hashtag mr-1"></i>{{ plan.cantidad_servicios_mes }} servicios/mes
+                                                    {% endif %}
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -164,63 +297,66 @@
                                         <div class="text-sm text-gray-500">por mes</div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        {% if plan.cantidad_servicios_mes == 0 %}
-                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800">
-                                                <i class="fas fa-infinity mr-1"></i>
-                                                Ilimitado
-                                            </span>
-                                        {% else %}
-                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800">
-                                                <i class="fas fa-hashtag mr-1"></i>
-                                                {{ plan.cantidad_servicios_mes }}
-                                            </span>
-                                        {% endif %}
+                                        <div class="max-w-xs">
+                                            {% with plan_servicios=plan.plan_servicios.all %}
+                                                {% if plan_servicios %}
+                                                    <div class="space-y-2">
+                                                        {% for ps in plan_servicios %}
+                                                            <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg text-xs">
+                                                                <span class="font-medium text-gray-700">
+                                                                    <i class="fas fa-wrench text-blue-500 mr-1"></i>
+                                                                    {{ ps.servicio.nombre_servicio|truncatechars:20 }}
+                                                                </span>
+                                                                {% if ps.porcentaje_descuento > 0 %}
+                                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800">
+                                                                        <i class="fas fa-percent mr-1"></i>
+                                                                        {{ ps.porcentaje_descuento|floatformat:0 }}% OFF
+                                                                    </span>
+                                                                {% else %}
+                                                                    <span class="text-gray-500 text-xs">${{ ps.servicio.precio }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    <span class="text-gray-400 text-sm italic">Sin servicios asignados</span>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="flex flex-wrap gap-1">
-                                            {% if plan.incluye_lavado_asientos %}
-                                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
-                                                    <i class="fas fa-check mr-1"></i>Asientos
+                                        <div class="flex items-center gap-2">
+                                            {% if plan.activo %}
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800 estado-badge-{{ plan.id_plan }}">
+                                                    <i class="fas fa-check-circle mr-1"></i>
+                                                    Activo
                                                 </span>
-                                            {% endif %}
-                                            {% if plan.incluye_aspirado %}
-                                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
-                                                    <i class="fas fa-check mr-1"></i>Aspirado
-                                                </span>
-                                            {% endif %}
-                                            {% if plan.incluye_lavado_exterior %}
-                                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
-                                                    <i class="fas fa-check mr-1"></i>Exterior
-                                                </span>
-                                            {% endif %}
-                                            {% if plan.incluye_encerado %}
-                                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                                                    <i class="fas fa-star mr-1"></i>Encerado
+                                            {% else %}
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 estado-badge-{{ plan.id_plan }}">
+                                                    <i class="fas fa-times-circle mr-1"></i>
+                                                    Inactivo
                                                 </span>
                                             {% endif %}
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        {% if plan.activo %}
-                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800">
-                                                <i class="fas fa-check-circle mr-1"></i>
-                                                Activo
-                                            </span>
-                                        {% else %}
-                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
-                                                <i class="fas fa-times-circle mr-1"></i>
-                                                Inactivo
-                                            </span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="px-6 py-4">
                                         <div class="flex items-center space-x-2">
+                                            <!-- Botón toggle activo/inactivo -->
+                                            <button onclick="togglePlanEstado({{ plan.id_plan }})" 
+                                                    class="inline-flex items-center px-3 py-2 {% if plan.activo %}bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600{% else %}bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600{% endif %} text-white rounded-lg transition-all duration-300 transform hover:scale-105 toggle-btn-{{ plan.id_plan }}"
+                                                    title="{% if plan.activo %}Desactivar{% else %}Activar{% endif %} plan">
+                                                <i class="fas fa-{% if plan.activo %}ban{% else %}check{% endif %} text-sm"></i>
+                                            </button>
+                                            
                                             <a href="{% url 'editar_plan' plan.id_plan %}" 
-                                               class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105">
+                                               class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105"
+                                               title="Editar plan">
                                                 <i class="fas fa-edit text-sm"></i>
                                             </a>
+                                            
                                             <a href="{% url 'eliminar_plan' plan.id_plan %}" 
-                                               class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg hover:from-red-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 delete-btn">
+                                               class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg hover:from-red-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 delete-btn"
+                                               title="Eliminar plan">
                                                 <i class="fas fa-trash text-sm"></i>
                                             </a>
                                         </div>
@@ -230,15 +366,126 @@
                         </tbody>
                     </table>
                 </div>
+                
+                <!-- Vista Móvil (Tarjetas) -->
+                <div class="mobile-cards p-3 sm:p-4 space-y-4">
+                    {% for plan in planes %}
+                        <div class="plan-card plan-row-{{ plan.id_plan }}" data-tipo="{{ plan.tipo }}" data-estado="{% if plan.activo %}activo{% else %}inactivo{% endif %}">
+                            <!-- Header de la tarjeta -->
+                            <div class="bg-gradient-to-r {% if plan.tipo == 'basico' %}from-blue-500 to-cyan-500{% elif plan.tipo == 'premium' %}from-purple-500 to-pink-500{% else %}from-emerald-500 to-green-500{% endif %} p-4 text-white">
+                                <div class="flex items-start justify-between mb-2">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center font-bold">
+                                            {{ plan.id_plan }}
+                                        </div>
+                                        <div>
+                                            <h3 class="text-lg font-bold">{{ plan.nombre }}</h3>
+                                            <p class="text-xs opacity-90">{{ plan.get_tipo_display }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-2xl font-bold">${{ plan.precio_mensual }}</div>
+                                        <div class="text-xs opacity-90">por mes</div>
+                                    </div>
+                                </div>
+                                <p class="text-sm opacity-90">{{ plan.descripcion|truncatechars:60 }}</p>
+                            </div>
+                            
+                            <!-- Contenido de la tarjeta -->
+                            <div class="p-4 space-y-3">
+                                <!-- Cantidad de servicios -->
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <span class="text-sm font-medium text-gray-600">Servicios por mes:</span>
+                                    <span class="text-sm font-bold text-gray-900">
+                                        {% if plan.cantidad_servicios_mes == 0 %}
+                                            <i class="fas fa-infinity text-blue-500"></i> Ilimitados
+                                        {% else %}
+                                            {{ plan.cantidad_servicios_mes }}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                
+                                <!-- Estado -->
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <span class="text-sm font-medium text-gray-600">Estado:</span>
+                                    {% if plan.activo %}
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 estado-badge-{{ plan.id_plan }}">
+                                            <i class="fas fa-check-circle mr-1"></i>
+                                            Activo
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 estado-badge-{{ plan.id_plan }}">
+                                            <i class="fas fa-times-circle mr-1"></i>
+                                            Inactivo
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Servicios incluidos -->
+                                {% with plan_servicios=plan.plan_servicios.all %}
+                                    {% if plan_servicios %}
+                                        <div>
+                                            <h4 class="text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-list-check mr-1"></i>Servicios incluidos:
+                                            </h4>
+                                            <div class="space-y-2">
+                                                {% for ps in plan_servicios %}
+                                                    <div class="flex items-center justify-between p-2 bg-blue-50 rounded-lg">
+                                                        <span class="text-xs font-medium text-gray-700">
+                                                            <i class="fas fa-wrench text-blue-500 mr-1"></i>
+                                                            {{ ps.servicio.nombre_servicio|truncatechars:25 }}
+                                                        </span>
+                                                        {% if ps.porcentaje_descuento > 0 %}
+                                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-green-500 text-white">
+                                                                {{ ps.porcentaje_descuento|floatformat:0 }}% OFF
+                                                            </span>
+                                                        {% else %}
+                                                            <span class="text-xs text-gray-500">${{ ps.servicio.precio }}</span>
+                                                        {% endif %}
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="text-center py-3 text-gray-400 text-sm italic">
+                                            Sin servicios asignados
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
+                                
+                                <!-- Botones de acción -->
+                                <div class="grid grid-cols-3 gap-2 pt-2">
+                                    <button onclick="togglePlanEstado({{ plan.id_plan }})" 
+                                            class="action-button flex flex-col items-center justify-center p-3 {% if plan.activo %}bg-gradient-to-br from-orange-500 to-red-500{% else %}bg-gradient-to-br from-green-500 to-emerald-500{% endif %} text-white rounded-lg active:scale-95 transition-all duration-200 toggle-btn-{{ plan.id_plan }}">
+                                        <i class="fas fa-{% if plan.activo %}ban{% else %}check{% endif %} text-lg mb-1"></i>
+                                        <span class="text-xs font-medium">{% if plan.activo %}Desactivar{% else %}Activar{% endif %}</span>
+                                    </button>
+                                    
+                                    <a href="{% url 'editar_plan' plan.id_plan %}" 
+                                       class="action-button flex flex-col items-center justify-center p-3 bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-lg active:scale-95 transition-all duration-200">
+                                        <i class="fas fa-edit text-lg mb-1"></i>
+                                        <span class="text-xs font-medium">Editar</span>
+                                    </a>
+                                    
+                                    <a href="{% url 'eliminar_plan' plan.id_plan %}" 
+                                       class="action-button flex flex-col items-center justify-center p-3 bg-gradient-to-br from-red-500 to-pink-500 text-white rounded-lg active:scale-95 transition-all duration-200 delete-btn">
+                                        <i class="fas fa-trash text-lg mb-1"></i>
+                                        <span class="text-xs font-medium">Eliminar</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
             {% else %}
-                <div class="text-center py-16">
-                    <div class="mx-auto h-24 w-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-layer-group text-gray-400 text-3xl"></i>
+                <div class="text-center py-12 sm:py-16 px-4">
+                    <div class="mx-auto h-20 w-20 sm:h-24 sm:w-24 bg-gray-100 rounded-full flex items-center justify-center mb-4 sm:mb-6">
+                        <i class="fas fa-layer-group text-gray-400 text-2xl sm:text-3xl"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No hay planes registrados</h3>
-                    <p class="text-gray-600 mb-6">Comienza creando tu primer plan de suscripción para ofrecer a los usuarios.</p>
+                    <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2">No hay planes registrados</h3>
+                    <p class="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">Comienza creando tu primer plan de suscripción para ofrecer a los usuarios.</p>
                     <a href="{% url 'crear_plan' %}" 
-                       class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-2xl shadow-lg hover:from-blue-700 hover:to-cyan-700 transform hover:scale-105 transition-all duration-300">
+                       class="inline-flex items-center px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-xl sm:rounded-2xl shadow-lg hover:from-blue-700 hover:to-cyan-700 transform hover:scale-105 transition-all duration-300">
                         <i class="fas fa-plus mr-2"></i>
                         Crear Primer Plan
                     </a>
@@ -295,5 +542,136 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Función para activar/desactivar plan
+function togglePlanEstado(planId) {
+    if (!confirm('¿Estás seguro de que deseas cambiar el estado de este plan?')) {
+        return;
+    }
+
+    // Obtener el token CSRF de forma más robusta
+    const csrftoken = getCSRFToken();
+    
+    if (!csrftoken) {
+        showNotification('Error: No se pudo obtener el token de seguridad', 'error');
+        console.error('CSRF Token no encontrado');
+        return;
+    }
+
+    fetch(`/toggle-plan-estado/${planId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+        },
+        credentials: 'same-origin'  // Importante para incluir cookies
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Actualizar el badge de estado
+            const estadoBadge = document.querySelector(`.estado-badge-${planId}`);
+            const toggleBtn = document.querySelector(`.toggle-btn-${planId}`);
+            const planRow = document.querySelector(`.plan-row-${planId}`);
+            
+            if (data.activo) {
+                // Cambiar a activo
+                estadoBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800 estado-badge-${planId}`;
+                estadoBadge.innerHTML = '<i class="fas fa-check-circle mr-1"></i> Activo';
+                
+                toggleBtn.className = `inline-flex items-center px-3 py-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 toggle-btn-${planId}`;
+                toggleBtn.innerHTML = '<i class="fas fa-ban text-sm"></i>';
+                toggleBtn.title = 'Desactivar plan';
+                
+                planRow.setAttribute('data-estado', 'activo');
+            } else {
+                // Cambiar a inactivo
+                estadoBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 estado-badge-${planId}`;
+                estadoBadge.innerHTML = '<i class="fas fa-times-circle mr-1"></i> Inactivo';
+                
+                toggleBtn.className = `inline-flex items-center px-3 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 toggle-btn-${planId}`;
+                toggleBtn.innerHTML = '<i class="fas fa-check text-sm"></i>';
+                toggleBtn.title = 'Activar plan';
+                
+                planRow.setAttribute('data-estado', 'inactivo');
+            }
+            
+            // Mostrar mensaje de éxito
+            showNotification(data.mensaje, 'success');
+        } else {
+            showNotification(data.mensaje || 'Error al cambiar el estado', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error de conexión al servidor: ' + error.message, 'error');
+    });
+}
+
+// Función mejorada para obtener el token CSRF
+function getCSRFToken() {
+    // Método 1: Buscar en las cookies
+    let token = getCookie('csrftoken');
+    
+    // Método 2: Si no está en cookies, buscar en el DOM
+    if (!token) {
+        const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (csrfInput) {
+            token = csrfInput.value;
+        }
+    }
+    
+    // Método 3: Buscar en meta tags
+    if (!token) {
+        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+        if (csrfMeta) {
+            token = csrfMeta.getAttribute('content');
+        }
+    }
+    
+    return token;
+}
+
+// Función para obtener el token CSRF de las cookies
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // ¿Esta cookie comienza con el nombre que queremos?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Función para mostrar notificaciones
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg z-50 ${
+        type === 'success' ? 'bg-green-500' : 'bg-red-500'
+    } text-white font-semibold animate-fade-in-down`;
+    notification.innerHTML = `
+        <div class="flex items-center gap-3">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} text-xl"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
 </script>
 {% endblock %}

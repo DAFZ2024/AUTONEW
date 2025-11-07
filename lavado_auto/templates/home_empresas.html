@@ -3,616 +3,430 @@
 {% block title %}Autonew - Dashboard Empresa{% endblock %}
 
 {% block content %}
+<!-- Dashboard Principal - Diseño Tailwind Moderno -->
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-4 sm:py-6 lg:py-8 px-3 sm:px-4 lg:px-8">
+    <div class="max-w-7xl mx-auto space-y-4 sm:space-y-6 lg:space-y-8">
+        
+        <!-- Header Hero Section -->
+        <div class="relative overflow-hidden bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-gray-100/50">
+            <!-- Gradiente de fondo -->
+            <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 opacity-90"></div>
+            
+            <div class="relative px-4 py-6 sm:px-8 sm:py-12 md:px-12 lg:px-16">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-building text-white text-base sm:text-lg lg:text-xl"></i>
+                            </div>
+                            <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
+                                Dashboard Empresarial
+                            </h1>
+                        </div>
+                        <p class="text-sm sm:text-base lg:text-xl text-white/90 mb-4 sm:mb-6 leading-relaxed">
+                            Controla y optimiza tu negocio de lavado automotriz con inteligencia avanzada
+                        </p>
+                        
+                        <!-- Status badges -->
+                        <div class="flex flex-wrap gap-2 sm:gap-3">
+                            <span class="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-white/20 rounded-full text-xs sm:text-sm font-semibold text-white border border-white/30">
+                                <i class="fas fa-clock w-3 h-3 sm:w-4 sm:h-4 text-xs sm:text-sm"></i>
+                                <span class="hidden xs:inline">Última actividad: </span>Hoy
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-emerald-500/20 rounded-full text-xs sm:text-sm font-semibold text-white border border-emerald-400/30">
+                                <i class="fas fa-check-circle w-3 h-3 sm:w-4 sm:h-4 text-xs sm:text-sm"></i>
+                                Sistema Activo
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Decoración lateral -->
+                    <div class="hidden lg:block">
+                        <div class="w-32 h-32 bg-white/10 rounded-full border border-white/20 flex items-center justify-center">
+                            <i class="fas fa-chart-line text-4xl text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Grid - Tarjetas de Métricas -->
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
+            <!-- Citas Pendientes -->
+            <div class="group relative bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <div class="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-3 h-3 sm:w-4 sm:h-4 bg-blue-500 rounded-full animate-pulse"></div>
+                <div class="flex items-start justify-between">
+                    <div class="w-full">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-calendar-check text-white text-sm sm:text-base lg:text-lg"></i>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-1">{{ reservas_pendientes }}</h3>
+                        <p class="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide">Citas Pendientes</p>
+                    </div>
+                </div>
+                <div class="mt-3 sm:mt-4 flex items-center text-xs sm:text-sm text-blue-600">
+                    <i class="fas fa-arrow-up mr-1 text-xs"></i>
+                    <span class="hidden sm:inline">Requieren atención</span>
+                    <span class="sm:hidden">Atención</span>
+                </div>
+            </div>
+
+            <!-- Total Reservas -->
+            <div class="group relative bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <div class="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-3 h-3 sm:w-4 sm:h-4 bg-emerald-500 rounded-full animate-pulse"></div>
+                <div class="flex items-start justify-between">
+                    <div class="w-full">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-calendar text-white text-sm sm:text-base lg:text-lg"></i>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-1">{{ total_reservas }}</h3>
+                        <p class="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide">Total Reservas</p>
+                    </div>
+                </div>
+                <div class="mt-3 sm:mt-4 flex items-center text-xs sm:text-sm text-emerald-600">
+                    <i class="fas fa-chart-line mr-1 text-xs"></i>
+                    <span class="hidden sm:inline">Historial completo</span>
+                    <span class="sm:hidden">Historial</span>
+                </div>
+            </div>
+
+            <!-- Reservas Completadas -->
+            <div class="group relative bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <div class="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-3 h-3 sm:w-4 sm:h-4 bg-purple-500 rounded-full animate-pulse"></div>
+                <div class="flex items-start justify-between">
+                    <div class="w-full">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-check-double text-white text-sm sm:text-base lg:text-lg"></i>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-1">{{ reservas_completadas }}</h3>
+                        <p class="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide">Completadas</p>
+                    </div>
+                </div>
+                <div class="mt-3 sm:mt-4 flex items-center text-xs sm:text-sm text-purple-600">
+                    <i class="fas fa-check mr-1 text-xs"></i>
+                    <span class="hidden sm:inline">Servicios exitosos</span>
+                    <span class="sm:hidden">Exitosos</span>
+                </div>
+            </div>
+
+            <!-- Citas de Hoy -->
+            <div class="group relative bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <div class="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-3 h-3 sm:w-4 sm:h-4 bg-amber-500 rounded-full animate-pulse"></div>
+                <div class="flex items-start justify-between">
+                    <div class="w-full">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-amber-500 to-amber-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-calendar-day text-white text-sm sm:text-base lg:text-lg"></i>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-1">{{ reservas_hoy }}</h3>
+                        <p class="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide">Citas Hoy</p>
+                    </div>
+                </div>
+                <div class="mt-3 sm:mt-4 flex items-center text-xs sm:text-sm text-amber-600">
+                    <i class="fas fa-clock mr-1 text-xs"></i>
+                    <span class="hidden sm:inline">Agenda del día</span>
+                    <span class="sm:hidden">Hoy</span>
+                </div>
+            </div>
+
+            <!-- Ingresos -->
+            <div class="group relative bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 col-span-2 lg:col-span-1">
+                <div class="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-3 h-3 sm:w-4 sm:h-4 bg-rose-500 rounded-full animate-pulse"></div>
+                <div class="flex items-start justify-between">
+                    <div class="w-full">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-rose-500 to-rose-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-dollar-sign text-white text-sm sm:text-base lg:text-lg"></i>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-1">
+                            {% if ingresos_mes > 0 %}
+                                ${{ ingresos_mes }}
+                            {% else %}
+                                ${{ ingresos_totales|default:0 }}
+                            {% endif %}
+                        </h3>
+                        <p class="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide">
+                            {% if ingresos_mes > 0 %}
+                                <span class="hidden sm:inline">Ingresos del Mes</span>
+                                <span class="sm:hidden">Ingresos Mes</span>
+                            {% else %}
+                                <span class="hidden sm:inline">Ingresos Totales</span>
+                                <span class="sm:hidden">Total</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-3 sm:mt-4 flex items-center text-xs sm:text-sm text-rose-600">
+                    <i class="fas fa-trending-up mr-1 text-xs"></i>
+                    <span>Facturación</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions Grid - Tarjetas de Acción -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
+            <!-- Gestión de Citas -->
+            <div class="group relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl sm:rounded-2xl border border-blue-100 hover:border-blue-200 transition-all duration-300 hover:shadow-xl">
+                <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5"></div>
+                <div class="relative p-5 sm:p-6 lg:p-8">
+                    <div class="flex items-center justify-between mb-4 sm:mb-6">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-calendar-alt text-white text-base sm:text-lg lg:text-xl"></i>
+                        </div>
+                        <div class="w-7 h-7 sm:w-8 sm:h-8 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-200 transition-colors duration-300">
+                            <i class="fas fa-arrow-right text-blue-600 text-xs sm:text-sm group-hover:translate-x-1 transition-transform duration-300"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">Gestión de Citas</h3>
+                    <p class="text-gray-600 text-xs sm:text-sm mb-4 sm:mb-6 leading-relaxed">
+                        Administra reservas, horarios y disponibilidad en tiempo real con herramientas avanzadas.
+                    </p>
+                    <a href="{% url 'citas_empresa' %}" class="inline-flex items-center justify-center w-full px-4 py-2.5 sm:px-6 sm:py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-semibold rounded-lg sm:rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 hover:shadow-lg group-hover:-translate-y-1 active:scale-95">
+                        <span>Ver Citas</span>
+                        <i class="fas fa-external-link-alt ml-2 text-xs"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Reportes & Analytics -->
+            <div class="group relative overflow-hidden bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl sm:rounded-2xl border border-emerald-100 hover:border-emerald-200 transition-all duration-300 hover:shadow-xl">
+                <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-500/5"></div>
+                <div class="relative p-5 sm:p-6 lg:p-8">
+                    <div class="flex items-center justify-between mb-4 sm:mb-6">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-chart-bar text-white text-base sm:text-lg lg:text-xl"></i>
+                        </div>
+                        <div class="w-7 h-7 sm:w-8 sm:h-8 bg-emerald-100 rounded-full flex items-center justify-center group-hover:bg-emerald-200 transition-colors duration-300">
+                            <i class="fas fa-arrow-right text-emerald-600 text-xs sm:text-sm group-hover:translate-x-1 transition-transform duration-300"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">Reportes & Analytics</h3>
+                    <p class="text-gray-600 text-xs sm:text-sm mb-4 sm:mb-6 leading-relaxed">
+                        Visualiza estadísticas detalladas y genera reportes completos de rendimiento empresarial.
+                    </p>
+                    <a href="{% url 'reportes_empresa' %}" class="inline-flex items-center justify-center w-full px-4 py-2.5 sm:px-6 sm:py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-sm font-semibold rounded-lg sm:rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 hover:shadow-lg group-hover:-translate-y-1 active:scale-95">
+                        <span>Ver Reportes</span>
+                        <i class="fas fa-external-link-alt ml-2 text-xs"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Configuración -->
+            <div class="group relative overflow-hidden bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl sm:rounded-2xl border border-purple-100 hover:border-purple-200 transition-all duration-300 hover:shadow-xl">
+                <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5"></div>
+                <div class="relative p-5 sm:p-6 lg:p-8">
+                    <div class="flex items-center justify-between mb-4 sm:mb-6">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-cog text-white text-base sm:text-lg lg:text-xl"></i>
+                        </div>
+                        <div class="w-7 h-7 sm:w-8 sm:h-8 bg-purple-100 rounded-full flex items-center justify-center group-hover:bg-purple-200 transition-colors duration-300">
+                            <i class="fas fa-arrow-right text-purple-600 text-xs sm:text-sm group-hover:translate-x-1 transition-transform duration-300"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">Configuración</h3>
+                    <p class="text-gray-600 text-xs sm:text-sm mb-4 sm:mb-6 leading-relaxed">
+                        Personaliza tu perfil empresarial y ajusta todas las preferencias del sistema.
+                    </p>
+                    <a href="{% url 'perfil_empresa' %}" class="inline-flex items-center justify-center w-full px-4 py-2.5 sm:px-6 sm:py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white text-sm font-semibold rounded-lg sm:rounded-xl hover:from-purple-600 hover:to-pink-700 transition-all duration-300 hover:shadow-lg group-hover:-translate-y-1 active:scale-95">
+                        <span>Configurar</span>
+                        <i class="fas fa-external-link-alt ml-2 text-xs"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Notificaciones -->
+            <div class="group relative overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl sm:rounded-2xl border border-amber-100 hover:border-amber-200 transition-all duration-300 hover:shadow-xl">
+                <div class="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-orange-500/5"></div>
+                <div class="relative p-5 sm:p-6 lg:p-8">
+                    <div class="flex items-center justify-between mb-4 sm:mb-6">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-amber-500 to-orange-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-bell text-white text-base sm:text-lg lg:text-xl"></i>
+                        </div>
+                        <div class="w-7 h-7 sm:w-8 sm:h-8 bg-amber-100 rounded-full flex items-center justify-center group-hover:bg-amber-200 transition-colors duration-300">
+                            <i class="fas fa-arrow-right text-amber-600 text-xs sm:text-sm group-hover:translate-x-1 transition-transform duration-300"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">Notificaciones</h3>
+                    <p class="text-gray-600 text-xs sm:text-sm mb-4 sm:mb-6 leading-relaxed">
+                        Mantente informado con alertas importantes y notificaciones del sistema.
+                    </p>
+                    <button class="inline-flex items-center justify-center w-full px-4 py-2.5 sm:px-6 sm:py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-sm font-semibold rounded-lg sm:rounded-xl hover:from-amber-600 hover:to-orange-700 transition-all duration-300 hover:shadow-lg group-hover:-translate-y-1 active:scale-95">
+                        <span>Ver Alertas</span>
+                        <i class="fas fa-external-link-alt ml-2 text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Sections - Nueva sección de actividad -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            
+            <!-- Actividad Reciente -->
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                <!-- Header de la sección -->
+                <div class="relative bg-gradient-to-r from-cyan-500 to-blue-500 px-8 py-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                <i class="fas fa-history text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">Actividad Reciente</h3>
+                                <p class="text-cyan-100 text-sm">Últimos 7 días</p>
+                            </div>
+                        </div>
+                        <div class="px-3 py-1 bg-white/20 rounded-full text-xs font-semibold text-white backdrop-blur-sm">
+                            <i class="fas fa-clock mr-1"></i>
+                            Actualizado
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de actividades -->
+                <div class="p-6 max-h-96 overflow-y-auto custom-scrollbar">
+                    {% for reserva in reservas_recientes %}
+                    <div class="group flex items-center space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-all duration-300 border-l-4 border-transparent hover:border-cyan-400 hover:shadow-md">
+                        <!-- Avatar del cliente -->
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-xl flex items-center justify-center text-white font-bold shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                {{ reserva.usuario.first_name|first|upper }}{{ reserva.usuario.last_name|first|upper }}
+                            </div>
+                        </div>
+                        
+                        <!-- Información del cliente -->
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-semibold text-gray-900 group-hover:text-cyan-600 transition-colors duration-300">
+                                {{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}
+                            </h4>
+                            <div class="flex items-center space-x-2 text-sm text-gray-500">
+                                <i class="fas fa-tools text-cyan-500"></i>
+                                <span>{{ reserva.servicios.first.nombre }}</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Fecha -->
+                        <div class="flex-shrink-0">
+                            <div class="px-3 py-1 bg-cyan-50 rounded-lg border border-cyan-200">
+                                <span class="text-sm font-semibold text-cyan-700">
+                                    {{ reserva.fecha|date:"d/m" }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <!-- Estado vacío -->
+                    <div class="text-center py-12">
+                        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-history text-2xl text-gray-400"></i>
+                        </div>
+                        <h4 class="text-lg font-medium text-gray-500 mb-2">Sin actividad reciente</h4>
+                        <p class="text-sm text-gray-400">Los registros aparecerán aquí cuando haya actividad</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Próximas Citas -->
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                <!-- Header de la sección -->
+                <div class="relative bg-gradient-to-r from-indigo-500 to-purple-500 px-8 py-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                <i class="fas fa-calendar-plus text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">Próximas Citas</h3>
+                                <p class="text-indigo-100 text-sm">Próximos 7 días</p>
+                            </div>
+                        </div>
+                        <div class="px-3 py-1 bg-white/20 rounded-full text-xs font-semibold text-white backdrop-blur-sm">
+                            <i class="fas fa-calendar mr-1"></i>
+                            Programadas
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de citas próximas -->
+                <div class="p-6 max-h-96 overflow-y-auto custom-scrollbar">
+                    {% for reserva in reservas_proximas %}
+                    <div class="group flex items-center space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-all duration-300 border-l-4 border-transparent hover:border-indigo-400 hover:shadow-md">
+                        <!-- Avatar del cliente -->
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-xl flex items-center justify-center text-white font-bold shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                {{ reserva.usuario.first_name|first|upper }}
+                            </div>
+                        </div>
+                        
+                        <!-- Información del cliente -->
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors duration-300">
+                                {{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}
+                            </h4>
+                            <div class="flex items-center space-x-2 text-sm text-gray-500">
+                                <i class="fas fa-clock text-indigo-500"></i>
+                                <span>{{ reserva.hora|time:"H:i" }}</span>
+                                <span class="text-gray-300">•</span>
+                                <span>{{ reserva.servicios.count }} servicio{{ reserva.servicios.count|pluralize }}</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Fecha -->
+                        <div class="flex-shrink-0">
+                            <div class="px-3 py-1 bg-indigo-50 rounded-lg border border-indigo-200">
+                                <span class="text-sm font-semibold text-indigo-700">
+                                    {{ reserva.fecha|date:"d/m" }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <!-- Estado vacío -->
+                    <div class="text-center py-12">
+                        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-calendar-plus text-2xl text-gray-400"></i>
+                        </div>
+                        <h4 class="text-lg font-medium text-gray-500 mb-2">Sin citas próximas</h4>
+                        <p class="text-sm text-gray-400">Las reservaciones aparecerán aquí cuando sean programadas</p>
+                    </div>
+                    {% endfor %}
+                    
+                    {% if reservas_proximas %}
+                    <!-- Botón para ver todas las citas -->
+                    <div class="mt-6 pt-6 border-t border-gray-100">
+                        <a href="{% url 'citas_empresa' %}" class="group flex items-center justify-center w-full px-4 py-3 bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 border border-indigo-200 rounded-xl text-indigo-700 font-semibold transition-all duration-300 hover:shadow-md">
+                            <span>Ver todas las citas</span>
+                            <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Estilos personalizados adicionales -->
 <style>
-    /* Variables de diseño moderno */
-    :root {
-        --primary-gradient: linear-gradient(135deg, #0891b2 0%, #2563eb 100%);
-        --secondary-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-        --success-gradient: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
-        --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-        --info-gradient: linear-gradient(135deg, #06b6d4 0%, #1e40af 100%);
-        --dark-bg: #0f172a;
-        --card-bg: #ffffff;
-        --text-primary: #1e293b;
-        --text-secondary: #64748b;
-        --border-color: #e2e8f0;
-        --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    }
-
-    /* Reset y base */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    .dashboard-container {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        min-height: 100vh;
-        padding: 2rem 1rem;
-    }
-
-    /* Header moderno con wave */
-    .dashboard-header {
-        background: var(--primary-gradient);
-        border-radius: 30px;
-        padding: 3rem 2rem;
-        margin-bottom: 2rem;
-        position: relative;
-        overflow: hidden;
-        box-shadow: var(--shadow-2xl);
-    }
-
-    .dashboard-header::before {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 100px;
-        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
-        background-size: cover;
-    }
-
-    .header-content {
-        position: relative;
-        z-index: 1;
-        color: white;
-    }
-
-    .header-title {
-        font-size: 2.5rem;
-        font-weight: 800;
-        margin-bottom: 0.5rem;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .header-subtitle {
-        font-size: 1.125rem;
-        opacity: 0.95;
-        font-weight: 500;
-    }
-
-    .header-badges {
-        display: flex;
-        gap: 1rem;
-        margin-top: 1.5rem;
-        flex-wrap: wrap;
-    }
-
-    .badge-modern {
-        background: rgba(255, 255, 255, 0.25);
-        backdrop-filter: blur(10px);
-        padding: 0.625rem 1.25rem;
-        border-radius: 50px;
-        font-size: 0.875rem;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        transition: all 0.3s ease;
-    }
-
-    .badge-modern:hover {
-        background: rgba(255, 255, 255, 0.35);
-        transform: translateY(-2px);
-    }
-
-    /* Stats Cards modernas */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .stat-card {
-        background: var(--card-bg);
-        border-radius: 16px;
-        padding: 1.25rem;
-        position: relative;
-        overflow: hidden;
-        box-shadow: var(--shadow-md);
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        border: 1px solid var(--border-color);
-    }
-
-    .stat-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        opacity: 0.1;
-        transition: all 0.4s ease;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-5px) scale(1.01);
-        box-shadow: var(--shadow-xl);
-    }
-
-    .stat-card:hover::before {
-        transform: scale(1.2);
-        opacity: 0.15;
-    }
-
-    .stat-card.primary::before {
-        background: #0891b2;
-    }
-
-    .stat-card.success::before {
-        background: #06b6d4;
-    }
-
-    .stat-card.purple::before {
-        background: #2563eb;
-    }
-
-    .stat-card.warning::before {
-        background: #f59e0b;
-    }
-
-    .stat-card.danger::before {
-        background: #ef4444;
-    }
-
-    .stat-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.4rem;
-        margin-bottom: 0.75rem;
-        position: relative;
-        z-index: 1;
-    }
-
-    .stat-icon.primary {
-        background: linear-gradient(135deg, #0891b2 0%, #2563eb 100%);
-        color: white;
-        box-shadow: 0 6px 12px rgba(8, 145, 178, 0.3);
-    }
-
-    .stat-icon.success {
-        background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
-        color: white;
-        box-shadow: 0 6px 12px rgba(6, 182, 212, 0.3);
-    }
-
-    .stat-icon.purple {
-        background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-        color: white;
-        box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3);
-    }
-
-    .stat-icon.warning {
-        background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-        color: white;
-        box-shadow: 0 6px 12px rgba(245, 158, 11, 0.3);
-    }
-
-    .stat-icon.danger {
-        background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
-        color: white;
-        box-shadow: 0 6px 12px rgba(239, 68, 68, 0.3);
-    }
-
-    .stat-value {
-        font-size: 1.875rem;
-        font-weight: 800;
-        color: var(--text-primary);
-        margin-bottom: 0.25rem;
-        position: relative;
-        z-index: 1;
-    }
-
-    .stat-label {
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--text-secondary);
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-        position: relative;
-        z-index: 1;
-    }
-
-    /* Action Cards */
-    .action-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 1.25rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .action-card {
-        background: var(--card-bg);
-        border-radius: 16px;
-        padding: 1.5rem;
-        box-shadow: var(--shadow-md);
-        transition: all 0.3s ease;
-        border: 1px solid var(--border-color);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .action-card::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: var(--primary-gradient);
-        transform: scaleX(0);
-        transition: transform 0.3s ease;
-    }
-
-    .action-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .action-card:hover::after {
-        transform: scaleX(1);
-    }
-
-    .action-icon-wrapper {
-        width: 56px;
-        height: 56px;
-        border-radius: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 1rem;
-        font-size: 1.5rem;
-    }
-
-    .action-card:nth-child(1) .action-icon-wrapper {
-        background: linear-gradient(135deg, #0891b2 0%, #2563eb 100%);
-        color: white;
-    }
-
-    .action-card:nth-child(2) .action-icon-wrapper {
-        background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-        color: white;
-    }
-
-    .action-card:nth-child(3) .action-icon-wrapper {
-        background: linear-gradient(135deg, #06b6d4 0%, #1e40af 100%);
-        color: white;
-    }
-
-    .action-card:nth-child(4) .action-icon-wrapper {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        color: white;
-    }
-
-    .action-title {
-        font-size: 1.125rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 0.5rem;
-    }
-
-    .action-description {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-        line-height: 1.5;
-        margin-bottom: 1rem;
-    }
-
-    .action-button {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: var(--primary-gradient);
-        color: white;
-        padding: 0.625rem 1.25rem;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 0.875rem;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-        box-shadow: 0 3px 12px rgba(8, 145, 178, 0.3);
-    }
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 0.9375rem;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-        box-shadow: 0 4px 15px rgba(8, 145, 178, 0.3);
-    }
-
-    .action-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(8, 145, 178, 0.4);
-    }
-
-    /* Activity Section */
-    .activity-section {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .activity-card {
-        background: var(--card-bg);
-        border-radius: 20px;
-        padding: 2rem;
-        box-shadow: var(--shadow-md);
-        border: 1px solid var(--border-color);
-    }
-
-    .activity-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid var(--border-color);
-    }
-
-    .activity-title {
-        font-size: 1.375rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .activity-icon {
-        width: 45px;
-        height: 45px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-    }
-
-    .activity-icon.recent {
-        background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
-        color: white;
-    }
-
-    .activity-icon.upcoming {
-        background: linear-gradient(135deg, #0891b2 0%, #2563eb 100%);
-        color: white;
-    }
-
-    .activity-time {
-        font-size: 0.8125rem;
-        color: var(--text-secondary);
-        font-weight: 600;
-    }
-
-    .activity-list {
-        max-height: 400px;
-        overflow-y: auto;
-        padding-right: 0.5rem;
-    }
-
-    .activity-list::-webkit-scrollbar {
+    /* Scrollbar personalizado */
+    .custom-scrollbar::-webkit-scrollbar {
         width: 6px;
     }
-
-    .activity-list::-webkit-scrollbar-track {
+    
+    .custom-scrollbar::-webkit-scrollbar-track {
         background: #f1f5f9;
         border-radius: 10px;
     }
-
-    .activity-list::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #0891b2 0%, #2563eb 100%);
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #06b6d4, #3b82f6);
         border-radius: 10px;
     }
-
-    .activity-item {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 1rem;
-        border-radius: 12px;
-        margin-bottom: 0.75rem;
-        background: #f8fafc;
-        transition: all 0.3s ease;
-        border-left: 3px solid transparent;
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #0891b2, #2563eb);
     }
 
-    .activity-item:hover {
-        background: #f1f5f9;
-        border-left-color: #0891b2;
-        transform: translateX(5px);
-    }
-
-    .activity-avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        background: var(--primary-gradient);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 1.125rem;
-        flex-shrink: 0;
-        box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3);
-    }
-
-    .activity-info {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .activity-name {
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 0.25rem;
-        font-size: 0.9375rem;
-    }
-
-    .activity-service {
-        font-size: 0.8125rem;
-        color: var(--text-secondary);
-        display: flex;
-        align-items: center;
-        gap: 0.375rem;
-    }
-
-    .activity-date {
-        font-size: 0.8125rem;
-        font-weight: 600;
-        color: #0891b2;
-        background: #ecfeff;
-        padding: 0.375rem 0.75rem;
-        border-radius: 8px;
-        flex-shrink: 0;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 3rem 1rem;
-    }
-
-    .empty-icon {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background: #f1f5f9;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.5rem;
-        color: var(--text-secondary);
-        margin: 0 auto 1rem;
-    }
-
-    .empty-text {
-        color: var(--text-secondary);
-        font-size: 0.9375rem;
-    }
-
-    .view-all-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #0891b2;
-        font-weight: 600;
-        font-size: 0.9375rem;
-        text-decoration: none;
-        margin-top: 1rem;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        background: #eef2ff;
-        transition: all 0.3s ease;
-    }
-
-    .view-all-link:hover {
-        background: #e0e7ff;
-        transform: translateX(3px);
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .dashboard-header {
-            padding: 2rem 1.5rem;
-            border-radius: 20px;
-        }
-
-        .header-title {
-            font-size: 1.875rem;
-        }
-
-        .stats-grid {
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 0.875rem;
-        }
-
-        .stat-card {
-            padding: 1rem;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-        }
-
-        .stat-label {
-            font-size: 0.688rem;
-        }
-
-        .action-grid {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-        }
-
-        .activity-section {
-            grid-template-columns: 1fr;
-        }
-
-        .header-badges {
-            flex-direction: column;
-        }
-
-        .badge-modern {
-            justify-content: center;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .dashboard-container {
-            padding: 1rem 0.5rem;
-        }
-
-        .stat-card {
-            padding: 0.875rem;
-        }
-
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            font-size: 1.2rem;
-        }
-
-        .stat-value {
-            font-size: 1.375rem;
-        }
-
-        .stat-label {
-            font-size: 0.625rem;
-        }
-
-        .action-card {
-            padding: 1.25rem;
-        }
-
-        .action-icon-wrapper {
-            width: 48px;
-            height: 48px;
-            font-size: 1.25rem;
-        }
-
-        .activity-card {
-            padding: 1.25rem;
-        }
-    }
-
-    /* Animaciones */
+    /* Animaciones personalizadas */
     @keyframes fadeInUp {
         from {
             opacity: 0;
@@ -624,14 +438,10 @@
         }
     }
 
-    .animate-fade-in {
-        animation: fadeInUp 0.6s ease-out;
-    }
-
-    @keyframes slideIn {
+    @keyframes slideInLeft {
         from {
             opacity: 0;
-            transform: translateX(-20px);
+            transform: translateX(-30px);
         }
         to {
             opacity: 1;
@@ -639,245 +449,184 @@
         }
     }
 
-    .animate-slide-in {
-        animation: slideIn 0.5s ease-out;
+    @keyframes bounceIn {
+        0% {
+            opacity: 0;
+            transform: scale(0.3);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+        70% {
+            transform: scale(0.9);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .animate-fade-in-up {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .animate-slide-in-left {
+        animation: slideInLeft 0.5s ease-out;
+    }
+
+    .animate-bounce-in {
+        animation: bounceIn 0.8s ease-out;
+    }
+
+    /* Efectos de cristal */
+    .glass-effect {
+        backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Gradientes dinámicos */
+    .dynamic-gradient {
+        background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+    }
+
+    @keyframes gradientShift {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
     }
 </style>
 
-<div class="dashboard-container">
-    <div class="max-w-7xl mx-auto">
+<!-- JavaScript mejorado -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animación de números contador
+    function animateNumbers() {
+        const statNumbers = document.querySelectorAll('.text-2xl.font-bold');
         
-        <!-- Header Moderno -->
-        <div class="dashboard-header animate-fade-in">
-            <div class="header-content">
-                <h1 class="header-title">
-                    <i class="fas fa-building mr-3"></i>
-                    Panel de Control Empresarial
-                </h1>
-                <p class="header-subtitle">Gestiona tu negocio de lavado de autos de forma inteligente</p>
-                <div class="header-badges">
-                    <span class="badge-modern">
-                        <i class="fas fa-clock"></i>
-                        Última actividad: Hoy
-                    </span>
-                    <span class="badge-modern">
-                        <i class="fas fa-check-circle"></i>
-                        Estado: Activo
-                    </span>
-                </div>
-            </div>
-        </div>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.classList.contains('animated')) {
+                    entry.target.classList.add('animated');
+                    animateValue(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
 
-        <!-- Stats Cards -->
-        <div class="stats-grid">
-            <div class="stat-card primary animate-fade-in" style="animation-delay: 0.1s;">
-                <div class="stat-icon primary">
-                    <i class="fas fa-calendar-check"></i>
-                </div>
-                <div class="stat-value">{{ reservas_pendientes }}</div>
-                <div class="stat-label">Citas Pendientes</div>
-            </div>
+        statNumbers.forEach(num => observer.observe(num));
+    }
 
-            <div class="stat-card success animate-fade-in" style="animation-delay: 0.2s;">
-                <div class="stat-icon success">
-                    <i class="fas fa-calendar"></i>
-                </div>
-                <div class="stat-value">{{ total_reservas }}</div>
-                <div class="stat-label">Total Reservas</div>
-            </div>
+    function animateValue(element) {
+        const text = element.textContent;
+        const hasPrefix = text.includes('$');
+        const number = parseInt(text.replace(/[^0-9]/g, '')) || 0;
+        
+        if (number > 0) {
+            let current = 0;
+            const increment = number / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= number) {
+                    element.textContent = hasPrefix ? `$${number.toLocaleString()}` : number.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    const displayValue = Math.floor(current);
+                    element.textContent = hasPrefix ? `$${displayValue.toLocaleString()}` : displayValue.toLocaleString();
+                }
+            }, 30);
+        }
+    }
 
-            <div class="stat-card purple animate-fade-in" style="animation-delay: 0.3s;">
-                <div class="stat-icon purple">
-                    <i class="fas fa-check-double"></i>
-                </div>
-                <div class="stat-value">{{ reservas_completadas }}</div>
-                <div class="stat-label">Completadas</div>
-            </div>
+    // Efectos de hover mejorados
+    function enhanceHoverEffects() {
+        const cards = document.querySelectorAll('.group');
+        
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+                this.style.transition = 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    }
 
-            <div class="stat-card warning animate-fade-in" style="animation-delay: 0.4s;">
-                <div class="stat-icon warning">
-                    <i class="fas fa-calendar-day"></i>
-                </div>
-                <div class="stat-value">{{ reservas_hoy }}</div>
-                <div class="stat-label">Citas Hoy</div>
-            </div>
+    // Animación de aparición progresiva
+    function progressiveAnimation() {
+        const elements = document.querySelectorAll('.grid > div, .space-y-8 > div');
+        
+        elements.forEach((element, index) => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                element.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    }
 
-            <div class="stat-card danger animate-fade-in" style="animation-delay: 0.5s;">
-                <div class="stat-icon danger">
-                    <i class="fas fa-dollar-sign"></i>
-                </div>
-                <div class="stat-value">
-                    {% if ingresos_mes > 0 %}
-                        ${{ ingresos_mes }}
-                    {% else %}
-                        ${{ ingresos_totales|default:0 }}
-                    {% endif %}
-                </div>
-                <div class="stat-label">
-                    {% if ingresos_mes > 0 %}
-                        Ingresos del Mes
-                    {% else %}
-                        Ingresos Totales
-                    {% endif %}
-                </div>
-            </div>
-        </div>
+    // Inicializar todas las animaciones
+    animateNumbers();
+    enhanceHoverEffects();
+    progressiveAnimation();
 
-        <!-- Action Cards -->
-        <div class="action-grid">
-            <div class="action-card animate-fade-in" style="animation-delay: 0.6s;">
-                <div class="action-icon-wrapper">
-                    <i class="fas fa-calendar-alt"></i>
-                </div>
-                <h3 class="action-title">Gestión de Citas</h3>
-                <p class="action-description">
-                    Administra las citas de tus clientes, horarios y disponibilidad en tiempo real.
-                </p>
-                <a href="{% url 'citas_empresa' %}" class="action-button">
-                    <i class="fas fa-arrow-right"></i>
-                    Ver Citas
-                </a>
-            </div>
+    // Efecto de brillo en botones
+    const buttons = document.querySelectorAll('a[class*="bg-gradient"], button[class*="bg-gradient"]');
+    buttons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.cssText = `
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.5);
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                left: ${x}px;
+                top: ${y}px;
+                width: ${size}px;
+                height: ${size}px;
+            `;
+            
+            this.style.position = 'relative';
+            this.style.overflow = 'hidden';
+            this.appendChild(ripple);
+            
+            setTimeout(() => ripple.remove(), 600);
+        });
+    });
 
-            <div class="action-card animate-fade-in" style="animation-delay: 0.7s;">
-                <div class="action-icon-wrapper">
-                    <i class="fas fa-chart-bar"></i>
-                </div>
-                <h3 class="action-title">Reportes & Analytics</h3>
-                <p class="action-description">
-                    Visualiza estadísticas detalladas y reportes completos de tu negocio.
-                </p>
-                <a href="{% url 'reportes_empresa' %}" class="action-button">
-                    <i class="fas fa-arrow-right"></i>
-                    Ver Reportes
-                </a>
-            </div>
-
-            <div class="action-card animate-fade-in" style="animation-delay: 0.8s;">
-                <div class="action-icon-wrapper">
-                    <i class="fas fa-cog"></i>
-                </div>
-                <h3 class="action-title">Configuración</h3>
-                <p class="action-description">
-                    Configura tu perfil empresarial y personaliza todas tus preferencias.
-                </p>
-                <a href="{% url 'perfil_empresa' %}" class="action-button">
-                    <i class="fas fa-arrow-right"></i>
-                    Configurar
-                </a>
-            </div>
-
-            <div class="action-card animate-fade-in" style="animation-delay: 0.9s;">
-                <div class="action-icon-wrapper">
-                    <i class="fas fa-bell"></i>
-                </div>
-                <h3 class="action-title">Notificaciones</h3>
-                <p class="action-description">
-                    Mantente informado con alertas y notificaciones importantes.
-                </p>
-                <button class="action-button">
-                    <i class="fas fa-arrow-right"></i>
-                    Ver Alertas
-                </button>
-            </div>
-        </div>
-
-        <!-- Activity Section -->
-        <div class="activity-section">
-            <!-- Actividad Reciente -->
-            <div class="activity-card animate-slide-in" style="animation-delay: 1s;">
-                <div class="activity-header">
-                    <h3 class="activity-title">
-                        <span class="activity-icon recent">
-                            <i class="fas fa-history"></i>
-                        </span>
-                        Actividad Reciente
-                    </h3>
-                    <span class="activity-time">Últimos 7 días</span>
-                </div>
-                <div class="activity-list">
-                    {% for reserva in reservas_recientes %}
-                    <div class="activity-item">
-                        <div class="activity-avatar">
-                            {{ reserva.usuario.first_name|first|upper }}{{ reserva.usuario.last_name|first|upper }}
-                        </div>
-                        <div class="activity-info">
-                            <div class="activity-name">
-                                {{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}
-                            </div>
-                            <div class="activity-service">
-                                <i class="fas fa-wrench"></i>
-                                {{ reserva.servicios.first.nombre }}
-                            </div>
-                        </div>
-                        <div class="activity-date">
-                            {{ reserva.fecha|date:"d/m" }}
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="empty-state">
-                        <div class="empty-icon">
-                            <i class="fas fa-history"></i>
-                        </div>
-                        <p class="empty-text">No hay actividad reciente</p>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <!-- Próximas Citas -->
-            <div class="activity-card animate-slide-in" style="animation-delay: 1.1s;">
-                <div class="activity-header">
-                    <h3 class="activity-title">
-                        <span class="activity-icon upcoming">
-                            <i class="fas fa-calendar-plus"></i>
-                        </span>
-                        Próximas Citas
-                    </h3>
-                    <span class="activity-time">Próximos 7 días</span>
-                </div>
-                <div class="activity-list">
-                    {% for reserva in reservas_proximas %}
-                    <div class="activity-item">
-                        <div class="activity-avatar">
-                            {{ reserva.usuario.first_name|first|upper }}
-                        </div>
-                        <div class="activity-info">
-                            <div class="activity-name">
-                                {{ reserva.usuario.first_name }} {{ reserva.usuario.last_name }}
-                            </div>
-                            <div class="activity-service">
-                                <i class="fas fa-clock"></i>
-                                {{ reserva.hora|time:"H:i" }} • {{ reserva.servicios.count }} servicio{{ reserva.servicios.count|pluralize }}
-                            </div>
-                        </div>
-                        <div class="activity-date">
-                            {{ reserva.fecha|date:"d/m" }}
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="empty-state">
-                        <div class="empty-icon">
-                            <i class="fas fa-calendar-plus"></i>
-                        </div>
-                        <p class="empty-text">No hay citas próximas</p>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% if reservas_proximas %}
-                <div class="text-center">
-                    <a href="{% url 'citas_empresa' %}" class="view-all-link">
-                        Ver todas las citas
-                        <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-
-    </div>
-</div>
-
+    // CSS para animación ripple
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes ripple {
+            to {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+});
+</script>
+    
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Animación de contador para las estadísticas

@@ -1,5 +1,5 @@
 from django.utils import timezone
-from datetime import timedelta
+from datetime import datetime, timedelta
 from .models import Reserva
 import logging
 
@@ -20,22 +20,30 @@ def auto_completar_reservas_vencidas(horas_limite=4):
     tiempo_limite = ahora - timedelta(hours=horas_limite)
     
     # Buscar reservas pendientes que ya pasaron el tiempo límite
-    reservas_pendientes = Reserva.objects.filter(estado='pendiente')
+    # Nota: soportar el estado legacy 'no_completado' que existía en migraciones antiguas
+    reservas_pendientes = Reserva.objects.filter(estado__in=['pendiente', 'no_completado'])
     
     reservas_para_completar = []
     
     for reserva in reservas_pendientes:
-        # Combinar fecha y hora de la reserva
+        # Combinar fecha y hora de la reserva y asegurarnos de que el datetime
+        # resultante sea timezone-aware antes de compararlo con "tiempo_limite".
         try:
-            fecha_hora_reserva = timezone.make_aware(
-                timezone.datetime.combine(reserva.fecha, reserva.hora)
-            )
-            
+            dt = datetime.combine(reserva.fecha, reserva.hora)
+
+            # Si el datetime es naive, convertirlo a aware usando la zona horaria
+            # actual configurada en Django. Si ya es aware, lo dejamos tal cual.
+            if timezone.is_naive(dt):
+                fecha_hora_reserva = timezone.make_aware(dt, timezone.get_current_timezone())
+            else:
+                fecha_hora_reserva = dt
+
             # Verificar si han pasado las horas especificadas
             if fecha_hora_reserva <= tiempo_limite:
                 reservas_para_completar.append(reserva)
+
         except Exception as e:
-            logger.error(f"Error al procesar reserva #{reserva.id_reserva}: {e}")
+            logger.error(f"Error al procesar reserva #{getattr(reserva, 'id_reserva', 'unknown')}: {e}")
             continue
     
     # Marcar las reservas como completadas

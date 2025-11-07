@@ -36,77 +36,121 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <!-- Contenido de texto -->
                 <div class="text-center lg:text-left">
+                    <!-- Badge con animación de pulso y brillo -->
                     <div class="animate-fadeInUp">
-                        <span class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 text-white text-sm font-semibold rounded-full uppercase tracking-wider mb-6 shadow-lg">
-                            <i class="fas fa-star mr-2"></i>
-                            Servicios Premium
+                        <span class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 text-white text-sm font-semibold rounded-full uppercase tracking-wider mb-6 shadow-lg relative overflow-hidden group cursor-pointer">
+                            <!-- Efecto de brillo deslizante -->
+                            <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></span>
+                            <i class="fas fa-star mr-2 animate-pulse"></i>
+                            <span class="relative">Servicios Premium</span>
+                            <!-- Ring animado -->
+                            <span class="absolute inset-0 rounded-full border-2 border-white/50 animate-ping"></span>
                         </span>
                     </div>
                     
-                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 animate-fadeInUp" style="animation-delay: 0.2s;">
-                        <span class="bg-gradient-to-r from-slate-800 via-blue-700 to-cyan-600 bg-clip-text text-transparent block">
+                    <!-- Título con animación de gradiente y efecto reveal -->
+                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 animate-fadeInUp overflow-hidden" style="animation-delay: 0.2s;">
+                        <span class="bg-gradient-to-r from-slate-800 via-blue-700 to-cyan-600 bg-clip-text text-transparent block animate-gradient-shift bg-[length:200%_auto]">
                             Servicios de
                         </span>
-                        <span class="bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent block">
+                        <span class="bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent block animate-gradient-shift bg-[length:200%_auto] relative" style="animation-delay: 0.1s;">
                             Lavado Premium
+                            <!-- Efecto de subrayado animado -->
+                            <span class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-blue-600 to-teal-600 animate-underline-expand"></span>
                         </span>
                     </h1>
                     
+                    <!-- Descripción con efecto typewriter -->
                     <p class="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed animate-fadeInUp max-w-2xl" style="animation-delay: 0.4s;">
-                        Transformamos tu vehículo con servicios de <span class="font-semibold text-blue-600">alta calidad</span>, 
-                        <span class="font-semibold text-cyan-600">tecnología avanzada</span> y 
-                        <span class="font-semibold text-teal-600">atención personalizada</span>
+                        Transformamos tu vehículo con servicios de 
+                        <span class="font-semibold text-blue-600 inline-block hover:scale-110 transition-transform duration-300 cursor-pointer">alta calidad</span>, 
+                        <span class="font-semibold text-cyan-600 inline-block hover:scale-110 transition-transform duration-300 cursor-pointer">tecnología avanzada</span> y 
+                        <span class="font-semibold text-teal-600 inline-block hover:scale-110 transition-transform duration-300 cursor-pointer">atención personalizada</span>
                     </p>
                     
-                    <!-- Estadísticas rápidas -->
+                    <!-- Estadísticas con counter animado -->
                     <div class="flex flex-wrap gap-6 justify-center lg:justify-start mb-8 animate-fadeInUp" style="animation-delay: 0.5s;">
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-blue-600">1000+</div>
-                            <div class="text-sm text-gray-500">Clientes Felices</div>
+                        <!-- Counter 1 -->
+                        <div class="text-center group cursor-pointer transform hover:scale-110 transition-all duration-300">
+                            <div class="relative">
+                                <!-- Círculo de fondo animado -->
+                                <div class="absolute inset-0 bg-blue-500/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition-all duration-300"></div>
+                                <div class="relative px-6 py-4 bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-2xl border border-blue-200/50 group-hover:border-blue-400 group-hover:shadow-lg transition-all duration-300">
+                                    <div class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent counter-animate" data-target="1000">0</div>
+                                    <div class="text-xs font-semibold text-blue-600 uppercase tracking-wider mt-1">Clientes Felices</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-cyan-600">15min</div>
-                            <div class="text-sm text-gray-500">Servicio Express</div>
+                        
+                        <!-- Counter 2 -->
+                        <div class="text-center group cursor-pointer transform hover:scale-110 transition-all duration-300">
+                            <div class="relative">
+                                <div class="absolute inset-0 bg-cyan-500/10 rounded-full blur-xl group-hover:bg-cyan-500/20 transition-all duration-300"></div>
+                                <div class="relative px-6 py-4 bg-gradient-to-br from-cyan-50 to-cyan-100/50 rounded-2xl border border-cyan-200/50 group-hover:border-cyan-400 group-hover:shadow-lg transition-all duration-300">
+                                    <div class="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-cyan-700 bg-clip-text text-transparent counter-animate" data-target="15">0</div>
+                                    <div class="text-xs font-semibold text-cyan-600 uppercase tracking-wider mt-1">Minutos Express</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-teal-600">24/7</div>
-                            <div class="text-sm text-gray-500">Disponibilidad</div>
+                        
+                        <!-- Counter 3 -->
+                        <div class="text-center group cursor-pointer transform hover:scale-110 transition-all duration-300">
+                            <div class="relative">
+                                <div class="absolute inset-0 bg-teal-500/10 rounded-full blur-xl group-hover:bg-teal-500/20 transition-all duration-300"></div>
+                                <div class="relative px-6 py-4 bg-gradient-to-br from-teal-50 to-teal-100/50 rounded-2xl border border-teal-200/50 group-hover:border-teal-400 group-hover:shadow-lg transition-all duration-300">
+                                    <div class="text-3xl font-bold bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">24/7</div>
+                                    <div class="text-xs font-semibold text-teal-600 uppercase tracking-wider mt-1">Disponibilidad</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
-                    <!-- Botones de acción mejorados -->
+                    <!-- Botones con animaciones avanzadas -->
                     <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fadeInUp" style="animation-delay: 0.6s;">
-                        <button class="group px-8 py-4 bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 text-white font-semibold rounded-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                        <!-- Botón principal con efecto de onda -->
+                        <button class="group px-8 py-4 bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 text-white font-semibold rounded-xl hover:shadow-2xl hover:shadow-cyan-500/50 hover:-translate-y-2 transition-all duration-500 relative overflow-hidden">
+                            <!-- Efecto de onda en hover -->
                             <span class="absolute inset-0 bg-gradient-to-r from-blue-700 via-cyan-700 to-teal-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                            <!-- Partículas brillantes -->
+                            <span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 bg-white/30 rounded-full group-hover:w-full group-hover:h-full transition-all duration-700 ease-out"></span>
+                            <!-- Borde animado -->
+                            <span class="absolute inset-0 rounded-xl border-2 border-white/0 group-hover:border-white/50 transition-all duration-300"></span>
                             <span class="relative flex items-center justify-center">
-                                <i class="fas fa-eye mr-2"></i>
-                                Ver Servicios
+                                <i class="fas fa-eye mr-2 group-hover:rotate-12 transition-transform duration-300"></i>
+                                <span class="group-hover:tracking-wider transition-all duration-300">Ver Servicios</span>
                             </span>
                         </button>
+                        
                         {% if request.user.is_authenticated %}
-                            <a href="{% url 'reservas' %}" class="group px-8 py-4 border-2 border-slate-300 bg-white/80 backdrop-blur-sm text-slate-700 font-semibold rounded-xl hover:bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                                <span class="flex items-center justify-center">
-                                    <i class="fas fa-calendar-alt mr-2"></i>
-                                    Agendar Cita
+                            <!-- Botón secundario con glassmorphism -->
+                            <a href="{% url 'reservas' %}" class="group px-8 py-4 border-2 border-slate-300 bg-white/80 backdrop-blur-sm text-slate-700 font-semibold rounded-xl hover:bg-white hover:shadow-xl hover:shadow-blue-500/20 hover:-translate-y-2 hover:border-blue-400 transition-all duration-500 relative overflow-hidden">
+                                <!-- Gradiente sutil en hover -->
+                                <span class="absolute inset-0 bg-gradient-to-r from-blue-50 to-cyan-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                                <span class="relative flex items-center justify-center">
+                                    <i class="fas fa-calendar-alt mr-2 group-hover:bounce-once transition-transform duration-300"></i>
+                                    <span class="group-hover:tracking-wider transition-all duration-300">Agendar Cita</span>
                                 </span>
                             </a>
                         {% else %}
-                            <a href="{% url 'login' %}" class="group px-8 py-4 border-2 border-slate-300 bg-white/80 backdrop-blur-sm text-slate-700 font-semibold rounded-xl hover:bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300" title="Inicia sesión para poder agendar tu cita">
-                                <span class="flex items-center justify-center">
-                                    <i class="fas fa-sign-in-alt mr-2"></i>
-                                    Iniciar Sesión
+                            <a href="{% url 'login' %}" class="group px-8 py-4 border-2 border-slate-300 bg-white/80 backdrop-blur-sm text-slate-700 font-semibold rounded-xl hover:bg-white hover:shadow-xl hover:shadow-blue-500/20 hover:-translate-y-2 hover:border-blue-400 transition-all duration-500 relative overflow-hidden" title="Inicia sesión para poder agendar tu cita">
+                                <span class="absolute inset-0 bg-gradient-to-r from-blue-50 to-cyan-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                                <span class="relative flex items-center justify-center">
+                                    <i class="fas fa-sign-in-alt mr-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                    <span class="group-hover:tracking-wider transition-all duration-300">Iniciar Sesión</span>
                                 </span>
                             </a>
                         {% endif %}
                     </div>
                 </div>
 
-                <!-- Imagen/Visual: imagen alineada a la derecha sin efecto de cuadro -->
+                <!-- Imagen simple sin animaciones -->
                 <div class="relative animate-fadeInUp" style="animation-delay: 0.8s;">
-                    <!-- Contenedor que alinea la imagen a la derecha en pantallas grandes y centra en móviles -->
                     <div class="flex items-center justify-end h-full">
                         <div class="w-full ml-0 md:ml-6 md:mr-6 lg:mr-12">
-                            <img src="{% static 'img/imgservicios.png' %}" alt="Servicios" class="w-full h-auto object-contain">
+                            <!-- Imagen principal sin efectos -->
+                            <img src="{% static 'img/imgservicios.png' %}" 
+                                 alt="Servicios" 
+                                 class="w-full h-auto object-contain">
                         </div>
                     </div>
                 </div>
@@ -372,8 +416,8 @@
         </div>
 
         <div class="container mx-auto px-6 relative z-10">
-            <!-- Header moderno -->
-            <div class="text-center mb-24">
+            <!-- Header moderno con scroll reveal -->
+            <div class="text-center mb-24 scroll-reveal">
                 <div class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 text-white text-sm font-bold rounded-2xl uppercase tracking-wider mb-8 shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-105">
                     <i class="fas fa-magic mr-3 text-lg"></i>
                     <span>Nuestro Proceso Único</span>
@@ -399,7 +443,7 @@
             <!-- Proceso en diseño zigzag -->
             <div class="space-y-24">
                 <!-- Paso 1: Recepción (Izquierda) -->
-                <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+                <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-16 scroll-reveal">
                     <div class="lg:w-1/2 order-2 lg:order-1">
                         <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/50 hover:shadow-violet-500/20 transition-all duration-500 transform hover:-translate-y-2 group">
                             <!-- Header de la card -->
@@ -473,7 +517,7 @@
                 </div>
 
                 <!-- Línea conectora animada -->
-                <div class="flex justify-center">
+                <div class="flex justify-center scroll-reveal">
                     <div class="w-px h-16 bg-gradient-to-b from-violet-300 via-purple-400 to-fuchsia-300 relative">
                         <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
                         <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-fuchsia-500 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
@@ -481,7 +525,7 @@
                 </div>
 
                 <!-- Paso 2: Preparación (Derecha) -->
-                <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+                <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-16 scroll-reveal">
                     <!-- Ilustración/Icono grande -->
                     <div class="lg:w-1/2 flex justify-center">
                         <div class="relative">
@@ -550,7 +594,7 @@
                 </div>
 
                 <!-- Línea conectora animada -->
-                <div class="flex justify-center">
+                <div class="flex justify-center scroll-reveal">
                     <div class="w-px h-16 bg-gradient-to-b from-cyan-300 via-teal-400 to-emerald-300 relative">
                         <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-teal-500 rounded-full animate-pulse"></div>
                         <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
@@ -558,7 +602,7 @@
                 </div>
 
                 <!-- Paso 3: Ejecución (Izquierda) -->
-                <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+                <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-16 scroll-reveal">
                     <div class="lg:w-1/2 order-2 lg:order-1">
                         <div class="bg-white/70 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/50 hover:shadow-emerald-500/20 transition-all duration-500 transform hover:-translate-y-2 group">
                             <div class="flex items-center mb-6">
@@ -626,7 +670,7 @@
                 </div>
 
                 <!-- Línea conectora animada -->
-                <div class="flex justify-center">
+                <div class="flex justify-center scroll-reveal">
                     <div class="w-px h-16 bg-gradient-to-b from-emerald-300 via-rose-400 to-pink-300 relative">
                         <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-rose-500 rounded-full animate-pulse"></div>
                         <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-pink-500 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
@@ -634,7 +678,7 @@
                 </div>
 
                 <!-- Paso 4: Entrega (Derecha) -->
-                <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+                <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-16 scroll-reveal">
                     <div class="lg:w-1/2 flex justify-center">
                         <div class="relative">
                             <div class="w-72 h-72 bg-gradient-to-br from-rose-400/30 to-pink-500/30 rounded-full backdrop-blur-sm border border-white/20 flex items-center justify-center shadow-2xl">
@@ -1159,6 +1203,364 @@
             radial-gradient(circle at 40% 40%, rgba(20, 184, 166, 0.08) 0%, transparent 50%);
         animation: float 20s ease-in-out infinite;
     }
+
+    /* ========== NUEVAS ANIMACIONES MODERNAS ========== */
+    
+    /* Animación de gradiente en movimiento */
+    @keyframes gradient-shift {
+        0%, 100% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+    }
+    
+    .animate-gradient-shift {
+        animation: gradient-shift 3s ease infinite;
+    }
+    
+    /* Animación de subrayado expansivo */
+    @keyframes underline-expand {
+        0% {
+            width: 0%;
+            left: 50%;
+        }
+        100% {
+            width: 100%;
+            left: 0%;
+        }
+    }
+    
+    .animate-underline-expand {
+        animation: underline-expand 1.5s ease-out 1s forwards;
+    }
+    
+    /* Animación de contador numérico */
+    @keyframes counter-up {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .counter-animate {
+        animation: counter-up 0.5s ease-out;
+    }
+    
+    /* Efecto de onda en botones */
+    @keyframes ripple {
+        0% {
+            transform: scale(0);
+            opacity: 0.5;
+        }
+        100% {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+    
+    /* Efecto 3D en hover para imágenes */
+    .perspective-1000 {
+        perspective: 1000px;
+    }
+    
+    .image-3d-container {
+        transform-style: preserve-3d;
+        transition: transform 0.6s ease-out;
+    }
+    
+    .image-3d-container:hover {
+        transform: rotateY(5deg) rotateX(-5deg);
+    }
+    
+    /* Efecto de parallax en scroll */
+    @keyframes parallax-float {
+        0%, 100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+    
+    .parallax-image {
+        animation: parallax-float 6s ease-in-out infinite;
+    }
+    
+    /* Animación de partículas de brillo */
+    @keyframes sparkle {
+        0%, 100% {
+            opacity: 0;
+            transform: scale(0) rotate(0deg);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1) rotate(180deg);
+        }
+    }
+    
+    /* Efecto de pulso en el badge */
+    @keyframes ring-pulse {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(1.5);
+            opacity: 0;
+        }
+    }
+    
+    /* Efecto de bounce personalizado */
+    @keyframes bounce-once {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        25% {
+            transform: translateY(-10px);
+        }
+        50% {
+            transform: translateY(0);
+        }
+        75% {
+            transform: translateY(-5px);
+        }
+    }
+    
+    .group:hover .bounce-once {
+        animation: bounce-once 0.6s ease;
+    }
+    
+    /* Efecto de glow pulsante */
+    @keyframes glow-pulse {
+        0%, 100% {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3),
+                        0 0 40px rgba(59, 130, 246, 0.1);
+        }
+        50% {
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.6),
+                        0 0 60px rgba(59, 130, 246, 0.3);
+        }
+    }
+    
+    /* Animación de tracking (espaciado de letras) */
+    .group:hover span {
+        letter-spacing: 0.05em;
+    }
+    
+    /* Efecto de rotación suave en iconos */
+    @keyframes rotate-smooth {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(12deg);
+        }
+    }
+    
+    /* Animación de escala con elastic */
+    @keyframes scale-elastic {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.15);
+        }
+        75% {
+            transform: scale(0.95);
+        }
+        100% {
+            transform: scale(1.1);
+        }
+    }
+    
+    /* Efecto de brillo deslizante */
+    @keyframes shine {
+        0% {
+            transform: translateX(-100%) skewX(-15deg);
+        }
+        100% {
+            transform: translateX(200%) skewX(-15deg);
+        }
+    }
+    
+    /* Animación de fade in con escala */
+    @keyframes fadeInScale {
+        0% {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    /* Efecto de texto con degradado animado */
+    @keyframes text-gradient {
+        0%, 100% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+    }
+    
+    /* Animación de números con flip */
+    @keyframes number-flip {
+        0% {
+            transform: rotateX(0deg);
+        }
+        100% {
+            transform: rotateX(360deg);
+        }
+    }
+    
+    /* Efecto de sombra dinámica */
+    @keyframes shadow-grow {
+        0% {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        100% {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                        0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    }
+    
+    /* Animación de borde con gradiente rotativo */
+    @keyframes border-rotate {
+        0% {
+            border-image-source: linear-gradient(0deg, #3b82f6, #06b6d4);
+        }
+        50% {
+            border-image-source: linear-gradient(180deg, #06b6d4, #14b8a6);
+        }
+        100% {
+            border-image-source: linear-gradient(360deg, #14b8a6, #3b82f6);
+        }
+    }
+    
+    /* Efecto de partículas flotantes en hover */
+    @keyframes particle-float {
+        0% {
+            transform: translate(0, 0) scale(0);
+            opacity: 0;
+        }
+        50% {
+            opacity: 1;
+        }
+        100% {
+            transform: translate(var(--tx), var(--ty)) scale(1);
+            opacity: 0;
+        }
+    }
+    
+    /* Responsive: ajustes para móvil */
+    @media (max-width: 768px) {
+        .image-3d-container:hover {
+            transform: rotateY(2deg) rotateX(-2deg);
+        }
+        
+        .animate-gradient-shift {
+            animation-duration: 5s;
+        }
+    }
+    
+    /* Optimización de rendimiento */
+    .animate-fadeInUp,
+    .counter-animate,
+    .parallax-image {
+        will-change: transform, opacity;
+    }
+    
+    /* Prevenir FOUC (Flash of Unstyled Content) */
+    .counter-animate {
+        visibility: visible;
+    }
+    
+    /* ========== ANIMACIÓN SCROLL REVEAL ========== */
+    
+    /* Estado inicial: elementos ocultos, pequeños y abajo */
+    .scroll-reveal {
+        opacity: 0;
+        transform: translateY(80px) scale(0.85);
+        transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    /* Estado cuando son visibles: normales y en posición */
+    .scroll-reveal.revealed {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    
+    /* Variaciones con delays para efecto escalonado */
+    .scroll-reveal:nth-child(1) {
+        transition-delay: 0ms;
+    }
+    
+    .scroll-reveal:nth-child(2) {
+        transition-delay: 100ms;
+    }
+    
+    .scroll-reveal:nth-child(3) {
+        transition-delay: 200ms;
+    }
+    
+    .scroll-reveal:nth-child(4) {
+        transition-delay: 300ms;
+    }
+    
+    .scroll-reveal:nth-child(5) {
+        transition-delay: 400ms;
+    }
+    
+    .scroll-reveal:nth-child(6) {
+        transition-delay: 500ms;
+    }
+    
+    /* Versión con bounce más pronunciado */
+    .scroll-reveal-bounce {
+        opacity: 0;
+        transform: translateY(100px) scale(0.7);
+        transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .scroll-reveal-bounce.revealed {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    
+    /* Optimización de rendimiento para scroll reveal */
+    .scroll-reveal,
+    .scroll-reveal-bounce {
+        will-change: transform, opacity;
+    }
+    
+    .scroll-reveal.revealed,
+    .scroll-reveal-bounce.revealed {
+        will-change: auto;
+    }
+    
+    /* Animación de ripple para botones */
+    @keyframes ripple {
+        0% {
+            transform: scale(0);
+            opacity: 0.6;
+        }
+        100% {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+    
+    .ripple-effect {
+        animation: ripple 0.6s ease-out;
+    }
 </style>
 
 <!-- JavaScript para animaciones mejorado -->
@@ -1214,6 +1616,243 @@
     }
 
     // Observador de intersección para animaciones al hacer scroll
+    document.addEventListener('DOMContentLoaded', function() {
+        // ========== ANIMACIÓN DE CONTADORES ==========
+        function animateCounter(element) {
+            const target = parseInt(element.getAttribute('data-target'));
+            const duration = 2000; // 2 segundos
+            const increment = target / (duration / 16); // 60 FPS
+            let current = 0;
+            
+            const updateCounter = () => {
+                current += increment;
+                if (current < target) {
+                    element.textContent = Math.floor(current) + (target === 1000 ? '+' : '');
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    element.textContent = target + (target === 1000 ? '+' : '');
+                }
+            };
+            
+            updateCounter();
+        }
+        
+        // Observer para activar contadores cuando sean visibles
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
+                    entry.target.classList.add('counted');
+                    animateCounter(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        // Observar todos los contadores
+        document.querySelectorAll('.counter-animate').forEach(counter => {
+            counterObserver.observe(counter);
+        });
+        
+        // ========== EFECTO PARALLAX EN SCROLL ==========
+        let ticking = false;
+        
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const scrolled = window.pageYOffset;
+                    const parallaxElements = document.querySelectorAll('.parallax-image');
+                    
+                    parallaxElements.forEach(element => {
+                        const speed = element.getAttribute('data-speed') || 0.5;
+                        const yPos = -(scrolled * speed);
+                        element.style.transform = `translateY(${yPos}px) scale(1.05)`;
+                    });
+                    
+                    ticking = false;
+                });
+                
+                ticking = true;
+            }
+        });
+        
+        // ========== EFECTO 3D EN IMAGEN CON MOUSE ==========
+        const image3DContainers = document.querySelectorAll('.image-3d-container');
+        
+        image3DContainers.forEach(container => {
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 20;
+                const rotateY = (centerX - x) / 20;
+                
+                container.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+            });
+            
+            container.addEventListener('mouseleave', () => {
+                container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+            });
+        });
+        
+        // ========== EFECTO DE TYPING EN TEXTOS ==========
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.textContent = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            
+            type();
+        }
+        
+        // ========== EFECTO RIPPLE EN BOTONES ==========
+        const buttons = document.querySelectorAll('button, a[class*="btn"]');
+        
+        buttons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple-effect');
+                
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'rgba(255, 255, 255, 0.5)';
+                ripple.style.pointerEvents = 'none';
+                ripple.style.animation = 'ripple 0.6s ease-out';
+                
+                const oldRipple = this.querySelector('.ripple-effect');
+                if (oldRipple) {
+                    oldRipple.remove();
+                }
+                
+                this.style.position = 'relative';
+                this.style.overflow = 'hidden';
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+        
+        // ========== SMOOTH REVEAL DE ELEMENTOS ==========
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+        
+        // Aplicar a elementos con animate-fadeInUp
+        document.querySelectorAll('.animate-fadeInUp').forEach(el => {
+            revealObserver.observe(el);
+        });
+        
+        // ========== EFECTO DE BRILLO EN BADGE ==========
+        const badges = document.querySelectorAll('.inline-flex.items-center.px-4');
+        
+        badges.forEach(badge => {
+            setInterval(() => {
+                const shine = badge.querySelector('.absolute.inset-0');
+                if (shine && !badge.matches(':hover')) {
+                    shine.style.animation = 'none';
+                    setTimeout(() => {
+                        shine.style.animation = '';
+                    }, 10);
+                }
+            }, 5000);
+        });
+        
+        // ========== PARTÍCULAS DECORATIVAS EN HOVER ==========
+        const statsCards = document.querySelectorAll('.text-center.group');
+        
+        statsCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                createSparkles(card);
+            });
+        });
+        
+        function createSparkles(element) {
+            const sparkleCount = 5;
+            
+            for (let i = 0; i < sparkleCount; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.position = 'absolute';
+                sparkle.style.width = '4px';
+                sparkle.style.height = '4px';
+                sparkle.style.borderRadius = '50%';
+                sparkle.style.background = 'radial-gradient(circle, rgba(59, 130, 246, 1), rgba(6, 182, 212, 0.5))';
+                sparkle.style.pointerEvents = 'none';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animation = 'sparkle 0.8s ease-out forwards';
+                
+                element.style.position = 'relative';
+                element.appendChild(sparkle);
+                
+                setTimeout(() => sparkle.remove(), 800);
+            }
+        }
+        
+        // ========== ANIMACIÓN DE GRADIENTES ==========
+        const gradientTexts = document.querySelectorAll('.animate-gradient-shift');
+        
+        gradientTexts.forEach(text => {
+            text.style.backgroundSize = '200% auto';
+        });
+        
+        // ========== SCROLL REVEAL ANIMATION ==========
+        // Observer para elementos con scroll-reveal
+        const scrollRevealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Agregar clase 'revealed' cuando el elemento es visible
+                    entry.target.classList.add('revealed');
+                    
+                    // Opcional: dejar de observar una vez revelado
+                    // scrollRevealObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.15, // Activar cuando el 15% del elemento es visible
+            rootMargin: '0px 0px -50px 0px' // Activar un poco antes de que sea visible
+        });
+        
+        // Observar todos los elementos con clase scroll-reveal
+        document.querySelectorAll('.scroll-reveal').forEach(element => {
+            scrollRevealObserver.observe(element);
+        });
+        
+        // También para scroll-reveal-bounce si se usa
+        document.querySelectorAll('.scroll-reveal-bounce').forEach(element => {
+            scrollRevealObserver.observe(element);
+        });
+        
+        console.log('✨ Animaciones modernas cargadas correctamente');
+        console.log('🎯 Scroll Reveal activado para la sección de proceso');
+    });
+    
+    // Observador de intersección original para animaciones al hacer scroll
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'

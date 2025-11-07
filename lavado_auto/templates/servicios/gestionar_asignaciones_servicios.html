@@ -1,0 +1,917 @@
+{% extends 'base/base_crud.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50 to-red-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
+            <div class="flex items-center space-x-4">
+                <a href="{% url 'empresascrud' %}" class="p-3 bg-gradient-to-br from-gray-500 to-gray-600 rounded-2xl shadow-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-300">
+                    <i class="fas fa-arrow-left text-white text-xl"></i>
+                </a>
+                <div class="p-3 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-lg">
+                    <i class="fas fa-link text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                        Asignar Servicios a Empresas
+                    </h1>
+                    <p class="text-gray-600 mt-1">Gestiona qué servicios están disponibles para cada empresa</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensajes de estado -->
+        {% if messages %}
+            <div class="mb-8 space-y-3">
+                {% for message in messages %}
+                    <div class="p-4 rounded-2xl shadow-lg backdrop-blur-xl border {% if message.tags == 'success' %}bg-green-50/80 border-green-200 text-green-800{% elif message.tags == 'error' %}bg-red-50/80 border-red-200 text-red-800{% elif message.tags == 'warning' %}bg-yellow-50/80 border-yellow-200 text-yellow-800{% else %}bg-blue-50/80 border-blue-200 text-blue-800{% endif %}">
+                        <div class="flex items-center">
+                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-3 text-lg"></i>
+                            <span class="font-medium">{{ message }}</span>
+                            <button type="button" class="ml-auto text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.style.display='none'">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Estadísticas rápidas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Empresas</p>
+                        <p class="text-3xl font-bold text-blue-600">{{ total_empresas }}</p>
+                    </div>
+                    <div class="p-3 bg-blue-100 rounded-xl">
+                        <i class="fas fa-building text-blue-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Servicios</p>
+                        <p class="text-3xl font-bold text-purple-600">{{ total_servicios }}</p>
+                    </div>
+                    <div class="p-3 bg-purple-100 rounded-xl">
+                        <i class="fas fa-concierge-bell text-purple-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Asignaciones Activas</p>
+                        <p class="text-3xl font-bold text-green-600">{{ total_asignaciones }}</p>
+                    </div>
+                    <div class="p-3 bg-green-100 rounded-xl">
+                        <i class="fas fa-link text-green-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Sin Servicios</p>
+                        <p class="text-3xl font-bold text-orange-600">{{ empresas_sin_servicios }}</p>
+                    </div>
+                    <div class="p-3 bg-orange-100 rounded-xl">
+                        <i class="fas fa-exclamation-triangle text-orange-600"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6 mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">
+                <i class="fas fa-filter mr-2 text-purple-500"></i>
+                Filtros de Búsqueda
+            </h2>
+            <form method="GET" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Buscar Empresa</label>
+                    <input type="text" name="empresa_filtro" value="{{ empresa_filtro }}" 
+                           placeholder="Nombre de empresa..."
+                           class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Buscar Servicio</label>
+                    <input type="text" name="servicio_filtro" value="{{ servicio_filtro }}" 
+                           placeholder="Nombre de servicio..."
+                           class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" 
+                            class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-2 px-4 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300">
+                        <i class="fas fa-search mr-2"></i>
+                        Filtrar
+                    </button>
+                </div>
+                <div class="flex items-end">
+                    <a href="{% url 'gestionar_asignaciones_servicios' %}" 
+                       class="w-full bg-gray-100 text-gray-700 font-semibold py-2 px-4 rounded-xl hover:bg-gray-200 transition-all duration-300 text-center">
+                        <i class="fas fa-times mr-2"></i>
+                        Limpiar
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sistema de Pestañas (Tabs) -->
+        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-8 mb-8">
+            <!-- Tabs Header -->
+            <div class="border-b border-gray-200 mb-6">
+                <nav class="flex space-x-4" aria-label="Tabs">
+                    <button onclick="switchTab('empresas')" id="tab-empresas" 
+                            class="tab-button tab-active px-6 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300">
+                        <i class="fas fa-building mr-2"></i>
+                        Empresa → Servicios
+                    </button>
+                    <button onclick="switchTab('servicios')" id="tab-servicios" 
+                            class="tab-button px-6 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300">
+                        <i class="fas fa-concierge-bell mr-2"></i>
+                        Servicio → Empresas
+                    </button>
+                    <button onclick="switchTab('vista')" id="tab-vista" 
+                            class="tab-button px-6 py-3 text-sm font-semibold rounded-t-xl transition-all duration-300">
+                        <i class="fas fa-list mr-2"></i>
+                        Vista General
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Tab Content: Empresa → Servicios -->
+            <div id="content-empresas" class="tab-content">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Lista de empresas y sus servicios -->
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-building mr-3 text-blue-500"></i>
+                            Empresas Registradas
+                        </h2>
+
+                        <div class="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+                            {% for empresa in empresas %}
+                                <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 hover:shadow-lg transition-all duration-200 border border-blue-100">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="p-2 bg-blue-500 rounded-lg">
+                                                <i class="fas fa-building text-white"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="font-bold text-gray-800">{{ empresa.nombre_empresa }}</h3>
+                                                <p class="text-sm text-gray-600">{{ empresa.direccion|truncatechars:40 }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            {% if empresa.verificada %}
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    <i class="fas fa-check-circle mr-1"></i>
+                                                    Verificada
+                                                </span>
+                                            {% else %}
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                    <i class="fas fa-clock mr-1"></i>
+                                                    Pendiente
+                                                </span>
+                                            {% endif %}
+                                            <a href="{% url 'asignar_servicio_empresa' empresa.id_empresa %}" 
+                                               class="inline-flex items-center px-3 py-1 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm">
+                                                <i class="fas fa-cog mr-1"></i>
+                                                Gestionar
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <!-- Servicios asignados -->
+                                    <div class="flex flex-wrap gap-2 mt-3">
+                                        {% if empresa.id_empresa in asignaciones_dict %}
+                                            {% for servicio in servicios %}
+                                                {% if servicio.id_servicio in asignaciones_dict|dictsort:"name"|slice:empresa.id_empresa %}
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                                        <i class="fas fa-concierge-bell mr-1"></i>
+                                                        {{ servicio.nombre_servicio }}
+                                                    </span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="text-sm text-gray-500 italic">Sin servicios asignados</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="text-center py-12">
+                                    <div class="p-4 bg-gray-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                                        <i class="fas fa-building text-gray-400 text-2xl"></i>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-600 mb-2">No se encontraron empresas</h3>
+                                    <p class="text-gray-500">Intenta ajustar los filtros de búsqueda</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Asignación masiva: Empresa → Servicios -->
+                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border-2 border-purple-200">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-magic mr-3 text-purple-500"></i>
+                            Asignación Masiva
+                        </h2>
+
+                        <form method="POST" class="space-y-6">
+                            {% csrf_token %}
+                            <input type="hidden" name="asignacion_masiva_empresa" value="1">
+                            
+                            <!-- Seleccionar empresa -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    <i class="fas fa-building mr-2 text-purple-500"></i>
+                                    1. Seleccionar Empresa
+                                </label>
+                                <select name="empresa_id" required
+                                        class="w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white">
+                                    <option value="">Selecciona una empresa...</option>
+                                    {% for empresa in empresas %}
+                                        <option value="{{ empresa.id_empresa }}">
+                                            {{ empresa.nombre_empresa }}
+                                            {% if not empresa.verificada %} (Sin verificar){% endif %}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Seleccionar servicios -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    <i class="fas fa-concierge-bell mr-2 text-purple-500"></i>
+                                    2. Servicios a Asignar (múltiples)
+                                </label>
+                                <div class="grid grid-cols-1 gap-3 max-h-64 overflow-y-auto border-2 border-purple-200 rounded-xl p-4 bg-white">
+                                    {% for servicio in servicios %}
+                                        <label class="flex items-center space-x-3 cursor-pointer hover:bg-purple-50 p-2 rounded-lg transition-colors">
+                                            <input type="checkbox" name="servicios" value="{{ servicio.id_servicio }}"
+                                                   class="h-5 w-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
+                                            <div class="flex-1">
+                                                <span class="font-medium text-gray-800">{{ servicio.nombre_servicio }}</span>
+                                                <p class="text-sm text-gray-600">${{ servicio.precio|floatformat:0 }}</p>
+                                            </div>
+                                        </label>
+                                    {% empty %}
+                                        <p class="text-gray-500 text-center py-4">No hay servicios disponibles</p>
+                                    {% endfor %}
+                                </div>
+                                <p class="mt-2 text-sm text-gray-500">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Selecciona los servicios que la empresa podrá ofrecer
+                                </p>
+                            </div>
+
+                            <!-- Botón de asignación -->
+                            <button type="submit" 
+                                    class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-300">
+                                <i class="fas fa-magic mr-2"></i>
+                                Asignar Servicios a Empresa
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Servicio → Empresas -->
+            <div id="content-servicios" class="tab-content hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Lista de servicios y sus empresas -->
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-concierge-bell mr-3 text-purple-500"></i>
+                            Servicios Disponibles
+                        </h2>
+
+                        <div class="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+                            {% for servicio in servicios %}
+                                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 hover:shadow-lg transition-all duration-200 border border-purple-100">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="p-2 bg-purple-500 rounded-lg">
+                                                <i class="fas fa-concierge-bell text-white"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="font-bold text-gray-800">{{ servicio.nombre_servicio }}</h3>
+                                                <p class="text-sm text-green-600 font-semibold">${{ servicio.precio|floatformat:0 }}</p>
+                                            </div>
+                                        </div>
+                                        <a href="{% url 'detalle_servicio' servicio.id_servicio %}" 
+                                           class="inline-flex items-center px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm">
+                                            <i class="fas fa-eye mr-1"></i>
+                                            Ver
+                                        </a>
+                                    </div>
+
+                                    <!-- Empresas que ofrecen este servicio -->
+                                    <div class="flex flex-wrap gap-2 mt-3">
+                                        {% for empresa in empresas %}
+                                            {% if empresa.id_empresa in asignaciones_dict and servicio.id_servicio in asignaciones_dict|dictsort:"name"|slice:empresa.id_empresa %}
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                    <i class="fas fa-building mr-1"></i>
+                                                    {{ empresa.nombre_empresa }}
+                                                </span>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if not servicio.id_servicio in asignaciones_dict.values %}
+                                            <span class="text-sm text-gray-500 italic">Sin empresas asignadas</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="text-center py-12">
+                                    <div class="p-4 bg-gray-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                                        <i class="fas fa-concierge-bell text-gray-400 text-2xl"></i>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-600 mb-2">No se encontraron servicios</h3>
+                                    <p class="text-gray-500">Intenta ajustar los filtros de búsqueda</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Asignación masiva: Servicio → Empresas -->
+                    <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6 border-2 border-blue-200">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-magic mr-3 text-blue-500"></i>
+                            Asignación Masiva Inversa
+                        </h2>
+
+                        <form method="POST" class="space-y-6">
+                            {% csrf_token %}
+                            <input type="hidden" name="asignacion_masiva_servicio" value="1">
+                            
+                            <!-- Seleccionar servicio -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    <i class="fas fa-concierge-bell mr-2 text-blue-500"></i>
+                                    1. Seleccionar Servicio
+                                </label>
+                                <select name="servicio_id" required
+                                        class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                                    <option value="">Selecciona un servicio...</option>
+                                    {% for servicio in servicios %}
+                                        <option value="{{ servicio.id_servicio }}">
+                                            {{ servicio.nombre_servicio }} - ${{ servicio.precio|floatformat:0 }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Seleccionar empresas -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    <i class="fas fa-building mr-2 text-blue-500"></i>
+                                    2. Empresas a Asignar (múltiples)
+                                </label>
+                                <div class="grid grid-cols-1 gap-3 max-h-64 overflow-y-auto border-2 border-blue-200 rounded-xl p-4 bg-white">
+                                    {% for empresa in empresas %}
+                                        <label class="flex items-center space-x-3 cursor-pointer hover:bg-blue-50 p-2 rounded-lg transition-colors">
+                                            <input type="checkbox" name="empresas" value="{{ empresa.id_empresa }}"
+                                                   class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                            <div class="flex-1">
+                                                <span class="font-medium text-gray-800">{{ empresa.nombre_empresa }}</span>
+                                                <p class="text-sm text-gray-600">{{ empresa.direccion|truncatechars:40 }}</p>
+                                            </div>
+                                            {% if empresa.verificada %}
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    <i class="fas fa-check-circle mr-1"></i>
+                                                </span>
+                                            {% else %}
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                    <i class="fas fa-clock mr-1"></i>
+                                                </span>
+                                            {% endif %}
+                                        </label>
+                                    {% empty %}
+                                        <p class="text-gray-500 text-center py-4">No hay empresas disponibles</p>
+                                    {% endfor %}
+                                </div>
+                                <p class="mt-2 text-sm text-gray-500">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Selecciona las empresas que podrán ofrecer este servicio
+                                </p>
+                            </div>
+
+                            <!-- Botón de asignación -->
+                            <button type="submit" 
+                                    class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300">
+                                <i class="fas fa-magic mr-2"></i>
+                                Asignar Empresas a Servicio
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Vista General -->
+            <div id="content-vista" class="tab-content hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Empresas y sus servicios -->
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-building mr-2 text-blue-500"></i>
+                            Empresas con Servicios
+                        </h3>
+                        <div class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+                            {% for empresa in empresas %}
+                                <div class="bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="font-semibold text-gray-800">{{ empresa.nombre_empresa }}</h4>
+                                        {% if empresa.verificada %}
+                                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                                                <i class="fas fa-check-circle"></i>
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex flex-wrap gap-1">
+                                        {% if empresa.id_empresa in asignaciones_dict %}
+                                            {% for servicio in servicios %}
+                                                {% if servicio.id_servicio in asignaciones_dict|dictsort:"name"|slice:empresa.id_empresa %}
+                                                    <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">
+                                                        {{ servicio.nombre_servicio }}
+                                                    </span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="text-xs text-gray-500 italic">Sin servicios</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Servicios y sus empresas -->
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-concierge-bell mr-2 text-purple-500"></i>
+                            Servicios con Empresas
+                        </h3>
+                        <div class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+                            {% for servicio in servicios %}
+                                <div class="bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="font-semibold text-gray-800">{{ servicio.nombre_servicio }}</h4>
+                                        <span class="text-sm font-bold text-green-600">${{ servicio.precio|floatformat:0 }}</span>
+                                    </div>
+                                    <div class="flex flex-wrap gap-1">
+                                        {% for empresa in empresas %}
+                                            {% if empresa.id_empresa in asignaciones_dict and servicio.id_servicio in asignaciones_dict|dictsort:"name"|slice:empresa.id_empresa %}
+                                                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                                                    {{ empresa.nombre_empresa }}
+                                                </span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Listado de asignaciones actuales -->
+        <div class="mt-8 bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">
+                    <i class="fas fa-list mr-3 text-green-500"></i>
+                    Asignaciones Actuales
+                </h2>
+                <span id="total-asignaciones-badge" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                    {{ total_asignaciones }} asignación{{ total_asignaciones|pluralize:"es" }}
+                </span>
+            </div>
+
+            <!-- Contenedor que se actualizará con AJAX -->
+            <div id="asignaciones-container">
+                {% if asignaciones %}
+                    <div class="overflow-x-auto">
+                        <table class="w-full" id="asignaciones-table">
+                            <thead>
+                                <tr class="bg-gray-50 rounded-xl">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-l-xl">
+                                        Empresa
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Servicio
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Precio
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Estado
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-r-xl">
+                                        Acciones
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="space-y-2" id="asignaciones-tbody">
+                                {% for asignacion in asignaciones %}
+                                    <tr class="bg-white hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="p-2 bg-blue-100 rounded-lg mr-3">
+                                                    <i class="fas fa-building text-blue-600"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="text-sm font-medium text-gray-900">{{ asignacion.empresa.nombre_empresa }}</div>
+                                                    <div class="text-sm text-gray-500">{{ asignacion.empresa.direccion|truncatechars:30 }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="p-2 bg-purple-100 rounded-lg mr-3">
+                                                    <i class="fas fa-concierge-bell text-purple-600"></i>
+                                                </div>
+                                                <div class="text-sm font-medium text-gray-900">{{ asignacion.servicio.nombre_servicio }}</div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="text-lg font-bold text-green-600">${{ asignacion.servicio.precio|floatformat:0 }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            {% if asignacion.empresa.verificada %}
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    <i class="fas fa-check-circle mr-1"></i>
+                                                    Activa
+                                                </span>
+                                            {% else %}
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                    <i class="fas fa-clock mr-1"></i>
+                                                    Pendiente
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <a href="{% url 'asignar_servicio_empresa' asignacion.empresa.id_empresa %}" 
+                                               class="text-purple-600 hover:text-purple-900 mr-3">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'detalle_servicio' asignacion.servicio.id_servicio %}" 
+                                               class="text-blue-600 hover:text-blue-900">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Controles de paginación -->
+                    <div class="mt-6 flex items-center justify-between border-t border-gray-200 pt-6">
+                        <div class="flex-1 flex justify-between sm:hidden">
+                            {% if asignaciones.has_previous %}
+                                <button onclick="loadPage({{ asignaciones.previous_page_number }})" 
+                                        class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                    Anterior
+                                </button>
+                            {% else %}
+                                <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-400 bg-gray-100 cursor-not-allowed">
+                                    Anterior
+                                </span>
+                            {% endif %}
+
+                            {% if asignaciones.has_next %}
+                                <button onclick="loadPage({{ asignaciones.next_page_number }})" 
+                                        class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                    Siguiente
+                                </button>
+                            {% else %}
+                                <span class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-400 bg-gray-100 cursor-not-allowed">
+                                    Siguiente
+                                </span>
+                            {% endif %}
+                        </div>
+                        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                            <div>
+                                <p class="text-sm text-gray-700">
+                                    Mostrando página
+                                    <span class="font-medium" id="current-page">{{ asignaciones.number }}</span>
+                                    de
+                                    <span class="font-medium" id="total-pages">{{ asignaciones.paginator.num_pages }}</span>
+                                    <span class="text-gray-500">({{ asignaciones.paginator.count }} asignaciones totales)</span>
+                                </p>
+                            </div>
+                            <div>
+                                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination" id="pagination-controls">
+                                    {% if asignaciones.has_previous %}
+                                        <button onclick="loadPage({{ asignaciones.previous_page_number }})" 
+                                                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                            <span class="sr-only">Anterior</span>
+                                            <i class="fas fa-chevron-left"></i>
+                                        </button>
+                                    {% else %}
+                                        <span class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400 cursor-not-allowed">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </span>
+                                    {% endif %}
+
+                                    {% for num in asignaciones.paginator.page_range %}
+                                        {% if asignaciones.number == num %}
+                                            <span class="z-10 bg-purple-50 border-purple-500 text-purple-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                                {{ num }}
+                                            </span>
+                                        {% elif num > asignaciones.number|add:'-3' and num < asignaciones.number|add:'3' %}
+                                            <button onclick="loadPage({{ num }})" 
+                                                    class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                                {{ num }}
+                                            </button>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if asignaciones.has_next %}
+                                        <button onclick="loadPage({{ asignaciones.next_page_number }})" 
+                                                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                            <span class="sr-only">Siguiente</span>
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    {% else %}
+                                        <span class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400 cursor-not-allowed">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </span>
+                                    {% endif %}
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center py-12">
+                        <div class="p-4 bg-gray-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                            <i class="fas fa-link text-gray-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-600 mb-2">No hay asignaciones</h3>
+                        <p class="text-gray-500">Comienza asignando servicios a las empresas</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilos para las pestañas */
+    .tab-button {
+        color: #6B7280;
+        border-bottom: 3px solid transparent;
+    }
+    
+    .tab-button:hover {
+        color: #9333EA;
+        background-color: rgba(147, 51, 234, 0.1);
+    }
+    
+    .tab-active {
+        color: #9333EA;
+        border-bottom: 3px solid #9333EA;
+        background-color: rgba(147, 51, 234, 0.1);
+    }
+    
+    .tab-content {
+        animation: fadeIn 0.3s ease-in;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<script>
+// Función para cambiar entre pestañas
+function switchTab(tabName) {
+    // Ocultar todos los contenidos
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+    });
+    
+    // Quitar clase activa de todos los botones
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('tab-active');
+    });
+    
+    // Mostrar el contenido seleccionado
+    document.getElementById('content-' + tabName).classList.remove('hidden');
+    
+    // Activar el botón correspondiente
+    document.getElementById('tab-' + tabName).classList.add('tab-active');
+    
+    // Guardar la pestaña activa en localStorage
+    localStorage.setItem('activeTab', tabName);
+}
+
+// Restaurar la pestaña activa al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    const activeTab = localStorage.getItem('activeTab') || 'empresas';
+    switchTab(activeTab);
+});
+
+function loadPage(pageNumber) {
+    // Mostrar indicador de carga
+    const container = document.getElementById('asignaciones-container');
+    container.style.opacity = '0.5';
+    container.style.pointerEvents = 'none';
+    
+    // Realizar petición AJAX
+    fetch(`?page=${pageNumber}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        updateAsignacionesTable(data);
+        container.style.opacity = '1';
+        container.style.pointerEvents = 'auto';
+        
+        // Scroll suave a la sección de asignaciones
+        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    })
+    .catch(error => {
+        console.error('Error al cargar la página:', error);
+        container.style.opacity = '1';
+        container.style.pointerEvents = 'auto';
+        alert('Error al cargar los datos. Por favor, intenta de nuevo.');
+    });
+}
+
+function updateAsignacionesTable(data) {
+    const tbody = document.getElementById('asignaciones-tbody');
+    const currentPageSpan = document.getElementById('current-page');
+    const totalPagesSpan = document.getElementById('total-pages');
+    const badge = document.getElementById('total-asignaciones-badge');
+    
+    // Actualizar badge de total
+    if (badge) {
+        const plural = data.total_asignaciones !== 1 ? 'es' : '';
+        badge.textContent = `${data.total_asignaciones} asignación${plural}`;
+    }
+    
+    // Actualizar información de página
+    if (currentPageSpan) currentPageSpan.textContent = data.page_number;
+    if (totalPagesSpan) totalPagesSpan.textContent = data.num_pages;
+    
+    // Limpiar tbody
+    tbody.innerHTML = '';
+    
+    // Si no hay asignaciones, mostrar mensaje
+    if (data.asignaciones.length === 0) {
+        const container = document.getElementById('asignaciones-container');
+        container.innerHTML = `
+            <div class="text-center py-12">
+                <div class="p-4 bg-gray-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                    <i class="fas fa-link text-gray-400 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-600 mb-2">No hay asignaciones</h3>
+                <p class="text-gray-500">Comienza asignando servicios a las empresas</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Generar filas de la tabla
+    data.asignaciones.forEach(asignacion => {
+        const row = document.createElement('tr');
+        row.className = 'bg-white hover:bg-gray-50 transition-colors';
+        
+        const estadoBadge = asignacion.empresa_verificada 
+            ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Activa</span>'
+            : '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"><i class="fas fa-clock mr-1"></i>Pendiente</span>';
+        
+        const direccionCorta = asignacion.empresa_direccion.length > 30 
+            ? asignacion.empresa_direccion.substring(0, 27) + '...' 
+            : asignacion.empresa_direccion;
+        
+        row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                    <div class="p-2 bg-blue-100 rounded-lg mr-3">
+                        <i class="fas fa-building text-blue-600"></i>
+                    </div>
+                    <div>
+                        <div class="text-sm font-medium text-gray-900">${asignacion.empresa_nombre}</div>
+                        <div class="text-sm text-gray-500">${direccionCorta}</div>
+                    </div>
+                </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                    <div class="p-2 bg-purple-100 rounded-lg mr-3">
+                        <i class="fas fa-concierge-bell text-purple-600"></i>
+                    </div>
+                    <div class="text-sm font-medium text-gray-900">${asignacion.servicio_nombre}</div>
+                </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="text-lg font-bold text-green-600">$${Math.round(asignacion.servicio_precio).toLocaleString('es-CL')}</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                ${estadoBadge}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <a href="/asignar-servicio-empresa/${asignacion.empresa_id}/" 
+                   class="text-purple-600 hover:text-purple-900 mr-3">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="/detalle-servicio/${asignacion.servicio_id}/" 
+                   class="text-blue-600 hover:text-blue-900">
+                    <i class="fas fa-eye"></i>
+                </a>
+            </td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+    
+    // Actualizar controles de paginación
+    updatePaginationControls(data);
+}
+
+function updatePaginationControls(data) {
+    const paginationControls = document.getElementById('pagination-controls');
+    if (!paginationControls) return;
+    
+    let html = '';
+    
+    // Botón anterior
+    if (data.has_previous) {
+        html += `
+            <button onclick="loadPage(${data.page_number - 1})" 
+                    class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                <span class="sr-only">Anterior</span>
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        `;
+    } else {
+        html += `
+            <span class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400 cursor-not-allowed">
+                <i class="fas fa-chevron-left"></i>
+            </span>
+        `;
+    }
+    
+    // Números de página
+    for (let i = 1; i <= data.num_pages; i++) {
+        if (i === data.page_number) {
+            html += `
+                <span class="z-10 bg-purple-50 border-purple-500 text-purple-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                    ${i}
+                </span>
+            `;
+        } else if (i >= data.page_number - 2 && i <= data.page_number + 2) {
+            html += `
+                <button onclick="loadPage(${i})" 
+                        class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                    ${i}
+                </button>
+            `;
+        }
+    }
+    
+    // Botón siguiente
+    if (data.has_next) {
+        html += `
+            <button onclick="loadPage(${data.page_number + 1})" 
+                    class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                <span class="sr-only">Siguiente</span>
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        `;
+    } else {
+        html += `
+            <span class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400 cursor-not-allowed">
+                <i class="fas fa-chevron-right"></i>
+            </span>
+        `;
+    }
+    
+    paginationControls.innerHTML = html;
+}
+</script>
+
+{% endblock %}
+

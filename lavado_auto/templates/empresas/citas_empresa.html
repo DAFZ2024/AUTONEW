@@ -141,83 +141,90 @@
     {% endif %}
 
     <!-- Header mejorado -->
-    <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8 animate-fadeInUp">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div class="flex items-center space-x-4">
-                <div class="p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl shadow-lg">
-                    <i class="fas fa-calendar-check text-white text-2xl"></i>
+    <div class="bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-xl border border-white/20 p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 animate-fadeInUp">
+        <div class="flex flex-col gap-4">
+            <!-- Título y empresa - Optimizado para móvil -->
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <div class="p-2 sm:p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl sm:rounded-2xl shadow-lg flex-shrink-0">
+                    <i class="fas fa-calendar-check text-white text-xl sm:text-2xl"></i>
                 </div>
-                <div>
-                    <h1 class="text-3xl font-bold text-slate-800">Gestión de Citas</h1>
-                    <p class="text-slate-600">{{ empresa.nombre_empresa }}</p>
+                <div class="min-w-0 flex-1">
+                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800 truncate">Gestión de Citas</h1>
+                    <p class="text-sm sm:text-base text-slate-600 truncate">{{ empresa.nombre_empresa }}</p>
                 </div>
             </div>
             
-            <div class="flex flex-col sm:flex-row gap-3">
+            <!-- Botón de volver - Mejorado y más compacto -->
+            <div class="w-full sm:w-auto sm:self-end">
                 <a href="{% url 'home_empresas' %}" 
-                   class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-slate-600 to-slate-700 text-white font-semibold rounded-xl hover:from-slate-700 hover:to-slate-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Volver al Dashboard
+                   class="flex sm:inline-flex items-center justify-center gap-2 px-4 py-2 sm:py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 active:scale-95 w-full sm:w-auto">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                    <span>Dashboard</span>
                 </a>
             </div>
         </div>
     </div>
 
     <!-- Estadísticas rápidas -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8 animate-fadeInUp" style="animation-delay: 0.2s;">
-        <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-calendar text-white"></i>
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8 animate-fadeInUp" style="animation-delay: 0.2s;">
+        <!-- Total Citas -->
+        <div class="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+            <div class="flex flex-col sm:flex-row items-center sm:justify-between mb-2 sm:mb-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-0">
+                    <i class="fas fa-calendar text-white text-sm sm:text-base"></i>
                 </div>
-                <span class="text-2xl font-bold text-blue-600">{{ total_reservas }}</span>
+                <span class="text-xl sm:text-2xl font-bold text-blue-600">{{ total_reservas }}</span>
             </div>
-            <h3 class="text-lg font-semibold text-slate-800">Total Citas</h3>
-            <p class="text-gray-600 text-sm">Todas las citas</p>
+            <h3 class="text-sm sm:text-base lg:text-lg font-semibold text-slate-800 text-center sm:text-left">Total Citas</h3>
+            <p class="text-gray-600 text-xs sm:text-sm text-center sm:text-left hidden sm:block">Todas las citas</p>
         </div>
         
-        <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-clock text-white"></i>
+        <!-- Pendientes -->
+        <div class="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+            <div class="flex flex-col sm:flex-row items-center sm:justify-between mb-2 sm:mb-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-0">
+                    <i class="fas fa-clock text-white text-sm sm:text-base"></i>
                 </div>
-                <span class="text-2xl font-bold text-yellow-600">{{ reservas_pendientes }}</span>
+                <span class="text-xl sm:text-2xl font-bold text-yellow-600">{{ reservas_pendientes }}</span>
             </div>
-            <h3 class="text-lg font-semibold text-slate-800">Pendientes</h3>
-            <p class="text-gray-600 text-sm">Por completar</p>
+            <h3 class="text-sm sm:text-base lg:text-lg font-semibold text-slate-800 text-center sm:text-left">Pendientes</h3>
+            <p class="text-gray-600 text-xs sm:text-sm text-center sm:text-left hidden sm:block">Por completar</p>
         </div>
         
-        <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-check-circle text-white"></i>
+        <!-- Completadas -->
+        <div class="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+            <div class="flex flex-col sm:flex-row items-center sm:justify-between mb-2 sm:mb-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-0">
+                    <i class="fas fa-check-circle text-white text-sm sm:text-base"></i>
                 </div>
-                <span class="text-2xl font-bold text-green-600">{{ reservas_completadas }}</span>
+                <span class="text-xl sm:text-2xl font-bold text-green-600">{{ reservas_completadas }}</span>
             </div>
-            <h3 class="text-lg font-semibold text-slate-800">Completadas</h3>
-            <p class="text-gray-600 text-sm">Finalizadas</p>
+            <h3 class="text-sm sm:text-base lg:text-lg font-semibold text-slate-800 text-center sm:text-left">Completadas</h3>
+            <p class="text-gray-600 text-xs sm:text-sm text-center sm:text-left hidden sm:block">Finalizadas</p>
         </div>
         
-        <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-ban text-white"></i>
+        <!-- Canceladas -->
+        <div class="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+            <div class="flex flex-col sm:flex-row items-center sm:justify-between mb-2 sm:mb-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-0">
+                    <i class="fas fa-ban text-white text-sm sm:text-base"></i>
                 </div>
-                <span class="text-2xl font-bold text-red-600">{{ reservas_canceladas|default:0 }}</span>
+                <span class="text-xl sm:text-2xl font-bold text-red-600">{{ reservas_canceladas|default:0 }}</span>
             </div>
-            <h3 class="text-lg font-semibold text-slate-800">Canceladas</h3>
-            <p class="text-gray-600 text-sm">Anuladas</p>
+            <h3 class="text-sm sm:text-base lg:text-lg font-semibold text-slate-800 text-center sm:text-left">Canceladas</h3>
+            <p class="text-gray-600 text-xs sm:text-sm text-center sm:text-left hidden sm:block">Anuladas</p>
         </div>
         
-        <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-calendar-day text-white"></i>
+        <!-- Hoy -->
+        <div class="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 col-span-2 lg:col-span-1">
+            <div class="flex flex-col sm:flex-row items-center sm:justify-between mb-2 sm:mb-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-0">
+                    <i class="fas fa-calendar-day text-white text-sm sm:text-base"></i>
                 </div>
-                <span class="text-2xl font-bold text-purple-600">{{ reservas_hoy }}</span>
+                <span class="text-xl sm:text-2xl font-bold text-purple-600">{{ reservas_hoy }}</span>
             </div>
-            <h3 class="text-lg font-semibold text-slate-800">Hoy</h3>
-            <p class="text-gray-600 text-sm">Citas de hoy</p>
+            <h3 class="text-sm sm:text-base lg:text-lg font-semibold text-slate-800 text-center sm:text-left">Hoy</h3>
+            <p class="text-gray-600 text-xs sm:text-sm text-center sm:text-left hidden sm:block">Citas de hoy</p>
         </div>
     </div>
 
@@ -402,7 +409,10 @@
                 <thead class="bg-gradient-to-r from-gray-50 to-blue-50">
                     <tr>
                         <th class="px-3 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                            <i class="fas fa-hashtag mr-1"></i>ID
+                            <i class="fas fa-hashtag mr-1"></i>Nº Reserva
+                        </th>
+                        <th class="px-3 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                            <i class="fas fa-id-badge mr-1"></i>ID
                         </th>
                         <th class="px-3 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                             <i class="fas fa-user mr-1"></i>Cliente
@@ -437,6 +447,11 @@
                             data-servicio="{% for servicio in item.servicios %}{{ servicio.nombre_servicio|lower }}{% if not forloop.last %} {% endif %}{% endfor %}"
                             data-reserva-id="{{ item.reserva.id_reserva }}">
                             
+                            <!-- Número legible de reserva -->
+                            <td class="px-3 py-4 text-sm font-medium text-gray-900">
+                                {{ item.numero_reserva }}
+                            </td>
+
                             <!-- ID -->
                             <td class="px-3 py-4 text-sm font-medium text-gray-900">
                                 #{{ item.reserva.id_reserva }}
@@ -501,32 +516,27 @@
                             <td class="px-3 py-4 text-sm">
                                 <div class="flex items-center space-x-2">
                                     {% if item.reserva.estado == 'pendiente' %}
-                                    <form method="post" action="{% url 'actualizar_estado_cita' %}" class="inline-block">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="reserva_id" value="{{ item.reserva.id_reserva }}">
-                                        <input type="hidden" name="nuevo_estado" value="completado">
-                                        <button type="submit" class="inline-flex items-center px-2 py-1 bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 transition-colors duration-200" title="Marcar como completada">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                    </form>
+                                    <button type="button" data-reserva-id="{{ item.reserva.id_reserva }}" class="qr-btn inline-flex items-center px-3 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors duration-200 table-action-btn" title="Generar código QR">
+                                        <i class="fas fa-qrcode text-base"></i>
+                                    </button>
                                     {% elif item.reserva.estado == 'completado' %}
                                     <form method="post" action="{% url 'actualizar_estado_cita' %}" class="inline-block">
                                         {% csrf_token %}
                                         <input type="hidden" name="reserva_id" value="{{ item.reserva.id_reserva }}">
                                         <input type="hidden" name="nuevo_estado" value="pendiente">
-                                        <button type="submit" class="inline-flex items-center px-2 py-1 bg-yellow-600 text-white text-xs font-medium rounded-lg hover:bg-yellow-700 transition-colors duration-200" title="Marcar como pendiente">
-                                            <i class="fas fa-undo"></i>
+                                        <button type="submit" class="inline-flex items-center px-3 py-2 bg-yellow-600 text-white text-sm font-medium rounded-lg hover:bg-yellow-700 transition-colors duration-200 table-action-btn" title="Marcar como pendiente">
+                                            <i class="fas fa-undo text-base"></i>
                                         </button>
                                     </form>
                                     {% endif %}
                                     
-                                    <button onclick="verDetalles({{ item.reserva.id_reserva }})" class="inline-flex items-center px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200" title="Ver detalles">
-                                        <i class="fas fa-eye"></i>
+                                    <button onclick="verDetalles({{ item.reserva.id_reserva }})" class="inline-flex items-center px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200 table-action-btn" title="Ver detalles">
+                                        <i class="fas fa-eye text-base"></i>
                                     </button>
                                     
                                     {% if item.reserva.estado != 'completado' and item.reserva.estado != 'cancelada' %}
-                                    <button onclick="editarCita({{ item.reserva.id_reserva }})" class="inline-flex items-center px-2 py-1 bg-indigo-600 text-white text-xs font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-200" title="Editar cita">
-                                        <i class="fas fa-edit"></i>
+                                    <button onclick="editarCita({{ item.reserva.id_reserva }})" class="inline-flex items-center px-3 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-200 table-action-btn" title="Editar cita">
+                                        <i class="fas fa-edit text-base"></i>
                                     </button>
                                     {% endif %}
                                 </div>
@@ -638,14 +648,9 @@
                         <!-- Acciones -->
                         <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
                             {% if item.reserva.estado == 'pendiente' %}
-                            <form method="post" action="{% url 'actualizar_estado_cita' %}" class="inline-block">
-                                {% csrf_token %}
-                                <input type="hidden" name="reserva_id" value="{{ item.reserva.id_reserva }}">
-                                <input type="hidden" name="nuevo_estado" value="completado">
-                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-xl hover:from-green-700 hover:to-green-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-                                    <i class="fas fa-check mr-2"></i>Marcar Completada
-                                </button>
-                            </form>
+                            <button type="button" data-reserva-id="{{ item.reserva.id_reserva }}" class="qr-btn inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-purple-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                                <i class="fas fa-qrcode mr-2"></i>Generar Código QR
+                            </button>
                             {% elif item.reserva.estado == 'completado' %}
                             <form method="post" action="{% url 'actualizar_estado_cita' %}" class="inline-block">
                                 {% csrf_token %}
@@ -690,26 +695,35 @@
     
     <!-- Controles de Paginación -->
     {% if page_obj.has_other_pages %}
-    <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 mt-6 animate-fadeInUp" style="animation-delay: 0.6s;">
-        <div class="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
-            
-            <!-- Información de resultados -->
-            <div class="flex items-center space-x-4">
-                <div class="text-sm text-gray-700">
-                    <span class="font-medium">Mostrando</span>
-                    <span class="font-bold text-blue-600">{{ page_obj.start_index }}</span>
-                    <span>-</span>
-                    <span class="font-bold text-blue-600">{{ page_obj.end_index }}</span>
-                    <span>de</span>
-                    <span class="font-bold text-blue-600">{{ page_obj.paginator.count }}</span>
-                    <span>citas</span>
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-6 mt-6 animate-fadeInUp" style="animation-delay: 0.6s;">
+        <!-- Header con información de resultados - Mejorado para móvil -->
+        <div class="flex flex-col space-y-4 mb-4">
+            <div class="flex flex-col sm:flex-row items-center justify-between space-y-3 sm:space-y-0">
+                <!-- Información de resultados - Optimizada para móvil -->
+                <div class="text-center sm:text-left">
+                    <div class="text-sm sm:text-base text-gray-700">
+                        <span class="font-medium">Mostrando</span>
+                        <span class="font-bold text-blue-600">{{ page_obj.start_index }}</span>
+                        <span class="hidden sm:inline">-</span>
+                        <span class="sm:hidden"> a </span>
+                        <span class="font-bold text-blue-600">{{ page_obj.end_index }}</span>
+                        <span>de</span>
+                        <span class="font-bold text-blue-600">{{ page_obj.paginator.count }}</span>
+                        <span class="hidden sm:inline">citas</span>
+                    </div>
+                    <!-- Info adicional solo móvil -->
+                    <div class="sm:hidden text-xs text-gray-500 mt-1">
+                        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                    </div>
                 </div>
                 
-                <!-- Selector de elementos por página -->
-                <div class="flex items-center space-x-2">
-                    <label for="per-page-select" class="text-sm text-gray-600">Por página:</label>
+                <!-- Selector de elementos por página - Mejorado para móvil -->
+                <div class="flex items-center space-x-2 bg-gray-50 px-4 py-2 rounded-xl">
+                    <i class="fas fa-list text-gray-400 text-sm"></i>
+                    <label for="per-page-select" class="text-sm text-gray-600 hidden sm:inline">Por página:</label>
+                    <label for="per-page-select" class="text-sm text-gray-600 sm:hidden">Mostrar:</label>
                     <select id="per-page-select" 
-                            class="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                             onchange="changePerPage(this.value)">
                         <option value="5" {% if items_per_page == 5 %}selected{% endif %}>5</option>
                         <option value="10" {% if items_per_page == 10 %}selected{% endif %}>10</option>
@@ -718,27 +732,30 @@
                     </select>
                 </div>
             </div>
-            
-            <!-- Controles de navegación -->
-            <div class="flex items-center space-x-2">
+        </div>
+        
+        <!-- Controles de navegación - Optimizados para móvil -->
+        <div class="space-y-3">
+            <!-- Vista Desktop -->
+            <div class="hidden lg:flex items-center justify-center space-x-2">
                 <!-- Botón Primera Página -->
                 {% if page_obj.has_previous %}
                     <a href="?page=1{% if request.GET.per_page %}&per_page={{ request.GET.per_page }}{% endif %}" 
-                       class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
-                        <i class="fas fa-angle-double-left mr-1"></i>Primera
+                       class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-blue-50 hover:border-blue-400 hover:text-blue-600 transition-all duration-200 shadow-sm">
+                        <i class="fas fa-angle-double-left mr-2"></i>Primera
                     </a>
                     
                     <!-- Botón Página Anterior -->
                     <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.per_page %}&per_page={{ request.GET.per_page }}{% endif %}" 
-                       class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
-                        <i class="fas fa-chevron-left mr-1"></i>Anterior
+                       class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-blue-50 hover:border-blue-400 hover:text-blue-600 transition-all duration-200 shadow-sm">
+                        <i class="fas fa-chevron-left mr-2"></i>Anterior
                     </a>
                 {% else %}
-                    <span class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed">
-                        <i class="fas fa-angle-double-left mr-1"></i>Primera
+                    <span class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed">
+                        <i class="fas fa-angle-double-left mr-2"></i>Primera
                     </span>
-                    <span class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed">
-                        <i class="fas fa-chevron-left mr-1"></i>Anterior
+                    <span class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed">
+                        <i class="fas fa-chevron-left mr-2"></i>Anterior
                     </span>
                 {% endif %}
                 
@@ -747,13 +764,13 @@
                     {% for num in page_obj.paginator.page_range %}
                         {% if page_obj.number == num %}
                             <!-- Página actual -->
-                            <span class="inline-flex items-center px-4 py-2 border border-blue-500 bg-blue-600 text-white text-sm font-bold rounded-lg">
+                            <span class="inline-flex items-center px-4 py-2 border-2 border-blue-500 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-bold rounded-xl shadow-lg">
                                 {{ num }}
                             </span>
                         {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                             <!-- Páginas cercanas -->
                             <a href="?page={{ num }}{% if request.GET.per_page %}&per_page={{ request.GET.per_page }}{% endif %}"
-                               class="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+                               class="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-gray-700 text-sm font-medium rounded-xl hover:bg-blue-50 hover:border-blue-400 hover:text-blue-600 transition-all duration-200 shadow-sm">
                                 {{ num }}
                             </a>
                         {% elif num == page_obj.number|add:'-3' or num == page_obj.number|add:'3' %}
@@ -766,31 +783,90 @@
                 {% if page_obj.has_next %}
                     <!-- Botón Página Siguiente -->
                     <a href="?page={{ page_obj.next_page_number }}{% if request.GET.per_page %}&per_page={{ request.GET.per_page }}{% endif %}" 
-                       class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
-                        Siguiente<i class="fas fa-chevron-right ml-1"></i>
+                       class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-blue-50 hover:border-blue-400 hover:text-blue-600 transition-all duration-200 shadow-sm">
+                        Siguiente<i class="fas fa-chevron-right ml-2"></i>
                     </a>
                     
                     <!-- Botón Última Página -->
                     <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.per_page %}&per_page={{ request.GET.per_page }}{% endif %}" 
-                       class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
-                        Última<i class="fas fa-angle-double-right ml-1"></i>
+                       class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-blue-50 hover:border-blue-400 hover:text-blue-600 transition-all duration-200 shadow-sm">
+                        Última<i class="fas fa-angle-double-right ml-2"></i>
                     </a>
                 {% else %}
-                    <span class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed">
-                        Siguiente<i class="fas fa-chevron-right ml-1"></i>
+                    <span class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed">
+                        Siguiente<i class="fas fa-chevron-right ml-2"></i>
                     </span>
-                    <span class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed">
-                        Última<i class="fas fa-angle-double-right ml-1"></i>
+                    <span class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed">
+                        Última<i class="fas fa-angle-double-right ml-2"></i>
                     </span>
                 {% endif %}
             </div>
-        </div>
-        
-        <!-- Información adicional en móviles -->
-        <div class="sm:hidden mt-4 pt-4 border-t border-gray-200">
-            <div class="flex justify-between items-center text-sm text-gray-600">
-                <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
-                <span>{{ page_obj.paginator.count }} total</span>
+            
+            <!-- Vista Tablet y Móvil - Versión compacta y táctil -->
+            <div class="lg:hidden">
+                <!-- Controles principales - Botones grandes para móvil -->
+                <div class="flex items-center justify-between gap-2 mb-3">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.per_page %}&per_page={{ request.GET.per_page }}{% endif %}" 
+                           class="flex-1 inline-flex items-center justify-center px-4 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 bg-white hover:bg-blue-50 hover:border-blue-400 hover:text-blue-600 transition-all duration-200 shadow-md active:scale-95">
+                            <i class="fas fa-chevron-left mr-2"></i>Anterior
+                        </a>
+                    {% else %}
+                        <span class="flex-1 inline-flex items-center justify-center px-4 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-400 bg-gray-100 cursor-not-allowed">
+                            <i class="fas fa-chevron-left mr-2"></i>Anterior
+                        </span>
+                    {% endif %}
+                    
+                    <!-- Indicador de página actual - Destacado -->
+                    <div class="flex-1 inline-flex items-center justify-center px-4 py-3 border-2 border-blue-500 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-lg">
+                        <span class="text-white text-sm font-bold">
+                            {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </div>
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.per_page %}&per_page={{ request.GET.per_page }}{% endif %}" 
+                           class="flex-1 inline-flex items-center justify-center px-4 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 bg-white hover:bg-blue-50 hover:border-blue-400 hover:text-blue-600 transition-all duration-200 shadow-md active:scale-95">
+                            Siguiente<i class="fas fa-chevron-right ml-2"></i>
+                        </a>
+                    {% else %}
+                        <span class="flex-1 inline-flex items-center justify-center px-4 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-400 bg-gray-100 cursor-not-allowed">
+                            Siguiente<i class="fas fa-chevron-right ml-2"></i>
+                        </span>
+                    {% endif %}
+                </div>
+                
+                <!-- Accesos rápidos a primera y última página -->
+                <div class="flex items-center justify-center gap-2">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1{% if request.GET.per_page %}&per_page={{ request.GET.per_page }}{% endif %}" 
+                           class="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 rounded-lg text-xs font-medium text-gray-600 bg-white hover:bg-gray-50 transition-all duration-200 active:scale-95">
+                            <i class="fas fa-angle-double-left mr-1"></i>Primera
+                        </a>
+                    {% endif %}
+                    
+                    <!-- Selector de página directa en móvil -->
+                    <div class="flex-1 relative">
+                        <select onchange="window.location.href='?page=' + this.value + '{% if request.GET.per_page %}&per_page={{ request.GET.per_page }}{% endif %}'"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-medium text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none">
+                            {% for num in page_obj.paginator.page_range %}
+                                <option value="{{ num }}" {% if page_obj.number == num %}selected{% endif %}>
+                                    Ir a página {{ num }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.per_page %}&per_page={{ request.GET.per_page }}{% endif %}" 
+                           class="flex-1 inline-flex items-center justify-center px-3 py-2 border border-gray-300 rounded-lg text-xs font-medium text-gray-600 bg-white hover:bg-gray-50 transition-all duration-200 active:scale-95">
+                            Última<i class="fas fa-angle-double-right ml-1"></i>
+                        </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -825,63 +901,6 @@
         // Ejecutar al cargar y al redimensionar
         updateViewVisibility();
         window.addEventListener('resize', updateViewVisibility);
-    }
-
-    // Función para filtrar citas por estado
-    function filtrarCitas(estado) {
-        const citasTabla = document.querySelectorAll('.tabla-row');
-        const citasTarjetas = document.querySelectorAll('.cita-card-mobile');
-        let citasVisibles = 0;
-        
-        // Filtrar filas de tabla
-        citasTabla.forEach(cita => {
-            const estadoCita = cita.getAttribute('data-estado');
-            let mostrar = false;
-            
-            if (estado === 'todas') {
-                mostrar = true;
-            } else if (estado === 'pendientes' && estadoCita === 'pendiente') {
-                mostrar = true;
-            } else if (estado === 'completadas' && estadoCita === 'completado') {
-                mostrar = true;
-            } else if (estado === 'canceladas' && estadoCita === 'cancelada') {
-                mostrar = true;
-            }
-            
-            if (mostrar) {
-                cita.style.display = 'table-row';
-                citasVisibles++;
-            } else {
-                cita.style.display = 'none';
-            }
-        });
-        
-        // Filtrar tarjetas móviles
-        citasTarjetas.forEach(cita => {
-            const estadoCita = cita.getAttribute('data-estado');
-            let mostrar = false;
-            
-            if (estado === 'todas') {
-                mostrar = true;
-            } else if (estado === 'pendientes' && estadoCita === 'pendiente') {
-                mostrar = true;
-            } else if (estado === 'completadas' && estadoCita === 'completado') {
-                mostrar = true;
-            } else if (estado === 'canceladas' && estadoCita === 'cancelada') {
-                mostrar = true;
-            }
-            
-            if (mostrar) {
-                cita.style.display = 'block';
-            } else {
-                cita.style.display = 'none';
-            }
-        });
-        
-        // Actualizar apariencia de tabs
-        actualizarTabsApariencia(estado);
-        
-        console.log(`Filtrado por ${estado}: ${citasVisibles} citas visibles`);
     }
 
     // Función para actualizar la apariencia de los tabs
@@ -1414,6 +1433,107 @@
         let filtroActivo = 'todas';
         let citasOriginales = null; // Se inicializará en DOMContentLoaded
         let citaActualModal = null; // Para almacenar la información de la cita actual
+        let reservaIdActual = null; // Para el modal QR
+
+        // Función para mostrar código QR
+        function mostrarCodigoQR(reservaId) {
+            console.log('mostrarCodigoQR called with reservaId:', reservaId);
+            reservaIdActual = reservaId;
+            
+            // Mostrar loading en el modal
+            const qrContent = document.getElementById('qrContent');
+            if (!qrContent) {
+                console.error('qrContent element not found');
+                return;
+            }
+            qrContent.innerHTML = '<div class="flex justify-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div></div>';
+            
+            // Mostrar modal
+            const modal = document.getElementById('qrModal');
+            if (!modal) {
+                console.error('qrModal element not found');
+                return;
+            }
+            modal.classList.remove('hidden');
+            
+            // Hacer petición AJAX para obtener el código QR
+            console.log('Making fetch request to:', `/generar-qr-reserva/${reservaId}/`);
+            fetch(`/generar-qr-reserva/${reservaId}/`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    const contentType = response.headers.get('content-type') || '';
+                    if (!contentType.includes('application/json')) {
+                        console.error('Respuesta inesperada (no JSON):', contentType);
+                        return response.text().then(text => ({ success: false, error: 'Respuesta inesperada del servidor' }));
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response data:', data);
+                    if (data.success) {
+                        qrContent.innerHTML = `
+                            <div class="space-y-4">
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <img src="data:image/png;base64,${data.qr_image}" alt="Código QR" class="mx-auto" style="max-width: 200px;">
+                                </div>
+                                <div class="text-left space-y-2">
+                                    <p class="text-sm text-gray-600"><strong>Número de Reserva:</strong> ${data.numero_reserva}</p>
+                                    <p class="text-sm text-gray-600"><strong>Cliente:</strong> ${data.cliente_nombre}</p>
+                                    <p class="text-sm text-gray-600"><strong>Servicio:</strong> ${data.servicio_nombre}</p>
+                                    <p class="text-sm text-gray-600"><strong>Fecha:</strong> ${data.fecha_reserva}</p>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        qrContent.innerHTML = `
+                            <div class="text-red-600 p-4">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                Error: ${data.error}
+                            </div>
+                        `;
+                        document.getElementById('completarBtn').style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error in fetch:', error);
+                    qrContent.innerHTML = `
+                        <div class="text-red-600 p-4">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            Error al generar el código QR: ${error.message}
+                        </div>
+                    `;
+                    document.getElementById('completarBtn').style.display = 'none';
+                });
+        }
+
+        function cerrarModal() {
+            document.getElementById('qrModal').classList.add('hidden');
+            reservaIdActual = null;
+        }
+
+        function marcarCompletada() {
+            if (!reservaIdActual) return;
+            
+            // Crear formulario temporal para enviar la actualización
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{% url "actualizar_estado_cita" %}';
+            
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            form.innerHTML = `
+                <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+                <input type="hidden" name="reserva_id" value="${reservaIdActual}">
+                <input type="hidden" name="nuevo_estado" value="completado">
+            `;
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
 
         // Datos de las citas (esto se poblará desde Django)
         const citasData = {
@@ -1433,22 +1553,52 @@
                     {% for servicio in item.servicios %}
                     {
                         nombre: '{{ servicio.nombre_servicio|escapejs }}',
-                        precio: {{ servicio.precio }},
+                        precio: '{{ servicio.precio|default_if_none:"0"|escapejs }}',
                         descripcion: '{{ servicio.descripcion|default:"Sin descripción"|escapejs }}'
                     }{% if not forloop.last %},{% endif %}
                     {% endfor %}
                 ],
-                precioTotal: {{ item.precio_total }},
-                totalServicios: {{ item.total_servicios }}
+                precioTotal: '{{ item.precio_total|default_if_none:"0"|escapejs }}',
+                totalServicios: '{{ item.total_servicios|default_if_none:"0"|escapejs }}'
             }{% if not forloop.last %},{% endif %}
             {% endfor %}
         };
+        
+        // Enlazar botones QR: si el DOM ya está listo, ejecútalo inmediatamente; sino espera a DOMContentLoaded
+        function bindQrButtons() {
+            document.querySelectorAll('.qr-btn').forEach(function(btn) {
+                // Evitar doble-binding
+                if (btn.__qr_bound) return;
+                btn.__qr_bound = true;
+                btn.addEventListener('click', function(e) {
+                    const reservaId = this.getAttribute('data-reserva-id');
+                    if (reservaId) mostrarCodigoQR(reservaId);
+                });
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', bindQrButtons);
+        } else {
+            bindQrButtons();
+        }
+        // Fallback: delegado a nivel de documento por si los botones se agregan dinámicamente
+        document.addEventListener('click', function(e) {
+            const el = e.target.closest && e.target.closest('.qr-btn');
+            if (el) {
+                const reservaId = el.getAttribute('data-reserva-id');
+                if (reservaId) {
+                    mostrarCodigoQR(reservaId);
+                }
+            }
+        });
         
         // Función para filtrar citas por estado
         function filtrarCitas(tipo) {
             console.log('Filtrando citas por:', tipo);
             filtroActivo = tipo;
-            const citas = document.querySelectorAll('.cita-card');
+            // Seleccionar tanto filas de tabla como tarjetas móviles (y cualquier clase futura 'cita-card')
+            const citas = document.querySelectorAll('.tabla-row, .cita-card-mobile, .cita-card');
             
             // Actualizar apariencia de los tabs
             actualizarTabsApariencia(tipo);
@@ -1514,7 +1664,7 @@
             const clienteFiltro = document.getElementById('buscar-cliente')?.value.toLowerCase().trim() || '';
             const estadoFiltro = document.getElementById('filtro-estado')?.value || '';
             const servicioFiltro = document.getElementById('filtro-servicio')?.value.toLowerCase().trim() || '';
-            const citas = document.querySelectorAll('.cita-card');
+            const citas = document.querySelectorAll('.tabla-row, .cita-card-mobile, .cita-card');
             
             let citasVisibles = 0;
             
@@ -1551,10 +1701,11 @@
                     mostrar = false;
                 }
                 
-                // Aplicar visibilidad con animación
+                // Aplicar visibilidad con animación. Las filas de tabla usan 'table-row', las tarjetas usan 'block'.
+                const isTableRow = cita.classList.contains('tabla-row') || cita.tagName === 'TR';
                 if (mostrar) {
                     citasVisibles++;
-                    cita.style.display = 'block';
+                    cita.style.display = isTableRow ? 'table-row' : 'block';
                     setTimeout(() => {
                         cita.style.opacity = '1';
                         cita.style.transform = 'translateY(0)';
@@ -1679,9 +1830,10 @@
             if (mensajeContainer) mensajeContainer.style.display = 'none';
             
             // Mostrar todas las citas con animación
-            const citas = document.querySelectorAll('.cita-card');
+            const citas = document.querySelectorAll('.tabla-row, .cita-card-mobile, .cita-card');
             citas.forEach((cita, index) => {
-                cita.style.display = 'block';
+                const isTableRow = cita.classList.contains('tabla-row') || cita.tagName === 'TR';
+                cita.style.display = isTableRow ? 'table-row' : 'block';
                 setTimeout(() => {
                     cita.style.opacity = '1';
                     cita.style.transform = 'translateY(0)';
@@ -1983,16 +2135,17 @@
             const mondayStr = monday.toISOString().split('T')[0];
             const sundayStr = sunday.toISOString().split('T')[0];
             
-            const citas = document.querySelectorAll('.cita-card');
+            const citas = document.querySelectorAll('.tabla-row, .cita-card-mobile, .cita-card');
             let citasVisibles = 0;
             
             citas.forEach((cita, index) => {
                 const fechaCita = cita.dataset.fecha;
                 const mostrar = fechaCita >= mondayStr && fechaCita <= sundayStr;
-                
+                const isTableRow = cita.classList.contains('tabla-row') || cita.tagName === 'TR';
+
                 if (mostrar) {
                     citasVisibles++;
-                    cita.style.display = 'block';
+                    cita.style.display = isTableRow ? 'table-row' : 'block';
                     setTimeout(() => {
                         cita.style.opacity = '1';
                         cita.style.transform = 'translateY(0)';
@@ -2030,10 +2183,11 @@
                 mensajeContainer.style.display = 'none';
             }
             
-            // Mostrar todas las citas con animación
-            const citas = document.querySelectorAll('.cita-card');
+            // Mostrar todas las citas con animación (filas de tabla y tarjetas móviles incluidas)
+            const citas = document.querySelectorAll('.tabla-row, .cita-card-mobile, .cita-card');
             citas.forEach((cita, index) => {
-                cita.style.display = 'block';
+                const isTableRow = cita.classList.contains('tabla-row') || cita.tagName === 'TR';
+                cita.style.display = isTableRow ? 'table-row' : 'block';
                 setTimeout(() => {
                     cita.style.opacity = '1';
                     cita.style.transform = 'translateY(0)';
@@ -2123,7 +2277,7 @@
             const tarjeta = document.querySelector(`[data-estado][data-reserva-id="${reservaId}"]`);
             if (!tarjeta) {
                 // Buscar por otro método si no se encuentra
-                const todasLasTarjetas = document.querySelectorAll('.cita-card');
+                const todasLasTarjetas = document.querySelectorAll('.tabla-row, .cita-card-mobile, .cita-card');
                 for (let tarjeta of todasLasTarjetas) {
                     const botonDetalles = tarjeta.querySelector(`[onclick*="${reservaId}"]`);
                     if (botonDetalles) {
@@ -2151,10 +2305,11 @@
             filtroActivo = 'todas';
             actualizarTabsApariencia('todas');
             
-            // Asegurar que todas las citas sean visibles al cargar
-            const citas = document.querySelectorAll('.cita-card');
+            // Asegurar que todas las citas sean visibles al cargar (filas y tarjetas)
+            const citas = document.querySelectorAll('.tabla-row, .cita-card-mobile, .cita-card');
             citas.forEach((cita, index) => {
-                cita.style.display = 'block';
+                const isTableRow = cita.classList.contains('tabla-row') || cita.tagName === 'TR';
+                cita.style.display = isTableRow ? 'table-row' : 'block';
                 cita.style.opacity = '1';
                 cita.style.transform = 'translateY(0)';
                 // Agregar animación de entrada suave
@@ -2222,8 +2377,8 @@
             console.log('Página cargada, inicializando funciones...');
             console.log('Datos de citas disponibles:', Object.keys(citasData).length);
             
-            // Inicializar variables globales
-            citasOriginales = document.querySelectorAll('.cita-card');
+            // Inicializar variables globales (incluir filas de tabla y tarjetas móviles)
+            citasOriginales = document.querySelectorAll('.tabla-row, .cita-card-mobile, .cita-card');
             
             // Configurar event listeners
             const clearButton = document.getElementById('clearFilters');
@@ -2235,10 +2390,11 @@
             filtroActivo = 'todas';
             actualizarTabsApariencia('todas');
             
-            // Asegurar que todas las citas sean visibles al cargar
-            const citas = document.querySelectorAll('.cita-card');
+            // Asegurar que todas las citas sean visibles al cargar (filas y tarjetas)
+            const citas = document.querySelectorAll('.tabla-row, .cita-card-mobile, .cita-card');
             citas.forEach((cita, index) => {
-                cita.style.display = 'block';
+                const isTableRow = cita.classList.contains('tabla-row') || cita.tagName === 'TR';
+                cita.style.display = isTableRow ? 'table-row' : 'block';
                 cita.style.opacity = '1';
                 cita.style.transform = 'translateY(0)';
             });
@@ -2311,4 +2467,44 @@
             window.location.href = currentUrl.toString();
         }
     </script>
+
+    <!-- Modal para Código QR -->
+    <div id="qrModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-xl bg-white">
+            <div class="mt-3 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-purple-100">
+                    <i class="fas fa-qrcode text-purple-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mt-4">Código QR de Reserva</h3>
+                
+                <div id="qrContent" class="mt-4">
+                    <!-- El contenido del QR se carga aquí dinámicamente -->
+                </div>
+                
+                <div class="mt-6 flex justify-center space-x-3">
+                    <button onclick="cerrarModal()" class="px-4 py-2 bg-gray-300 text-gray-700 text-base font-medium rounded-lg hover:bg-gray-400 transition-colors duration-200">
+                        Cerrar
+                    </button>
+                    <button onclick="marcarCompletada()" id="completarBtn" class="px-4 py-2 bg-green-600 text-white text-base font-medium rounded-lg hover:bg-green-700 transition-colors duration-200">
+                        Marcar Completada
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Event listener para cerrar modal al hacer clic fuera de él
+    document.addEventListener('DOMContentLoaded', function() {
+        const qrModal = document.getElementById('qrModal');
+        if (qrModal) {
+            qrModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    cerrarModal();
+                }
+            });
+        }
+    });
+    </script>
+
 {% endblock %}

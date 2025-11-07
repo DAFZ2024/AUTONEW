@@ -132,6 +132,75 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
+        /* Mejoras para los dropdowns del navbar */
+        .dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .group:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        
+        /* Dropdown activo con click - se mantiene visible */
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        
+        /* Mantener el dropdown abierto con un pequeño delay al salir */
+        .dropdown-wrapper {
+            position: relative;
+        }
+        
+        .dropdown-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            height: 20px; /* Espacio invisible que mantiene el hover activo - aumentado */
+        }
+        
+        /* Mejora para transición suave entre el botón y el menú */
+        .group {
+            position: relative;
+        }
+        
+        .group .dropdown-menu {
+            margin-top: 0.5rem; /* 8px de espacio */
+        }
+        
+        /* Pseudo-elemento para crear puente invisible entre botón y menú */
+        .group::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            height: 12px;
+            z-index: 40;
+        }
+        
+        /* Animación suave para los dropdowns móviles */
+        .dropdown-mobile {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out;
+        }
+        
+        .dropdown-mobile.show {
+            max-height: 500px;
+        }
+        
         /* Rotación completa para el botón */
         .group:hover .group-hover\:rotate-360 {
             transform: rotate(360deg);
@@ -243,47 +312,185 @@
         .modal-enter::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+        
+        /* Animación de brillo para el logo */
+        @keyframes shine {
+            0% {
+                background-position: -200% center;
+            }
+            100% {
+                background-position: 200% center;
+            }
+        }
+        
+        .logo-shine {
+            background: linear-gradient(90deg, 
+                #0891b2 0%, 
+                #0891b2 40%, 
+                #ffffff 50%, 
+                #0891b2 60%, 
+                #0891b2 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shine 6s linear infinite;
+        }
+        
+        .logo-shine:hover {
+            animation-duration: 3s;
+        }
     </style>
     <header>
         <!-- Navbar con Tailwind CSS (Paleta clara) -->
         <nav class="fixed top-0 w-full z-50 bg-white/30 backdrop-blur-navbar shadow-lg transition-all duration-300 border-b border-gray-200/30">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-center items-center h-16 lg:h-20">
-                    <!-- Logo -->
-                    <div class="flex items-center flex-shrink-0">
+                <div class="flex justify-between items-center h-16 lg:h-20 lg:justify-center">
+                    <!-- Botón de menú móvil - Ahora primero en móvil -->
+                    <button class="lg:hidden text-cyan-700 hover:text-cyan-500 transition-colors duration-300 p-2 -ml-2" id="mobile-menu-button">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                    
+                    <!-- Logo - Centrado en móvil -->
+                    <div class="flex items-center flex-shrink-0 absolute left-1/2 transform -translate-x-1/2 lg:relative lg:left-auto lg:transform-none">
                         <a href="/" class="relative group">
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-600 to-cyan-700 text-2xl lg:text-3xl font-bold tracking-wider hover:from-cyan-500 hover:via-blue-500 hover:to-cyan-600 transition-all duration-300 transform group-hover:scale-105">
+                            <span class="logo-shine text-transparent text-2xl lg:text-3xl font-bold tracking-wider transition-all duration-300 transform group-hover:scale-110 group-hover:rotate-1">
                                 Auto<span class="text-blue-800 font-extrabold">new</span>
                             </span>
                             <div class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 group-hover:w-full transition-all duration-300"></div>
+                            <!-- Efecto de resplandor al hacer hover -->
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500"></div>
                         </a>
                     </div>
+                    
+                    <!-- Espacio para mantener balance en móvil -->
+                    <div class="lg:hidden w-10"></div>
 
                     <!-- Links de navegación - Desktop -->
                     <div class="hidden lg:flex items-center justify-center mx-auto">
                         <ul class="flex items-center space-x-4 xl:space-x-6 text-gray-700 font-medium text-xs">
                             <li><a href="/" class="hover:text-cyan-600 transition-colors duration-300 text-sm ml-4 no-underline" style="text-decoration: none;">Home</a></li>
                             <li><a href="/nosotros" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Nosotros</a></li>
-                            <li><a href="/planes" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Planes</a></li>
-                            <li><a href="/planes-empresariales" class="hover:text-cyan-600 transition-colors duration-300 relative group text-sm no-underline" style="text-decoration: none;">
-                                <span class="flex items-center space-x-1">
-                                    <span>Planes Empresariales</span>
-                                    <span class="bg-gradient-to-r from-orange-400 to-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold animate-pulse">NUEVO</span>
-                                </span>
-                            </a></li>
+                            
+                            <!-- Dropdown de Planes -->
+                            <li class="relative group z-50">
+                                <a href="#" onclick="toggleDesktopDropdown('planes-dropdown-desktop', event)" class="hover:text-cyan-600 transition-colors duration-300 text-sm flex items-center space-x-1 no-underline" style="text-decoration: none;">
+                                    <span>Planes</span>
+                                    <i class="fas fa-chevron-down text-xs transition-transform duration-300 group-hover:rotate-180" id="planes-dropdown-desktop-icon"></i>
+                                </a>
+                                
+                                <!-- Menú desplegable -->
+                                <div id="planes-dropdown-desktop" class="dropdown-menu absolute left-0 mt-2 w-64 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200/50 hidden group-hover:block transition-all duration-300">
+                                    <div class="py-2">
+                                        <a href="/planes" class="flex items-center px-4 py-3 text-gray-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors duration-200 no-underline" style="text-decoration: none;">
+                                            <i class="fas fa-star w-5 text-center mr-3 text-cyan-600"></i>
+                                            <div>
+                                                <div class="font-semibold">Planes Individuales</div>
+                                                <div class="text-xs text-gray-500">Para tu vehículo personal</div>
+                                            </div>
+                                        </a>
+                                        <a href="/planes-empresariales" class="flex items-center px-4 py-3 text-gray-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors duration-200 no-underline relative" style="text-decoration: none;">
+                                            <i class="fas fa-building w-5 text-center mr-3 text-cyan-600"></i>
+                                            <div class="flex-1">
+                                                <div class="font-semibold flex items-center space-x-2">
+                                                    <span>Planes Empresariales</span>
+                                                    <span class="bg-gradient-to-r from-orange-400 to-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold animate-pulse">NUEVO</span>
+                                                </div>
+                                                <div class="text-xs text-gray-500">Para flotas y empresas</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                            
                             <li><a href="/servicios" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Servicios</a></li>
-                            <li><a href="/faq" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">FAQ</a></li>
-                            <li><a href="/blog" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Blog</a></li>
+                            
                             {% if not request.user.is_authenticated %}
                             <li><a href="/empresas" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Une tu empresa</a></li>
-                            <li><a href="/logincrud" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Administrador</a></li>
+                            <li><a href="/logincrud" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Acceso Empresas</a></li>
                             {% endif %}
+                             <!-- Dropdown de otros -->
+                            <li class="relative group z-50">
+                                <a href="#" onclick="toggleDesktopDropdown('reservas-dropdown-desktop', event)" class="hover:text-cyan-600 transition-colors duration-300 text-sm flex items-center space-x-1 no-underline" style="text-decoration: none;">
+                                    <span>Ayuda</span>
+                                    <i class="fas fa-chevron-down text-xs transition-transform duration-300 group-hover:rotate-180" id="reservas-dropdown-desktop-icon"></i>
+                                </a>
+                                
+                                <!-- Menú desplegable -->
+                                <div id="reservas-dropdown-desktop" class="dropdown-menu absolute left-0 mt-2 w-56 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200/50 hidden group-hover:block transition-all duration-300">
+                                    <div class="py-2">
+                                        <a href="/faq" class="flex items-center px-4 py-3 text-gray-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors duration-200 no-underline" style="text-decoration: none;">
+                                            <i class="fas fa-calendar-check w-5 text-center mr-3 text-cyan-600"></i>
+                                            <div>
+                                                <div class="font-semibold">FAQ</div>
+                                                <div class="text-xs text-gray-500">Resuelve tus dudas</div>
+                                            </div>
+                                        </a>
+                                        <a href="/blog" class="flex items-center px-4 py-3 text-gray-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors duration-200 no-underline" style="text-decoration: none;">
+                                            <i class="fas fa-plus-circle w-5 text-center mr-3 text-cyan-600"></i>
+                                            <div>
+                                                <div class="font-semibold">Blog</div>
+                                                <div class="text-xs text-gray-500">Actualizate con lo ultimo</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
                             {% if request.user.is_authenticated %}
-                            <li><a href="/citas" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Tus reservas</a></li>
-                            <li><a href="/reservas" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Reservar</a></li>
-                            <li><a href="/contacto" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">PQRS</a></li>
-                            <li><a href="/comentarios" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Comentar</a></li>
-                            <li><a href="/perfil" class="hover:text-cyan-600 transition-colors duration-300 text-sm no-underline" style="text-decoration: none;">Perfil</a></li>
+                            <!-- Dropdown de Reservas -->
+                            <li class="relative group z-50">
+                                <a href="#" onclick="toggleDesktopDropdown('reservas-dropdown-desktop', event)" class="hover:text-cyan-600 transition-colors duration-300 text-sm flex items-center space-x-1 no-underline" style="text-decoration: none;">
+                                    <span>Reservas</span>
+                                    <i class="fas fa-chevron-down text-xs transition-transform duration-300 group-hover:rotate-180" id="reservas-dropdown-desktop-icon"></i>
+                                </a>
+                                
+                                <!-- Menú desplegable -->
+                                <div id="reservas-dropdown-desktop" class="dropdown-menu absolute left-0 mt-2 w-56 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200/50 hidden group-hover:block transition-all duration-300">
+                                    <div class="py-2">
+                                        <a href="/citas" class="flex items-center px-4 py-3 text-gray-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors duration-200 no-underline" style="text-decoration: none;">
+                                            <i class="fas fa-calendar-check w-5 text-center mr-3 text-cyan-600"></i>
+                                            <div>
+                                                <div class="font-semibold">Mis Reservas</div>
+                                                <div class="text-xs text-gray-500">Ver mis citas agendadas</div>
+                                            </div>
+                                        </a>
+                                        <a href="/reservas" class="flex items-center px-4 py-3 text-gray-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors duration-200 no-underline" style="text-decoration: none;">
+                                            <i class="fas fa-plus-circle w-5 text-center mr-3 text-cyan-600"></i>
+                                            <div>
+                                                <div class="font-semibold">Reservar</div>
+                                                <div class="text-xs text-gray-500">Agendar nueva cita</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            <!-- Dropdown de Contacto -->
+                            <li class="relative group z-50">
+                                <a href="#" onclick="toggleDesktopDropdown('contacto-dropdown-desktop', event)" class="hover:text-cyan-600 transition-colors duration-300 text-sm flex items-center space-x-1 no-underline" style="text-decoration: none;">
+                                    <span>Contacto</span>
+                                    <i class="fas fa-chevron-down text-xs transition-transform duration-300 group-hover:rotate-180" id="contacto-dropdown-desktop-icon"></i>
+                                </a>
+                                
+                                <!-- Menú desplegable -->
+                                <div id="contacto-dropdown-desktop" class="dropdown-menu absolute left-0 mt-2 w-56 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200/50 hidden group-hover:block transition-all duration-300">
+                                    <div class="py-2">
+                                        <a href="/contacto" class="flex items-center px-4 py-3 text-gray-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors duration-200 no-underline" style="text-decoration: none;">
+                                            <i class="fas fa-envelope w-5 text-center mr-3 text-cyan-600"></i>
+                                            <div>
+                                                <div class="font-semibold">PQRS</div>
+                                                <div class="text-xs text-gray-500">Peticiones, quejas y reclamos</div>
+                                            </div>
+                                        </a>
+                                        <a href="/comentarios" class="flex items-center px-4 py-3 text-gray-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors duration-200 no-underline" style="text-decoration: none;">
+                                            <i class="fas fa-comments w-5 text-center mr-3 text-cyan-600"></i>
+                                            <div>
+                                                <div class="font-semibold">Comentar</div>
+                                                <div class="text-xs text-gray-500">Dejar tu opinión</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
                             {% endif %}
                         </ul>
                     </div>
@@ -381,42 +588,104 @@
                                 <span class="font-bold tracking-wider text-sm">ACCEDER</span>
                                 <i class="fas fa-chevron-right text-xs group-hover:translate-x-1 group-hover:text-white transition-all duration-300"></i>
                             </div>
-                        </a>
+                            </a>
                         {% endif %}
-                    </div>                    <!-- Botón de menú móvil -->
-                    <button class="lg:hidden text-cyan-700 hover:text-cyan-500 transition-colors duration-300" id="mobile-menu-button">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Menú móvil -->
+            </div>            <!-- Menú móvil -->
             <div class="lg:hidden hidden" id="mobile-menu">
                 <div class="bg-white/40 backdrop-blur-sm shadow-xl border-t border-gray-200/30">
                     <div class="px-4 py-6 space-y-4">
                         <a href="/" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">Home</a>
                         <a href="/nosotros" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">Nosotros</a>
-                        <a href="/planes" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">Planes</a>
-                        <a href="/planes-empresariales" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300 relative">
-                            <span class="flex items-center space-x-2">
-                                
-                                <span>Planes Empresariales</span>
-                                <span class="bg-gradient-to-r from-orange-400 to-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold animate-pulse">NUEVO</span>
-                            </span>
-                        </a>
+                        
+                        <!-- Dropdown de Planes para móvil -->
+                        <div class="space-y-2">
+                            <button onclick="toggleMobilePlanesMenu()" class="w-full flex items-center justify-between text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">
+                                <span>Planes</span>
+                                <i id="planesChevron" class="fas fa-chevron-down text-sm transition-transform duration-300"></i>
+                            </button>
+                            
+                            <!-- Submenú de Planes -->
+                            <div id="mobileSubMenuPlanes" class="hidden pl-4 space-y-2 border-l-2 border-cyan-200">
+                                <a href="/planes" class="flex items-center space-x-3 text-gray-600 hover:text-cyan-600 py-2 transition-colors duration-300">
+                                    <i class="fas fa-star text-cyan-600 text-sm"></i>
+                                    <div>
+                                        <div class="font-semibold text-base">Planes Individuales</div>
+                                        <div class="text-xs text-gray-500">Para tu vehículo personal</div>
+                                    </div>
+                                </a>
+                                <a href="/planes-empresariales" class="flex items-center space-x-3 text-gray-600 hover:text-cyan-600 py-2 transition-colors duration-300">
+                                    <i class="fas fa-building text-cyan-600 text-sm"></i>
+                                    <div class="flex-1">
+                                        <div class="font-semibold text-base flex items-center space-x-2">
+                                            <span>Planes Empresariales</span>
+                                            <span class="bg-gradient-to-r from-orange-400 to-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold animate-pulse">NUEVO</span>
+                                        </div>
+                                        <div class="text-xs text-gray-500">Para flotas y empresas</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        
                         <a href="/servicios" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">Servicios</a>
                         <a href="/faq" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">FAQ</a>
                         <a href="/blog" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">Blog</a>
                         {% if not request.user.is_authenticated %}
                         <a href="/empresas" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">Une tu empresa</a>
-                        <a href="/logincrud" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">Administrador</a>
+                        <a href="/logincrud" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">Acceso Empresas</a>
                         {% endif %}
                         {% if request.user.is_authenticated %}
-                        <a href="/citas" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">Tus reservas</a>
-                        <a href="/reservas" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">Reservar citas</a>
-                        <a href="/contacto" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">Contacto</a>
-                        <a href="/comentarios" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">Comentar</a>
-                        <a href="/perfil" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">Perfil</a>
+                        
+                        <!-- Dropdown de Reservas en móvil -->
+                        <div class="border-t border-gray-200 pt-2">
+                            <button onclick="toggleMobileDropdown('reservas-dropdown')" class="w-full flex items-center justify-between text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">
+                                <span>Reservas</span>
+                                <i class="fas fa-chevron-down text-sm transition-transform duration-300" id="reservas-dropdown-icon"></i>
+                            </button>
+                            <div id="reservas-dropdown" class="hidden pl-4 space-y-1">
+                                <a href="/citas" class="flex items-center text-gray-600 hover:text-cyan-600 py-2 transition-colors duration-300">
+                                    <i class="fas fa-calendar-check w-5 text-center mr-2 text-cyan-600 text-sm"></i>
+                                    <div>
+                                        <div class="font-medium text-base">Mis Reservas</div>
+                                        <div class="text-xs text-gray-500">Ver mis citas agendadas</div>
+                                    </div>
+                                </a>
+                                <a href="/reservas" class="flex items-center text-gray-600 hover:text-cyan-600 py-2 transition-colors duration-300">
+                                    <i class="fas fa-plus-circle w-5 text-center mr-2 text-cyan-600 text-sm"></i>
+                                    <div>
+                                        <div class="font-medium text-base">Reservar</div>
+                                        <div class="text-xs text-gray-500">Agendar nueva cita</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Dropdown de Contacto en móvil -->
+                        <div class="border-t border-gray-200 pt-2">
+                            <button onclick="toggleMobileDropdown('contacto-dropdown')" class="w-full flex items-center justify-between text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300">
+                                <span>Contacto</span>
+                                <i class="fas fa-chevron-down text-sm transition-transform duration-300" id="contacto-dropdown-icon"></i>
+                            </button>
+                            <div id="contacto-dropdown" class="hidden pl-4 space-y-1">
+                                <a href="/contacto" class="flex items-center text-gray-600 hover:text-cyan-600 py-2 transition-colors duration-300">
+                                    <i class="fas fa-envelope w-5 text-center mr-2 text-cyan-600 text-sm"></i>
+                                    <div>
+                                        <div class="font-medium text-base">PQRS</div>
+                                        <div class="text-xs text-gray-500">Peticiones, quejas y reclamos</div>
+                                    </div>
+                                </a>
+                                <a href="/comentarios" class="flex items-center text-gray-600 hover:text-cyan-600 py-2 transition-colors duration-300">
+                                    <i class="fas fa-comments w-5 text-center mr-2 text-cyan-600 text-sm"></i>
+                                    <div>
+                                        <div class="font-medium text-base">Comentar</div>
+                                        <div class="text-xs text-gray-500">Dejar tu opinión</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <a href="/perfil" class="block text-gray-700 hover:text-cyan-600 py-2 text-lg transition-colors duration-300 border-t border-gray-200 pt-2">Perfil</a>
                         {% endif %}
                         <div class="pt-4 mt-4 border-t border-gray-200">
                             {% if request.user.is_authenticated %}
@@ -493,19 +762,306 @@
             });
         });
 
-        // Función para toggle del menú de perfil
-        function toggleProfileMenu() {
-            const dropdown = document.getElementById('profileDropdown');
-            dropdown.classList.toggle('hidden');
+        // Función para toggle del submenú de Planes en móvil
+        function toggleMobilePlanesMenu() {
+            const subMenu = document.getElementById('mobileSubMenuPlanes');
+            const chevron = document.getElementById('planesChevron');
+            
+            if (subMenu) {
+                subMenu.classList.toggle('hidden');
+                if (chevron) {
+                    chevron.classList.toggle('rotate-180');
+                }
+            }
         }
 
-        // Cerrar dropdown al hacer clic fuera
+        // Función para toggle de dropdowns en móvil (Reservas, Contacto, etc.)
+        let mobileDropdownTimers = {};
+        
+        function toggleMobileDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            const iconId = dropdownId + '-icon';
+            const icon = document.getElementById(iconId);
+            
+            if (dropdown) {
+                const isHidden = dropdown.classList.contains('hidden');
+                
+                // Limpiar timer existente si lo hay
+                if (mobileDropdownTimers[dropdownId]) {
+                    clearTimeout(mobileDropdownTimers[dropdownId]);
+                    delete mobileDropdownTimers[dropdownId];
+                }
+                
+                if (isHidden) {
+                    // Abrir el dropdown
+                    dropdown.classList.remove('hidden');
+                    if (icon) {
+                        icon.classList.add('rotate-180');
+                    }
+                    
+                    // Configurar timer para cerrar automáticamente después de 5 segundos
+                    mobileDropdownTimers[dropdownId] = setTimeout(() => {
+                        dropdown.classList.add('hidden');
+                        if (icon) {
+                            icon.classList.remove('rotate-180');
+                        }
+                        delete mobileDropdownTimers[dropdownId];
+                    }, 5000); // 5 segundos
+                } else {
+                    // Cerrar el dropdown inmediatamente
+                    dropdown.classList.add('hidden');
+                    if (icon) {
+                        icon.classList.remove('rotate-180');
+                    }
+                }
+            }
+        }
+
+        // Función para toggle de dropdowns en desktop (con temporizador)
+        let desktopDropdownTimers = {};
+        
+        function toggleDesktopDropdown(dropdownId, event) {
+            if (event) {
+                event.preventDefault();
+            }
+            
+            const dropdown = document.getElementById(dropdownId);
+            const iconId = dropdownId + '-icon';
+            const icon = document.getElementById(iconId);
+            
+            if (dropdown) {
+                const isHidden = dropdown.classList.contains('hidden');
+                
+                // Limpiar timer existente si lo hay
+                if (desktopDropdownTimers[dropdownId]) {
+                    clearTimeout(desktopDropdownTimers[dropdownId]);
+                    delete desktopDropdownTimers[dropdownId];
+                }
+                
+                if (isHidden) {
+                    // Cerrar otros dropdowns desktop
+                    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                        if (menu.id !== dropdownId) {
+                            menu.classList.remove('active');
+                            menu.classList.add('hidden');
+                        }
+                    });
+                    
+                    // Abrir este dropdown
+                    dropdown.classList.remove('hidden');
+                    dropdown.classList.add('active');
+                    if (icon) {
+                        icon.classList.add('rotate-180');
+                    }
+                    
+                    // Configurar timer para cerrar automáticamente después de 5 segundos
+                    desktopDropdownTimers[dropdownId] = setTimeout(() => {
+                        dropdown.classList.add('hidden');
+                        dropdown.classList.remove('active');
+                        if (icon) {
+                            icon.classList.remove('rotate-180');
+                        }
+                        delete desktopDropdownTimers[dropdownId];
+                    }, 5000); // 5 segundos
+                } else {
+                    // Cerrar el dropdown inmediatamente
+                    dropdown.classList.add('hidden');
+                    dropdown.classList.remove('active');
+                    if (icon) {
+                        icon.classList.remove('rotate-180');
+                    }
+                }
+            }
+        }
+
+        // Función para toggle del menú de perfil (con temporizador)
+        let profileDropdownTimer = null;
+        
+        function toggleProfileMenu() {
+            const dropdown = document.getElementById('profileDropdown');
+            
+            if (dropdown) {
+                const isHidden = dropdown.classList.contains('hidden');
+                
+                // Limpiar timer existente si lo hay
+                if (profileDropdownTimer) {
+                    clearTimeout(profileDropdownTimer);
+                    profileDropdownTimer = null;
+                }
+                
+                if (isHidden) {
+                    // Abrir el dropdown
+                    dropdown.classList.remove('hidden');
+                    
+                    // Configurar timer para cerrar automáticamente después de 6 segundos
+                    profileDropdownTimer = setTimeout(() => {
+                        dropdown.classList.add('hidden');
+                        profileDropdownTimer = null;
+                    }, 6000); // 6 segundos
+                } else {
+                    // Cerrar el dropdown inmediatamente
+                    dropdown.classList.add('hidden');
+                }
+            }
+        }
+
+        // Cerrar dropdowns al hacer clic fuera
         document.addEventListener('click', function(event) {
             const dropdown = document.getElementById('profileDropdown');
             const profileImage = event.target.closest('[onclick="toggleProfileMenu()"]');
             
+            // Cerrar dropdown de perfil si se hace clic fuera
             if (dropdown && !profileImage && !dropdown.contains(event.target)) {
                 dropdown.classList.add('hidden');
+                if (profileDropdownTimer) {
+                    clearTimeout(profileDropdownTimer);
+                    profileDropdownTimer = null;
+                }
+            }
+            
+            // Cerrar dropdowns desktop si se hace clic fuera
+            const clickedDropdownButton = event.target.closest('[onclick^="toggleDesktopDropdown"]');
+            if (!clickedDropdownButton) {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    if (!menu.contains(event.target)) {
+                        menu.classList.add('hidden');
+                        menu.classList.remove('active');
+                        
+                        // Limpiar el timer si existe
+                        if (desktopDropdownTimers[menu.id]) {
+                            clearTimeout(desktopDropdownTimers[menu.id]);
+                            delete desktopDropdownTimers[menu.id];
+                        }
+                        
+                        // Resetear el ícono
+                        const icon = document.getElementById(menu.id + '-icon');
+                        if (icon) {
+                            icon.classList.remove('rotate-180');
+                        }
+                    }
+                });
+            }
+        });
+
+        // Agregar event listeners para mantener dropdowns abiertos cuando el mouse está sobre ellos
+        document.addEventListener('DOMContentLoaded', function() {
+            // Para dropdowns desktop - Sistema mejorado con delays
+            const dropdownGroups = document.querySelectorAll('.group');
+            let closeTimer = null;
+            
+            dropdownGroups.forEach(group => {
+                const dropdown = group.querySelector('.dropdown-menu');
+                
+                if (dropdown) {
+                    // Cuando el mouse entra al grupo (botón + menú)
+                    group.addEventListener('mouseenter', function() {
+                        // Cancelar cualquier timer de cierre pendiente
+                        if (closeTimer) {
+                            clearTimeout(closeTimer);
+                            closeTimer = null;
+                        }
+                        
+                        // Cerrar otros dropdowns
+                        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                            if (menu !== dropdown) {
+                                menu.classList.add('hidden');
+                                menu.classList.remove('active');
+                            }
+                        });
+                        
+                        // Abrir este dropdown
+                        dropdown.classList.remove('hidden');
+                        dropdown.classList.add('active');
+                        
+                        // Limpiar timer de desktop si existe
+                        if (desktopDropdownTimers[dropdown.id]) {
+                            clearTimeout(desktopDropdownTimers[dropdown.id]);
+                            delete desktopDropdownTimers[dropdown.id];
+                        }
+                    });
+                    
+                    // Cuando el mouse sale del grupo
+                    group.addEventListener('mouseleave', function() {
+                        // Esperar 300ms antes de cerrar para dar tiempo a mover el mouse
+                        closeTimer = setTimeout(() => {
+                            dropdown.classList.add('hidden');
+                            dropdown.classList.remove('active');
+                            
+                            // Resetear el ícono
+                            const icon = dropdown.querySelector('.fa-chevron-down') || 
+                                        group.querySelector('.fa-chevron-down');
+                            if (icon) {
+                                icon.classList.remove('rotate-180');
+                            }
+                            closeTimer = null;
+                        }, 300);
+                    });
+                    
+                    // Mantener abierto cuando el mouse está sobre el menú
+                    dropdown.addEventListener('mouseenter', function() {
+                        if (closeTimer) {
+                            clearTimeout(closeTimer);
+                            closeTimer = null;
+                        }
+                    });
+                    
+                    // Cuando el mouse sale del menú (pero no del grupo)
+                    dropdown.addEventListener('mouseleave', function() {
+                        closeTimer = setTimeout(() => {
+                            dropdown.classList.add('hidden');
+                            dropdown.classList.remove('active');
+                            closeTimer = null;
+                        }, 300);
+                    });
+                }
+            });
+            
+            // Para dropdowns desktop (versión antigua - mantener por compatibilidad)
+            document.querySelectorAll('.dropdown-menu').forEach(dropdown => {
+                dropdown.addEventListener('mouseenter', function() {
+                    const dropdownId = this.id;
+                    if (desktopDropdownTimers[dropdownId]) {
+                        clearTimeout(desktopDropdownTimers[dropdownId]);
+                        delete desktopDropdownTimers[dropdownId];
+                    }
+                });
+                
+                dropdown.addEventListener('mouseleave', function() {
+                    const dropdownId = this.id;
+                    const icon = document.getElementById(dropdownId + '-icon');
+                    
+                    // Reiniciar el timer cuando el mouse sale
+                    if (!this.classList.contains('hidden')) {
+                        desktopDropdownTimers[dropdownId] = setTimeout(() => {
+                            this.classList.add('hidden');
+                            this.classList.remove('active');
+                            if (icon) {
+                                icon.classList.remove('rotate-180');
+                            }
+                            delete desktopDropdownTimers[dropdownId];
+                        }, 500); // Aumentado a 500ms para dar más tiempo
+                    }
+                });
+            });
+            
+            // Para dropdown de perfil
+            const profileDropdown = document.getElementById('profileDropdown');
+            if (profileDropdown) {
+                profileDropdown.addEventListener('mouseenter', function() {
+                    if (profileDropdownTimer) {
+                        clearTimeout(profileDropdownTimer);
+                        profileDropdownTimer = null;
+                    }
+                });
+                
+                profileDropdown.addEventListener('mouseleave', function() {
+                    if (!this.classList.contains('hidden')) {
+                        profileDropdownTimer = setTimeout(() => {
+                            this.classList.add('hidden');
+                            profileDropdownTimer = null;
+                        }, 500); // Aumentado a 500ms
+                    }
+                });
             }
         });
 
@@ -527,78 +1083,95 @@
 {% endblock  %}
 
 <!-- Footer con Tailwind CSS (Paleta clara) - Optimizado para móviles -->
-<footer class="bg-white border-t border-gray-200 text-gray-700 pt-8 sm:pt-10 md:pt-12 rounded-t-3xl shadow-2xl">
+<footer class="bg-white border-t border-gray-200 text-gray-700 pt-5 sm:pt-10 md:pt-12 rounded-t-3xl shadow-2xl mt-8">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-12">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8 lg:gap-12">
             <!-- Sección del Logo y Descripción -->
-            <div class="space-y-4 sm:space-y-6 text-center sm:text-left">
+            <div class="space-y-3 sm:space-y-6 text-center sm:text-left pb-4 sm:pb-0 border-b sm:border-b-0 border-gray-200">
                 <div>
                     <a href="/" class="relative group inline-block">
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-600 to-cyan-700 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wider hover:from-cyan-500 hover:via-blue-500 hover:to-cyan-600 transition-all duration-300">
-                                    Auto<span class="text-blue-800 font-extrabold">new</span>
-                                </span>
-                        <div class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 group-hover:w-full transition-all duration-300"></div>
+                            Auto<span class="text-blue-800 font-extrabold">new</span>
+                        </span>
+                        <div class="absolute -bottom-1 left-0 right-0 mx-auto w-0 h-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 group-hover:w-full transition-all duration-300"></div>
                     </a>
-                    <p class="text-gray-500 mt-3 sm:mt-4 leading-relaxed text-sm sm:text-base max-w-sm mx-auto sm:mx-0">
+                    <p class="text-gray-500 mt-2 sm:mt-4 leading-relaxed text-sm sm:text-base max-w-sm mx-auto sm:mx-0 px-2 sm:px-0">
                         Expertos en lavado y cuidado automotriz. Calidad, confianza y servicio premium para tu vehículo.
                     </p>
                 </div>
                 <div class="flex space-x-3 sm:space-x-4 justify-center sm:justify-start">
                     <a href="#" aria-label="Facebook" 
-                       class="w-8 h-8 sm:w-10 sm:h-10 bg-cyan-600 hover:bg-cyan-700 text-white hover:text-cyan-100 rounded-full flex items-center justify-center transition-all duration-300 hover:-translate-y-1 hover:scale-110 shadow-lg text-sm sm:text-base">
+                       class="w-10 h-10 sm:w-10 sm:h-10 bg-cyan-600 hover:bg-cyan-700 text-white hover:text-cyan-100 rounded-full flex items-center justify-center transition-all duration-300 hover:-translate-y-1 hover:scale-110 shadow-lg text-sm sm:text-base active:scale-95">
                         <i class="fab fa-facebook-f"></i>
                     </a>
                     <a href="#" aria-label="Twitter" 
-                       class="w-8 h-8 sm:w-10 sm:h-10 bg-cyan-600 hover:bg-cyan-700 text-white hover:text-cyan-100 rounded-full flex items-center justify-center transition-all duration-300 hover:-translate-y-1 hover:scale-110 shadow-lg text-sm sm:text-base">
+                       class="w-10 h-10 sm:w-10 sm:h-10 bg-cyan-600 hover:bg-cyan-700 text-white hover:text-cyan-100 rounded-full flex items-center justify-center transition-all duration-300 hover:-translate-y-1 hover:scale-110 shadow-lg text-sm sm:text-base active:scale-95">
                         <i class="fab fa-twitter"></i>
                     </a>
                     <a href="#" aria-label="Instagram" 
-                       class="w-8 h-8 sm:w-10 sm:h-10 bg-cyan-600 hover:bg-cyan-700 text-white hover:text-cyan-100 rounded-full flex items-center justify-center transition-all duration-300 hover:-translate-y-1 hover:scale-110 shadow-lg text-sm sm:text-base">
+                       class="w-10 h-10 sm:w-10 sm:h-10 bg-cyan-600 hover:bg-cyan-700 text-white hover:text-cyan-100 rounded-full flex items-center justify-center transition-all duration-300 hover:-translate-y-1 hover:scale-110 shadow-lg text-sm sm:text-base active:scale-95">
                         <i class="fab fa-instagram"></i>
                     </a>
                     <a href="#" aria-label="LinkedIn" 
-                       class="w-8 h-8 sm:w-10 sm:h-10 bg-cyan-600 hover:bg-cyan-700 text-white hover:text-cyan-100 rounded-full flex items-center justify-center transition-all duration-300 hover:-translate-y-1 hover:scale-110 shadow-lg text-sm sm:text-base">
+                       class="w-10 h-10 sm:w-10 sm:h-10 bg-cyan-600 hover:bg-cyan-700 text-white hover:text-cyan-100 rounded-full flex items-center justify-center transition-all duration-300 hover:-translate-y-1 hover:scale-110 shadow-lg text-sm sm:text-base active:scale-95">
                         <i class="fab fa-linkedin-in"></i>
                     </a>
                 </div>
             </div>
             <!-- Sección de Enlaces -->
-            <div class="space-y-4 sm:space-y-6 text-center sm:text-left">
+            <div class="space-y-3 sm:space-y-6 text-center sm:text-left pb-4 sm:pb-0 border-b sm:border-b-0 border-gray-200">
                 <h4 class="text-cyan-700 text-lg sm:text-xl font-bold tracking-wide">Enlaces</h4>
-                <ul class="space-y-2 sm:space-y-3">
-                    <li><a href="/" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base">Home</a></li>
-                    <li><a href="/nosotros" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base">Nosotros</a></li>
-                    <li><a href="/servicios" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base">Servicios</a></li>
-                    <li><a href="/planes" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base">Planes</a></li>
-                    <li><a href="/planes-empresariales" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base flex items-center space-x-1">
-                        
-                        <span>Planes Empresariales</span>
-                        <span class="bg-gradient-to-r from-orange-400 to-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">NUEVO</span>
-                    </a></li>
-                    <li><a href="/faq" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base">FAQ</a></li>
+                <ul class="space-y-1.5 sm:space-y-3">
+                    <li><a href="/" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base inline-block py-0.5">Home</a></li>
+                    <li><a href="/nosotros" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base inline-block py-0.5">Nosotros</a></li>
+                    <li><a href="/servicios" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base inline-block py-0.5">Servicios</a></li>
+                    
+                    <!-- Planes con subenlaces -->
+                    <li class="pt-0.5">
+                        <div class="text-gray-700 font-medium text-sm sm:text-base mb-1">Planes</div>
+                        <ul class="pl-0 sm:pl-4 space-y-1 sm:border-l-2 border-cyan-200">
+                            <li>
+                                <a href="/planes" class="text-gray-600 hover:text-cyan-600 hover:underline transition-colors duration-300 text-xs sm:text-sm flex items-center justify-center sm:justify-start space-x-1.5 py-0.5">
+                                    <i class="fas fa-star text-cyan-600 text-xs"></i>
+                                    <span>Planes Individuales</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/planes-empresariales" class="text-gray-600 hover:text-cyan-600 hover:underline transition-colors duration-300 text-xs sm:text-sm flex items-center justify-center sm:justify-start space-x-1.5 py-0.5">
+                                    <i class="fas fa-building text-cyan-600 text-xs"></i>
+                                    <span class="flex items-center space-x-1">
+                                        <span>Planes Empresariales</span>
+                                        <span class="bg-gradient-to-r from-orange-400 to-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">NUEVO</span>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <li><a href="/faq" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base inline-block py-0.5">FAQ</a></li>
                     {% if request.user.is_authenticated %}
-                    <li><a href="/citas" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base">Tus reservas</a></li>
-                    <li><a href="/reservas" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base">Reservar citas</a></li>
-                    <li><a href="/contacto" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base">Contacto</a></li>
-                    <li><a href="/perfil" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base">Perfil</a></li>
-                    <li><a href="/comentarios" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base">Comentar</a></li>
+                    <li><a href="/citas" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base inline-block py-0.5">Tus reservas</a></li>
+                    <li><a href="/reservas" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base inline-block py-0.5">Reservar citas</a></li>
+                    <li><a href="/contacto" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base inline-block py-0.5">Contacto</a></li>
+                    <li><a href="/perfil" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base inline-block py-0.5">Perfil</a></li>
+                    <li><a href="/comentarios" class="text-gray-700 hover:text-cyan-600 hover:underline transition-colors duration-300 text-sm sm:text-base inline-block py-0.5">Comentar</a></li>
                     {% endif %}
                 </ul>
             </div>
             <!-- Sección de Contacto -->
-            <div class="space-y-4 sm:space-y-6 text-center sm:text-left sm:col-span-2 lg:col-span-1">
+            <div class="space-y-3 sm:space-y-6 text-center sm:text-left sm:col-span-2 lg:col-span-1">
                 <h4 class="text-cyan-700 text-lg sm:text-xl font-bold tracking-wide">Contacto</h4>
-                <ul class="space-y-3 sm:space-y-4">
-                    <li class="flex items-center space-x-3 text-gray-600 justify-center sm:justify-start">
-                        <i class="fas fa-envelope text-cyan-600 text-sm sm:text-lg flex-shrink-0"></i>
-                        <span class="text-sm sm:text-base break-all sm:break-normal">autonew@gmail.com</span>
+                <ul class="space-y-2.5 sm:space-y-4">
+                    <li class="flex flex-col sm:flex-row items-center sm:items-center space-y-0.5 sm:space-y-0 sm:space-x-3 text-gray-600">
+                        <i class="fas fa-envelope text-cyan-600 text-base sm:text-lg flex-shrink-0"></i>
+                        <a href="mailto:autonew@gmail.com" class="text-sm sm:text-base hover:text-cyan-600 transition-colors break-all sm:break-normal">autonew@gmail.com</a>
                     </li>
-                    <li class="flex items-center space-x-3 text-gray-600 justify-center sm:justify-start">
-                        <i class="fas fa-phone text-cyan-600 text-sm sm:text-lg flex-shrink-0"></i>
-                        <span class="text-sm sm:text-base">3114906440</span>
+                    <li class="flex flex-col sm:flex-row items-center sm:items-center space-y-0.5 sm:space-y-0 sm:space-x-3 text-gray-600">
+                        <i class="fas fa-phone text-cyan-600 text-base sm:text-lg flex-shrink-0"></i>
+                        <a href="tel:3114906440" class="text-sm sm:text-base hover:text-cyan-600 transition-colors">3114906440</a>
                     </li>
-                    <li class="flex items-center space-x-3 text-gray-600 justify-center sm:justify-start">
-                        <i class="fas fa-map-marker-alt text-cyan-600 text-sm sm:text-lg flex-shrink-0"></i>
+                    <li class="flex flex-col sm:flex-row items-center sm:items-center space-y-0.5 sm:space-y-0 sm:space-x-3 text-gray-600">
+                        <i class="fas fa-map-marker-alt text-cyan-600 text-base sm:text-lg flex-shrink-0"></i>
                         <span class="text-sm sm:text-base">Torre Colpatria piso 14</span>
                     </li>
                 </ul>
@@ -606,40 +1179,38 @@
         </div>
     </div>
     <!-- Bottom Footer - Optimizado para móviles -->
-    <div class="border-t border-gray-200 mt-6 sm:mt-8 pt-4 sm:pt-6 pb-4 sm:pb-6 bg-gray-50 rounded-b-3xl">
+    <div class="border-t border-gray-200 mt-5 sm:mt-8 pt-4 sm:pt-6 pb-4 sm:pb-6 bg-gray-50 rounded-b-3xl">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Enlaces adicionales -->
-            <div class="flex flex-wrap justify-center items-center space-x-4 mb-4 text-xs sm:text-sm">
+            <div class="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-2 sm:gap-2 mb-4 sm:mb-6 text-xs sm:text-sm">
                 <button onclick="mostrarModal('modalPoliticaCookies')" 
-                   class="text-gray-600 hover:text-cyan-600 underline hover:no-underline transition-colors duration-200 flex items-center space-x-1 bg-transparent border-0 p-0">
-                    
-                    <span>Política de Cookies</span>
+                   class="text-gray-600 hover:text-cyan-600 underline hover:no-underline transition-colors duration-200 bg-transparent border-0 p-1 sm:p-2 active:scale-95">
+                    Política de Cookies
                 </button>
-                <span class="text-gray-400">|</span>
+                <span class="text-gray-400 hidden sm:inline">|</span>
                 <button onclick="mostrarModal('modalConfigCookies')" 
-                        class="text-gray-600 hover:text-cyan-600 underline hover:no-underline transition-colors duration-200 flex items-center space-x-1 bg-transparent border-0 p-0">
-                    
-                    <span>Configurar Cookies</span>
+                        class="text-gray-600 hover:text-cyan-600 underline hover:no-underline transition-colors duration-200 bg-transparent border-0 p-1 sm:p-2 active:scale-95">
+                    Configurar Cookies
                 </button>
-                <span class="text-gray-400">|</span>
+                <span class="text-gray-400 hidden sm:inline">|</span>
                 <button onclick="mostrarModal('modalTerminos')" 
-                   class="text-gray-600 hover:text-cyan-600 underline hover:no-underline transition-colors duration-200 bg-transparent border-0 p-0">
+                   class="text-gray-600 hover:text-cyan-600 underline hover:no-underline transition-colors duration-200 bg-transparent border-0 p-1 sm:p-2 active:scale-95">
                     Términos y Condiciones
                 </button>
-                <span class="text-gray-400">|</span>
+                <span class="text-gray-400 hidden sm:inline">|</span>
                 <button onclick="mostrarModal('modalPrivacidad')" 
-                   class="text-gray-600 hover:text-cyan-600 underline hover:no-underline transition-colors duration-200 bg-transparent border-0 p-0">
+                   class="text-gray-600 hover:text-cyan-600 underline hover:no-underline transition-colors duration-200 bg-transparent border-0 p-1 sm:p-2 active:scale-95">
                     Política de Privacidad
                 </button>
             </div>
             
             <!-- Copyright -->
-            <p class="text-center text-gray-500 text-xs sm:text-sm leading-relaxed">
+            <p class="text-center text-gray-500 text-xs sm:text-sm leading-relaxed px-3 sm:px-4">
                 &copy; <span id="year"></span> 
                 <a href="#" class="text-cyan-700 font-semibold hover:text-cyan-500 hover:underline transition-colors duration-300">AUTONEW</a>. 
                 <span class="block sm:inline mt-1 sm:mt-0">Todos los derechos reservados.</span> 
                 <span class="block sm:inline mt-1 sm:mt-0">Diseñado por</span>
-                <a href="https://portafolio-freelancer.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-cyan-700 font-semibold hover:text-cyan-500 hover:underline transition-colors duration-300 hover:scale-105 inline-flex items-center space-x-1 group ml-1">
+                <a href="https://portafolio-freelancer.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-cyan-700 font-semibold hover:text-cyan-500 hover:underline transition-colors duration-300 inline-flex items-center justify-center sm:justify-start space-x-1 group mt-0.5 sm:mt-0 sm:ml-1">
                     <span>Andres Forero</span>
                     <i class="fas fa-external-link-alt text-xs opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300"></i>
                 </a>

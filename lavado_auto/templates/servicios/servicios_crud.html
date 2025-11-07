@@ -1,35 +1,41 @@
 {% extends 'base/base_crud.html' %}
 {% load static %}
+{% load l10n %}
 
 {% block content %}
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <!-- Header mejorado -->
-        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 p-6 sm:p-8 mb-8">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div class="flex items-center space-x-4">
-                    <div class="p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl shadow-lg">
-                        <i class="fas fa-concierge-bell text-white text-2xl"></i>
+        <div class="bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-xl border border-white/20 p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
+            <div class="flex flex-col gap-4">
+                <!-- Título -->
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                    <div class="p-2 sm:p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl sm:rounded-2xl shadow-lg flex-shrink-0">
+                        <i class="fas fa-concierge-bell text-white text-xl sm:text-2xl"></i>
                     </div>
-                    <div>
-                        <h1 class="text-3xl sm:text-4xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                    <div class="min-w-0 flex-1">
+                        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent truncate">
                             Gestión de Servicios
                         </h1>
-                        <p class="text-gray-600 mt-1">Administra todos los servicios del sistema de manera eficiente</p>
+                        <p class="text-gray-600 mt-1 text-sm sm:text-base hidden sm:block">Administra todos los servicios del sistema de manera eficiente</p>
+                        <p class="text-gray-600 mt-1 text-xs sm:hidden">Administra servicios</p>
                     </div>
                 </div>
                 
-                <div class="flex flex-col sm:flex-row gap-3">
+                <!-- Botones de acción -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                     <a href="{% url 'crear_servicio' %}" 
-                       class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-2xl shadow-lg hover:from-green-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300">
+                       class="inline-flex items-center justify-center px-4 sm:px-6 py-3 sm:py-3.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-xl sm:rounded-2xl shadow-lg hover:from-green-700 hover:to-emerald-700 active:scale-95 transform transition-all duration-300 text-sm sm:text-base">
                         <i class="fas fa-plus mr-2"></i>
-                        Nuevo Servicio
+                        <span class="hidden sm:inline">Nuevo Servicio</span>
+                        <span class="sm:hidden">Nuevo</span>
                     </a>
                     <a href="{% url 'gestionar_asignaciones_servicios' %}" 
-                       class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-2xl shadow-lg hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-300">
+                       class="inline-flex items-center justify-center px-4 sm:px-6 py-3 sm:py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl sm:rounded-2xl shadow-lg hover:from-purple-700 hover:to-pink-700 active:scale-95 transform transition-all duration-300 text-sm sm:text-base">
                         <i class="fas fa-sitemap mr-2"></i>
-                        Gestionar Asignaciones
+                        <span class="hidden sm:inline">Gestionar Asignaciones</span>
+                        <span class="sm:hidden">Asignaciones</span>
                     </a>
                 </div>
             </div>
@@ -83,51 +89,51 @@
 
 
         <!-- Estadísticas rápidas -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Total Servicios</p>
-                        <p class="text-3xl font-bold text-blue-600">{{ total_servicios }}</p>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
+            <div class="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-2xl shadow-lg border border-white/20 p-3 sm:p-4 lg:p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div class="order-2 sm:order-1">
+                        <p class="text-xs sm:text-sm font-medium text-gray-600 mb-1">Total Servicios</p>
+                        <p class="text-2xl sm:text-3xl font-bold text-blue-600">{{ total_servicios }}</p>
                     </div>
-                    <div class="p-3 bg-blue-100 rounded-xl">
-                        <i class="fas fa-concierge-bell text-blue-600 text-xl"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Empresas</p>
-                        <p class="text-3xl font-bold text-emerald-600">{{ empresas|length|default:0 }}</p>
-                    </div>
-                    <div class="p-3 bg-emerald-100 rounded-xl">
-                        <i class="fas fa-building text-emerald-600 text-xl"></i>
+                    <div class="p-2 sm:p-3 bg-blue-100 rounded-lg sm:rounded-xl order-1 sm:order-2 self-start">
+                        <i class="fas fa-concierge-bell text-blue-600 text-lg sm:text-xl"></i>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Asignaciones</p>
-                        <p class="text-3xl font-bold text-purple-600">{{ total_asignaciones|default:0 }}</p>
+            <div class="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-2xl shadow-lg border border-white/20 p-3 sm:p-4 lg:p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div class="order-2 sm:order-1">
+                        <p class="text-xs sm:text-sm font-medium text-gray-600 mb-1">Empresas</p>
+                        <p class="text-2xl sm:text-3xl font-bold text-emerald-600">{{ empresas|length|default:0 }}</p>
                     </div>
-                    <div class="p-3 bg-purple-100 rounded-xl">
-                        <i class="fas fa-link text-purple-600 text-xl"></i>
+                    <div class="p-2 sm:p-3 bg-emerald-100 rounded-lg sm:rounded-xl order-1 sm:order-2 self-start">
+                        <i class="fas fa-building text-emerald-600 text-lg sm:text-xl"></i>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Pendientes</p>
-                        <p class="text-3xl font-bold text-indigo-600">{{ total_solicitudes_pendientes|default:0 }}</p>
+            <div class="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-2xl shadow-lg border border-white/20 p-3 sm:p-4 lg:p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div class="order-2 sm:order-1">
+                        <p class="text-xs sm:text-sm font-medium text-gray-600 mb-1">Asignaciones</p>
+                        <p class="text-2xl sm:text-3xl font-bold text-purple-600">{{ total_asignaciones|default:0 }}</p>
                     </div>
-                    <div class="p-3 bg-indigo-100 rounded-xl">
-                        <i class="fas fa-clock text-indigo-600 text-xl"></i>
+                    <div class="p-2 sm:p-3 bg-purple-100 rounded-lg sm:rounded-xl order-1 sm:order-2 self-start">
+                        <i class="fas fa-link text-purple-600 text-lg sm:text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-2xl shadow-lg border border-white/20 p-3 sm:p-4 lg:p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div class="order-2 sm:order-1">
+                        <p class="text-xs sm:text-sm font-medium text-gray-600 mb-1">Pendientes</p>
+                        <p class="text-2xl sm:text-3xl font-bold text-indigo-600">{{ total_solicitudes_pendientes|default:0 }}</p>
+                    </div>
+                    <div class="p-2 sm:p-3 bg-indigo-100 rounded-lg sm:rounded-xl order-1 sm:order-2 self-start">
+                        <i class="fas fa-clock text-indigo-600 text-lg sm:text-xl"></i>
                     </div>
                 </div>
             </div>
@@ -314,13 +320,14 @@
         </div>
             
         <!-- Lista de servicios -->
-        <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden">
-            <div class="p-6 sm:p-8 border-b border-gray-200">
-                <h2 class="text-2xl font-bold text-gray-900">Servicios Disponibles</h2>
-                <p class="text-gray-600 mt-1">Total: {{ servicios|length }} servicio{{ servicios|length|pluralize:"s" }}</p>
+        <div id="servicios-container" class="bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-xl border border-white/20 overflow-hidden">
+            <div class="p-4 sm:p-6 lg:p-8 border-b border-gray-200">
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Servicios Disponibles</h2>
+                <p class="text-gray-600 mt-1 text-sm sm:text-base">Total: {{ servicios|length }} servicio{{ servicios|length|pluralize:"s" }}</p>
             </div>
             {% if servicios %}
-                <div class="overflow-x-auto">
+                <!-- Tabla para desktop (oculta en móvil) -->
+                <div class="hidden lg:block overflow-x-auto">
                     <table class="w-full">
                         <thead class="bg-gray-50/80">
                             <tr>
@@ -387,15 +394,70 @@
                         </tbody>
                     </table>
                 </div>
-            {% else %}
-                <div class="text-center py-16">
-                    <div class="mx-auto h-24 w-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-concierge-bell text-gray-400 text-3xl"></i>
+
+                <!-- Vista de tarjetas para móvil (visible solo en móvil) -->
+                <div class="lg:hidden divide-y divide-gray-200">
+                    {% for servicio in servicios %}
+                    <div class="p-4 hover:bg-gray-50 transition-colors duration-200">
+                        <!-- Header de la tarjeta móvil -->
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center space-x-3 flex-1 min-w-0">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center text-white font-bold flex-shrink-0">
+                                    {{ servicio.id_servicio }}
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <h3 class="font-bold text-gray-900 text-base truncate">{{ servicio.nombre_servicio }}</h3>
+                                    <p class="text-lg font-bold text-blue-600 mt-1">${{ servicio.precio }}</p>
+                                </div>
+                            </div>
+                            <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-purple-100 text-purple-800 flex-shrink-0 ml-2">
+                                <i class="fas fa-building mr-1"></i>
+                                {{ servicio.empresas_asociadas|length|default:0 }}
+                            </span>
+                        </div>
+                        
+                        <!-- Descripción -->
+                        <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ servicio.descripcion }}</p>
+                        
+                        <!-- Botones de acción -->
+                        <div class="grid grid-cols-4 gap-2">
+                            <a href="{% url 'detalle_servicio' servicio.id_servicio %}" 
+                               class="flex flex-col items-center justify-center px-2 py-2.5 bg-gradient-to-br from-blue-500 to-cyan-500 text-white rounded-lg active:scale-95 transition-transform"
+                               title="Ver detalle">
+                                <i class="fas fa-eye text-sm mb-1"></i>
+                                <span class="text-xs font-medium">Ver</span>
+                            </a>
+                            <a href="{% url 'editar_servicio' servicio.id_servicio %}" 
+                               class="flex flex-col items-center justify-center px-2 py-2.5 bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-lg active:scale-95 transition-transform"
+                               title="Editar">
+                                <i class="fas fa-edit text-sm mb-1"></i>
+                                <span class="text-xs font-medium">Editar</span>
+                            </a>
+                            <a href="{% url 'gestionar_asignaciones_servicios' %}" 
+                               class="flex flex-col items-center justify-center px-2 py-2.5 bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-lg active:scale-95 transition-transform"
+                               title="Asignar">
+                                <i class="fas fa-building text-sm mb-1"></i>
+                                <span class="text-xs font-medium">Asignar</span>
+                            </a>
+                            <a href="{% url 'eliminar_servicio' servicio.id_servicio %}" 
+                               class="flex flex-col items-center justify-center px-2 py-2.5 bg-gradient-to-br from-red-500 to-rose-500 text-white rounded-lg active:scale-95 transition-transform"
+                               title="Eliminar">
+                                <i class="fas fa-trash text-sm mb-1"></i>
+                                <span class="text-xs font-medium">Borrar</span>
+                            </a>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No hay servicios registrados</h3>
-                    <p class="text-gray-600 mb-6">Comienza creando tu primer servicio para ofrecer a los clientes.</p>
-                    <button onclick="document.getElementById('toggleFormButton').click()" 
-                       class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-2xl shadow-lg hover:from-blue-700 hover:to-cyan-700 transform hover:scale-105 transition-all duration-300">
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-12 sm:py-16 px-4">
+                    <div class="mx-auto h-16 w-16 sm:h-24 sm:w-24 bg-gray-100 rounded-full flex items-center justify-center mb-4 sm:mb-6">
+                        <i class="fas fa-concierge-bell text-gray-400 text-2xl sm:text-3xl"></i>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2">No hay servicios registrados</h3>
+                    <p class="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">Comienza creando tu primer servicio para ofrecer a los clientes.</p>
+                    <button onclick="document.getElementById('toggleFormButton')?.click()" 
+                       class="inline-flex items-center px-5 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-xl sm:rounded-2xl shadow-lg hover:from-blue-700 hover:to-cyan-700 active:scale-95 transform transition-all duration-300 text-sm sm:text-base">
                         <i class="fas fa-plus mr-2"></i>
                         Crear Primer Servicio
                     </button>
@@ -403,8 +465,8 @@
             {% endif %}
         </div>
 
-        <!-- Vista de tarjetas para móviles -->
-                <div class="lg:hidden space-y-6 p-4">
+        <!-- Vista de tarjetas mejorada (legacy - se puede eliminar si ya no se usa) -->
+                <div class="hidden space-y-6 p-4">
                     {% for servicio in servicios %}
                         <div class="group bg-white rounded-3xl border-2 border-gray-100 shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:border-blue-200">
                             <!-- Header de la tarjeta con gradiente mejorado -->
@@ -542,93 +604,92 @@
 
                 <!-- Paginación -->
                 {% if paginator.num_pages > 1 %}
-                    <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6 mt-8">
-                        <div class="flex items-center justify-between">
+                    <div class="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-2xl shadow-lg border border-white/20 p-4 sm:p-6 mt-6 sm:mt-8">
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                             <!-- Información de página -->
-                            <div class="flex items-center space-x-2 text-sm text-gray-600">
-                                <span>Página {{ servicios.number }} de {{ paginator.num_pages }}</span>
-                                <span class="text-gray-400">|</span>
-                                <span>{{ total_servicios }} resultado{{ total_servicios|pluralize:"s" }} total{{ total_servicios|pluralize:"es" }}</span>
+                            <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-2 text-xs sm:text-sm text-gray-600">
+                                <span class="font-medium">Página {{ servicios.number }} de {{ paginator.num_pages }}</span>
+                                <span class="text-gray-400 hidden sm:inline">|</span>
+                                <span>{{ total_servicios }} resultado{{ total_servicios|pluralize:"s" }}</span>
                             </div>
 
                             <!-- Controles de paginación -->
-                            <div class="flex items-center space-x-2">
+                            <div class="flex items-center space-x-1 sm:space-x-2">
                                 <!-- Primera página -->
                                 {% if servicios.has_previous %}
-                                    <a href="?page=1{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}" 
-                                       class="px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
-                                        <i class="fas fa-angle-double-left"></i>
-                                    </a>
+                                    <button onclick="loadPage(1)" 
+                                       class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 active:scale-95 transition-all duration-300">
+                                        <i class="fas fa-angle-double-left text-sm"></i>
+                                    </button>
                                 {% else %}
-                                    <span class="px-3 py-2 text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
-                                        <i class="fas fa-angle-double-left"></i>
+                                    <span class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+                                        <i class="fas fa-angle-double-left text-sm"></i>
                                     </span>
                                 {% endif %}
 
                                 <!-- Página anterior -->
                                 {% if servicios.has_previous %}
-                                    <a href="?page={{ servicios.previous_page_number }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}" 
-                                       class="px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
-                                        <i class="fas fa-angle-left"></i>
-                                    </a>
+                                    <button onclick="loadPage({{ servicios.previous_page_number }})" 
+                                       class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 active:scale-95 transition-all duration-300">
+                                        <i class="fas fa-angle-left text-sm"></i>
+                                    </button>
                                 {% else %}
-                                    <span class="px-3 py-2 text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
-                                        <i class="fas fa-angle-left"></i>
+                                    <span class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+                                        <i class="fas fa-angle-left text-sm"></i>
                                     </span>
                                 {% endif %}
 
-                                <!-- Números de página -->
+                                <!-- Números de página (ocultos en móvil excepto actual) -->
                                 {% for num in paginator.page_range %}
                                     {% if num == servicios.number %}
-                                        <span class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-lg">
+                                        <span class="w-9 h-9 sm:w-auto sm:h-auto sm:px-4 sm:py-2 flex items-center justify-center bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-lg text-sm">
                                             {{ num }}
                                         </span>
-                                    {% elif num > servicios.number|add:'-3' and num < servicios.number|add:'3' %}
-                                        <a href="?page={{ num }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}" 
-                                           class="px-4 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
+                                    {% elif num > servicios.number|add:'-2' and num < servicios.number|add:'2' %}
+                                        <button onclick="loadPage({{ num }})" 
+                                           class="hidden sm:flex w-auto h-auto px-4 py-2 items-center justify-center text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 active:scale-95 transition-all duration-300 text-sm">
                                             {{ num }}
-                                        </a>
+                                        </button>
                                     {% endif %}
                                 {% endfor %}
 
                                 <!-- Página siguiente -->
                                 {% if servicios.has_next %}
-                                    <a href="?page={{ servicios.next_page_number }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}" 
-                                       class="px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
-                                        <i class="fas fa-angle-right"></i>
-                                    </a>
+                                    <button onclick="loadPage({{ servicios.next_page_number }})" 
+                                       class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 active:scale-95 transition-all duration-300">
+                                        <i class="fas fa-angle-right text-sm"></i>
+                                    </button>
                                 {% else %}
-                                    <span class="px-3 py-2 text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
-                                        <i class="fas fa-angle-right"></i>
+                                    <span class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+                                        <i class="fas fa-angle-right text-sm"></i>
                                     </span>
                                 {% endif %}
 
                                 <!-- Última página -->
                                 {% if servicios.has_next %}
-                                    <a href="?page={{ paginator.num_pages }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}" 
-                                       class="px-3 py-2 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300">
-                                        <i class="fas fa-angle-double-right"></i>
-                                    </a>
+                                    <button onclick="loadPage({{ paginator.num_pages }})" 
+                                       class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 active:scale-95 transition-all duration-300">
+                                        <i class="fas fa-angle-double-right text-sm"></i>
+                                    </button>
                                 {% else %}
-                                    <span class="px-3 py-2 text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
-                                        <i class="fas fa-angle-double-right"></i>
+                                    <span class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+                                        <i class="fas fa-angle-double-right text-sm"></i>
                                     </span>
                                 {% endif %}
                             </div>
                         </div>
 
-                        <!-- Salto rápido a página -->
-                        <div class="mt-4 flex items-center justify-center space-x-2 text-sm">
+                        <!-- Salto rápido a página (solo desktop) -->
+                        <div class="mt-4 hidden sm:flex items-center justify-center space-x-2 text-sm">
                             <span class="text-gray-600">Ir a página:</span>
-                            <form method="GET" class="inline-flex items-center space-x-2">
-                                {% if filtros_activos.busqueda %}<input type="hidden" name="busqueda" value="{{ filtros_activos.busqueda }}">{% endif %}
-                                <input type="number" name="page" min="1" max="{{ paginator.num_pages }}" 
+                            <div class="inline-flex items-center space-x-2">
+                                <input type="number" id="quick-page-input" min="1" max="{{ paginator.num_pages }}" 
                                        value="{{ servicios.number }}"
-                                       class="w-16 px-2 py-1 text-center border border-gray-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-200">
-                                <button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                                       class="w-16 px-2 py-1 text-center border border-gray-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm">
+                                <button onclick="loadPage(document.getElementById('quick-page-input').value)" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 active:scale-95 transition-all text-sm">
                                     <i class="fas fa-arrow-right"></i>
                                 </button>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 {% endif %}
@@ -890,7 +951,7 @@
                                             <input type="number" 
                                                    name="precio" 
                                                    id="edit_precio_{{ servicio.id_servicio }}"
-                                                   value="{{ servicio.precio }}"
+                                                   value="{{ servicio.precio|unlocalize }}"
                                                    class="w-full pl-8 pr-12 py-3 border-2 border-gray-200 rounded-xl focus:border-yellow-500 focus:ring-4 focus:ring-yellow-100 transition-all duration-300 bg-gray-50 focus:bg-white text-sm placeholder-gray-400" 
                                                    placeholder="0.00"
                                                    min="0"
@@ -938,18 +999,121 @@
 </body>
 
 <script>
-// Toggle del formulario
-document.getElementById('toggleFormButton').onclick = function() {
-    var formContainer = document.getElementById('formContainer');
-    if (formContainer.style.display === 'none' || formContainer.style.display === '') {
-        formContainer.style.display = 'block';
-        this.innerHTML = '<i class="fas fa-times mr-2"></i>Cancelar';
-        formContainer.scrollIntoView({ behavior: 'smooth' });
-    } else {
-        formContainer.style.display = 'none';
-        this.innerHTML = '<i class="fas fa-plus mr-2"></i>Crear Nuevo Servicio';
+// ========================
+// PAGINACIÓN CON AJAX
+// ========================
+function loadPage(pageNumber) {
+    // Mostrar indicador de carga
+    const container = document.getElementById('servicios-container');
+    if (!container) return;
+    
+    // Agregar overlay de carga
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.id = 'loading-overlay';
+    loadingOverlay.className = 'absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50';
+    loadingOverlay.innerHTML = `
+        <div class="flex flex-col items-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-3"></div>
+            <p class="text-gray-600 font-medium">Cargando servicios...</p>
+        </div>
+    `;
+    
+    // Hacer el contenedor relativo para el overlay
+    container.style.position = 'relative';
+    container.appendChild(loadingOverlay);
+    
+    // Obtener los parámetros de búsqueda actuales
+    const searchInput = document.getElementById('search-servicios');
+    const searchValue = searchInput ? searchInput.value : '';
+    
+    // Construir URL con parámetros
+    const url = new URL(window.location.href);
+    url.searchParams.set('page', pageNumber);
+    if (searchValue) {
+        url.searchParams.set('busqueda', searchValue);
     }
-};
+    
+    // Hacer petición AJAX
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.text())
+    .then(html => {
+        // Crear un documento temporal para parsear el HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Extraer el contenedor de servicios del nuevo HTML
+        const newContainer = doc.getElementById('servicios-container');
+        
+        if (newContainer) {
+            // Reemplazar el contenido del contenedor
+            container.innerHTML = newContainer.innerHTML;
+            
+            // Scroll suave hacia el contenedor de servicios
+            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Actualizar la URL sin recargar la página
+            window.history.pushState({}, '', url);
+        }
+    })
+    .catch(error => {
+        console.error('Error al cargar la página:', error);
+        
+        // Remover el overlay de carga
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay) {
+            overlay.remove();
+        }
+        
+        // Mostrar mensaje de error
+        const errorMsg = document.createElement('div');
+        errorMsg.className = 'p-4 bg-red-50 border border-red-200 text-red-800 rounded-xl mb-4';
+        errorMsg.innerHTML = `
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-circle mr-3"></i>
+                <span>Error al cargar los servicios. Por favor, intenta de nuevo.</span>
+            </div>
+        `;
+        container.insertBefore(errorMsg, container.firstChild);
+        
+        // Ocultar mensaje después de 5 segundos
+        setTimeout(() => {
+            errorMsg.style.transition = 'opacity 0.5s';
+            errorMsg.style.opacity = '0';
+            setTimeout(() => errorMsg.remove(), 500);
+        }, 5000);
+    })
+    .finally(() => {
+        // Remover el overlay de carga
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay) {
+            overlay.remove();
+        }
+    });
+}
+
+// Esperar a que el DOM esté completamente cargado
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle del formulario
+    const toggleFormButton = document.getElementById('toggleFormButton');
+    if (toggleFormButton) {
+        toggleFormButton.onclick = function() {
+            var formContainer = document.getElementById('formContainer');
+            if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+                formContainer.style.display = 'block';
+                this.innerHTML = '<i class="fas fa-times mr-2"></i>Cancelar';
+                formContainer.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                formContainer.style.display = 'none';
+                this.innerHTML = '<i class="fas fa-plus mr-2"></i>Crear Nuevo Servicio';
+            }
+        };
+    }
+});
 
 // Función para expandir/contraer contenido
 function toggleContent(element, fullText) {
@@ -1528,14 +1692,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Mejorar accesibilidad con navegación por teclado
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('click', function(e) {
         if (e.key === 'Tab') {
             document.body.classList.add('keyboard-navigation');
         }
     });
     
-    </div>
-</div>
+});
+
 
 <!-- Modales de edición y asignación de empresas -->
 {% for servicio in servicios %}
@@ -1554,7 +1718,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Precio</label>
-                        <input type="text" name="precio" value="{{ servicio.precio }}" 
+                        <input type="text" name="precio" value="{{ servicio.precio|unlocalize }}" 
                                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" required>
                     </div>
                     <div>
@@ -1701,11 +1865,12 @@ document.addEventListener('DOMContentLoaded', function() {
         searchInput.addEventListener('input', function() {
             clearTimeout(timeoutId);
             timeoutId = setTimeout(function() {
-                // Enviar formulario automáticamente después de una pausa en la escritura
-                document.getElementById('filter-form').submit();
+                // Cargar resultados con AJAX en lugar de recargar toda la página
+                loadPage(1); // Ir a la primera página con los nuevos filtros
             }, 500); // Esperar 500ms después de que el usuario deje de escribir
         });
     }
 });
+
 </script>
 {% endblock %}

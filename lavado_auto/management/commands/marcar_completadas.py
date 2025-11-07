@@ -22,6 +22,11 @@ class Command(BaseCommand):
             default=4,
             help='Número de horas después de las cuales marcar como completada (default: 4)',
         )
+        parser.add_argument(
+            '--yes',
+            action='store_true',
+            help='No pedir confirmación interactiva y aplicar cambios directamente',
+        )
 
     def handle(self, *args, **options):
         dry_run = options['dry_run']
@@ -34,9 +39,9 @@ class Command(BaseCommand):
         self.stdout.write(f"🕐 Hora actual: {ahora.strftime('%Y-%m-%d %H:%M:%S')}")
         self.stdout.write(f"⏰ Buscando reservas anteriores a: {tiempo_limite.strftime('%Y-%m-%d %H:%M:%S')}")
         
-        # Buscar reservas pendientes que ya pasaron el tiempo límite
+        # Buscar reservas pendientes (incluye estado legacy 'no_completado') que ya pasaron el tiempo límite
         reservas_pendientes = Reserva.objects.filter(
-            estado='pendiente'
+            estado__in=['pendiente', 'no_completado']
         )
         
         reservas_para_completar = []
@@ -78,11 +83,12 @@ class Command(BaseCommand):
             )
             return
         
-        # Confirmar antes de hacer cambios
-        confirm = input("¿Desea marcar estas reservas como completadas? (s/N): ")
-        if confirm.lower() not in ['s', 'si', 'sí', 'y', 'yes']:
-            self.stdout.write(self.style.WARNING('❌ Operación cancelada por el usuario.'))
-            return
+        # Confirmar antes de hacer cambios (a menos que --yes esté presente)
+        if not options.get('yes'):
+            confirm = input("¿Desea marcar estas reservas como completadas? (s/N): ")
+            if confirm.lower() not in ['s', 'si', 'sí', 'y', 'yes']:
+                self.stdout.write(self.style.WARNING('❌ Operación cancelada por el usuario.'))
+                return
         
         # Marcar las reservas como completadas
         reservas_actualizadas = 0

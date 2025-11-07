@@ -89,52 +89,111 @@
 
 <!-- Contenido principal -->
 <div class="relative top-24 min-h-screen pt-20 pb-32">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header de la página mejorado -->
-        <div class="text-center mb-16">
-            <div class="relative inline-block mb-8">
-                <div class="absolute -inset-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur opacity-30 animate-pulse"></div>
-                <div class="relative inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 rounded-3xl shadow-2xl transform hover:scale-110 transition-all duration-300">
-                    <svg class="w-10 h-10 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header de la página mejorado con animaciones -->
+        <div class="text-center mb-20 animate-fade-in-up">
+            <div class="relative inline-block mb-10">
+                <!-- Efecto de resplandor animado -->
+                <div class="absolute -inset-4 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full blur-2xl opacity-40 animate-pulse"></div>
+                <div class="absolute -inset-3 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-full blur-xl opacity-30 animate-spin-slow"></div>
+                
+                <!-- Icono principal con efecto 3D -->
+                <div class="relative inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 rounded-3xl shadow-2xl transform hover:scale-110 hover:rotate-3 transition-all duration-500 border-4 border-white/30">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-3xl"></div>
+                    <svg class="w-12 h-12 text-white drop-shadow-2xl relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
+                    <!-- Detalles decorativos -->
+                    <div class="absolute -top-2 -right-2 w-6 h-6 bg-green-400 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
+                        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
                 </div>
             </div>
-            <h1 class="text-5xl font-extrabold bg-gradient-to-r from-slate-800 via-blue-800 to-indigo-900 bg-clip-text text-transparent mb-6 leading-tight">
+            
+            <!-- Título con efecto de gradiente animado -->
+            <h1 class="text-6xl font-black bg-gradient-to-r from-slate-800 via-blue-800 to-indigo-900 bg-clip-text text-transparent mb-6 leading-tight tracking-tight">
                 Mi Perfil
             </h1>
-            <p class="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-                Gestiona tu información personal de forma segura y mantén tu perfil siempre actualizado
+            
+            <!-- Subtítulo mejorado -->
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed mb-8">
+                Gestiona tu información personal de forma <span class="font-bold text-blue-600">segura</span> y mantén tu perfil siempre <span class="font-bold text-purple-600">actualizado</span>
             </p>
-            <div class="flex justify-center mt-6">
-                <div class="h-1 w-24 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
+            
+            <!-- Línea divisoria con animación -->
+            <div class="flex justify-center items-center space-x-3 mt-8">
+                <div class="h-1 w-12 bg-gradient-to-r from-transparent to-blue-500 rounded-full"></div>
+                <div class="h-1.5 w-32 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full animate-pulse"></div>
+                <div class="h-1 w-12 bg-gradient-to-l from-transparent to-pink-500 rounded-full"></div>
+            </div>
+            
+            <!-- Estadísticas del perfil -->
+            <div class="flex justify-center items-center space-x-8 mt-10">
+                <div class="group cursor-pointer">
+                    <div class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200/50 hover:border-blue-300 transition-all hover:shadow-lg">
+                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <span class="text-sm font-semibold text-slate-700">Activo</span>
+                    </div>
+                </div>
+                <div class="group cursor-pointer">
+                    <div class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border border-purple-200/50 hover:border-purple-300 transition-all hover:shadow-lg">
+                        <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                        <span class="text-sm font-semibold text-slate-700">Verificado</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Card principal del perfil mejorado -->
-        <div class="relative">
-            <!-- Decoración de fondo -->
-            <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur opacity-20"></div>
+        <!-- Card principal del perfil con diseño mejorado -->
+        <div class="relative mb-16">
+            <!-- Efecto de resplandor de fondo -->
+            <div class="absolute -inset-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur-xl opacity-20 animate-pulse-slow"></div>
             
-            <div class="relative bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
-                <!-- Header decorativo del card -->
-                <div class="relative bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 px-8 py-6 border-b border-slate-200/50">
+            <div class="relative bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/60 overflow-hidden hover:shadow-3xl transition-all duration-500">
+                <!-- Header decorativo del card con patrón -->
+                <div class="relative bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 px-10 py-8 border-b border-slate-200/50 overflow-hidden">
+                    <!-- Patrón de fondo decorativo -->
+                    <div class="absolute inset-0 opacity-5">
+                        <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, rgba(0,0,0,0.15) 1px, transparent 0); background-size: 32px 32px;"></div>
+                    </div>
                     <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5"></div>
-                    <div class="relative flex items-center justify-between">
+                    
+                    <div class="relative flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
                         <div class="flex items-center">
-                            <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                </svg>
+                            <!-- Icono con efecto 3D -->
+                            <div class="relative">
+                                <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl blur opacity-40"></div>
+                                <div class="relative w-14 h-14 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg transform hover:scale-110 hover:rotate-3 transition-all duration-300">
+                                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                </div>
                             </div>
-                            <div class="ml-4">
-                                <h3 class="text-lg font-bold text-slate-800">Información del Perfil</h3>
-                                <p class="text-sm text-slate-600">Actualiza tus datos personales</p>
+                            
+                            <div class="ml-5">
+                                <h3 class="text-2xl font-black text-slate-800 mb-1">Información del Perfil</h3>
+                                <p class="text-sm text-slate-600 font-medium">Actualiza tus datos personales</p>
                             </div>
                         </div>
-                        <div class="hidden md:flex items-center space-x-2">
-                            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                            <span class="text-sm text-slate-600 font-medium">En línea</span>
+                        
+                        <!-- Badge de estado -->
+                        <div class="flex items-center space-x-6">
+                            <div class="px-5 py-2.5 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-full shadow-sm hover:shadow-md transition-shadow">
+                                <span class="text-sm font-bold text-green-700 flex items-center">
+                                    <div class="w-2.5 h-2.5 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                                    Verificado
+                                </span>
+                            </div>
+                            <div class="hidden lg:flex items-center space-x-2 text-slate-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span class="text-sm font-medium">Última actualización: hoy</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -575,19 +634,24 @@
     </div>
 </div>
 
-<!-- Estilos adicionales mejorados -->
+<!-- Estilos adicionales mejorados y ampliados -->
 <style>
+/* ========== ANIMACIONES PRINCIPALES ========== */
 @keyframes shine {
-    100% { transform: translateX(100%) skewX(-12deg); }
+    100% { transform: translateX(200%) skewX(-12deg); }
 }
 
 .group:hover .animate-shine {
-    animation: shine 0.6s ease-in-out;
+    animation: shine 0.75s ease-in-out;
 }
 
 @keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-10px) rotate(2deg); }
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg); 
+    }
+    50% { 
+        transform: translateY(-12px) rotate(3deg); 
+    }
 }
 
 .animate-float {
@@ -596,12 +660,12 @@
 
 @keyframes pulse-glow {
     0%, 100% { 
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
         transform: scale(1);
     }
     50% { 
-        box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
-        transform: scale(1.02);
+        box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
+        transform: scale(1.03);
     }
 }
 
@@ -609,25 +673,77 @@
     animation: pulse-glow 3s ease-in-out infinite;
 }
 
-/* Mejoras en los inputs */
-.group:hover input {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+@keyframes pulse-slow {
+    0%, 100% { 
+        opacity: 0.2;
+    }
+    50% { 
+        opacity: 0.35;
+    }
 }
 
-/* Efecto de escritura en los placeholders */
-@keyframes typing {
-    from { width: 0; }
-    to { width: 100%; }
+.animate-pulse-slow {
+    animation: pulse-slow 4s ease-in-out infinite;
 }
 
-.typing-effect {
-    overflow: hidden;
-    white-space: nowrap;
-    animation: typing 2s steps(40, end);
+@keyframes spin-slow {
+    from { 
+        transform: rotate(0deg) scale(1.1); 
+    }
+    to { 
+        transform: rotate(360deg) scale(1.1); 
+    }
 }
 
-/* Gradientes dinámicos */
+.animate-spin-slow {
+    animation: spin-slow 15s linear infinite;
+}
+
+/* ========== EFECTOS DE ENTRADA ========== */
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out forwards;
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(120%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-fade-in-right {
+    animation: fadeInRight 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========== EFECTOS DE HOVER E INTERACCIÓN ========== */
+.group:hover input,
+.group:hover textarea {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+input:focus,
+textarea:focus {
+    transform: translateY(-1px) scale(1.005);
+    box-shadow: 0 15px 35px rgba(59, 130, 246, 0.15);
+}
+
+/* ========== GRADIENTES DINÁMICOS ========== */
 .dynamic-gradient {
     background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
     background-size: 400% 400%;
@@ -640,21 +756,21 @@
     100% { background-position: 0% 50%; }
 }
 
-/* Efecto de hover mejorado para cards */
+/* ========== EFECTOS DE ELEVACIÓN ========== */
 .hover-lift {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hover-lift:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.18);
 }
 
-/* Animación para elementos que aparecen */
+/* ========== ANIMACIÓN DE STAGGER ========== */
 .fade-in-up {
     opacity: 0;
-    transform: translateY(30px);
-    animation: fadeInUp 0.8s ease-out forwards;
+    transform: translateY(35px);
+    animation: fadeInUp 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes fadeInUp {
@@ -664,17 +780,189 @@
     }
 }
 
-/* Stagger animation para elementos en grid */
-.stagger-item:nth-child(1) { animation-delay: 0.1s; }
-.stagger-item:nth-child(2) { animation-delay: 0.2s; }
-.stagger-item:nth-child(3) { animation-delay: 0.3s; }
-.stagger-item:nth-child(4) { animation-delay: 0.4s; }
-.stagger-item:nth-child(5) { animation-delay: 0.5s; }
-.stagger-item:nth-child(6) { animation-delay: 0.6s; }
+.stagger-item:nth-child(1) { animation-delay: 0.05s; }
+.stagger-item:nth-child(2) { animation-delay: 0.1s; }
+.stagger-item:nth-child(3) { animation-delay: 0.15s; }
+.stagger-item:nth-child(4) { animation-delay: 0.2s; }
+.stagger-item:nth-child(5) { animation-delay: 0.25s; }
+.stagger-item:nth-child(6) { animation-delay: 0.3s; }
 
-/* Mejora en el border-3 */
+/* ========== MEJORAS VISUALES ========== */
 .border-3 {
     border-width: 3px;
+}
+
+/* Efecto de escritura */
+.typing-effect {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typing 2s steps(40, end);
+}
+
+@keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+/* Efecto de ripple para botones */
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.ripple-effect {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple-effect::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.ripple-effect:active::after {
+    width: 200px;
+    height: 200px;
+}
+
+/* ========== EFECTOS DE SOMBRA AVANZADOS ========== */
+.shadow-3xl {
+    box-shadow: 0 35px 70px rgba(0, 0, 0, 0.2);
+}
+
+.shadow-inner-glow {
+    box-shadow: inset 0 2px 10px rgba(255, 255, 255, 0.5);
+}
+
+/* ========== TRANSICIONES SUAVES ========== */
+* {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========== EFECTOS DE FOCUS MEJORADOS ========== */
+input:focus-visible,
+textarea:focus-visible,
+button:focus-visible {
+    outline: 3px solid rgba(59, 130, 246, 0.3);
+    outline-offset: 3px;
+}
+
+/* ========== ANIMACIONES DE CARGA ========== */
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.shimmer {
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 100%
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+}
+
+/* ========== EFECTOS DE GLASSMORPHISM ========== */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ========== MEJORAS DE ACCESIBILIDAD ========== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ========== EFECTOS RESPONSIVOS ========== */
+@media (max-width: 768px) {
+    .animate-float {
+        animation: none;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-5px) scale(1.01);
+    }
+}
+
+/* ========== SCROLLBAR PERSONALIZADA ========== */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, #f1f5f9, #e2e8f0);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #3b82f6, #6366f1);
+    border-radius: 10px;
+    border: 2px solid #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #2563eb, #4f46e5);
+}
+
+/* ========== EFECTOS DE PARTÍCULAS ========== */
+@keyframes particle-float {
+    0%, 100% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 0;
+    }
+    10%, 90% {
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(-100px) translateX(50px) rotate(180deg);
+    }
+}
+
+.particle {
+    animation: particle-float 8s infinite ease-in-out;
+}
+
+/* ========== EFECTOS DE TEXTO ========== */
+.text-shadow-glow {
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.5),
+                 0 0 30px rgba(99, 102, 241, 0.3);
+}
+
+.text-gradient-animated {
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient-shift 4s ease infinite;
 }
 </style>
 

@@ -167,6 +167,116 @@ def calcular_precio_total(servicios):
         return "0.00"
 
 @register.filter
+def calcular_precio_reserva(reserva):
+    """Calcular el precio total de una reserva considerando el precio_aplicado en ReservaServicio"""
+    try:
+        from lavado_auto.models import ReservaServicio
+        total = 0
+        
+        # Obtener todas las relaciones ReservaServicio para esta reserva
+        reserva_servicios = ReservaServicio.objects.filter(reserva=reserva)
+        
+        for rs in reserva_servicios:
+            # Si tiene precio_aplicado, usar ese, si no usar el precio del servicio
+            if rs.precio_aplicado is not None:
+                total += float(rs.precio_aplicado)
+            else:
+                total += float(rs.servicio.precio)
+        
+        return "{:.2f}".format(total)
+    except Exception as e:
+        return "0.00"
+
+@register.filter
+def calcular_precio_servicios_adicionales(reserva):
+    """Calcular solo el precio de los servicios adicionales (NO incluye servicios del plan)"""
+    try:
+        from lavado_auto.models import ReservaServicio
+        total = 0
+        
+        # Obtener todas las relaciones ReservaServicio para esta reserva
+        reserva_servicios = ReservaServicio.objects.filter(reserva=reserva)
+        
+        for rs in reserva_servicios:
+            # Solo sumar si NO es servicio del plan
+            if not rs.es_servicio_plan:
+                if rs.precio_aplicado is not None:
+                    total += float(rs.precio_aplicado)
+                else:
+                    total += float(rs.servicio.precio)
+        
+        return "{:.2f}".format(total)
+    except Exception as e:
+        return "0.00"
+
+@register.filter
+def obtener_servicios_con_precio(reserva):
+    """Obtener lista de servicios de una reserva con su precio aplicado y descuentos"""
+    try:
+        from lavado_auto.models import ReservaServicio
+        servicios_info = []
+        
+        # Obtener todas las relaciones ReservaServicio para esta reserva
+        reserva_servicios = ReservaServicio.objects.filter(reserva=reserva).select_related('servicio')
+        
+        for rs in reserva_servicios:
+            precio = rs.precio_aplicado if rs.precio_aplicado is not None else rs.servicio.precio
+            precio_original = rs.precio_original if rs.precio_original is not None else rs.servicio.precio
+            
+            servicios_info.append({
+                'servicio': rs.servicio,
+                'precio_aplicado': float(precio),
+                'precio_original': float(precio_original),
+                'es_gratis': float(precio) == 0,
+                'es_servicio_plan': rs.es_servicio_plan,
+                'descuento_plan': float(rs.descuento_plan_individual) if rs.descuento_plan_individual else 0,
+                'descuento_empresarial': float(rs.descuento_empresarial) if rs.descuento_empresarial else 0,
+                'ahorro': rs.obtener_ahorro(),
+            })
+        
+        return servicios_info
+    except Exception as e:
+        print(f"Error en obtener_servicios_con_precio: {e}")
+        return []
+
+@register.filter
+def todos_servicios_son_plan(reserva):
+    """Verificar si todos los servicios de la reserva son del plan (gratis)"""
+    try:
+        from lavado_auto.models import ReservaServicio
+        reserva_servicios = ReservaServicio.objects.filter(reserva=reserva)
+        
+        if not reserva_servicios.exists():
+            return False
+        
+        # Verificar si todos tienen precio_aplicado = 0 o son servicios del plan
+        todos_gratis = all(
+            (rs.precio_aplicado is not None and float(rs.precio_aplicado) == 0) or rs.es_servicio_plan
+            for rs in reserva_servicios
+        )
+        
+        return todos_gratis
+    except Exception as e:
+        return False
+
+@register.filter
+def tiene_servicios_adicionales(reserva):
+    """Verificar si la reserva tiene servicios adicionales (no del plan)"""
+    try:
+        from lavado_auto.models import ReservaServicio
+        reserva_servicios = ReservaServicio.objects.filter(reserva=reserva)
+        
+        # Verificar si hay al menos un servicio que no sea del plan
+        tiene_adicionales = any(
+            not rs.es_servicio_plan or (rs.precio_aplicado is not None and float(rs.precio_aplicado) > 0)
+            for rs in reserva_servicios
+        )
+        
+        return tiene_adicionales
+    except Exception as e:
+        return False
+
+@register.filter
 def precio_formateado(precio):
     """Formatear precio con dos decimales"""
     try:
@@ -190,3 +300,33 @@ def es_nueva_24h(fecha):
         return fecha >= hace_24_horas
     except Exception:
         return False
+
+@register.filter
+def lookup(dictionary, key):
+    """Buscar valor en diccionario por clave"""
+    if isinstance(dictionary, dict):
+        return dictionary.get(key)
+    elif isinstance(dictionary, list):
+        # Para listas de tuplas como meses_disponibles
+        for item in dictionary:
+            if isinstance(item, (list, tuple)) and len(item) >= 2:
+                if item[0] == key:
+                    return item[1]
+    return None
+
+@register.filter
+def sum_attribute(lista, atributo):
+    """Sumar un atributo específico de una lista de objetos/diccionarios"""
+    total = 0
+    for item in lista:
+        if isinstance(item, dict):
+            value = item.get(atributo, 0)
+        else:
+            value = getattr(item, atributo, 0)
+        
+        if value:
+            try:
+                total += float(value)
+            except (ValueError, TypeError):
+                continue
+    return total

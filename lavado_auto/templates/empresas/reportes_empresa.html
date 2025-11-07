@@ -1966,28 +1966,159 @@
                     .detailed-analysis .table-th .th-content { color: #0f172a !important; }
 
                     /* Columnas más angostas para completadas, pendientes y canceladas */
-                    .detailed-analysis .detailed-table { table-layout: fixed; }
-                    .detailed-analysis .detailed-table th, .detailed-analysis .detailed-table td { padding: 10px 8px; }
-                    .detailed-analysis .detailed-table th:nth-child(3),
-                    .detailed-analysis .detailed-table td:nth-child(3),
-                    .detailed-analysis .detailed-table th:nth-child(4),
-                    .detailed-analysis .detailed-table td:nth-child(4),
-                    .detailed-analysis .detailed-table th:nth-child(5),
-                    .detailed-analysis .detailed-table td:nth-child(5),
-                    .detailed-analysis .detailed-table th:nth-child(8),
-                    .detailed-analysis .detailed-table td:nth-child(8) {
-                        width: 88px;
-                        max-width: 88px;
-                        white-space: nowrap;
-                        text-align: center;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
+                    .detailed-analysis .detailed-table { 
+                        table-layout: auto; 
+                        width: 100%;
+                        font-size: 0.7rem; /* Aún más pequeño */
                     }
+                    
+                    /* Reducir padding general de todas las celdas - MÁS COMPACTO */
+                    .detailed-analysis .detailed-table th, 
+                    .detailed-analysis .detailed-table td { 
+                        padding: 3px 4px !important;
+                        font-size: 0.7rem !important;
+                        white-space: nowrap;
+                        line-height: 1.3;
+                    }
+                    
+                    /* Anchos específicos para cada columna - MÁS PEQUEÑOS */
+                    .detailed-analysis .detailed-table th:nth-child(1),
+                    .detailed-analysis .detailed-table td:nth-child(1) { width: 9%; min-width: 75px; } /* Mes/Año */
+                    
+                    .detailed-analysis .detailed-table th:nth-child(2),
+                    .detailed-analysis .detailed-table td:nth-child(2) { width: 10%; min-width: 80px; } /* Total Reservas */
+                    
+                    .detailed-analysis .detailed-table th:nth-child(3),
+                    .detailed-analysis .detailed-table td:nth-child(3) { width: 8%; min-width: 60px; text-align: center; } /* Completadas */
+                    
+                    .detailed-analysis .detailed-table th:nth-child(4),
+                    .detailed-analysis .detailed-table td:nth-child(4) { width: 8%; min-width: 60px; text-align: center; } /* Pendientes */
+                    
+                    .detailed-analysis .detailed-table th:nth-child(5),
+                    .detailed-analysis .detailed-table td:nth-child(5) { width: 8%; min-width: 60px; text-align: center; } /* Canceladas */
+                    
+                    .detailed-analysis .detailed-table th:nth-child(6),
+                    .detailed-analysis .detailed-table td:nth-child(6) { width: 10%; min-width: 75px; } /* Tasa Éxito */
+                    
+                    .detailed-analysis .detailed-table th:nth-child(7),
+                    .detailed-analysis .detailed-table td:nth-child(7) { width: 11%; min-width: 80px; } /* Ingresos */
+                    
+                    .detailed-analysis .detailed-table th:nth-child(8),
+                    .detailed-analysis .detailed-table td:nth-child(8) { width: 9%; min-width: 65px; text-align: center; } /* Crecimiento */
+                    
+                    .detailed-analysis .detailed-table th:nth-child(9),
+                    .detailed-analysis .detailed-table td:nth-child(9) { width: 10%; min-width: 75px; } /* Rendimiento */
 
-                    /* Asegurar que la columna 'Rendimiento' permanezca visible reduciendo padding de otras columnas si hace falta */
-                    .detailed-analysis .detailed-table th:last-child,
-                    .detailed-analysis .detailed-table td:last-child {
-                        min-width: 120px;
+                    /* Reducir iconos y textos en headers - MÁS PEQUEÑOS */
+                    .detailed-analysis .th-content i { 
+                        font-size: 0.65rem !important; 
+                        margin-right: 2px !important; 
+                    }
+                    
+                    .detailed-analysis .th-content {
+                        font-size: 0.7rem !important;
+                        font-weight: 600 !important;
+                        line-height: 1.2;
+                    }
+                    
+                    /* Optimizar badges y elementos internos - MÁS COMPACTOS */
+                    .detailed-analysis .status-badge { 
+                        padding: 1px 4px !important; 
+                        font-size: 0.65rem !important;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 1px;
+                    }
+                    
+                    .detailed-analysis .status-badge i {
+                        font-size: 0.6rem !important;
+                        margin-right: 1px !important;
+                    }
+                    
+                    /* Optimizar celdas de métricas */
+                    .detailed-analysis .metric-number {
+                        font-size: 0.8rem !important;
+                        font-weight: 600;
+                    }
+                    
+                    .detailed-analysis .metric-detail {
+                        font-size: 0.6rem !important;
+                    }
+                    
+                    /* Reducir barras de progreso - MÁS DELGADAS */
+                    .detailed-analysis .progress-bar { 
+                        height: 3px !important; 
+                        margin: 1px 0 !important;
+                    }
+                    
+                    .detailed-analysis .progress-fill { 
+                        height: 3px !important; 
+                    }
+                    
+                    /* Optimizar badge de rendimiento - MÁS COMPACTO */
+                    .detailed-analysis .performance-badge {
+                        padding: 2px 4px !important;
+                        font-size: 0.65rem !important;
+                    }
+                    
+                    .detailed-analysis .performance-label {
+                        font-size: 0.65rem !important;
+                    }
+                    
+                    .detailed-analysis .indicator-dot { 
+                        width: 5px !important; 
+                        height: 5px !important; 
+                    }
+                    
+                    /* Reducir estrellas - MÁS PEQUEÑAS */
+                    .detailed-analysis .star-rating i { 
+                        font-size: 0.6rem !important; 
+                        margin-right: 0.5px !important; 
+                    }
+                    
+                    /* Optimizar celdas de ingresos - MÁS COMPACTAS */
+                    .detailed-analysis .revenue-number {
+                        font-size: 0.75rem !important;
+                        font-weight: 600;
+                    }
+                    
+                    .detailed-analysis .revenue-average {
+                        font-size: 0.6rem !important;
+                    }
+                    
+                    /* Optimizar badges de crecimiento - MÁS PEQUEÑOS */
+                    .detailed-analysis .growth-badge {
+                        padding: 2px 4px !important;
+                        font-size: 0.65rem !important;
+                    }
+                    
+                    .detailed-analysis .growth-badge i {
+                        font-size: 0.6rem !important;
+                    }
+                    
+                    /* Optimizar celda de mes - MÁS COMPACTA */
+                    .detailed-analysis .month-name {
+                        font-size: 0.75rem !important;
+                    }
+                    
+                    .detailed-analysis .time-ago,
+                    .detailed-analysis .current-badge {
+                        font-size: 0.6rem !important;
+                        padding: 1px 3px !important;
+                    }
+                    
+                    /* Asegurar que la tasa de éxito sea compacta */
+                    .detailed-analysis .rate-number {
+                        font-size: 0.75rem !important;
+                        font-weight: 600;
+                        display: block;
+                    }
+                    
+                    .detailed-analysis .rate-cell {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 1px;
                     }
 
                     /* Progresos y badges: colores consistentes */
@@ -1998,29 +2129,18 @@
                     /* Menor contraste en iconos flotantes dentro de la sección */
                     .detailed-analysis .insight-icon { opacity: 0.95; }
 
-                    /* Modo compacto: reducir tamaños para que la tabla y tarjetas ocupen menos espacio */
-                    .detailed-analysis.compact, .detailed-analysis {
-                        font-size: 13px; /* base ligeramente menor */
-                    }
-                    .detailed-analysis .detailed-table th, .detailed-analysis .detailed-table td {
-                        padding: 6px 6px !important;
-                        font-size: 0.875rem !important;
-                    }
-                    .detailed-analysis .th-content i { font-size: 0.95rem !important; margin-right: 6px !important; }
-                    .detailed-analysis .summary-card { padding: 0.6rem !important; }
-                    .detailed-analysis .summary-icon { width: 36px !important; height: 36px !important; }
-                    .detailed-analysis .summary-value { font-size: 0.95rem !important; }
-                    .detailed-analysis .summary-label, .detailed-analysis .summary-detail { font-size: 0.78rem !important; }
-                    .detailed-analysis .action-btn { padding: 0.35rem 0.6rem !important; font-size: 0.85rem !important; }
+                    /* Ajustes adicionales para summary cards */
+                    .detailed-analysis .summary-card { padding: 0.75rem !important; }
+                    .detailed-analysis .summary-icon { width: 40px !important; height: 40px !important; }
+                    .detailed-analysis .summary-value { font-size: 1rem !important; }
+                    .detailed-analysis .summary-label, .detailed-analysis .summary-detail { font-size: 0.8rem !important; }
+                    
+                    /* Botones de acción */
+                    .detailed-analysis .action-btn { padding: 0.4rem 0.75rem !important; font-size: 0.85rem !important; }
+                    
+                    /* Insights */
                     .detailed-analysis .insight-icon { font-size: 18px !important; line-height: 1 !important; }
-                    .detailed-analysis .insight-card { padding: 0.6rem !important; }
-
-                    /* Compactar barras y badges */
-                    .detailed-analysis .metric-cell .progress-bar { height: 8px !important; }
-                    .detailed-analysis .progress-fill { height: 8px !important; }
-                    .detailed-analysis .status-badge { padding: 4px 8px !important; font-size: 0.82rem !important; }
-                    .detailed-analysis .performance-indicator .indicator-dot { width: 8px !important; height: 8px !important; }
-                    .detailed-analysis .star-rating i { font-size: 12px !important; margin-right: 2px !important; }
+                    .detailed-analysis .insight-card { padding: 0.75rem !important; }
 
                     /* Asegurar truncamiento y centrado adicional cuando se compacte */
                     .detailed-analysis .detailed-table td, .detailed-analysis .detailed-table th { overflow: hidden; text-overflow: ellipsis; }
@@ -2926,16 +3046,14 @@
 
         // Función para cerrar sesión
         function logout() {
-            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-                // Intentar varios métodos de redirección
+            // Intentar varios métodos de redirección
+            try {
+                window.location.replace('/logout-empresa/');
+            } catch (error) {
                 try {
-                    window.location.replace('/logout-empresa/');
-                } catch (error) {
-                    try {
-                        window.location.assign('/logout-empresa/');
-                    } catch (error2) {
-                        window.location.href = '/logout-empresa/';
-                    }
+                    window.location.assign('/logout-empresa/');
+                } catch (error2) {
+                    window.location.href = '/logout-empresa/';
                 }
             }
         }

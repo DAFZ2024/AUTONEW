@@ -1,0 +1,272 @@
+{% extends "base/base_crud_empresas.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-4 sm:py-8">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
+        <!-- Header -->
+        <div class="mb-6 sm:mb-10">
+            <div class="flex flex-col gap-4 sm:gap-6">
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <div class="p-2 sm:p-3 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl sm:rounded-2xl shadow-lg flex-shrink-0">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h1 class="text-2xl sm:text-3xl lg:text-5xl font-extrabold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent leading-tight">
+                            Mis Pagos
+                        </h1>
+                    </div>
+                    <p class="text-sm sm:text-base text-gray-600 ml-0 sm:ml-14 max-w-2xl">
+                        Consulta tus pagos de reservas - {{ empresa.nombre_empresa }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-10">
+            <!-- Total Pendiente -->
+            <div class="group relative bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-orange-100 hover:border-orange-300 overflow-hidden">
+                <div class="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-orange-500/10 to-orange-600/5 rounded-full -mr-12 sm:-mr-16 -mt-12 sm:-mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-3 sm:mb-4">
+                        <div class="p-2 sm:p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg sm:rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-2xl sm:text-4xl font-black bg-gradient-to-br from-orange-600 to-orange-700 bg-clip-text text-transparent">${{ stats.total_pendiente|floatformat:0 }}</span>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="text-xs sm:text-sm font-bold text-gray-900">Por Recibir</div>
+                        <div class="flex items-center gap-2 text-xs text-gray-600">
+                            <div class="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                            <span class="text-xs">{{ stats.total_reservas_pendientes }} reservas (88% neto)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Recibido -->
+            <div class="group relative bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-green-100 hover:border-green-300 overflow-hidden">
+                <div class="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-full -mr-12 sm:-mr-16 -mt-12 sm:-mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-3 sm:mb-4">
+                        <div class="p-2 sm:p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-lg sm:rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-2xl sm:text-4xl font-black bg-gradient-to-br from-green-600 to-green-700 bg-clip-text text-transparent">${{ stats.total_pagado|floatformat:0 }}</span>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="text-xs sm:text-sm font-bold text-gray-900">Total Recibido</div>
+                        <div class="flex items-center gap-2 text-xs text-gray-600">
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span class="text-xs">{{ stats.total_reservas_pagadas }} reservas (88% neto)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="bg-white rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 mb-6 sm:mb-10 border border-gray-200">
+            <div class="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                <div class="p-1.5 sm:p-2 bg-blue-100 rounded-lg">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                    </svg>
+                </div>
+                <h2 class="text-lg sm:text-xl font-bold text-gray-900">Filtros de Búsqueda</h2>
+            </div>
+            <form method="GET" class="space-y-4 sm:space-y-5">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5">
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-2 text-xs sm:text-sm font-bold text-gray-700">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            Fecha Desde
+                        </label>
+                        <input type="date" name="fecha_desde" value="{{ filtros.fecha_desde }}" 
+                               class="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border-2 border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400">
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-2 text-xs sm:text-sm font-bold text-gray-700">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            Fecha Hasta
+                        </label>
+                        <input type="date" name="fecha_hasta" value="{{ filtros.fecha_hasta }}" 
+                               class="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border-2 border-gray-300 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400">
+                    </div>
+                    
+                    <div class="flex flex-col sm:items-end gap-2 sm:gap-3">
+                        <label class="text-xs sm:text-sm font-bold text-gray-700 opacity-0 hidden sm:block">Acciones</label>
+                        <div class="flex gap-2 sm:gap-3 w-full sm:w-auto">
+                            <button type="submit" class="flex-1 sm:flex-none px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg sm:rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 flex items-center justify-center gap-2 font-semibold text-sm sm:text-base shadow-md hover:shadow-lg">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                                Filtrar
+                            </button>
+                            <a href="{% url 'empresa_mis_pagos' %}" class="px-4 py-2 sm:px-6 sm:py-3 bg-gray-200 text-gray-700 rounded-lg sm:rounded-xl hover:bg-gray-300 transition-all duration-200 font-semibold text-sm sm:text-base shadow-sm hover:shadow-md flex items-center justify-center">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabs -->
+        <div class="mb-6 sm:mb-8">
+            <div class="bg-white rounded-xl sm:rounded-2xl shadow-lg p-1.5 sm:p-2">
+                <nav class="flex flex-col sm:flex-row gap-2">
+                    <a href="?estado=pendientes" class="tab-button flex-1 px-4 py-3 sm:px-6 sm:py-4 rounded-lg sm:rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 {% if estado_filtro == 'pendientes' %}bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %} text-sm sm:text-base">
+                        <span class="{% if estado_filtro == 'pendientes' %}bg-white/20{% else %}bg-orange-100 text-orange-800{% endif %} backdrop-blur-sm px-3 py-1 sm:px-4 sm:py-1.5 rounded-full text-xs sm:text-sm font-black">
+                            {{ stats.total_reservas_pendientes }}
+                        </span>
+                        <span>Por Recibir</span>
+                    </a>
+                    <a href="?estado=pagadas" class="tab-button flex-1 px-4 py-3 sm:px-6 sm:py-4 rounded-lg sm:rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 {% if estado_filtro == 'pagadas' %}bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %} text-sm sm:text-base">
+                        <span class="{% if estado_filtro == 'pagadas' %}bg-white/20{% else %}bg-green-100 text-green-800{% endif %} px-3 py-1 sm:px-4 sm:py-1.5 rounded-full text-xs sm:text-sm font-black">
+                            {{ stats.total_reservas_pagadas }}
+                        </span>
+                        <span>Recibidos</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Tabla de Reservas -->
+        <div class="bg-white rounded-xl sm:rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+            <div class="bg-gradient-to-r from-{% if estado_filtro == 'pagadas' %}green{% else %}orange{% endif %}-500 via-{% if estado_filtro == 'pagadas' %}green{% else %}orange{% endif %}-600 to-{% if estado_filtro == 'pagadas' %}green{% else %}orange{% endif %}-700 px-4 sm:px-8 py-4 sm:py-6">
+                <h2 class="text-xl sm:text-3xl font-black text-white flex items-center gap-2 sm:gap-4">
+                    <div class="p-1.5 sm:p-2 bg-white/20 rounded-lg sm:rounded-xl backdrop-blur-sm">
+                        <svg class="w-5 h-5 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            {% if estado_filtro == 'pagadas' %}
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            {% else %}
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            {% endif %}
+                        </svg>
+                    </div>
+                    <span class="text-base sm:text-3xl">{% if estado_filtro == 'pagadas' %}Pagos Recibidos{% else %}Pagos Pendientes{% endif %}</span>
+                </h2>
+            </div>
+
+            {% if reservas %}
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-[800px] text-sm">
+                        <thead class="bg-gradient-to-r from-gray-100 to-gray-200">
+                            <tr>
+                                <th class="px-2 sm:px-3 py-2 sm:py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Número</th>
+                                <th class="px-2 sm:px-3 py-2 sm:py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Fecha</th>
+                                <th class="px-2 sm:px-3 py-2 sm:py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Cliente</th>
+                                <th class="px-2 sm:px-3 py-2 sm:py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Servicios</th>
+                                <th class="px-2 sm:px-3 py-2 sm:py-3 text-center text-xs font-black text-gray-700 uppercase tracking-wider w-24">Tipo Pago</th>
+                                <th class="px-2 sm:px-3 py-2 sm:py-3 text-right text-xs font-black text-gray-700 uppercase tracking-wider w-32">{% if estado_filtro == 'pagadas' %}Monto Recibido{% else %}Monto a Recibir{% endif %}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y-2 divide-gray-200 bg-white">
+                            {% for reserva in reservas %}
+                            {% with detalle=reserva.obtener_detalle_servicios %}
+                            <tr class="hover:bg-{% if estado_filtro == 'pagadas' %}green{% else %}orange{% endif %}-50 transition-all duration-200">
+                                <td class="px-2 sm:px-3 py-2 sm:py-3">
+                                    <span class="font-mono text-xs font-bold text-{% if estado_filtro == 'pagadas' %}green{% else %}orange{% endif %}-700 bg-{% if estado_filtro == 'pagadas' %}green{% else %}orange{% endif %}-100 px-2 py-1 rounded">{{ reserva.numero_reserva }}</span>
+                                </td>
+                                <td class="px-2 sm:px-3 py-2 sm:py-3">
+                                    <div class="text-xs font-semibold text-gray-900">{{ reserva.fecha|date:"d/m/Y" }}</div>
+                                    <div class="text-xs text-gray-500">{{ reserva.hora }}</div>
+                                </td>
+                                <td class="px-2 sm:px-3 py-2 sm:py-3">
+                                    <div class="text-xs font-bold text-gray-900 max-w-[120px] truncate" title="{{ reserva.usuario.nombre_completo }}">{{ reserva.usuario.nombre_completo }}</div>
+                                    <div class="text-xs text-gray-500 max-w-[120px] truncate" title="{{ reserva.usuario.correo }}">{{ reserva.usuario.correo }}</div>
+                                </td>
+                                <td class="px-2 sm:px-3 py-2 sm:py-3">
+                                    <div class="flex flex-wrap gap-1 max-w-[140px]">
+                                        {% for servicio in reserva.servicios.all %}
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-gradient-to-r from-{% if estado_filtro == 'pagadas' %}green{% else %}orange{% endif %}-500 to-{% if estado_filtro == 'pagadas' %}emerald{% else %}orange{% endif %}-500 text-white" title="{{ servicio.nombre_servicio }}">
+                                            {{ servicio.nombre_servicio|truncatechars:12 }}
+                                        </span>
+                                        {% endfor %}
+                                    </div>
+                                </td>
+                                <td class="px-2 sm:px-3 py-2 sm:py-3 text-center">
+                                    {% if reserva.es_reserva_empresarial %}
+                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-black bg-purple-100 text-purple-800 border border-purple-300">
+                                            Emp.
+                                        </span>
+                                    {% elif reserva.suscripcion_utilizada %}
+                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-black bg-green-100 text-green-800 border border-green-300">
+                                            Plan
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-black bg-gray-100 text-gray-800 border border-gray-300">
+                                            Indiv.
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-2 sm:px-3 py-2 sm:py-3 text-right">
+                                    {% widthratio detalle.total_original 100 88 as pago_empresa %}
+                                    <div class="text-lg font-black text-{% if estado_filtro == 'pagadas' %}green{% else %}orange{% endif %}-700">${{ pago_empresa|floatformat:0 }}</div>
+                                </td>
+                            </tr>
+                            {% endwith %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginación -->
+                {% if reservas.has_other_pages %}
+                <div class="px-3 sm:px-6 py-3 sm:py-4 bg-gray-50 border-t border-gray-200">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div class="text-xs sm:text-sm text-gray-700 text-center sm:text-left">
+                            Página <span class="font-bold">{{ reservas.number }}</span> de <span class="font-bold">{{ reservas.paginator.num_pages }}</span>
+                        </div>
+                        <div class="flex gap-2 justify-center">
+                            {% if reservas.has_previous %}
+                            <a href="?estado={{ estado_filtro }}&page={{ reservas.previous_page_number }}" 
+                               class="px-3 py-2 sm:px-4 sm:py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-xs sm:text-sm font-semibold whitespace-nowrap">
+                                ← Anterior
+                            </a>
+                            {% endif %}
+                            
+                            {% if reservas.has_next %}
+                            <a href="?estado={{ estado_filtro }}&page={{ reservas.next_page_number }}" 
+                               class="px-3 py-2 sm:px-4 sm:py-2 bg-{% if estado_filtro == 'pagadas' %}green{% else %}orange{% endif %}-600 text-white rounded-lg hover:bg-{% if estado_filtro == 'pagadas' %}green{% else %}orange{% endif %}-700 transition-colors text-xs sm:text-sm font-semibold whitespace-nowrap">
+                                Siguiente →
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="p-12 text-center">
+                    <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
+                        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Sin registros</h3>
+                    <p class="text-gray-600">No hay {% if estado_filtro == 'pagadas' %}pagos recibidos{% else %}pagos pendientes{% endif %} para mostrar.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -91,17 +91,132 @@
         border-radius: 1rem;
         overflow: hidden;
     }
+    
+    /* VISTA MÓVIL MEJORADA */
+    @media (max-width: 1024px) {
+        .desktop-table {
+            display: none !important;
+        }
+        .mobile-cards {
+            display: block !important;
+        }
+    }
+    
+    @media (min-width: 1025px) {
+        .desktop-table {
+            display: block !important;
+        }
+        .mobile-cards {
+            display: none !important;
+        }
+    }
+    
+    /* Tarjetas móviles */
+    .subscription-card {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .subscription-card:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .subscription-card-header {
+        padding: 1rem;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .subscription-card-header.activa {
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    }
+    
+    .subscription-card-header.vencida {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+    
+    .subscription-card-header.cancelada {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+    
+    .subscription-card-body {
+        padding: 1rem;
+    }
+    
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        background: #f8fafc;
+        border-radius: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .info-label {
+        font-size: 0.85rem;
+        color: #64748b;
+        font-weight: 600;
+    }
+    
+    .info-value {
+        font-size: 0.9rem;
+        color: #1e293b;
+        font-weight: 700;
+    }
+    
     @media (max-width: 768px) {
         .card-header-modern {
             padding: 1.2rem 1rem 1rem 1rem;
             text-align: center;
         }
-        .modern-card {
-            margin-top: 30px;
+        
+        .card-header-modern h4 {
+            font-size: 1.5rem;
         }
+        
+        .card-header-modern p {
+            font-size: 0.85rem;
+        }
+        
+        .modern-card {
+            margin-top: 20px;
+            border-radius: 1rem;
+        }
+        
         .table-modern thead th, .table-modern tbody td {
             padding: 10px 6px;
             font-size: 0.8rem;
+        }
+        
+        .badge-modern {
+            font-size: 0.7rem;
+            padding: 5px 10px;
+        }
+        
+        .subscription-card-header {
+            flex-direction: column;
+            gap: 0.5rem;
+            text-align: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .card-header-modern h4 {
+            font-size: 1.25rem;
+        }
+        
+        .info-row {
+            flex-direction: column;
+            gap: 0.25rem;
+            text-align: center;
         }
     }
 </style>
@@ -115,7 +230,8 @@
                     <p class="mb-0 opacity-75">Administra las suscripciones de los usuarios</p>
                 </div>
                 <div class="card-body p-0">
-                    <div class="table-responsive">
+                    <!-- Vista de Escritorio (Tabla) -->
+                    <div class="table-responsive desktop-table">
                         <table class="table table-modern">
                             <thead>
                                 <tr>
@@ -167,9 +283,108 @@
                             </tbody>
                         </table>
                     </div>
+                    
+                    <!-- Vista Móvil (Tarjetas) -->
+                    <div class="mobile-cards p-3" style="display: none;">
+                        {% for suscripcion in suscripciones %}
+                        <div class="subscription-card">
+                            <!-- Header de la tarjeta con color según estado -->
+                            <div class="subscription-card-header {{ suscripcion.estado }}">
+                                <div>
+                                    <div style="font-size: 0.75rem; opacity: 0.9; margin-bottom: 0.25rem;">
+                                        ID #{{ suscripcion.id_suscripcion }}
+                                    </div>
+                                    <div style="font-size: 1.1rem; font-weight: 700;">
+                                        {{ suscripcion.usuario.nombre_usuario }}
+                                    </div>
+                                </div>
+                                <div>
+                                    {% if suscripcion.estado == 'activa' %}
+                                        <span class="badge-modern badge-success-modern">
+                                            <i class="fas fa-check-circle"></i>
+                                            {{ suscripcion.get_estado_display }}
+                                        </span>
+                                    {% elif suscripcion.estado == 'vencida' %}
+                                        <span class="badge-modern badge-danger-modern">
+                                            <i class="fas fa-times-circle"></i>
+                                            {{ suscripcion.get_estado_display }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge-modern badge-warning-modern">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            {{ suscripcion.get_estado_display }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Cuerpo de la tarjeta -->
+                            <div class="subscription-card-body">
+                                <!-- Plan -->
+                                <div class="info-row">
+                                    <span class="info-label">
+                                        <i class="fas fa-layer-group me-1"></i>Plan
+                                    </span>
+                                    <span class="info-value">{{ suscripcion.plan.nombre }}</span>
+                                </div>
+                                
+                                <!-- Fecha Inicio -->
+                                <div class="info-row">
+                                    <span class="info-label">
+                                        <i class="fas fa-calendar-plus me-1"></i>Fecha Inicio
+                                    </span>
+                                    <span class="info-value">{{ suscripcion.fecha_inicio|date:"d/m/Y" }}</span>
+                                </div>
+                                
+                                <!-- Fecha Fin -->
+                                <div class="info-row">
+                                    <span class="info-label">
+                                        <i class="fas fa-calendar-times me-1"></i>Fecha Fin
+                                    </span>
+                                    <span class="info-value">{{ suscripcion.fecha_fin|date:"d/m/Y" }}</span>
+                                </div>
+                                
+                                <!-- Servicios Usados -->
+                                <div class="info-row">
+                                    <span class="info-label">
+                                        <i class="fas fa-chart-line me-1"></i>Servicios Usados
+                                    </span>
+                                    <span class="info-value">
+                                        {{ suscripcion.servicios_utilizados_mes }}/{{ suscripcion.plan.cantidad_servicios_mes|default:"∞" }}
+                                    </span>
+                                </div>
+                                
+                                <!-- Auto Renovar -->
+                                <div class="info-row">
+                                    <span class="info-label">
+                                        <i class="fas fa-sync-alt me-1"></i>Auto Renovar
+                                    </span>
+                                    <span class="info-value">
+                                        {% if suscripcion.auto_renovar %}
+                                            <i class="fas fa-check-circle text-success" style="font-size: 1.2rem;"></i>
+                                            <span class="text-success ms-1">Sí</span>
+                                        {% else %}
+                                            <i class="fas fa-times-circle text-danger" style="font-size: 1.2rem;"></i>
+                                            <span class="text-danger ms-1">No</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-address-card fa-3x mb-3 text-primary opacity-50"></i>
+                            <div class="fw-bold fs-5 mb-2">No hay suscripciones registradas</div>
+                            <div class="text-muted">Aún no se han creado suscripciones</div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
                 <div class="card-footer bg-gradient-to-r from-blue-50 to-indigo-50 border-top-0 rounded-bottom-3 px-4 py-3">
-                    <p class="text-muted mb-0">Total de suscripciones: <span class="fw-bold">{{ suscripciones.count }}</span></p>
+                    <p class="text-muted mb-0 text-center">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Total de suscripciones: <span class="fw-bold">{{ suscripciones.count }}</span>
+                    </p>
                 </div>
             </div>
         </div>

@@ -5,42 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recuperar Contraseña - Empresa | AUTONEW</title>
-    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            --primary-blue: #3b82f6;
-            --primary-navy: #1e3a8a;
-            --light-blue: #dbeafe;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-600: #4b5563;
-            --gray-800: #1f2937;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .reset-container {
-            width: 100%;
-            max-width: 450px;
-        }
-
-        .reset-card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: slideIn 0.5s ease;
-        }
-
         @keyframes slideIn {
             from {
                 opacity: 0;
@@ -52,188 +18,63 @@
             }
         }
 
-        .icon-container {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 20px;
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-navy) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
-        }
-
-        .icon-container svg {
-            width: 40px;
-            height: 40px;
-            color: white;
-        }
-
-        h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--gray-800);
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            color: var(--gray-600);
-            text-align: center;
-            font-size: 0.95rem;
-            margin-bottom: 30px;
-            line-height: 1.5;
-        }
-
-        .badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 24px;
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            color: var(--gray-800);
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gray-600);
-            width: 20px;
-            height: 20px;
-        }
-
-        input[type="email"] {
-            width: 100%;
-            padding: 14px 14px 14px 45px;
-            border: 2px solid var(--gray-200);
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-        }
-
-        input[type="email"]:focus {
-            outline: none;
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-navy) 100%);
-            color: white;
-            font-weight: 600;
-            font-size: 1rem;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4);
-        }
-
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            color: var(--primary-blue);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .back-link:hover {
-            color: var(--primary-navy);
-        }
-
-        .info-box {
-            background: var(--light-blue);
-            border-left: 4px solid var(--primary-blue);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 24px;
-        }
-
-        .info-box p {
-            margin: 0;
-            color: var(--gray-800);
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        @media (max-width: 640px) {
-            .reset-card {
-                padding: 30px 20px;
-            }
-
-            h1 {
-                font-size: 1.5rem;
-            }
+        .animate-slide-in {
+            animation: slideIn 0.5s ease;
         }
     </style>
 </head>
-<body>
-    <div class="reset-container">
-        <div class="reset-card">
+<body class="min-h-screen flex items-center justify-center p-5 bg-white">
+    <div class="w-full max-w-md">
+        <div class="bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] p-10 sm:p-8 animate-slide-in">
+            <!-- Badge -->
             <div class="text-center">
-                <span class="badge">🏢 PANEL EMPRESARIAL</span>
+                <span class="inline-block bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-1.5 rounded-full text-xs font-semibold mb-5">
+                    🏢 PANEL EMPRESARIAL
+                </span>
             </div>
 
-            <div class="icon-container">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <!-- Icon Container -->
+            <div class="w-20 h-20 mx-auto mb-5 bg-gradient-to-br from-blue-500 to-blue-900 rounded-full flex items-center justify-center shadow-[0_10px_30px_rgba(59,130,246,0.3)]">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-10 h-10 text-white">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                 </svg>
             </div>
 
-            <h1>Recuperar Contraseña</h1>
-            <p class="subtitle">
+            <!-- Title -->
+            <h1 class="text-3xl font-bold text-gray-800 text-center mb-2.5">
+                Recuperar Contraseña
+            </h1>
+            
+            <!-- Subtitle -->
+            <p class="text-gray-600 text-center text-[0.95rem] mb-8 leading-relaxed">
                 Ingresa el correo electrónico de tu empresa y te enviaremos las instrucciones para restablecer tu contraseña.
             </p>
 
-            <div class="info-box">
-                <p><strong>💡 Importante:</strong> El correo de recuperación será enviado a la dirección registrada de tu empresa.</p>
+            <!-- Info Box -->
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg mb-6">
+                <p class="m-0 text-gray-800 text-sm leading-relaxed">
+                    <strong>💡 Importante:</strong> El correo de recuperación será enviado a la dirección registrada de tu empresa.
+                </p>
             </div>
 
+            <!-- Messages -->
             {% if messages %}
                 {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}" style="padding: 12px; margin-bottom: 20px; border-radius: 8px; background: {% if message.tags == 'error' %}#fee2e2{% else %}#d1fae5{% endif %}; border-left: 4px solid {% if message.tags == 'error' %}#dc2626{% else %}#10b981{% endif %};">
+                    <div class="p-3 mb-5 rounded-lg border-l-4 {% if message.tags == 'error' %}bg-red-50 border-red-600 text-red-700{% elif message.tags == 'success' %}bg-green-50 border-green-600 text-green-700{% elif message.tags == 'warning' %}bg-yellow-50 border-yellow-600 text-yellow-700{% else %}bg-blue-50 border-blue-600 text-blue-700{% endif %}">
                         {{ message }}
                     </div>
                 {% endfor %}
             {% endif %}
 
+            <!-- Form -->
             <form method="POST" action="{% url 'empresa_password_reset' %}">
                 {% csrf_token %}
-                <div class="form-group">
-                    <label for="email">Correo Electrónico de la Empresa</label>
-                    <div class="input-wrapper">
-                        <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="mb-6">
+                    <label for="email" class="block font-semibold text-gray-800 mb-2 text-[0.95rem]">
+                        Correo Electrónico de la Empresa
+                    </label>
+                    <div class="relative">
+                        <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
                         <input 
@@ -243,16 +84,18 @@
                             placeholder="empresa@ejemplo.com"
                             required
                             autocomplete="email"
+                            class="w-full py-3.5 pl-11 pr-3.5 border-2 border-gray-200 rounded-xl text-base transition-all duration-300 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                         >
                     </div>
                 </div>
 
-                <button type="submit" class="btn-primary">
+                <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-blue-500 to-blue-900 text-white font-semibold text-base border-none rounded-xl cursor-pointer transition-all duration-300 shadow-[0_4px_15px_rgba(59,130,246,0.3)] hover:-translate-y-0.5 hover:shadow-[0_6px_25px_rgba(59,130,246,0.4)] active:translate-y-0">
                     Enviar Instrucciones
                 </button>
             </form>
 
-            <a href="{% url 'logincrud' %}" class="back-link">
+            <!-- Back Link -->
+            <a href="{% url 'logincrud' %}" class="block text-center mt-5 text-blue-500 no-underline font-medium transition-all duration-300 hover:text-blue-900">
                 ← Volver al inicio de sesión
             </a>
         </div>
