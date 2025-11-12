@@ -285,6 +285,27 @@ def precio_formateado(precio):
         return "0.00"
 
 @register.filter
+def calcular_total_reserva_con_descuentos(reserva):
+    """Calcular el total de la reserva INCLUYENDO servicios del plan con descuento aplicado"""
+    try:
+        from lavado_auto.models import ReservaServicio
+        total = 0
+        
+        # Obtener todas las relaciones ReservaServicio para esta reserva
+        reserva_servicios = ReservaServicio.objects.filter(reserva=reserva)
+        
+        for rs in reserva_servicios:
+            # Sumar TODOS los servicios con su precio_aplicado
+            if rs.precio_aplicado is not None:
+                total += float(rs.precio_aplicado)
+            else:
+                total += float(rs.servicio.precio)
+        
+        return "{:.2f}".format(total)
+    except Exception as e:
+        return "0.00"
+
+@register.filter
 def es_nueva_24h(fecha):
     """Verificar si una fecha está dentro de las últimas 24 horas"""
     try:

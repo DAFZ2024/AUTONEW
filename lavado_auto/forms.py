@@ -232,7 +232,6 @@ class ProfileUserForm(forms.ModelForm):
             'correo',
             'telefono',
             'direccion',
-            'profile_picture',
         ]
 
 class EmpresaPerfilForm(forms.ModelForm):
@@ -457,7 +456,6 @@ class AdminProfileForm(forms.ModelForm):
             'correo',
             'telefono',
             'direccion',
-            'profile_picture',
         ]
         widgets = {
             'nombre_completo': forms.TextInput(attrs={
@@ -480,10 +478,6 @@ class AdminProfileForm(forms.ModelForm):
                 'class': 'w-full px-6 py-4 bg-slate-50/50 border-2 border-slate-200/70 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 hover:border-slate-300 hover:bg-white placeholder-slate-400 text-slate-700 font-medium',
                 'placeholder': 'Ingresa tu dirección completa'
             }),
-            'profile_picture': forms.ClearableFileInput(attrs={
-                'class': 'hidden',
-                'accept': 'image/*'
-            }),
         }
         labels = {
             'nombre_completo': 'Nombre Completo',
@@ -491,7 +485,6 @@ class AdminProfileForm(forms.ModelForm):
             'correo': 'Correo Electrónico',
             'telefono': 'Teléfono',
             'direccion': 'Dirección Completa',
-            'profile_picture': 'Foto de Perfil',
         }
     
     def clean_nombre_usuario(self):
@@ -638,3 +631,130 @@ class SolicitudContactoPlanForm(forms.ModelForm):
             if dominio in dominios_temporales:
                 raise forms.ValidationError("Por favor usa un correo empresarial válido.")
         return email
+
+
+class UsuarioRegistroForm(forms.ModelForm):
+    """
+    Formulario de registro de usuario con consentimientos
+    según la Ley 1581 de 2012
+    """
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-300',
+            'placeholder': 'Crea una contraseña segura',
+            'minlength': '6'
+        }),
+        min_length=6,
+        label='Contraseña',
+        help_text='Mínimo 6 caracteres'
+    )
+    
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-300',
+            'placeholder': 'Confirma tu contraseña'
+        }),
+        label='Confirmar Contraseña'
+    )
+    
+    # ========== CONSENTIMIENTOS OBLIGATORIOS (LEY 1581) ==========
+    acepta_politica_privacidad = forms.BooleanField(
+        required=True,
+        label='',
+        error_messages={
+            'required': 'Debes aceptar el Aviso de Privacidad para continuar.'
+        },
+        widget=forms.CheckboxInput(attrs={
+            'class': 'w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2'
+        })
+    )
+    
+    acepta_tratamiento_datos = forms.BooleanField(
+        required=True,
+        label='',
+        error_messages={
+            'required': 'Debes aceptar la Política de Tratamiento de Datos para continuar.'
+        },
+        widget=forms.CheckboxInput(attrs={
+            'class': 'w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2'
+        })
+    )
+    
+    acepta_terminos_condiciones = forms.BooleanField(
+        required=True,
+        label='',
+        error_messages={
+            'required': 'Debes aceptar los Términos y Condiciones para continuar.'
+        },
+        widget=forms.CheckboxInput(attrs={
+            'class': 'w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2'
+        })
+    )
+    
+    # ========== CONSENTIMIENTOS OPCIONALES ==========
+    acepta_comunicaciones_comerciales = forms.BooleanField(
+        required=False,
+        label='',
+        widget=forms.CheckboxInput(attrs={
+            'class': 'w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2'
+        })
+    )
+    
+    class Meta:
+        model = Usuario
+        fields = ['nombre_completo', 'nombre_usuario', 'correo', 'telefono', 'direccion']
+        widgets = {
+            'nombre_completo': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-300',
+                'placeholder': 'Tu nombre completo',
+                'required': True
+            }),
+            'nombre_usuario': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-300',
+                'placeholder': 'Elige un nombre de usuario único',
+                'required': True
+            }),
+            'correo': forms.EmailInput(attrs={
+                'class': 'w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-300',
+                'placeholder': 'tu@email.com',
+                'required': True
+            }),
+            'telefono': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-300',
+                'placeholder': '+57 300 123 4567'
+            }),
+            'direccion': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-300',
+                'placeholder': 'Tu dirección completa'
+            }),
+        }
+        labels = {
+            'nombre_completo': 'Nombre Completo *',
+            'nombre_usuario': 'Nombre de Usuario *',
+            'correo': 'Correo Electrónico *',
+            'telefono': 'Teléfono',
+            'direccion': 'Dirección',
+        }
+    
+    def clean_nombre_usuario(self):
+        nombre_usuario = self.cleaned_data.get('nombre_usuario')
+        if Usuario.objects.filter(nombre_usuario=nombre_usuario).exists():
+            raise forms.ValidationError("Este nombre de usuario ya está en uso.")
+        return nombre_usuario
+    
+    def clean_correo(self):
+        correo = self.cleaned_data.get('correo')
+        if Usuario.objects.filter(correo=correo).exists():
+            raise forms.ValidationError("Este correo electrónico ya está registrado.")
+        return correo
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
+        
+        if password and confirm_password:
+            if password != confirm_password:
+                raise forms.ValidationError("Las contraseñas no coinciden.")
+        
+        return cleaned_data

@@ -282,6 +282,23 @@ body::before, body::after {
     animation: testimonialFadeIn 0.8s ease-out;
 }
 
+/* Animación de movimiento horizontal para elementos decorativos */
+@keyframes slideHorizontal {
+    0% {
+        transform: translateX(-20px);
+    }
+    50% {
+        transform: translateX(20px);
+    }
+    100% {
+        transform: translateX(-20px);
+    }
+}
+
+.slide-horizontal-animation {
+    animation: slideHorizontal 4s ease-in-out infinite;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     #testimonial-carousel-track {
@@ -459,6 +476,257 @@ body::before, body::after {
 </div>
 <!-- Fin Sección Hero -->
 
+<!-- Bento Grid Section - Diseño Moderno Asimétrico -->
+<div class="relative py-16 md:py-24 bg-gradient-to-br from-white via-slate-50 to-blue-50 overflow-hidden">
+    <!-- Elementos decorativos de fondo -->
+    <div class="absolute inset-0">
+        <div class="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-200/40 to-cyan-200/40 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-r from-slate-200/40 to-gray-200/40 rounded-full mix-blend-multiply filter blur-3xl animate-pulse animation-delay-2000"></div>
+    </div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header de la sección -->
+        <div class="text-center mb-12 md:mb-16 scroll-reveal">
+            <div class="inline-flex items-center px-4 md:px-6 py-2 md:py-3 bg-gradient-to-r from-blue-100 to-slate-100 rounded-full mb-4 md:mb-6">
+                <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                <span class="text-blue-600 font-semibold text-sm uppercase tracking-wide">Descubre AutoNew</span>
+            </div>
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4">
+                Todo lo que necesitas en 
+                <span class="bg-gradient-to-r from-blue-600 via-cyan-600 to-slate-600 bg-clip-text text-transparent">
+                    un solo lugar
+                </span>
+            </h2>
+            <p class="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+                Experimenta el mejor servicio de lavado con tecnología de punta y atención personalizada
+            </p>
+        </div>
+
+        <!-- Bento Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4 md:gap-6">
+            
+            <!-- Card 1: Grande - Servicio Express (ocupa 4 columnas en desktop) -->
+            <div class="md:col-span-4 group relative overflow-hidden bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-3xl p-8 md:p-12 shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02] scroll-reveal">
+                <!-- Efectos decorativos -->
+                <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yLjIxLTEuNzktNC00LTRzLTQgMS43OS00IDQgMS43OSA0IDQgNCA0LTEuNzkgNC00em0wLTEwYzAtMi4yMS0xLjc5LTQtNC00cy00IDEuNzktNCA0IDEuNzkgNCA0IDQgNC0xLjc5IDQtNHoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-30"></div>
+                <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 group-hover:scale-150 transition-transform duration-700"></div>
+                
+                <div class="relative z-10 h-full flex flex-col">
+                    <div class="flex-1">
+                        <div class="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-sm rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-8 h-8 md:w-10 md:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl md:text-4xl font-bold text-white mb-4">
+                            Servicio Express
+                        </h3>
+                        <p class="text-blue-100 text-base md:text-lg leading-relaxed mb-6">
+                            Tu vehículo impecable en solo 30 minutos. Tecnología avanzada y personal capacitado para resultados perfectos.
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-4 text-white">
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span class="font-semibold">30 min</span>
+                        </div>
+                        <div class="h-6 w-px bg-white/30"></div>
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span class="font-semibold">Garantizado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Mediana - Eco-Friendly (ocupa 2 columnas) -->
+            <div class="md:col-span-2 group relative overflow-hidden bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-6 md:p-8 shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02] scroll-reveal delay-100">
+                <div class="absolute inset-0 bg-white/5 group-hover:bg-white/10 transition-colors duration-500"></div>
+                <div class="absolute bottom-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mb-16 group-hover:scale-150 transition-transform duration-700"></div>
+                
+                <div class="relative z-10 h-full flex flex-col">
+                    <div class="inline-flex items-center justify-center w-14 h-14 md:w-16 md:h-16 bg-white/20 backdrop-blur-sm rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-7 h-7 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-bold text-white mb-3">
+                        100% Eco-Friendly
+                    </h3>
+                    <p class="text-emerald-100 text-sm md:text-base flex-1">
+                        Productos biodegradables y sistema de reciclaje de agua.
+                    </p>
+                    <div class="mt-4 inline-flex items-center text-white font-semibold group-hover:translate-x-2 transition-transform duration-300">
+                        <span class="text-sm">Cuidamos el planeta</span>
+                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Pequeña - Ubicaciones (2 columnas) -->
+            <div class="md:col-span-2 group relative overflow-hidden bg-gradient-to-br from-purple-500 to-pink-600 rounded-3xl p-6 md:p-8 shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02] scroll-reveal delay-200">
+                <div class="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity duration-500">
+                    <div class="absolute top-4 right-4 w-24 h-24 bg-white rounded-full"></div>
+                    <div class="absolute bottom-4 left-4 w-16 h-16 bg-white rounded-full"></div>
+                </div>
+                
+                <div class="relative z-10 h-full flex flex-col justify-between">
+                    <div>
+                        <div class="inline-flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl md:text-2xl font-bold text-white mb-2">
+                            40+
+                        </h3>
+                        <p class="text-purple-100 text-sm">
+                            Ubicaciones en toda la ciudad
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Mediana - Calidad Premium (2 columnas) -->
+            <div class="md:col-span-2 group relative overflow-hidden bg-gradient-to-br from-amber-500 to-orange-600 rounded-3xl p-6 md:p-8 shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02] scroll-reveal delay-300">
+                <div class="absolute top-0 left-0 w-full h-full opacity-10">
+                    <svg class="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50,10 L61.8,38.2 L92,38.2 L67.1,56.2 L78.9,84.4 L50,66.4 L21.1,84.4 L32.9,56.2 L8,38.2 L38.2,38.2 Z" fill="white"/>
+                    </svg>
+                </div>
+                
+                <div class="relative z-10 h-full flex flex-col">
+                    <div class="inline-flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-bold text-white mb-3">
+                        Calidad Premium
+                    </h3>
+                    <p class="text-amber-100 text-sm flex-1">
+                        Productos de primera calidad para resultados excepcionales
+                    </p>
+                    <div class="mt-4 flex items-center space-x-1">
+                        {% for i in "12345" %}
+                            <svg class="w-5 h-5 text-white fill-current" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: Mediana - Atención 24/7 (2 columnas) -->
+            <div class="md:col-span-2 group relative overflow-hidden bg-gradient-to-br from-cyan-500 to-blue-600 rounded-3xl p-6 md:p-8 shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02] scroll-reveal delay-400">
+                <div class="absolute inset-0">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full transform translate-x-16 -translate-y-16"></div>
+                    <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full transform -translate-x-12 translate-y-12"></div>
+                </div>
+                
+                <div class="relative z-10 h-full flex flex-col">
+                    <div class="inline-flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl mb-4 group-hover:rotate-12 transition-transform duration-300">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-bold text-white mb-3">
+                        Atención 24/7
+                    </h3>
+                    <p class="text-cyan-100 text-sm flex-1">
+                        Siempre disponibles cuando nos necesites
+                    </p>
+                    <div class="mt-4 inline-flex items-center space-x-2">
+                        <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                        <span class="text-white text-sm font-semibold">Disponible ahora</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6: Grande - Reserva Online (ocupa 4 columnas) -->
+            <div class="md:col-span-4 group relative overflow-hidden bg-gradient-to-br from-slate-700 via-gray-800 to-slate-900 rounded-3xl p-8 md:p-12 shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-[1.02] scroll-reveal delay-500">
+                <div class="absolute inset-0">
+                    <div class="absolute inset-0 opacity-10">
+                        <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <pattern id="grid-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                                    <circle cx="20" cy="20" r="1" fill="white"/>
+                                </pattern>
+                            </defs>
+                            <rect width="100%" height="100%" fill="url(#grid-pattern)"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between h-full">
+                    <div class="flex-1 mb-6 md:mb-0">
+                        <div class="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-white/10 backdrop-blur-sm rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-8 h-8 md:w-10 md:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl md:text-4xl font-bold text-white mb-4">
+                            Reserva Online
+                        </h3>
+                        <p class="text-gray-300 text-base md:text-lg max-w-lg">
+                            Agenda tu cita en segundos desde cualquier dispositivo. Sistema de reservas fácil y rápido.
+                        </p>
+                    </div>
+                    <div class="flex-shrink-0">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'reservas' %}" class="inline-flex items-center px-6 md:px-8 py-3 md:py-4 bg-white text-gray-900 font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl group-hover:bg-blue-500 group-hover:text-white">
+                                <span>Reservar ahora</span>
+                                <svg class="ml-2 w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                </svg>
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="inline-flex items-center px-6 md:px-8 py-3 md:py-4 bg-white text-gray-900 font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl group-hover:bg-blue-500 group-hover:text-white">
+                                <span>Iniciar sesión</span>
+                                <svg class="ml-2 w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                </svg>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Script para animación de scroll reveal -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const revealElements = document.querySelectorAll('.scroll-reveal');
+    
+    const revealOnScroll = () => {
+        revealElements.forEach((element) => {
+            const elementTop = element.getBoundingClientRect().top;
+            const elementVisible = 150;
+            
+            if (elementTop < window.innerHeight - elementVisible) {
+                element.classList.add('revealed');
+            }
+        });
+    };
+    
+    window.addEventListener('scroll', revealOnScroll);
+    revealOnScroll(); // Check on page load
+});
+</script>
+<!-- Fin Bento Grid Section -->
+
 <!-- Invitación de Autenticación - Solo para usuarios no logueados -->
 {% if not user.is_authenticated %}
 <div class="relative py-12 md:py-16 lg:py-20 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 overflow-hidden">
@@ -578,15 +846,15 @@ body::before, body::after {
         <div class="grid lg:grid-cols-2 gap-16 items-center">
             <!-- Imagen con efectos modernos -->
             <div class="relative group">
-                <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl opacity-20 group-hover:opacity-30 transition-all duration-500 blur-lg"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl opacity-20 group-hover:opacity-30 transition-all duration-500 blur-lg slide-horizontal-animation"></div>
                 <div class="relative bg-white rounded-3xl p-2 shadow-2xl group-hover:shadow-3xl transition-all duration-500 transform group-hover:scale-105">
                     <!-- Solo la imagen del vehículo se anima -->
                     <img src="{% static 'img/autoimg.png' %}" alt="Auto" 
                          class="w-full h-auto rounded-2xl car-driving-animation">
                 </div>
-                <!-- Elementos flotantes decorativos -->
-                <div class="absolute -top-6 -right-6 w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl shadow-lg transform rotate-12 opacity-80"></div>
-                <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl shadow-lg transform -rotate-12 opacity-80"></div>
+                <!-- Elementos flotantes decorativos con animación horizontal -->
+                <div class="absolute -top-6 -right-6 w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl shadow-lg transform rotate-12 opacity-80 slide-horizontal-animation"></div>
+                <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl shadow-lg transform -rotate-12 opacity-80 slide-horizontal-animation animation-delay-2000"></div>
             </div>
             
             <!-- Contenido -->
@@ -2605,22 +2873,86 @@ function toggleFaq(element) {
     element.classList.toggle('active');
 }
 
-// Modal de Descarga de App Móvil
+// Modal de Descarga de App Móvil con funcionalidad de QR tabs
 document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('appDownloadModal');
     const closeBtn = document.querySelector('.close-modal');
     const dismissBtn = document.getElementById('dismissModal');
     
+    // Elementos de los tabs
+    const tabIOS = document.getElementById('tabIOS');
+    const tabAndroid = document.getElementById('tabAndroid');
+    const qrIOS = document.getElementById('qrIOS');
+    const qrAndroid = document.getElementById('qrAndroid');
+    
+    // Función para cambiar entre tabs
+    function switchToIOS() {
+        // Actualizar estilos de los tabs
+        tabIOS.classList.add('bg-white', 'shadow-md');
+        tabIOS.classList.remove('text-gray-600');
+        tabIOS.style.color = '#0C553C';
+        
+        tabAndroid.classList.remove('bg-white', 'shadow-md');
+        tabAndroid.classList.add('text-gray-600');
+        tabAndroid.style.color = '';
+        
+        // Mostrar/ocultar QR codes
+        qrIOS.classList.remove('hidden');
+        qrAndroid.classList.add('hidden');
+    }
+    
+    function switchToAndroid() {
+        // Actualizar estilos de los tabs
+        tabAndroid.classList.add('bg-white', 'shadow-md');
+        tabAndroid.classList.remove('text-gray-600');
+        tabAndroid.style.color = '#0C553C';
+        
+        tabIOS.classList.remove('bg-white', 'shadow-md');
+        tabIOS.classList.add('text-gray-600');
+        tabIOS.style.color = '';
+        
+        // Mostrar/ocultar QR codes
+        qrAndroid.classList.remove('hidden');
+        qrIOS.classList.add('hidden');
+    }
+    
+    // Event listeners para los tabs
+    if (tabIOS && tabAndroid) {
+        tabIOS.addEventListener('click', switchToIOS);
+        tabAndroid.addEventListener('click', switchToAndroid);
+    }
+    
+    // Detectar dispositivo y mostrar QR correspondiente automáticamente
+    function detectDevice() {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        
+        // Detectar iOS
+        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+            switchToIOS();
+        }
+        // Detectar Android
+        else if (/android/i.test(userAgent)) {
+            switchToAndroid();
+        }
+        // Por defecto mostrar iOS
+        else {
+            switchToIOS();
+        }
+    }
+    
     // Verificar si el modal ya se mostró en esta sesión
     const modalShown = sessionStorage.getItem('appModalShown');
     
     if (!modalShown) {
-        // Mostrar el modal después de 1.5 segundos
+        // Mostrar el modal después de 2 segundos
         setTimeout(function() {
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             sessionStorage.setItem('appModalShown', 'true');
-        }, 1500);
+            
+            // Detectar dispositivo después de mostrar el modal
+            detectDevice();
+        }, 2000);
     }
     
     // Función para cerrar modal con animación
@@ -2636,10 +2968,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Cerrar modal con el botón X
-    closeBtn.addEventListener('click', closeModal);
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeModal);
+    }
     
     // Cerrar modal con el botón "Recordármelo después"
-    dismissBtn.addEventListener('click', closeModal);
+    if (dismissBtn) {
+        dismissBtn.addEventListener('click', closeModal);
+    }
     
     // Cerrar modal al hacer clic fuera del contenido
     modal.addEventListener('click', function(event) {
@@ -2647,119 +2983,246 @@ document.addEventListener('DOMContentLoaded', function() {
             closeModal();
         }
     });
+    
+    // Prevenir que clics dentro del modal lo cierren
+    const modalContent = modal.querySelector('.relative.w-full');
+    if (modalContent) {
+        modalContent.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    }
 });
 </script>
 
-<!-- Modal de Descarga de Aplicación Móvil -->
+<!-- Modal de Descarga de Aplicación Móvil - Compacto con QR -->
 <div id="appDownloadModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm animate-in fade-in duration-300">
-    <div class="relative w-full max-w-lg mx-4 bg-white rounded-3xl shadow-2xl shadow-gray-500/20 backdrop-blur-lg border border-gray-100 animate-in slide-in-from-bottom-8 duration-500">
+    <div class="relative w-full max-w-2xl mx-4 bg-white rounded-3xl shadow-2xl shadow-gray-500/20 backdrop-blur-lg border border-gray-100 animate-in slide-in-from-bottom-8 duration-500">
         
         <!-- Botón Cerrar -->
-        <button class="close-modal absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-300 hover:rotate-90 z-10">
+        <button class="close-modal absolute top-3 right-3 w-9 h-9 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-300 hover:rotate-90 z-10">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
         </button>
         
-        <!-- Header con color de marca -->
-        <div class="relative overflow-hidden rounded-t-3xl p-8 text-center" style="background-color: #0C553C;">
-            <!-- Decoraciones de fondo -->
-            <div class="absolute top-0 left-0 w-full h-full opacity-10">
-                <div class="absolute top-4 left-4 w-16 h-16 bg-white rounded-full animate-pulse"></div>
-                <div class="absolute bottom-4 right-4 w-12 h-12 bg-white rounded-full animate-pulse animation-delay-500"></div>
-                <div class="absolute top-1/2 left-1/4 w-8 h-8 bg-white rounded-full animate-bounce animation-delay-1000"></div>
+        <!-- Header Compacto -->
+        <div class="relative overflow-hidden rounded-t-3xl p-6 text-center" style="background: linear-gradient(135deg, #0C553C 0%, #0a4430 100%);">
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute top-2 left-2 w-16 h-16 bg-white rounded-full animate-pulse"></div>
+                <div class="absolute bottom-2 right-2 w-12 h-12 bg-white rounded-full animate-pulse animation-delay-500"></div>
             </div>
             
-            <!-- Logo con animación -->
-            <div class="relative mb-4 flex justify-center">
-                <img src="{% static 'img/logo.png' %}" alt="AutoNEW Logo" class="w-20 h-20 object-cover rounded-full animate-float">
+            <div class="relative mb-3 flex justify-center">
+                <img src="{% static 'img/logo.png' %}" alt="AutoNEW Logo" class="w-16 h-16 object-cover rounded-full shadow-xl animate-float border-2 border-white/30">
             </div>
             
-            <h2 class="text-3xl font-bold text-white mb-2 drop-shadow-lg">¡Descarga AutoNEW!</h2>
-            <div class="w-16 h-1 bg-white/30 rounded-full mx-auto"></div>
+            <h2 class="text-2xl font-bold text-white mb-1 drop-shadow-lg">¡Descarga AutoNEW!</h2>
+            <p class="text-white/80 text-sm">Gestiona tus servicios desde tu móvil</p>
         </div>
         
-        <!-- Contenido Principal -->
-        <div class="p-6 space-y-6">
-            <!-- Descripción -->
-            <p class="text-center text-gray-600 text-base leading-relaxed">
-                Lleva el <span class="font-semibold" style="color: #0C553C;">lavado de tu auto</span> en la palma de tu mano. 
-                Descarga nuestra app móvil y disfruta de:
-            </p>
-            
-            <!-- Lista de Características -->
-            <div class="space-y-3">
-                <div class="flex items-center space-x-3 p-3 rounded-xl hover:bg-green-50 transition-all duration-300 group">
-                    <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="background-color: #0C553C;">
-                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                        </svg>
+        <!-- Contenido Principal Compacto -->
+        <div class="p-5">
+            <!-- Grid de contenido: Características + QR -->
+            <div class="grid md:grid-cols-2 gap-6">
+                
+                <!-- Columna Izquierda: Características -->
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-2 p-2 rounded-lg hover:bg-green-50 transition-all duration-300 group">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="background: linear-gradient(135deg, #0C553C 0%, #0a4430 100%);">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="text-gray-800 font-semibold text-sm">Reservas 24/7</span>
                     </div>
-                    <span class="text-gray-700 font-medium">Reservas rápidas y fáciles</span>
+                    
+                    <div class="flex items-center space-x-2 p-2 rounded-lg hover:bg-green-50 transition-all duration-300 group">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="background: linear-gradient(135deg, #0C553C 0%, #0a4430 100%);">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                            </svg>
+                        </div>
+                        <span class="text-gray-800 font-semibold text-sm">Notificaciones en tiempo real</span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-2 p-2 rounded-lg hover:bg-green-50 transition-all duration-300 group">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="background: linear-gradient(135deg, #0C553C 0%, #0a4430 100%);">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="text-gray-800 font-semibold text-sm">Historial de servicios</span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-2 p-2 rounded-lg hover:bg-green-50 transition-all duration-300 group">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="background: linear-gradient(135deg, #0C553C 0%, #0a4430 100%);">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="text-gray-800 font-semibold text-sm">Ofertas exclusivas</span>
+                    </div>
                 </div>
                 
-                <div class="flex items-center space-x-3 p-3 rounded-xl hover:bg-green-50 transition-all duration-300 group">
-                    <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="background-color: #0C553C;">
-                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                        </svg>
+                <!-- Columna Derecha: QR -->
+                <div class="flex flex-col items-center justify-center space-y-3">
+                    <!-- Tabs -->
+                    <div class="w-full">
+                        <div class="flex bg-gray-100 rounded-xl p-1 shadow-inner">
+                            <button id="tabIOS" class="flex-1 py-2 px-3 rounded-lg font-semibold text-xs transition-all duration-300 flex items-center justify-center space-x-1.5 bg-white shadow-md" style="color: #0C553C;">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                                </svg>
+                                <span>iOS</span>
+                            </button>
+                            <button id="tabAndroid" class="flex-1 py-2 px-3 rounded-lg font-semibold text-xs transition-all duration-300 flex items-center justify-center space-x-1.5 text-gray-600 hover:text-gray-800">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M17.523 15.341c-.759 0-1.377-.617-1.377-1.377s.618-1.377 1.377-1.377 1.377.617 1.377 1.377-.618 1.377-1.377 1.377zm-11.046 0c-.759 0-1.377-.617-1.377-1.377s.618-1.377 1.377-1.377 1.377.617 1.377 1.377-.618 1.377-1.377 1.377zm11.837-12.209l1.476-2.555c.097-.168.038-.385-.13-.482-.168-.097-.385-.038-.482.13l-1.494 2.588c-1.323-.608-2.791-.937-4.339-.937-1.549 0-3.016.329-4.339.937L7.512.225c-.097-.168-.314-.227-.482-.13-.168.097-.227.314-.13.482l1.476 2.555C5.655 4.611 3.672 7.319 3.5 10.5h17c-.172-3.181-2.155-5.889-4.876-7.368zm-4.992-1.014c.276 0 .5.224.5.5s-.224.5-.5.5-.5-.224-.5-.5.224-.5.5-.5zm-4.646 0c.276 0 .5.224.5.5s-.224.5-.5.5-.5-.224-.5-.5.224-.5.5-.5z"/>
+                                </svg>
+                                <span>Android</span>
+                            </button>
+                        </div>
                     </div>
-                    <span class="text-gray-700 font-medium">Notificaciones en tiempo real</span>
-                </div>
-                
-                <div class="flex items-center space-x-3 p-3 rounded-xl hover:bg-green-50 transition-all duration-300 group">
-                    <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="background-color: #0C553C;">
-                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                        </svg>
+                    
+                    <!-- QR Codes -->
+                    <div class="relative">
+                        <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-10 animate-bounce">
+                            📱 Escanea
+                        </div>
+                        
+                        <!-- QR iOS -->
+                        <div id="qrIOS" class="qr-container bg-white p-4 rounded-2xl shadow-xl border-2 border-gray-100 transition-all duration-500">
+                            <div class="relative">
+                                <div class="absolute -top-1 -left-1 w-6 h-6 border-t-3 border-l-3 rounded-tl-xl" style="border-color: #0C553C;"></div>
+                                <div class="absolute -top-1 -right-1 w-6 h-6 border-t-3 border-r-3 rounded-tr-xl" style="border-color: #0C553C;"></div>
+                                <div class="absolute -bottom-1 -left-1 w-6 h-6 border-b-3 border-l-3 rounded-bl-xl" style="border-color: #0C553C;"></div>
+                                <div class="absolute -bottom-1 -right-1 w-6 h-6 border-b-3 border-r-3 rounded-br-xl" style="border-color: #0C553C;"></div>
+                                
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://apps.apple.com/app/autonew" 
+                                     alt="QR iOS" 
+                                     class="w-40 h-40 mx-auto rounded-lg shadow-md">
+                            </div>
+                            
+                            <div class="mt-3 flex items-center justify-center space-x-1.5 bg-black text-white px-3 py-1.5 rounded-full">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                                </svg>
+                                <span class="font-bold text-xs">App Store</span>
+                            </div>
+                        </div>
+                        
+                        <!-- QR Android -->
+                        <div id="qrAndroid" class="qr-container bg-white p-4 rounded-2xl shadow-xl border-2 border-gray-100 hidden transition-all duration-500">
+                            <div class="relative">
+                                <div class="absolute -top-1 -left-1 w-6 h-6 border-t-3 border-l-3 rounded-tl-xl" style="border-color: #0C553C;"></div>
+                                <div class="absolute -top-1 -right-1 w-6 h-6 border-t-3 border-r-3 rounded-tr-xl" style="border-color: #0C553C;"></div>
+                                <div class="absolute -bottom-1 -left-1 w-6 h-6 border-b-3 border-l-3 rounded-bl-xl" style="border-color: #0C553C;"></div>
+                                <div class="absolute -bottom-1 -right-1 w-6 h-6 border-b-3 border-r-3 rounded-br-xl" style="border-color: #0C553C;"></div>
+                                
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://play.google.com/store/apps/details?id=com.autonew.app" 
+                                     alt="QR Android" 
+                                     class="w-40 h-40 mx-auto rounded-lg shadow-md">
+                            </div>
+                            
+                            <div class="mt-3 flex items-center justify-center space-x-1.5 text-white px-3 py-1.5 rounded-full" style="background-color: #0C553C;">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M17.523 15.341c-.759 0-1.377-.617-1.377-1.377s.618-1.377 1.377-1.377 1.377.617 1.377 1.377-.618 1.377-1.377 1.377zm-11.046 0c-.759 0-1.377-.617-1.377-1.377s.618-1.377 1.377-1.377 1.377.617 1.377 1.377-.618 1.377-1.377 1.377zm11.837-12.209l1.476-2.555c.097-.168.038-.385-.13-.482-.168-.097-.385-.038-.482.13l-1.494 2.588c-1.323-.608-2.791-.937-4.339-.937-1.549 0-3.016.329-4.339.937L7.512.225c-.097-.168-.314-.227-.482-.13-.168.097-.227.314-.13.482l1.476 2.555C5.655 4.611 3.672 7.319 3.5 10.5h17c-.172-3.181-2.155-5.889-4.876-7.368zm-4.992-1.014c.276 0 .5.224.5.5s-.224.5-.5.5-.5-.224-.5-.5.224-.5.5-.5zm-4.646 0c.276 0 .5.224.5.5s-.224.5-.5.5-.5-.224-.5-.5.224-.5.5-.5z"/>
+                                </svg>
+                                <span class="font-bold text-xs">Google Play</span>
+                            </div>
+                        </div>
                     </div>
-                    <span class="text-gray-700 font-medium">Historial completo de servicios</span>
-                </div>
-                
-                <div class="flex items-center space-x-3 p-3 rounded-xl hover:bg-green-50 transition-all duration-300 group">
-                    <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style="background-color: #0C553C;">
-                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                        </svg>
-                    </div>
-                    <span class="text-gray-700 font-medium">Ofertas exclusivas para app</span>
                 </div>
             </div>
             
-            <!-- Botones de Descarga -->
-            <div class="space-y-3 pt-2">
-                <!-- iOS Button -->
-                <a href="#" class="flex items-center justify-center space-x-3 w-full bg-black hover:bg-gray-800 text-white py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl group">
-                    <svg class="w-8 h-8 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" viewBox="0 0 24 24" fill="currentColor">
+            <!-- Divider -->
+            <div class="my-5 flex items-center">
+                <div class="flex-1 border-t border-gray-200"></div>
+                <span class="px-3 text-gray-500 font-medium text-xs">O descarga directamente</span>
+                <div class="flex-1 border-t border-gray-200"></div>
+            </div>
+            
+            <!-- Botones Compactos -->
+            <div class="grid grid-cols-2 gap-3">
+                <a href="https://apps.apple.com/app/autonew" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center space-x-2 bg-black hover:bg-gray-800 text-white py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 group">
+                    <svg class="w-6 h-6 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
                     </svg>
                     <div class="text-left">
-                        <div class="text-xs opacity-80">Disponible en</div>
-                        <div class="text-lg font-bold">App Store</div>
+                        <div class="text-xs opacity-80">App Store</div>
                     </div>
                 </a>
                 
-                <!-- Android Button -->
-                <a href="#" class="flex items-center justify-center space-x-3 w-full text-white py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl group hover:opacity-90" style="background-color: #0C553C;">
-                    <svg class="w-8 h-8 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" viewBox="0 0 24 24" fill="currentColor">
+                <a href="https://play.google.com/store/apps/details?id=com.autonew.app" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 group" style="background: linear-gradient(135deg, #0C553C 0%, #0a4430 100%);">
+                    <svg class="w-6 h-6 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M17.523 15.341c-.759 0-1.377-.617-1.377-1.377s.618-1.377 1.377-1.377 1.377.617 1.377 1.377-.618 1.377-1.377 1.377zm-11.046 0c-.759 0-1.377-.617-1.377-1.377s.618-1.377 1.377-1.377 1.377.617 1.377 1.377-.618 1.377-1.377 1.377zm11.837-12.209l1.476-2.555c.097-.168.038-.385-.13-.482-.168-.097-.385-.038-.482.13l-1.494 2.588c-1.323-.608-2.791-.937-4.339-.937-1.549 0-3.016.329-4.339.937L7.512.225c-.097-.168-.314-.227-.482-.13-.168.097-.227.314-.13.482l1.476 2.555C5.655 4.611 3.672 7.319 3.5 10.5h17c-.172-3.181-2.155-5.889-4.876-7.368zm-4.992-1.014c.276 0 .5.224.5.5s-.224.5-.5.5-.5-.224-.5-.5.224-.5.5-.5zm-4.646 0c.276 0 .5.224.5.5s-.224.5-.5.5-.5-.224-.5-.5.224-.5.5-.5z"/>
                     </svg>
                     <div class="text-left">
-                        <div class="text-xs opacity-80">Disponible en</div>
-                        <div class="text-lg font-bold">Google Play</div>
+                        <div class="text-xs opacity-80">Google Play</div>
                     </div>
                 </a>
             </div>
         </div>
         
-        <!-- Footer -->
-        <div class="px-6 pb-6">
-            <button id="dismissModal" class="w-full text-gray-500 py-3 text-sm font-medium transition-colors duration-300 hover:bg-green-50 rounded-xl" style="color: #0C553C; opacity: 0.7;" onmouseover="this.style.opacity='1';" onmouseout="this.style.opacity='0.7';">
-                Recordármelo después
+        <!-- Footer Compacto -->
+        <div class="px-5 pb-4">
+            <button id="dismissModal" class="w-full text-gray-600 py-2.5 text-xs font-semibold transition-all duration-300 hover:bg-green-50 rounded-xl border border-transparent hover:border-green-200" style="color: #0C553C;">
+                ⏰ Recordármelo después
             </button>
         </div>
     </div>
 </div>
+
+<!-- Estilos adicionales para el modal mejorado -->
+<style>
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animation-delay-500 {
+    animation-delay: 0.5s;
+}
+
+.animation-delay-1000 {
+    animation-delay: 1s;
+}
+
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+
+/* Animación de entrada para el QR */
+.qr-container {
+    animation: qrAppear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes qrAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) rotate(-10deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* Efecto de pulso para el badge */
+@keyframes pulse-badge {
+    0%, 100% {
+        transform: translateY(0px) scale(1);
+    }
+    50% {
+        transform: translateY(-5px) scale(1.05);
+    }
+}
+</style>
 
 
 

@@ -14,21 +14,236 @@
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
     <script  type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Estilo de plantilla -->
-    <link href="{% static 'estilos/estilos.css' %}" rel="stylesheet" type="text/css">
     {% block extra_head %}{% endblock %}
 </head>
 <body>
     <style>
+        /* Archivo CSS mínimo para prevenir 404 en reportes */
+        :root{--primary:#667eea;--muted:#6b7280}
+        body{font-family:Inter,Segoe UI,Roboto,Arial,sans-serif}
+        .chart-container{height:400px}
+        .empty-state{text-align:center;padding:2rem;color:var(--muted)}
+        .notification{position:fixed;top:1rem;right:1rem;z-index:9999}
+        /* Pequeñas correcciones para tablas */
+        .table-modern th, .table-modern td{padding:0.75rem}
+
+        /* Estilos mejorados para las cards de puntos de lavado */
+        .location-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, box-shadow;
+        }
+
+        .location-card:hover {
+            transform: translateY(-4px) scale(1.02);
+        }
+
+        .location-card.selected {
+            border-color: #3b82f6 !important;
+            box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.1), 0 10px 10px -5px rgba(59, 130, 246, 0.04);
+        }
+
+        .location-card.selected .select-indicator {
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+        }
+
+        .location-card.selected .select-indicator > div {
+            transform: scale(1);
+            background-color: white;
+        }
+
+        /* Animación de línea de carga para el texto truncado */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Mejora para el efecto de brillo */
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) skewX(-12deg); }
+            100% { transform: translateX(200%) skewX(-12deg); }
+        }
+
+        .location-card:hover .absolute.bg-gradient-to-r {
+            animation: shimmer 0.8s ease-out;
+        }
+
+        /* Animación de pulso mejorada */
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .animate-pulse {
+            animation: pulse-soft 2s ease-in-out infinite;
+        }
+
+        /* Transición suave para iconos */
+        .location-card i {
+            transition: all 0.3s ease;
+        }
+
+        /* Efecto de resplandor sutil en hover */
+        .location-card:hover .bg-gradient-to-br {
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Mejora para el estado de distancia */
+        .distance-indicator {
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Prevenir animaciones no deseadas en la carga de página */
+        .no-initial-animation,
+        .no-initial-animation * {
+            animation-duration: 0s !important;
+            transition-duration: 0s !important;
+        }
+
+        /* Aplicar a body durante la carga inicial */
+        body.loading {
+            animation: none !important;
+            transition: none !important;
+        }
+
+        body.loading * {
+            animation: none !important;
+            transition: none !important;
+        }
+
+        /* Estilos modernos para botones de navegación 2025 */
+        .scale-98 {
+            transform: scale(0.98);
+        }
+
+        /* Efecto de partículas en los botones */
+        @keyframes particle-float {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-20px) rotate(180deg);
+                opacity: 0;
+            }
+        }
+
+        /* Estados disabled mejorados para botones */
+        button:disabled {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        button:disabled:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Animación de carga para botones */
+        @keyframes button-loading {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .button-loading::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: button-loading 1s linear infinite;
+        }
+
+        /* Efecto de ondas en los botones */
+        @keyframes ripple {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .button-ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button-ripple::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: all 0.5s ease;
+        }
+
+        .button-ripple:active::after {
+            width: 100px;
+            height: 100px;
+            animation: ripple 0.6s ease-out;
+        }
+        
         /* Estilos personalizados y ajustes para Tailwind */
         body {
-            padding-top: 70px; /* Ajustado para el navbar optimizado */
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 75px; /* Ajustado para el navbar modernizado */
+            font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            background-color: #fafafa;
         }
         
         /* Asegurar que los enlaces funcionen correctamente */
         a {
             text-decoration: none;
+        }
+        
+        /* Mejoras para elementos del navbar */
+        .nav-item {
+            position: relative;
+            white-space: nowrap;
+        }
+        
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(to right, #3b82f6, #2563eb);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-item:hover::before {
+            transform: scaleX(1);
         }
         
         /* Transiciones suaves específicas - mejoradas para evitar zoom indeseado */
@@ -165,301 +380,409 @@
         /* Responsive breakpoints personalizados */
         @media (max-width: 1024px) {
             body {
-                padding-top: 68px;
+                padding-top: 72px;
             }
         }
         
         @media (max-width: 768px) {
             body {
-                padding-top: 65px;
+                padding-top: 70px;
             }
         }
         
         @media (max-width: 640px) {
             body {
-                padding-top: 62px;
+                padding-top: 68px;
             }
+        }
+        
+        /* Animación de entrada para el navbar */
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        nav {
+            animation: slideInDown 0.4s ease-out;
+        }
+        
+        /* Efecto de elevación para botones */
+        .hover-lift:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Estilo para scroll suave */
+        html {
+            scroll-behavior: smooth;
         }
         
         /* Scrollbar personalizada */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 10px;
         }
         
         ::-webkit-scrollbar-track {
             background: #f1f5f9;
+            border-radius: 5px;
         }
         
         ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
+            background: linear-gradient(180deg, #cbd5e1, #94a3b8);
+            border-radius: 5px;
+            border: 2px solid #f1f5f9;
         }
         
         ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+            background: linear-gradient(180deg, #94a3b8, #64748b);
+        }
+        
+        /* Efecto ripple para botones */
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s ease-out;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        /* Animación para el dropdown del perfil */
+        #profileDropdown:not(.hidden) {
+            animation: dropdownFadeIn 0.3s ease-out;
+        }
+        
+        @keyframes dropdownFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Sombras personalizadas para profundidad */
+        .shadow-custom {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                        0 2px 4px -1px rgba(0, 0, 0, 0.06),
+                        0 0 0 1px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Transición suave para cambios de color */
+        * {
+            transition-property: background-color, border-color, color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        /* Evitar transiciones en elementos específicos */
+        nav, .nav-item, button, a {
+            transition-property: all;
         }
     </style>
-    <!-- Navbar con Tailwind CSS -->
-    <nav class="bg-white/90 backdrop-blur-xl shadow-xl border-b border-gray-200/50 px-3 sm:px-4 md:px-6 lg:px-8 py-3 fixed top-0 left-0 right-0 z-50">
-        <div class="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-4">
+    <!-- Navbar con Tailwind CSS - Diseño UX/UI Mejorado -->
+    <nav class="bg-white shadow-lg border-b-2 border-gray-100 px-4 sm:px-6 lg:px-8 py-3.5 fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="max-w-[1920px] mx-auto flex items-center justify-between gap-4">
             <!-- Logo y marca mejorados - lado izquierdo -->
-            <div class="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
+            <div class="flex items-center space-x-3 sm:space-x-4 flex-shrink-0">
                 <!-- Información de usuario y perfil mejorada -->
                 {% if request.user.is_authenticated %}
                 <div class="flex items-center">
-                    <!-- Contenedor del perfil con efecto glassmorphism -->
-                    <div class="relative group bg-white/60 backdrop-blur-sm rounded-2xl p-1.5 sm:p-2 border border-gray-200/50 hover:border-blue-300/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10">
+                    <!-- Contenedor del perfil modernizado -->
+                    <div class="relative group bg-gradient-to-br from-gray-50 to-white rounded-2xl p-2 border border-gray-200 hover:border-blue-400 transition-all duration-300 hover:shadow-md cursor-pointer"
+                         onclick="toggleProfileMenu()">
                         <!-- Imagen de perfil mejorada -->
                         <div class="relative">
                             {% if request.user.profile_picture %}
                                 <img src="{{ request.user.profile_picture.url }}" 
                                      alt="Foto de Perfil de {{ request.user.nombre_completo|default:request.user.nombre_usuario }}" 
-                                     class="profile-image profile-image-navbar rounded-xl border-2 border-white shadow-md ring-2 ring-blue-100 group-hover:ring-blue-300 transition-all duration-300 cursor-pointer"
-                                     onclick="toggleProfileMenu()">
+                                     class="profile-image profile-image-navbar rounded-xl shadow-sm ring-2 ring-blue-200 group-hover:ring-blue-400 transition-all duration-300">
                             {% else %}
-                                <div class="profile-image-navbar rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-cyan-500 border-2 border-white shadow-md ring-2 ring-blue-100 group-hover:ring-blue-300 transition-all duration-300 cursor-pointer flex items-center justify-center"
-                                     onclick="toggleProfileMenu()">
-                                    <i class="fas fa-user text-white text-sm group-hover:scale-110 transition-transform duration-300"></i>
+                                <div class="profile-image-navbar rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-sm ring-2 ring-blue-200 group-hover:ring-blue-400 transition-all duration-300 flex items-center justify-center">
+                                    <i class="fas fa-user text-white text-base group-hover:scale-110 transition-transform duration-300"></i>
                                 </div>
                             {% endif %}
                             
                             <!-- Indicador de estado online mejorado -->
-                            <div class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 border-2 border-white rounded-full shadow-sm ring-1 ring-green-200 animate-pulse"></div>
-                        </div>
-                        
-                        <!-- Información del usuario (visible en pantallas grandes) -->
-                        <div class="absolute left-full ml-3 hidden xl:flex flex-col justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto">
-                            <span class="text-sm font-semibold text-slate-700 whitespace-nowrap">{{ request.user.nombre_completo|default:request.user.nombre_usuario }}</span>
-                            <span class="text-xs text-blue-600 font-medium">Administrador</span>
+                            <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full shadow-sm">
+                                <span class="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-75"></span>
+                            </div>
                         </div>
                         
                         <!-- Tooltip de información del usuario -->
-                        <div class="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs py-2 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-50 shadow-xl">
+                        <div class="absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs py-2.5 px-4 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-50 shadow-2xl">
                             <div class="flex items-center space-x-2">
-                                <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                <span>{{ request.user.nombre_completo|default:request.user.nombre_usuario }} - Online</span>
+                                <div class="w-2 h-2 bg-emerald-400 rounded-full">
+                                    <span class="absolute w-2 h-2 bg-emerald-400 rounded-full animate-ping"></span>
+                                </div>
+                                <span class="font-medium">{{ request.user.nombre_completo|default:request.user.nombre_usuario }}</span>
                             </div>
-                            <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-t-2 border-transparent border-t-gray-900"></div>
+                            <div class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px">
+                                <div class="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                            </div>
                         </div>
                     </div>
                     
-                    <!-- Dropdown Menu mejorado -->
-                    <div id="profileDropdown" class="hidden absolute left-0 top-full mt-3 w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/60 z-50 overflow-hidden ring-1 ring-gray-900/5">
-                        <!-- Header del dropdown -->
-                        <div class="p-5 bg-gradient-to-r from-blue-50 to-cyan-50 border-b border-gray-100">
+                    <!-- Dropdown Menu modernizado -->
+                    <div id="profileDropdown" class="hidden absolute left-0 top-full mt-4 w-80 bg-white rounded-2xl shadow-2xl border-2 border-gray-200 z-50 overflow-hidden">
+                        <!-- Header del dropdown mejorado -->
+                        <div class="p-6 bg-gradient-to-br from-blue-50 via-indigo-50 to-white border-b-2 border-gray-100">
                             <div class="flex items-center space-x-4">
                                 {% if request.user.profile_picture %}
-                                    <img src="{{ request.user.profile_picture.url }}" 
-                                         alt="Perfil" 
-                                         class="profile-image profile-image-dropdown rounded-xl border-3 border-white shadow-lg ring-2 ring-blue-200">
+                                    <div class="relative">
+                                        <img src="{{ request.user.profile_picture.url }}" 
+                                             alt="Perfil" 
+                                             class="profile-image profile-image-dropdown rounded-2xl shadow-lg ring-4 ring-blue-200">
+                                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-3 border-white rounded-full"></div>
+                                    </div>
                                 {% else %}
-                                    <div class="profile-image-dropdown rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-cyan-500 border-3 border-white shadow-lg ring-2 ring-blue-200 flex items-center justify-center">
-                                        <i class="fas fa-user text-white text-xl"></i>
+                                    <div class="relative">
+                                        <div class="profile-image-dropdown rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg ring-4 ring-blue-200 flex items-center justify-center">
+                                            <i class="fas fa-user text-white text-2xl"></i>
+                                        </div>
+                                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-3 border-white rounded-full"></div>
                                     </div>
                                 {% endif %}
                                 <div class="flex-1 min-w-0">
-                                    <p class="font-bold text-gray-900 truncate text-lg">{{ request.user.nombre_completo|default:request.user.nombre_usuario }}</p>
-                                    <p class="text-sm text-blue-600 font-medium truncate">{{ request.user.correo|default:'admin@autonew.com' }}</p>
-                                    <div class="flex items-center mt-1">
-                                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"></div>
-                                        <span class="text-xs text-green-600 font-medium">En línea</span>
+                                    <p class="font-bold text-gray-900 truncate text-lg mb-1">{{ request.user.nombre_completo|default:request.user.nombre_usuario }}</p>
+                                    <p class="text-sm text-gray-600 truncate mb-2">{{ request.user.correo|default:'admin@autonew.com' }}</p>
+                                    <div class="inline-flex items-center px-2.5 py-1 bg-emerald-100 rounded-full">
+                                        <div class="w-2 h-2 bg-emerald-500 rounded-full mr-1.5 animate-pulse"></div>
+                                        <span class="text-xs text-emerald-700 font-semibold">En línea</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Opciones del menú -->
-                        <div class="py-2">
-                            <a href="{% url 'perfil_admin' %}" class="group flex items-center px-5 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-all duration-200">
-                                <div class="w-10 h-10 bg-blue-100 group-hover:bg-blue-200 rounded-xl flex items-center justify-center mr-4 transition-colors duration-200">
-                                    <i class="fas fa-user-edit text-blue-600 text-sm"></i>
+                        <!-- Opciones del menú mejoradas -->
+                        <div class="py-3">
+                            <a href="{% url 'perfil_admin' %}" class="group flex items-center px-6 py-3.5 text-gray-700 hover:bg-blue-50 transition-all duration-200 relative overflow-hidden">
+                                <div class="w-11 h-11 bg-gradient-to-br from-blue-100 to-blue-200 group-hover:from-blue-200 group-hover:to-blue-300 rounded-xl flex items-center justify-center mr-4 transition-all duration-200 shadow-sm">
+                                    <i class="fas fa-user-edit text-blue-600 text-base"></i>
                                 </div>
                                 <div>
-                                    <div class="font-medium">Editar Perfil</div>
-                                    <div class="text-xs text-gray-500">Actualizar información personal</div>
+                                    <div class="font-semibold text-gray-800">Editar Perfil</div>
+                                    <div class="text-xs text-gray-500">Actualizar información</div>
                                 </div>
+                                <i class="fas fa-chevron-right text-gray-400 ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200"></i>
                             </a>
-                            <a href="/configuracion" class="group flex items-center px-5 py-3 text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-all duration-200">
-                                <div class="w-10 h-10 bg-purple-100 group-hover:bg-purple-200 rounded-xl flex items-center justify-center mr-4 transition-colors duration-200">
-                                    <i class="fas fa-cogs text-purple-600 text-sm"></i>
+                            <a href="/configuracion" class="group flex items-center px-6 py-3.5 text-gray-700 hover:bg-purple-50 transition-all duration-200 relative overflow-hidden">
+                                <div class="w-11 h-11 bg-gradient-to-br from-purple-100 to-purple-200 group-hover:from-purple-200 group-hover:to-purple-300 rounded-xl flex items-center justify-center mr-4 transition-all duration-200 shadow-sm">
+                                    <i class="fas fa-cogs text-purple-600 text-base"></i>
                                 </div>
                                 <div>
-                                    <div class="font-medium">Configuración</div>
+                                    <div class="font-semibold text-gray-800">Configuración</div>
                                     <div class="text-xs text-gray-500">Preferencias del sistema</div>
                                 </div>
+                                <i class="fas fa-chevron-right text-gray-400 ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200"></i>
                             </a>
                             
-                            <!-- Separador -->
-                            <div class="border-t border-gray-100 my-2 mx-5"></div>
+                            <!-- Separador elegante -->
+                            <div class="my-3 mx-6 border-t-2 border-gray-100"></div>
                             
-                            <a href="{% url 'logout_view' %}" class="group flex items-center px-5 py-3 text-red-600 hover:bg-red-50 transition-all duration-200">
-                                <div class="w-10 h-10 bg-red-100 group-hover:bg-red-200 rounded-xl flex items-center justify-center mr-4 transition-colors duration-200">
-                                    <i class="fas fa-sign-out-alt text-red-600 text-sm"></i>
+                            <a href="{% url 'logout_view' %}" class="group flex items-center px-6 py-3.5 text-red-600 hover:bg-red-50 transition-all duration-200 relative overflow-hidden">
+                                <div class="w-11 h-11 bg-gradient-to-br from-red-100 to-red-200 group-hover:from-red-200 group-hover:to-red-300 rounded-xl flex items-center justify-center mr-4 transition-all duration-200 shadow-sm">
+                                    <i class="fas fa-sign-out-alt text-red-600 text-base"></i>
                                 </div>
                                 <div>
-                                    <div class="font-medium">Cerrar Sesión</div>
-                                    <div class="text-xs text-red-400">Salir del panel de administración</div>
+                                    <div class="font-semibold text-red-600">Cerrar Sesión</div>
+                                    <div class="text-xs text-red-400">Salir del panel</div>
                                 </div>
+                                <i class="fas fa-chevron-right text-red-400 ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200"></i>
                             </a>
                         </div>
                     </div>
                 </div>
                 {% endif %}
                 
-                <div class="flex flex-col">
-                    <span class="text-lg sm:text-xl lg:text-2xl font-black tracking-tight bg-gradient-to-r from-slate-800 via-blue-700 to-blue-600 bg-clip-text text-transparent whitespace-nowrap">
-                        AUTO<span class="text-blue-500">NEW</span>
+                <!-- Logo y texto mejorado -->
+                <div class="flex flex-col select-none">
+                    <div class="flex items-center space-x-1.5">
+                        <span class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight bg-gradient-to-r from-gray-800 to-gray-900 bg-clip-text text-transparent">
+                            AUTO
+                        </span>
+                        <span class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
+                            NEW
+                        </span>
+                    </div>
+                    <span class="text-[10px] sm:text-xs font-bold text-gray-500 tracking-widest uppercase mt-0.5">
+                        <i class="fas fa-shield-alt text-blue-500 mr-1"></i>Admin Panel
                     </span>
-                    <span class="text-[10px] sm:text-xs font-semibold text-blue-600/70 tracking-wider uppercase hidden sm:block">Admin Dashboard</span>
                 </div>
             </div>
             
-            <!-- Menú de navegación mejorado - centro (solo desktop) -->
-            <div id="navbar-menu" class="hidden lg:flex items-center space-x-1 flex-1 justify-center">
+            <!-- Menú de navegación modernizado - centro (solo desktop) -->
+            <div id="navbar-menu" class="hidden lg:flex items-center space-x-2 flex-1 justify-center">
                 <!-- Grupo Principal: Gestión Core -->
-                <div class="flex items-center bg-gray-50/80 rounded-2xl p-1.5 border border-gray-200/50 backdrop-blur-sm">
-                    <a href="/homecrud" class="group px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center space-x-2 {% if request.path == '/homecrud' %}bg-blue-600 text-white shadow-lg shadow-blue-600/25{% else %}text-gray-600 hover:text-blue-600 hover:bg-white/70{% endif %}">
-                        <i class="fas fa-home text-sm group-hover:scale-110 transition-transform duration-300"></i>
+                <div class="flex items-center bg-gray-50 rounded-xl p-1 border-2 border-gray-200 shadow-sm">
+                    <a href="/homecrud" class="nav-item group relative px-4 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 flex items-center space-x-2.5 {% if request.path == '/homecrud' %}bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-md{% else %}text-gray-700 hover:text-blue-600 hover:bg-white{% endif %}">
+                        <i class="fas fa-home text-base group-hover:scale-110 transition-transform duration-300"></i>
                         <span>Home</span>
+                        {% if request.path == '/homecrud' %}<div class="absolute inset-0 bg-white/20 rounded-lg"></div>{% endif %}
                     </a>
-                    <a href="/usuarioscrud" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-blue-600 hover:bg-white/70 transition-all duration-300 flex items-center space-x-2">
-                        <i class="fas fa-users text-sm text-blue-500 group-hover:scale-110 transition-transform duration-300"></i>
+                    <a href="/usuarioscrud" class="nav-item group px-4 py-2.5 rounded-lg text-sm font-bold text-gray-700 hover:text-blue-600 hover:bg-white transition-all duration-300 flex items-center space-x-2.5">
+                        <i class="fas fa-users text-base text-blue-500 group-hover:scale-110 transition-transform duration-300"></i>
                         <span>Usuarios</span>
                     </a>
-                    <a href="/citascrud" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-emerald-600 hover:bg-emerald-50/70 transition-all duration-300 flex items-center space-x-2">
-                        <i class="fas fa-calendar-alt text-sm text-emerald-500 group-hover:scale-110 transition-transform duration-300"></i>
+                    <a href="/citascrud" class="nav-item group px-4 py-2.5 rounded-lg text-sm font-bold text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-all duration-300 flex items-center space-x-2.5">
+                        <i class="fas fa-calendar-check text-base text-emerald-500 group-hover:scale-110 transition-transform duration-300"></i>
                         <span>Citas</span>
                     </a>
                 </div>
                 
+                <!-- Separador visual -->
+                <div class="h-8 w-px bg-gray-300"></div>
+                
                 <!-- Grupo Servicios -->
-                <div class="flex items-center bg-gray-50/80 rounded-2xl p-1.5 border border-gray-200/50 backdrop-blur-sm">
-                    <a href="/servicioscrud" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-purple-600 hover:bg-purple-50/70 transition-all duration-300 flex items-center space-x-2">
-                        <i class="fas fa-cogs text-sm text-purple-500 group-hover:scale-110 transition-transform duration-300"></i>
+                <div class="flex items-center bg-gray-50 rounded-xl p-1 border-2 border-gray-200 shadow-sm">
+                    <a href="/servicioscrud" class="nav-item group px-4 py-2.5 rounded-lg text-sm font-bold text-gray-700 hover:text-purple-600 hover:bg-purple-50 transition-all duration-300 flex items-center space-x-2.5">
+                        <i class="fas fa-wrench text-base text-purple-500 group-hover:scale-110 transition-transform duration-300"></i>
                         <span>Servicios</span>
                     </a>
-                    <a href="/empresascrud" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50/70 transition-all duration-300 flex items-center space-x-2">
-                        <i class="fas fa-building text-sm text-indigo-500 group-hover:scale-110 transition-transform duration-300"></i>
+                    <a href="/empresascrud" class="nav-item group px-4 py-2.5 rounded-lg text-sm font-bold text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-300 flex items-center space-x-2.5">
+                        <i class="fas fa-building text-base text-indigo-500 group-hover:scale-110 transition-transform duration-300"></i>
                         <span>Empresas</span>
                     </a>
                 </div>
                 
-                <!-- Grupo Planes y Suscripciones -->
-                <div class="flex items-center bg-gray-50/80 rounded-2xl p-1.5 border border-gray-200/50 backdrop-blur-sm">
-                    <a href="/planescrud" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-cyan-600 hover:bg-cyan-50/70 transition-all duration-300 flex items-center space-x-2">
-                        <i class="fas fa-layer-group text-sm text-cyan-500 group-hover:scale-110 transition-transform duration-300"></i>
+                <!-- Separador visual -->
+                <div class="h-8 w-px bg-gray-300"></div>
+                
+                <!-- Grupo Planes y Pagos -->
+                <div class="flex items-center bg-gray-50 rounded-xl p-1 border-2 border-gray-200 shadow-sm">
+                    <a href="/planescrud" class="nav-item group px-4 py-2.5 rounded-lg text-sm font-bold text-gray-700 hover:text-cyan-600 hover:bg-cyan-50 transition-all duration-300 flex items-center space-x-2.5">
+                        <i class="fas fa-box text-base text-cyan-500 group-hover:scale-110 transition-transform duration-300"></i>
                         <span>Planes</span>
                     </a>
-                    <a href="/planes-empresariales-crud" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-violet-600 hover:bg-violet-50/70 transition-all duration-300 flex items-center space-x-2">
-                        <i class="fas fa-briefcase text-sm text-violet-500 group-hover:scale-110 transition-transform duration-300"></i>
-                        <span>Planes Empresariales</span>
+                    <a href="/planes-empresariales-crud" class="nav-item group px-4 py-2.5 rounded-lg text-sm font-bold text-gray-700 hover:text-violet-600 hover:bg-violet-50 transition-all duration-300 flex items-center space-x-2.5">
+                        <i class="fas fa-briefcase text-base text-violet-500 group-hover:scale-110 transition-transform duration-300"></i>
+                        <span>P. Empresariales</span>
                     </a>
-                    <a href="{% url 'gestion_pagos_empresas' %}" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-yellow-600 hover:bg-yellow-50/70 transition-all duration-300 flex items-center space-x-2">
-                        <i class="fas fa-money-bill-wave text-sm text-yellow-500 group-hover:scale-110 transition-transform duration-300"></i>
-                        <span>Pagos Empresas</span>
+                    <a href="{% url 'gestion_pagos_empresas' %}" class="nav-item group px-4 py-2.5 rounded-lg text-sm font-bold text-gray-700 hover:text-amber-600 hover:bg-amber-50 transition-all duration-300 flex items-center space-x-2.5">
+                        <i class="fas fa-dollar-sign text-base text-amber-500 group-hover:scale-110 transition-transform duration-300"></i>
+                        <span>Pagos</span>
                     </a>
                 </div>
                 
-                <!-- Grupo Feedback y Gestión -->
-                <div class="flex items-center bg-gray-50/80 rounded-2xl p-1.5 border border-gray-200/50 backdrop-blur-sm">
-                    <a href="/quejascrud" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-orange-600 hover:bg-orange-50/70 transition-all duration-300 flex items-center space-x-2">
-                        <i class="fas fa-exclamation-triangle text-sm text-orange-500 group-hover:scale-110 transition-transform duration-300"></i>
+                <!-- Separador visual -->
+                <div class="h-8 w-px bg-gray-300"></div>
+                
+                <!-- Grupo Feedback -->
+                <div class="flex items-center bg-gray-50 rounded-xl p-1 border-2 border-gray-200 shadow-sm">
+                    <a href="/quejascrud" class="nav-item group px-4 py-2.5 rounded-lg text-sm font-bold text-gray-700 hover:text-orange-600 hover:bg-orange-50 transition-all duration-300 flex items-center space-x-2.5">
+                        <i class="fas fa-exclamation-circle text-base text-orange-500 group-hover:scale-110 transition-transform duration-300"></i>
                         <span>PQRS</span>
                     </a>
-                    <a href="/comentarioscrud" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-green-600 hover:bg-green-50/70 transition-all duration-300 flex items-center space-x-2">
-                        <i class="fas fa-comments text-sm text-green-500 group-hover:scale-110 transition-transform duration-300"></i>
+                    <a href="/comentarioscrud" class="nav-item group px-4 py-2.5 rounded-lg text-sm font-bold text-gray-700 hover:text-green-600 hover:bg-green-50 transition-all duration-300 flex items-center space-x-2.5">
+                        <i class="fas fa-comment-dots text-base text-green-500 group-hover:scale-110 transition-transform duration-300"></i>
                         <span>Comentarios</span>
                     </a>
                 </div>
             </div>
                 
-            <!-- Botón hamburguesa para móvil mejorado - lado derecho -->
-            <button class="lg:hidden p-2.5 sm:p-3 rounded-xl hover:bg-blue-50 active:bg-blue-100 transition-all duration-200 border-2 border-slate-200 hover:border-blue-300 shadow-sm flex-shrink-0" onclick="toggleMobileMenu()">
-                <svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Botón hamburguesa para móvil modernizado - lado derecho -->
+            <button class="lg:hidden p-3 rounded-xl hover:bg-gray-100 active:bg-gray-200 transition-all duration-200 border-2 border-gray-300 hover:border-blue-400 shadow-sm flex-shrink-0 group" onclick="toggleMobileMenu()">
+                <svg class="w-6 h-6 text-gray-700 group-hover:text-blue-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
             </button>
             
-            <!-- Contenedor para botón de acción (desktop) -->
-            <div class="hidden lg:flex items-center flex-shrink-0">
-                <!-- Separador elegante -->
-                <div class="w-px h-8 bg-gradient-to-b from-transparent via-gray-300 to-transparent mx-4"></div>
+            <!-- Contenedor para botones de acción (desktop) -->
+            <div class="hidden lg:flex items-center space-x-3 flex-shrink-0">
+                <!-- Notificaciones (opcional - puede activarse después) -->
+                <button class="relative p-2.5 rounded-xl hover:bg-gray-100 transition-all duration-200 group">
+                    <i class="fas fa-bell text-gray-600 group-hover:text-blue-600 text-lg transition-colors duration-200"></i>
+                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
+                </button>
                 
-                <!-- Botón de acción rápida (si no está autenticado) -->
-                {% if not request.user.is_authenticated %}
-                <div class="flex items-center">
-                    <a href="{% url 'logout_view' %}" class="group px-6 py-3 rounded-2xl text-sm font-semibold text-white bg-gradient-to-r from-red-500 via-red-600 to-pink-600 hover:from-red-600 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 border border-red-400/30">
-                        <i class="fas fa-sign-out-alt text-sm group-hover:rotate-12 transition-transform duration-300"></i>
-                        <span>Cerrar Sesión</span>
-                        <div class="absolute inset-0 bg-white/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    </a>
-                </div>
-                {% endif %}
+                <!-- Separador -->
+                <div class="h-8 w-px bg-gray-300"></div>
+                
+                <!-- Botón de cerrar sesión (siempre visible) -->
+                <a href="{% url 'logout_view' %}" class="group relative px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 overflow-hidden">
+                    <div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <i class="fas fa-sign-out-alt text-base relative z-10 group-hover:rotate-12 transition-transform duration-300"></i>
+                    <span class="relative z-10">Salir</span>
+                </a>
             </div>
         </div>
         
-        <!-- Menú móvil mejorado -->
-        <div id="mobile-menu" class="lg:hidden hidden mt-4 pb-4 border-t border-gray-200">
-            <div class="grid grid-cols-2 gap-2 sm:gap-3 mt-4">
+        <!-- Menú móvil modernizado -->
+        <div id="mobile-menu" class="lg:hidden hidden mt-5 pb-5 border-t-2 border-gray-200 bg-gradient-to-b from-white to-gray-50">
+            <div class="grid grid-cols-2 gap-3 mt-5">
                 <!-- Primera columna -->
                 <div class="space-y-2">
-                    <a href="/homecrud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-slate-100 hover:text-slate-900 transition-all duration-300 {% if request.path == '/homecrud' %}bg-slate-800 text-white{% endif %}">
-                        <i class="fas fa-home mr-3 text-sm"></i>
+                    <a href="/homecrud" class="flex items-center px-4 py-3 rounded-xl font-bold shadow-sm transition-all duration-300 border-2 {% if request.path == '/homecrud' %}bg-gradient-to-r from-blue-600 to-blue-500 text-white border-blue-500{% else %}bg-white text-gray-700 border-gray-200 hover:border-blue-400 hover:shadow-md{% endif %}">
+                        <i class="fas fa-home mr-3 text-base"></i>
                         <span class="text-sm">Home</span>
                     </a>
-                    <a href="/usuarioscrud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-blue-50 hover:text-blue-600 transition-all duration-300">
-                        <i class="fas fa-users mr-3 text-sm text-blue-500"></i>
+                    <a href="/usuarioscrud" class="flex items-center px-4 py-3 rounded-xl text-gray-700 font-bold bg-white border-2 border-gray-200 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-600 shadow-sm hover:shadow-md transition-all duration-300">
+                        <i class="fas fa-users mr-3 text-base text-blue-500"></i>
                         <span class="text-sm">Usuarios</span>
                     </a>
-                    <a href="/citascrud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-blue-50 hover:text-blue-600 transition-all duration-300">
-                        <i class="fas fa-calendar-alt mr-3 text-sm text-blue-500"></i>
+                    <a href="/citascrud" class="flex items-center px-4 py-3 rounded-xl text-gray-700 font-bold bg-white border-2 border-gray-200 hover:border-emerald-400 hover:bg-emerald-50 hover:text-emerald-600 shadow-sm hover:shadow-md transition-all duration-300">
+                        <i class="fas fa-calendar-check mr-3 text-base text-emerald-500"></i>
                         <span class="text-sm">Citas</span>
                     </a>
-                    <a href="/quejascrud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-orange-50 hover:text-orange-600 transition-all duration-300">
-                        <i class="fas fa-exclamation-triangle mr-3 text-sm text-orange-500"></i>
-                        <span class="text-sm">Quejas</span>
+                    <a href="/quejascrud" class="flex items-center px-4 py-3 rounded-xl text-gray-700 font-bold bg-white border-2 border-gray-200 hover:border-orange-400 hover:bg-orange-50 hover:text-orange-600 shadow-sm hover:shadow-md transition-all duration-300">
+                        <i class="fas fa-exclamation-circle mr-3 text-base text-orange-500"></i>
+                        <span class="text-sm">PQRS</span>
                     </a>
-                    <a href="/comentarioscrud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-green-50 hover:text-green-600 transition-all duration-300">
-                        <i class="fas fa-comments mr-3 text-sm text-green-500"></i>
+                    <a href="/comentarioscrud" class="flex items-center px-4 py-3 rounded-xl text-gray-700 font-bold bg-white border-2 border-gray-200 hover:border-green-400 hover:bg-green-50 hover:text-green-600 shadow-sm hover:shadow-md transition-all duration-300">
+                        <i class="fas fa-comment-dots mr-3 text-base text-green-500"></i>
                         <span class="text-sm">Comentarios</span>
                     </a>
-                    <a href="{% url 'gestion_pagos_empresas' %}" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-yellow-50 hover:text-yellow-600 transition-all duration-300">
-                        <i class="fas fa-money-bill-wave mr-3 text-sm text-yellow-500"></i>
-                        <span class="text-sm">Pagos Empresas</span>
+                    <a href="{% url 'gestion_pagos_empresas' %}" class="flex items-center px-4 py-3 rounded-xl text-gray-700 font-bold bg-white border-2 border-gray-200 hover:border-amber-400 hover:bg-amber-50 hover:text-amber-600 shadow-sm hover:shadow-md transition-all duration-300">
+                        <i class="fas fa-dollar-sign mr-3 text-base text-amber-500"></i>
+                        <span class="text-sm">Pagos</span>
                     </a>
                 </div>
                 
                 <!-- Segunda columna -->
                 <div class="space-y-2">
-                    <a href="/servicioscrud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-purple-50 hover:text-purple-600 transition-all duration-300">
-                        <i class="fas fa-cogs mr-3 text-sm text-purple-500"></i>
+                    <a href="/servicioscrud" class="flex items-center px-4 py-3 rounded-xl text-gray-700 font-bold bg-white border-2 border-gray-200 hover:border-purple-400 hover:bg-purple-50 hover:text-purple-600 shadow-sm hover:shadow-md transition-all duration-300">
+                        <i class="fas fa-wrench mr-3 text-base text-purple-500"></i>
                         <span class="text-sm">Servicios</span>
                     </a>
-                    <a href="/empresascrud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-indigo-50 hover:text-indigo-600 transition-all duration-300">
-                        <i class="fas fa-building mr-3 text-sm text-indigo-500"></i>
+                    <a href="/empresascrud" class="flex items-center px-4 py-3 rounded-xl text-gray-700 font-bold bg-white border-2 border-gray-200 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-600 shadow-sm hover:shadow-md transition-all duration-300">
+                        <i class="fas fa-building mr-3 text-base text-indigo-500"></i>
                         <span class="text-sm">Empresas</span>
                     </a>
-                    <a href="/planescrud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-cyan-50 hover:text-cyan-600 transition-all duration-300">
-                        <i class="fas fa-layer-group mr-3 text-sm text-cyan-500"></i>
+                    <a href="/planescrud" class="flex items-center px-4 py-3 rounded-xl text-gray-700 font-bold bg-white border-2 border-gray-200 hover:border-cyan-400 hover:bg-cyan-50 hover:text-cyan-600 shadow-sm hover:shadow-md transition-all duration-300">
+                        <i class="fas fa-box mr-3 text-base text-cyan-500"></i>
                         <span class="text-sm">Planes</span>
                     </a>
-                    <a href="/planes-empresariales-crud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-purple-50 hover:text-purple-600 transition-all duration-300">
-                        <i class="fas fa-building mr-3 text-sm text-purple-500"></i>
+                    <a href="/planes-empresariales-crud" class="flex items-center px-4 py-3 rounded-xl text-gray-700 font-bold bg-white border-2 border-gray-200 hover:border-violet-400 hover:bg-violet-50 hover:text-violet-600 shadow-sm hover:shadow-md transition-all duration-300">
+                        <i class="fas fa-briefcase mr-3 text-base text-violet-500"></i>
                         <span class="text-sm">P. Empresariales</span>
                     </a>
-                    <a href="/suscripciones-individuales-crud" class="flex items-center px-3 py-2.5 rounded-xl text-slate-700 font-medium hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-300">
-                        <i class="fas fa-user-check mr-3 text-sm text-emerald-500"></i>
+                    <a href="/suscripciones-individuales-crud" class="flex items-center px-4 py-3 rounded-xl text-gray-700 font-bold bg-white border-2 border-gray-200 hover:border-teal-400 hover:bg-teal-50 hover:text-teal-600 shadow-sm hover:shadow-md transition-all duration-300">
+                        <i class="fas fa-user-check mr-3 text-base text-teal-500"></i>
                         <span class="text-sm">Suscripciones</span>
                     </a>
-                   
                 </div>
             </div>
             
-            <!-- Botón de cerrar sesión móvil -->
-            <div class="mt-4 pt-4 border-t border-gray-200">
-                <a href="{% url 'logout_view' %}" class="w-full flex items-center justify-center px-4 py-3 rounded-xl text-white font-medium bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 shadow-lg transition-all duration-300 space-x-2">
-                    <i class="fas fa-sign-out-alt text-sm"></i>
-                    <span>Cerrar Sesión</span>
+            <!-- Botón de cerrar sesión móvil modernizado -->
+            <div class="mt-5 pt-5 border-t-2 border-gray-200">
+                <a href="{% url 'logout_view' %}" class="relative group w-full flex items-center justify-center px-5 py-3.5 rounded-xl text-white font-bold bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg hover:shadow-xl transition-all duration-300 space-x-2.5 overflow-hidden border-2 border-red-400">
+                    <div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <i class="fas fa-sign-out-alt text-base relative z-10 group-hover:rotate-12 transition-transform duration-300"></i>
+                    <span class="relative z-10">Cerrar Sesión</span>
                 </a>
             </div>
         </div>
@@ -599,31 +922,63 @@
                 document.documentElement.classList.add('page-ready');
             }, 100);
             
-            // DESACTIVADO: Animación del navbar que causaba zoom en carga
-            // const navbar = document.querySelector('nav');
-            // navbar.style.transform = 'translateY(-100%)';
-            // navbar.style.transition = 'transform 0.5s ease-out';
-            // setTimeout(() => {
-            //     navbar.style.transform = 'translateY(0)';
-            // }, 100);
+            // Efecto de scroll para el navbar (añade sombra al hacer scroll)
+            let lastScroll = 0;
+            const navbar = document.querySelector('nav');
             
-            // Efectos de hover mejorados para los enlaces de navegación (solo cuando esté listo)
+            window.addEventListener('scroll', function() {
+                const currentScroll = window.pageYOffset;
+                
+                if (currentScroll > 20) {
+                    navbar.classList.add('shadow-2xl');
+                    navbar.classList.remove('shadow-lg');
+                } else {
+                    navbar.classList.add('shadow-lg');
+                    navbar.classList.remove('shadow-2xl');
+                }
+                
+                lastScroll = currentScroll;
+            });
+            
+            // Efectos de hover mejorados para los enlaces de navegación
             setTimeout(function() {
-                const navLinks = document.querySelectorAll('nav a');
-                navLinks.forEach(link => {
-                    link.addEventListener('mouseenter', function() {
-                        if (document.documentElement.classList.contains('page-ready')) {
-                            this.style.transform = 'translateY(-2px)';
-                        }
-                    });
-                    
-                    link.addEventListener('mouseleave', function() {
-                        if (document.documentElement.classList.contains('page-ready')) {
-                            this.style.transform = 'translateY(0)';
-                        }
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => {
+                    // Efecto de ripple al hacer click
+                    item.addEventListener('click', function(e) {
+                        const ripple = document.createElement('span');
+                        const rect = this.getBoundingClientRect();
+                        const size = Math.max(rect.width, rect.height);
+                        const x = e.clientX - rect.left - size / 2;
+                        const y = e.clientY - rect.top - size / 2;
+                        
+                        ripple.style.width = ripple.style.height = size + 'px';
+                        ripple.style.left = x + 'px';
+                        ripple.style.top = y + 'px';
+                        ripple.classList.add('ripple-effect');
+                        
+                        this.appendChild(ripple);
+                        
+                        setTimeout(() => ripple.remove(), 600);
                     });
                 });
             }, 150);
+            
+            // Animación suave para el menú móvil
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenu) {
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.attributeName === 'class') {
+                            if (!mobileMenu.classList.contains('hidden')) {
+                                mobileMenu.style.animation = 'slideDown 0.3s ease-out';
+                            }
+                        }
+                    });
+                });
+                
+                observer.observe(mobileMenu, { attributes: true });
+            }
         });
     </script>
 </body>

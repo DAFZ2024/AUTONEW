@@ -12,11 +12,203 @@
     <script  type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     {% load static %}
-    <!-- Estilo de plantilla -->
-    <link href="{% static "estilos/estilos.css" %}" rel="stylesheet" type="text/css" >
 </head>
 <body>
     <style>
+        /* Archivo CSS mínimo para prevenir 404 en reportes */
+        :root{--primary:#667eea;--muted:#6b7280}
+        body{font-family:Inter,Segoe UI,Roboto,Arial,sans-serif}
+        .chart-container{height:400px}
+        .empty-state{text-align:center;padding:2rem;color:var(--muted)}
+        .notification{position:fixed;top:1rem;right:1rem;z-index:9999}
+        /* Pequeñas correcciones para tablas */
+        .table-modern th, .table-modern td{padding:0.75rem}
+
+        /* Estilos mejorados para las cards de puntos de lavado */
+        .location-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, box-shadow;
+        }
+
+        .location-card:hover {
+            transform: translateY(-4px) scale(1.02);
+        }
+
+        .location-card.selected {
+            border-color: #3b82f6 !important;
+            box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.1), 0 10px 10px -5px rgba(59, 130, 246, 0.04);
+        }
+
+        .location-card.selected .select-indicator {
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+        }
+
+        .location-card.selected .select-indicator > div {
+            transform: scale(1);
+            background-color: white;
+        }
+
+        /* Animación de línea de carga para el texto truncado */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Mejora para el efecto de brillo */
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) skewX(-12deg); }
+            100% { transform: translateX(200%) skewX(-12deg); }
+        }
+
+        .location-card:hover .absolute.bg-gradient-to-r {
+            animation: shimmer 0.8s ease-out;
+        }
+
+        /* Animación de pulso mejorada */
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .animate-pulse {
+            animation: pulse-soft 2s ease-in-out infinite;
+        }
+
+        /* Transición suave para iconos */
+        .location-card i {
+            transition: all 0.3s ease;
+        }
+
+        /* Efecto de resplandor sutil en hover */
+        .location-card:hover .bg-gradient-to-br {
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Mejora para el estado de distancia */
+        .distance-indicator {
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Prevenir animaciones no deseadas en la carga de página */
+        .no-initial-animation,
+        .no-initial-animation * {
+            animation-duration: 0s !important;
+            transition-duration: 0s !important;
+        }
+
+        /* Aplicar a body durante la carga inicial */
+        body.loading {
+            animation: none !important;
+            transition: none !important;
+        }
+
+        body.loading * {
+            animation: none !important;
+            transition: none !important;
+        }
+
+        /* Estilos modernos para botones de navegación 2025 */
+        .scale-98 {
+            transform: scale(0.98);
+        }
+
+        /* Efecto de partículas en los botones */
+        @keyframes particle-float {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-20px) rotate(180deg);
+                opacity: 0;
+            }
+        }
+
+        /* Estados disabled mejorados para botones */
+        button:disabled {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        button:disabled:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Animación de carga para botones */
+        @keyframes button-loading {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .button-loading::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: button-loading 1s linear infinite;
+        }
+
+        /* Efecto de ondas en los botones */
+        @keyframes ripple {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .button-ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button-ripple::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: all 0.5s ease;
+        }
+
+        .button-ripple:active::after {
+            width: 100px;
+            height: 100px;
+            animation: ripple 0.6s ease-out;
+        }
+        
         /* Estilos personalizados y ajustes para Tailwind */
         body {
             padding-top: 85px; /* Ajustado para el navbar de empresas */
@@ -243,8 +435,12 @@
                     </a>
                 </div>
                 
-                <!-- Grupo Reportes y Analytics -->
+                <!-- Grupo Servicios y Gestión -->
                 <div class="flex items-center bg-gray-50/80 rounded-2xl p-1.5 border border-gray-200/50 backdrop-blur-sm">
+                    <a href="{% url 'gestion_servicios_empresa' %}" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-purple-600 hover:bg-purple-50/70 transition-all duration-300 flex items-center space-x-2">
+                        <i class="fas fa-cogs text-sm text-purple-500 group-hover:scale-110 transition-transform duration-300"></i>
+                        <span>Servicios</span>
+                    </a>
                     <a href="{% url 'reportes_empresa' %}" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-orange-600 hover:bg-orange-50/70 transition-all duration-300 flex items-center space-x-2">
                         <i class="fas fa-chart-bar text-sm text-orange-500 group-hover:scale-110 transition-transform duration-300"></i>
                         <span>Reportes</span>
@@ -253,8 +449,8 @@
                         <i class="fas fa-dollar-sign text-sm text-green-500 group-hover:scale-110 transition-transform duration-300"></i>
                         <span>Mis Pagos</span>
                     </a>
-                    <a href="{% url 'perfil_empresa' %}" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-purple-600 hover:bg-purple-50/70 transition-all duration-300 flex items-center space-x-2">
-                        <i class="fas fa-user-cog text-sm text-purple-500 group-hover:scale-110 transition-transform duration-300"></i>
+                    <a href="{% url 'perfil_empresa' %}" class="group px-3 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50/70 transition-all duration-300 flex items-center space-x-2">
+                        <i class="fas fa-user-cog text-sm text-indigo-500 group-hover:scale-110 transition-transform duration-300"></i>
                         <span>Perfil</span>
                     </a>
                 </div>
@@ -305,6 +501,10 @@
                                 <i class="fas fa-user-edit w-4 h-4 sm:w-5 sm:h-5 text-gray-400 flex-shrink-0"></i>
                                 <span class="font-medium text-sm sm:text-base">Configurar Perfil</span>
                             </a>
+                            <a href="{% url 'gestion_servicios_empresa' %}" class="flex items-center space-x-2 sm:space-x-3 px-3 sm:px-5 py-2.5 sm:py-3 text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors active:bg-purple-100">
+                                <i class="fas fa-cogs w-4 h-4 sm:w-5 sm:h-5 text-purple-500 flex-shrink-0"></i>
+                                <span class="font-medium text-sm sm:text-base">Gestión de Servicios</span>
+                            </a>
                             <a href="{% url 'reportes_empresa' %}" class="flex items-center space-x-2 sm:space-x-3 px-3 sm:px-5 py-2.5 sm:py-3 text-gray-700 hover:bg-cyan-50 hover:text-cyan-600 transition-colors active:bg-cyan-100">
                                 <i class="fas fa-chart-line w-4 h-4 sm:w-5 sm:h-5 text-gray-400 flex-shrink-0"></i>
                                 <span class="font-medium text-sm sm:text-base">Ver Reportes</span>
@@ -345,6 +545,10 @@
                     <i class="fas fa-calendar-alt mr-3 w-4 sm:w-5 text-sm sm:text-base flex-shrink-0"></i>
                     <span class="text-sm sm:text-base">Citas</span>
                 </a>
+                <a href="{% url 'gestion_servicios_empresa' %}" class="flex items-center text-gray-700 hover:text-purple-600 hover:bg-purple-50 font-medium transition-all py-2.5 px-3 rounded-lg active:bg-purple-100">
+                    <i class="fas fa-cogs mr-3 w-4 sm:w-5 text-sm sm:text-base flex-shrink-0"></i>
+                    <span class="text-sm sm:text-base">Servicios</span>
+                </a>
                 <a href="{% url 'reportes_empresa' %}" class="flex items-center text-gray-700 hover:text-orange-600 hover:bg-orange-50 font-medium transition-all py-2.5 px-3 rounded-lg active:bg-orange-100">
                     <i class="fas fa-chart-bar mr-3 w-4 sm:w-5 text-sm sm:text-base flex-shrink-0"></i>
                     <span class="text-sm sm:text-base">Reportes</span>
@@ -353,7 +557,7 @@
                     <i class="fas fa-dollar-sign mr-3 w-4 sm:w-5 text-sm sm:text-base flex-shrink-0"></i>
                     <span class="text-sm sm:text-base">Mis Pagos</span>
                 </a>
-                <a href="{% url 'perfil_empresa' %}" class="flex items-center text-gray-700 hover:text-purple-600 hover:bg-purple-50 font-medium transition-all py-2.5 px-3 rounded-lg active:bg-purple-100">
+                <a href="{% url 'perfil_empresa' %}" class="flex items-center text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 font-medium transition-all py-2.5 px-3 rounded-lg active:bg-indigo-100">
                     <i class="fas fa-user-cog mr-3 w-4 sm:w-5 text-sm sm:text-base flex-shrink-0"></i>
                     <span class="text-sm sm:text-base">Perfil</span>
                 </a>
@@ -415,10 +619,13 @@
                         <a href="{% url 'citas_empresa' %}" class="block text-sm sm:text-base text-gray-600 hover:text-emerald-600 transition-colors py-1">
                             <i class="fas fa-calendar-alt mr-2 text-xs sm:text-sm"></i>Gestión de Citas
                         </a>
+                        <a href="{% url 'gestion_servicios_empresa' %}" class="block text-sm sm:text-base text-gray-600 hover:text-purple-600 transition-colors py-1">
+                            <i class="fas fa-cogs mr-2 text-xs sm:text-sm"></i>Servicios
+                        </a>
                         <a href="{% url 'reportes_empresa' %}" class="block text-sm sm:text-base text-gray-600 hover:text-orange-600 transition-colors py-1">
                             <i class="fas fa-chart-bar mr-2 text-xs sm:text-sm"></i>Reportes
                         </a>
-                        <a href="{% url 'perfil_empresa' %}" class="block text-sm sm:text-base text-gray-600 hover:text-purple-600 transition-colors py-1">
+                        <a href="{% url 'perfil_empresa' %}" class="block text-sm sm:text-base text-gray-600 hover:text-indigo-600 transition-colors py-1">
                             <i class="fas fa-user-cog mr-2 text-xs sm:text-sm"></i>Configuración
                         </a>
                     </div>

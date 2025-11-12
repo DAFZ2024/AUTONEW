@@ -2,7 +2,177 @@
 {% load static %}
 {% load l10n %}
 
+{% block extra_head %}
+<script>
+// Variables globales para el modal de confirmación
+let accionActual = null;
+let solicitudIdActual = null;
+
+// Definir función antes de que se cargue el HTML
+function toggleSolicitud(id) {
+    const detalles = document.getElementById(id);
+    const icon = document.getElementById('icon-' + id);
+    
+    if (!detalles || !icon) {
+        console.error('Elementos no encontrados:', id);
+        return;
+    }
+    
+    if (detalles.classList.contains('hidden')) {
+        // Cerrar todas las demás solicitudes abiertas
+        document.querySelectorAll('.detalles-solicitud').forEach(function(el) {
+            if (el.id !== id) {
+                el.classList.add('hidden');
+            }
+        });
+        
+        // Rotar todos los iconos a su posición original
+        document.querySelectorAll('[id^="icon-solicitud-"]').forEach(function(el) {
+            if (el.id !== 'icon-' + id) {
+                el.classList.remove('rotate-180');
+            }
+        });
+        
+        // Abrir esta solicitud con animación
+        detalles.classList.remove('hidden');
+        setTimeout(function() {
+            detalles.classList.add('animate-slideDown');
+        }, 10);
+        icon.classList.add('rotate-180');
+    } else {
+        // Cerrar esta solicitud
+        detalles.classList.add('hidden');
+        detalles.classList.remove('animate-slideDown');
+        icon.classList.remove('rotate-180');
+    }
+}
+
+// Función para mostrar modal de confirmación personalizado
+function mostrarConfirmacion(accion, solicitudId, empresa, servicio) {
+    accionActual = accion;
+    solicitudIdActual = solicitudId;
+    
+    const modal = document.getElementById('modal-confirmacion');
+    const modalContent = document.getElementById('modal-confirmacion-content');
+    const titulo = document.getElementById('modal-titulo');
+    const mensaje = document.getElementById('modal-mensaje');
+    const iconContainer = document.getElementById('modal-icon-container');
+    const icon = document.getElementById('modal-icon');
+    const btnConfirmar = document.getElementById('modal-btn-confirmar');
+    const btnIcon = document.getElementById('modal-btn-icon');
+    const btnTexto = document.getElementById('modal-btn-texto');
+    const empresaEl = document.getElementById('modal-empresa');
+    const servicioEl = document.getElementById('modal-servicio');
+    
+    // Configurar contenido según la acción
+    if (accion === 'aprobar') {
+        titulo.textContent = 'Aprobar Solicitud';
+        mensaje.textContent = '¿Estás seguro de que deseas aprobar esta solicitud? La empresa tendrá acceso inmediato al servicio solicitado.';
+        iconContainer.className = 'w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-green-100 to-emerald-100';
+        icon.className = 'fas fa-check-circle text-2xl text-green-600';
+        btnConfirmar.className = 'flex-1 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5';
+        btnIcon.className = 'fas fa-check mr-2';
+        btnTexto.textContent = 'Aprobar';
+    } else {
+        titulo.textContent = 'Rechazar Solicitud';
+        mensaje.textContent = '¿Estás seguro de que deseas rechazar esta solicitud? La empresa será notificada del rechazo.';
+        iconContainer.className = 'w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-red-100 to-rose-100';
+        icon.className = 'fas fa-times-circle text-2xl text-red-600';
+        btnConfirmar.className = 'flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5';
+        btnIcon.className = 'fas fa-times mr-2';
+        btnTexto.textContent = 'Rechazar';
+    }
+    
+    empresaEl.textContent = empresa;
+    servicioEl.textContent = servicio;
+    
+    // Mostrar modal con animación
+    modal.classList.remove('hidden');
+    setTimeout(function() {
+        modalContent.classList.remove('scale-95', 'opacity-0');
+        modalContent.classList.add('scale-100', 'opacity-100');
+    }, 10);
+}
+
+// Función para cerrar modal de confirmación
+function cerrarConfirmacion() {
+    const modal = document.getElementById('modal-confirmacion');
+    const modalContent = document.getElementById('modal-confirmacion-content');
+    
+    modalContent.classList.remove('scale-100', 'opacity-100');
+    modalContent.classList.add('scale-95', 'opacity-0');
+    
+    setTimeout(function() {
+        modal.classList.add('hidden');
+        accionActual = null;
+        solicitudIdActual = null;
+    }, 200);
+}
+
+// Función para confirmar la acción
+function confirmarAccion() {
+    if (!accionActual || !solicitudIdActual) return;
+    
+    const form = document.getElementById(accionActual + '-form-' + solicitudIdActual);
+    if (form) {
+        // Crear un input hidden con el nombre y valor apropiados
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = accionActual + '_solicitud';
+        input.value = solicitudIdActual;
+        form.appendChild(input);
+        
+        // Enviar el formulario
+        form.submit();
+    }
+}
+
+// Cerrar modal al hacer clic fuera
+document.addEventListener('click', function(e) {
+    if (e.target.id === 'modal-confirmacion') {
+        cerrarConfirmacion();
+    }
+});
+
+// Cerrar modal con tecla Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        cerrarConfirmacion();
+    }
+});
+</script>
+{% endblock %}
+
 {% block content %}
+<style>
+    /* Animación para expansión de solicitudes */
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            max-height: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            max-height: 2000px;
+            transform: translateY(0);
+        }
+    }
+    
+    .animate-slideDown {
+        animation: slideDown 0.3s ease-out forwards;
+    }
+    
+    .rotate-180 {
+        transform: rotate(180deg);
+    }
+    
+    .detalles-solicitud {
+        overflow: hidden;
+        transition: all 0.3s ease-in-out;
+    }
+</style>
+
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -70,22 +240,7 @@
     <!-- Contenido principal -->
     <main class="relative z-10 pt-4 sm:pt-8">
         <div class="max-w-full xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Mensajes de estado -->
-            {% if messages %}
-                <div class="mb-6 space-y-3">
-                    {% for message in messages %}
-                        <div class="p-4 rounded-2xl shadow-lg animate-slideInDown {% if message.tags == 'success' %}bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 text-green-800{% elif message.tags == 'error' %}bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 text-red-800{% elif message.tags == 'warning' %}bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 text-yellow-800{% else %}bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-blue-800{% endif %}">
-                            <div class="flex items-center">
-                                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-3 text-lg"></i>
-                                <span class="font-medium">{{ message }}</span>
-                                <button type="button" class="ml-auto text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.style.display='none'">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
+            
 
 
         <!-- Estadísticas rápidas -->
@@ -141,97 +296,258 @@
 
             <!-- Sección de Gestión de Solicitudes -->
             {% if solicitudes_servicios %}
-            <div class="bg-white rounded-2xl p-4 sm:p-8 shadow-lg border border-gray-200 mb-6 sm:mb-8 animate-fadeInUp" style="animation-delay: 0.3s;">
-                <div class="text-center mb-6 sm:mb-8">
-                    <h3 class="text-xl sm:text-2xl font-bold text-slate-800 mb-2">
-                        <i class="fas fa-clipboard-list mr-2 text-orange-600"></i>
-                        Solicitudes de Servicios Pendientes
-                    </h3>
-                    <div class="w-16 sm:w-20 h-1 bg-gradient-to-r from-orange-600 to-orange-500 rounded-full mx-auto mb-4"></div>
-                    <p class="text-gray-600 text-sm">
-                        Tienes <span class="font-semibold text-orange-600">{{ total_solicitudes_pendientes }}</span> solicitudes pendientes de revisión
-                    </p>
+            <div class="bg-gradient-to-br from-white via-slate-50 to-blue-50 rounded-3xl p-6 sm:p-8 shadow-lg border border-slate-200 mb-8 animate-fadeInUp" style="animation-delay: 0.3s;">
+                <!-- Header Section -->
+                <div class="border-b border-slate-200 pb-6 mb-8">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="w-12 h-12 bg-gradient-to-br from-orange-100 to-amber-100 rounded-xl flex items-center justify-center border border-orange-200 shadow-sm">
+                                    <i class="fas fa-clipboard-list text-orange-600 text-lg"></i>
+                                </div>
+                                <h3 class="text-xl sm:text-2xl font-bold bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent">
+                                    Solicitudes Pendientes
+                                </h3>
+                            </div>
+                            <p class="text-slate-600 text-sm ml-15">
+                                Gestiona las solicitudes de servicios que requieren tu atención
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center px-4 py-3 rounded-xl bg-gradient-to-r from-indigo-100 to-purple-100 border border-indigo-200 shadow-sm">
+                                <i class="fas fa-clock text-indigo-600 text-sm mr-2"></i>
+                                <span class="text-sm font-semibold text-indigo-800">{{ total_solicitudes_pendientes }}</span>
+                                <span class="text-xs text-indigo-600 ml-1">pendientes</span>
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="grid gap-4">
+                <!-- Solicitudes Cards Grid con Expansión -->
+                <div class="space-y-4 mb-6" id="solicitudes-container">
                     {% for solicitud in solicitudes_servicios %}
-                    <div class="bg-gray-50 rounded-xl p-4 sm:p-6 border-l-4 border-orange-400 hover:shadow-md transition-all duration-300">
-                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                            <div class="flex-1">
-                                <div class="flex items-center gap-3 mb-2">
-                                    <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                                        <i class="fas fa-building text-orange-600 text-sm"></i>
+                    <div class="solicitud-card bg-gradient-to-br from-white to-slate-50 border-2 border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl hover:border-blue-300 transition-all duration-300">
+                        <!-- Card Header (Siempre visible) -->
+                        <div class="p-4 cursor-pointer hover:bg-blue-50/50 transition-colors" onclick="toggleSolicitud('solicitud-{{ solicitud.id_solicitud }}')">
+                            <div class="flex items-center justify-between gap-4">
+                                <!-- Información principal -->
+                                <div class="flex items-center gap-3 flex-1 min-w-0">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center border border-blue-200 shadow-sm flex-shrink-0">
+                                        <i class="fas fa-building text-blue-600"></i>
                                     </div>
-                                    <h4 class="font-semibold text-slate-800 text-sm sm:text-base">{{ solicitud.empresa.nombre_empresa }}</h4>
-                                    <span class="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full font-medium">
-                                        {{ solicitud.get_estado_display }}
-                                    </span>
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="font-bold text-slate-800 text-base truncate">{{ solicitud.empresa.nombre_empresa }}</h4>
+                                        <div class="flex items-center gap-2 mt-1 flex-wrap">
+                                            <span class="inline-flex items-center px-2 py-1 bg-gradient-to-r from-orange-100 to-amber-100 text-orange-800 text-xs rounded-lg font-medium border border-orange-200">
+                                                <i class="fas fa-clock mr-1"></i>{{ solicitud.get_estado_display }}
+                                            </span>
+                                            <span class="text-xs text-slate-600">{{ solicitud.fecha_solicitud|date:"d/m/Y H:i" }}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="pl-11">
-                                    <p class="text-gray-700 font-medium text-sm">
-                                        <i class="fas fa-concierge-bell mr-2 text-blue-600"></i>
-                                        Servicio solicitado: <span class="text-blue-600">{{ solicitud.servicio_solicitado.nombre_servicio }}</span>
-                                    </p>
-                                    <p class="text-gray-600 text-sm mt-1">
-                                        <i class="fas fa-calendar-alt mr-2"></i>
-                                        Fecha de solicitud: {{ solicitud.fecha_solicitud|date:"d/m/Y H:i" }}
-                                    </p>
-                                    <p class="text-gray-600 text-sm mt-1">
-                                        <i class="fas fa-phone mr-2 text-green-600"></i>
-                                        Teléfono de contacto: <span class="font-medium text-green-700">{{ solicitud.telefono_contacto }}</span>
-                                    </p>
-                                    {% if solicitud.usuario_responsable %}
-                                    <p class="text-gray-600 text-sm mt-1">
-                                        <i class="fas fa-user mr-2 text-purple-600"></i>
-                                        Responsable: <span class="font-medium text-purple-700">{{ solicitud.usuario_responsable }}</span>
-                                    </p>
-                                    {% endif %}
-                                    {% if solicitud.motivo_solicitud %}
-                                    <p class="text-gray-600 text-sm mt-2">
-                                        <i class="fas fa-comment mr-2"></i>
-                                        <strong>Motivo:</strong> {{ solicitud.motivo_solicitud }}
-                                    </p>
-                                    {% endif %}
+                                
+                                <!-- Indicador de expansión -->
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-chevron-down text-slate-400 text-lg transition-transform duration-300" id="icon-solicitud-{{ solicitud.id_solicitud }}"></i>
                                 </div>
                             </div>
                             
-                            <div class="flex gap-2 sm:flex-col lg:flex-row">
-                                <form method="POST" style="display: inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" name="aprobar_solicitud" value="{{ solicitud.id_solicitud }}" 
-                                            class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
-                                            onclick="return confirm('¿Estás seguro de que deseas aprobar esta solicitud?')">
-                                        <i class="fas fa-check mr-1"></i>
-                                        Aprobar
-                                    </button>
-                                </form>
-                                
-                                <form method="POST" style="display: inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" name="rechazar_solicitud" value="{{ solicitud.id_solicitud }}" 
-                                            class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
-                                            onclick="return confirm('¿Estás seguro de que deseas rechazar esta solicitud?')">
-                                        <i class="fas fa-times mr-1"></i>
-                                        Rechazar
-                                    </button>
-                                </form>
+                            <!-- Resumen rápido (siempre visible) -->
+                            <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div class="flex items-center gap-2 p-2 bg-gradient-to-r from-emerald-50 to-green-50 rounded-lg border border-emerald-100">
+                                    <i class="fas fa-concierge-bell text-emerald-600 text-xs"></i>
+                                    <span class="text-xs text-emerald-700 truncate font-medium">{{ solicitud.servicio_solicitado.nombre_servicio }}</span>
+                                </div>
+                                <div class="flex items-center gap-2 p-2 bg-gradient-to-r from-rose-50 to-pink-50 rounded-lg border border-rose-100">
+                                    <i class="fas fa-phone text-rose-600 text-xs"></i>
+                                    <span class="text-xs text-rose-700 truncate font-medium">{{ solicitud.telefono_contacto }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detalles expandibles (Oculto por defecto) -->
+                        <div id="solicitud-{{ solicitud.id_solicitud }}" class="detalles-solicitud hidden border-t-2 border-slate-200 bg-gradient-to-br from-slate-50 to-blue-50">
+                            <div class="p-6 space-y-4">
+                                <!-- Información detallada -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="bg-white rounded-xl p-4 border border-blue-100 shadow-sm">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-concierge-bell text-blue-600"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-blue-600 font-medium">Servicio solicitado</p>
+                                                <p class="font-semibold text-gray-900 text-sm">{{ solicitud.servicio_solicitado.nombre_servicio }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-white rounded-xl p-4 border border-green-100 shadow-sm">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-calendar-alt text-green-600"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-green-600 font-medium">Fecha de solicitud</p>
+                                                <p class="font-semibold text-gray-900 text-sm">{{ solicitud.fecha_solicitud|date:"d/m/Y H:i" }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-white rounded-xl p-4 border border-purple-100 shadow-sm">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-phone text-purple-600"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-purple-600 font-medium">Teléfono de contacto</p>
+                                                <p class="font-semibold text-gray-900 text-sm">{{ solicitud.telefono_contacto }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-white rounded-xl p-4 border border-orange-100 shadow-sm">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-building text-orange-600"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-orange-600 font-medium">Empresa</p>
+                                                <p class="font-semibold text-gray-900 text-sm">{{ solicitud.empresa.nombre_empresa }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% if solicitud.usuario_responsable %}
+                                <div class="bg-white rounded-xl p-4 border border-indigo-100 shadow-sm">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-user text-indigo-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-indigo-600 font-medium">Responsable</p>
+                                            <p class="font-semibold text-gray-900 text-sm">{{ solicitud.usuario_responsable }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                {% if solicitud.motivo_solicitud %}
+                                <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                                    <h5 class="font-semibold text-gray-900 mb-2 flex items-center text-sm">
+                                        <i class="fas fa-comment mr-2 text-gray-600"></i>
+                                        Motivo de la solicitud
+                                    </h5>
+                                    <p class="text-sm text-gray-700 leading-relaxed">{{ solicitud.motivo_solicitud }}</p>
+                                </div>
+                                {% endif %}
+
+                                <!-- Botones de acción -->
+                                <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-200">
+                                    <form method="POST" class="flex-1" id="aprobar-form-{{ solicitud.id_solicitud }}">
+                                        {% csrf_token %}
+                                        <button type="button" 
+                                                onclick="mostrarConfirmacion('aprobar', '{{ solicitud.id_solicitud }}', '{{ solicitud.empresa.nombre_empresa }}', '{{ solicitud.servicio_solicitado.nombre_servicio }}')"
+                                                class="w-full px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                            <i class="fas fa-check mr-2"></i>
+                                            Aprobar Solicitud
+                                        </button>
+                                    </form>
+                                    
+                                    <form method="POST" class="flex-1" id="rechazar-form-{{ solicitud.id_solicitud }}">
+                                        {% csrf_token %}
+                                        <button type="button"
+                                                onclick="mostrarConfirmacion('rechazar', '{{ solicitud.id_solicitud }}', '{{ solicitud.empresa.nombre_empresa }}', '{{ solicitud.servicio_solicitado.nombre_servicio }}')"
+                                                class="w-full px-6 py-3 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white text-sm font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                            <i class="fas fa-times mr-2"></i>
+                                            Rechazar Solicitud
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
-            </div>
-            {% else %}
-            <div class="bg-blue-50 rounded-2xl p-4 sm:p-6 border border-blue-200 mb-6 sm:mb-8 animate-fadeInUp" style="animation-delay: 0.3s;">
-                <div class="text-center">
-                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i class="fas fa-clipboard-check text-blue-600 text-xl"></i>
+
+                <!-- Paginación de solicitudes -->
+                <div class="flex items-center justify-between pt-4 border-t border-slate-200">
+                    <div class="text-sm text-slate-700 bg-gradient-to-r from-blue-50 to-indigo-50 px-3 py-2 rounded-lg border border-blue-200">
+                        <i class="fas fa-info-circle mr-2 text-blue-600"></i>
+                        Mostrando <span class="font-semibold text-blue-700">{{ solicitudes_servicios|length }}</span> de <span class="font-semibold text-indigo-700">{{ total_solicitudes_pendientes }}</span> solicitudes
                     </div>
-                    <h3 class="text-lg font-semibold text-blue-800 mb-2">No hay solicitudes pendientes</h3>
-                    <p class="text-blue-600 text-sm">Todas las solicitudes de servicios han sido procesadas.</p>
+                </div>
+            </div>
+
+            {% else %}
+            <!-- Estado vacío -->
+            <div class="bg-gradient-to-br from-white via-green-50 to-emerald-50 rounded-3xl p-8 shadow-lg border border-green-200 mb-8 animate-fadeInUp" style="animation-delay: 0.3s;">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-green-200 shadow-sm">
+                        <i class="fas fa-clipboard-check text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent mb-2">Todo al día</h3>
+                    <p class="text-green-600 text-sm max-w-md mx-auto">
+                        Excelente trabajo. No hay solicitudes pendientes por revisar en este momento.
+                    </p>
                 </div>
             </div>
             {% endif %}
+
+            <!-- Modal de Confirmación Personalizado -->
+            <div id="modal-confirmacion" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+                <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl transform transition-all scale-95 opacity-0" id="modal-confirmacion-content">
+                    <!-- Header del modal -->
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center gap-4">
+                            <div id="modal-icon-container" class="w-12 h-12 rounded-xl flex items-center justify-center">
+                                <i id="modal-icon" class="text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 id="modal-titulo" class="text-xl font-bold text-gray-900"></h3>
+                                <p class="text-sm text-gray-500 mt-1">Esta acción no se puede deshacer</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contenido del modal -->
+                    <div class="p-6">
+                        <p id="modal-mensaje" class="text-gray-700 leading-relaxed"></p>
+                        
+                        <div class="mt-4 bg-gray-50 rounded-xl p-4 border border-gray-200">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-600">
+                                        <span class="font-semibold">Empresa:</span> <span id="modal-empresa"></span>
+                                    </p>
+                                    <p class="text-sm text-gray-600 mt-1">
+                                        <span class="font-semibold">Servicio:</span> <span id="modal-servicio"></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer del modal -->
+                    <div class="p-6 bg-gray-50 border-t border-gray-200 flex gap-3">
+                        <button type="button" 
+                                onclick="cerrarConfirmacion()"
+                                class="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl transition-all duration-300">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancelar
+                        </button>
+                        <button type="button" 
+                                id="modal-btn-confirmar"
+                                onclick="confirmarAccion()"
+                                class="flex-1 px-6 py-3 text-white font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                            <i id="modal-btn-icon" class="mr-2"></i>
+                            <span id="modal-btn-texto"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
         <!-- Filtros y Búsqueda -->
         <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6 mb-8">
@@ -267,7 +583,7 @@
         <!-- Formulario de creación -->
         <div id="formContainer" class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden mb-8" style="display: none;">
             <div class="p-6 sm:p-8 border-b border-gray-200">
-                <h2 class="text-2xl font-bold text-gray-900">Crear Nuevo Servicio</h2>
+                <h2 class="text-2xl font-bold bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent">Crear Nuevo Servicio</h2>
                 <p class="text-gray-600 mt-1">Completa la información del servicio</p>
             </div>
             
@@ -322,7 +638,7 @@
         <!-- Lista de servicios -->
         <div id="servicios-container" class="bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-xl border border-white/20 overflow-hidden">
             <div class="p-4 sm:p-6 lg:p-8 border-b border-gray-200">
-                <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Servicios Disponibles</h2>
+                <h2 class="text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">Servicios Disponibles</h2>
                 <p class="text-gray-600 mt-1 text-sm sm:text-base">Total: {{ servicios|length }} servicio{{ servicios|length|pluralize:"s" }}</p>
             </div>
             {% if servicios %}
@@ -357,7 +673,7 @@
                                         <div class="text-sm text-gray-700">{{ servicio.descripcion|truncatechars:80 }}</div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="text-2xl font-bold text-gray-900">${{ servicio.precio }}</div>
+                                        <div class="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">${{ servicio.precio }}</div>
                                     </td>
                                     <td class="px-6 py-4">
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
@@ -617,10 +933,11 @@
                             <div class="flex items-center space-x-1 sm:space-x-2">
                                 <!-- Primera página -->
                                 {% if servicios.has_previous %}
-                                    <button onclick="loadPage(1)" 
-                                       class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 active:scale-95 transition-all duration-300">
+                                    <a href="?page=1{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}" 
+                                       data-page="1"
+                                       class="pagination-link w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 active:scale-95 transition-all duration-300">
                                         <i class="fas fa-angle-double-left text-sm"></i>
-                                    </button>
+                                    </a>
                                 {% else %}
                                     <span class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
                                         <i class="fas fa-angle-double-left text-sm"></i>
@@ -629,10 +946,11 @@
 
                                 <!-- Página anterior -->
                                 {% if servicios.has_previous %}
-                                    <button onclick="loadPage({{ servicios.previous_page_number }})" 
-                                       class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 active:scale-95 transition-all duration-300">
+                                    <a href="?page={{ servicios.previous_page_number }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}" 
+                                       data-page="{{ servicios.previous_page_number }}"
+                                       class="pagination-link w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 active:scale-95 transition-all duration-300">
                                         <i class="fas fa-angle-left text-sm"></i>
-                                    </button>
+                                    </a>
                                 {% else %}
                                     <span class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
                                         <i class="fas fa-angle-left text-sm"></i>
@@ -646,19 +964,21 @@
                                             {{ num }}
                                         </span>
                                     {% elif num > servicios.number|add:'-2' and num < servicios.number|add:'2' %}
-                                        <button onclick="loadPage({{ num }})" 
-                                           class="hidden sm:flex w-auto h-auto px-4 py-2 items-center justify-center text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 active:scale-95 transition-all duration-300 text-sm">
+                                        <a href="?page={{ num }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}" 
+                                           data-page="{{ num }}"
+                                           class="pagination-link hidden sm:flex w-auto h-auto px-4 py-2 items-center justify-center text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 active:scale-95 transition-all duration-300 text-sm">
                                             {{ num }}
-                                        </button>
+                                        </a>
                                     {% endif %}
                                 {% endfor %}
 
                                 <!-- Página siguiente -->
                                 {% if servicios.has_next %}
-                                    <button onclick="loadPage({{ servicios.next_page_number }})" 
-                                       class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 active:scale-95 transition-all duration-300">
+                                    <a href="?page={{ servicios.next_page_number }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}" 
+                                       data-page="{{ servicios.next_page_number }}"
+                                       class="pagination-link w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 active:scale-95 transition-all duration-300">
                                         <i class="fas fa-angle-right text-sm"></i>
-                                    </button>
+                                    </a>
                                 {% else %}
                                     <span class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
                                         <i class="fas fa-angle-right text-sm"></i>
@@ -667,10 +987,11 @@
 
                                 <!-- Última página -->
                                 {% if servicios.has_next %}
-                                    <button onclick="loadPage({{ paginator.num_pages }})" 
-                                       class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 active:scale-95 transition-all duration-300">
+                                    <a href="?page={{ paginator.num_pages }}{% if filtros_activos.busqueda %}&busqueda={{ filtros_activos.busqueda }}{% endif %}" 
+                                       data-page="{{ paginator.num_pages }}"
+                                       class="pagination-link w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 active:scale-95 transition-all duration-300">
                                         <i class="fas fa-angle-double-right text-sm"></i>
-                                    </button>
+                                    </a>
                                 {% else %}
                                     <span class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
                                         <i class="fas fa-angle-double-right text-sm"></i>
@@ -682,14 +1003,17 @@
                         <!-- Salto rápido a página (solo desktop) -->
                         <div class="mt-4 hidden sm:flex items-center justify-center space-x-2 text-sm">
                             <span class="text-gray-600">Ir a página:</span>
-                            <div class="inline-flex items-center space-x-2">
-                                <input type="number" id="quick-page-input" min="1" max="{{ paginator.num_pages }}" 
+                            <form method="GET" id="quick-page-form" class="inline-flex items-center space-x-2">
+                                {% if filtros_activos.busqueda %}
+                                    <input type="hidden" name="busqueda" value="{{ filtros_activos.busqueda }}">
+                                {% endif %}
+                                <input type="number" name="page" id="quick-page-input" min="1" max="{{ paginator.num_pages }}" 
                                        value="{{ servicios.number }}"
                                        class="w-16 px-2 py-1 text-center border border-gray-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-200 text-sm">
-                                <button onclick="loadPage(document.getElementById('quick-page-input').value)" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 active:scale-95 transition-all text-sm">
+                                <button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 active:scale-95 transition-all text-sm">
                                     <i class="fas fa-arrow-right"></i>
                                 </button>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 {% endif %}
@@ -1053,6 +1377,9 @@ function loadPage(pageNumber) {
             // Reemplazar el contenido del contenedor
             container.innerHTML = newContainer.innerHTML;
             
+            // Re-adjuntar event listeners a los nuevos enlaces de paginación
+            attachPaginationListeners();
+            
             // Scroll suave hacia el contenedor de servicios
             container.scrollIntoView({ behavior: 'smooth', block: 'start' });
             
@@ -1096,8 +1423,42 @@ function loadPage(pageNumber) {
     });
 }
 
+// Función para adjuntar event listeners a los enlaces de paginación
+function attachPaginationListeners() {
+    // Seleccionar todos los enlaces de paginación
+    const paginationLinks = document.querySelectorAll('.pagination-link');
+    
+    paginationLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault(); // Prevenir navegación normal
+            
+            // Obtener el número de página del atributo data o del href
+            const pageNumber = this.getAttribute('data-page') || new URL(this.href).searchParams.get('page');
+            
+            if (pageNumber) {
+                loadPage(pageNumber);
+            }
+        });
+    });
+    
+    // Adjuntar listener al formulario de salto rápido
+    const quickPageForm = document.getElementById('quick-page-form');
+    if (quickPageForm) {
+        quickPageForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const pageInput = document.getElementById('quick-page-input');
+            if (pageInput && pageInput.value) {
+                loadPage(pageInput.value);
+            }
+        });
+    }
+}
+
 // Esperar a que el DOM esté completamente cargado
 document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar listeners de paginación
+    attachPaginationListeners();
+    
     // Toggle del formulario
     const toggleFormButton = document.getElementById('toggleFormButton');
     if (toggleFormButton) {
@@ -1856,7 +2217,7 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Funcionalidad de filtros del lado del servidor
+// Funcionalidad de búsqueda en tiempo real para servicios
 document.addEventListener('DOMContentLoaded', function() {
     // Detectar cambios en el filtro de búsqueda
     const searchInput = document.getElementById('search-servicios');
@@ -1869,6 +2230,128 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadPage(1); // Ir a la primera página con los nuevos filtros
             }, 500); // Esperar 500ms después de que el usuario deje de escribir
         });
+    }
+
+    // Inicializar paginación de solicitudes solo si existen solicitudes
+    if (document.getElementById('solicitudes-container')) {
+        initSimpleSolicitudesPagination();
+    }
+});
+
+// Funcionalidad de paginación de solicitudes simplificada
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar paginación de solicitudes solo si existen solicitudes
+    if (document.getElementById('solicitudes-container')) {
+        initSimpleSolicitudesPagination();
+    }
+});
+
+// Variables globales para solicitudes
+let allSolicitudesCards = [];
+let currentSolicitudPage = 1;
+const solicitudesPerPage = 4;
+
+// Función simplificada para inicializar paginación de solicitudes
+function initSimpleSolicitudesPagination() {
+    // Obtener todas las cards de solicitudes del DOM
+    const container = document.getElementById('solicitudes-container');
+    if (!container) return;
+    
+    allSolicitudesCards = Array.from(container.children);
+    
+    if (allSolicitudesCards.length === 0) {
+        return; // No hay solicitudes
+    }
+
+    // Mostrar primera página
+    showSolicitudesPageSimple(1);
+
+    // Event listeners para botones de paginación
+    const prevBtn = document.getElementById('prev-solicitudes');
+    const nextBtn = document.getElementById('next-solicitudes');
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+            if (currentSolicitudPage > 1) {
+                showSolicitudesPageSimple(currentSolicitudPage - 1);
+            }
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+            const totalPages = Math.ceil(allSolicitudesCards.length / solicitudesPerPage);
+            if (currentSolicitudPage < totalPages) {
+                showSolicitudesPageSimple(currentSolicitudPage + 1);
+            }
+        });
+    }
+}
+
+// Función para mostrar página específica de solicitudes
+function showSolicitudesPageSimple(page) {
+    const container = document.getElementById('solicitudes-container');
+    if (!container) return;
+    
+    const startIndex = (page - 1) * solicitudesPerPage;
+    const endIndex = startIndex + solicitudesPerPage;
+
+    // Ocultar todas las cards
+    allSolicitudesCards.forEach(card => {
+        card.style.display = 'none';
+    });
+
+    // Mostrar solo las cards de la página actual
+    for (let i = startIndex; i < endIndex && i < allSolicitudesCards.length; i++) {
+        allSolicitudesCards[i].style.display = '';
+    }
+
+    currentSolicitudPage = page;
+    updateSolicitudesPaginationSimple();
+}
+
+// Función para actualizar controles de paginación
+function updateSolicitudesPaginationSimple() {
+    const totalPages = Math.ceil(allSolicitudesCards.length / solicitudesPerPage);
+    const startIndex = (currentSolicitudPage - 1) * solicitudesPerPage + 1;
+    const endIndex = Math.min(currentSolicitudPage * solicitudesPerPage, allSolicitudesCards.length);
+
+    // Actualizar texto de información
+    const showingElement = document.getElementById('solicitudes-showing');
+    if (showingElement) {
+        showingElement.textContent = `${startIndex}-${endIndex}`;
+    }
+
+    // Actualizar botones
+    const prevBtn = document.getElementById('prev-solicitudes');
+    const nextBtn = document.getElementById('next-solicitudes');
+
+    if (prevBtn) {
+        prevBtn.disabled = currentSolicitudPage === 1;
+        if (currentSolicitudPage === 1) {
+            prevBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            prevBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    }
+    
+    if (nextBtn) {
+        nextBtn.disabled = currentSolicitudPage === totalPages || totalPages === 0;
+        if (currentSolicitudPage === totalPages || totalPages === 0) {
+            nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    }
+}
+
+
+
+
+// Cerrar modal al hacer clic fuera
+document.addEventListener('click', function(e) {
+    if (e.target.id === 'solicitud-modal') {
+        closeSolicitudModal();
     }
 });
 

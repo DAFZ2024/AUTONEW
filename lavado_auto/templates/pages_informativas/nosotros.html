@@ -119,6 +119,203 @@
         transform: translateY(-5px);
         box-shadow: 0 20px 40px rgba(30, 58, 138, 0.15);
     }
+
+    /* ========== SCROLL REVEAL ANIMATIONS ========== */
+    
+    /* Badge Reveal */
+    .scroll-reveal-badge {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.8);
+        transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    .scroll-reveal-badge.revealed {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    
+    /* Title Text Reveal */
+    .scroll-reveal-title {
+        overflow: hidden;
+    }
+    
+    .text-reveal-line {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(100%);
+        animation: slideUpFade 0.8s ease-out forwards;
+        animation-delay: 0.3s;
+    }
+    
+    .text-reveal-word {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(100%) scale(0.8);
+        animation: slideUpScale 1s ease-out forwards;
+        animation-delay: 0.8s;
+    }
+    
+    /* Underline Expand Animation */
+    .underline-expand {
+        transform: scaleX(0);
+        animation: expandUnderline 1.2s ease-out forwards;
+        animation-delay: 1.5s;
+    }
+    
+    /* Description Fade Up */
+    .scroll-reveal-text {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 1s ease-out;
+        transition-delay: 0.5s;
+    }
+    
+    .scroll-reveal-text.revealed {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    /* Highlight Word Effect */
+    .highlight-word {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .highlight-word::after {
+        content: '';
+        position: absolute;
+        bottom: 2px;
+        left: 0;
+        width: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--navy), var(--electric-blue));
+        transition: width 0.6s ease-out;
+        border-radius: 2px;
+    }
+    
+    .scroll-reveal-text.revealed .highlight-word::after {
+        width: 100%;
+        transition-delay: 1.2s;
+    }
+    
+    /* Buttons Scroll Reveal */
+    .scroll-reveal-buttons {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 0.8s ease-out;
+        transition-delay: 0.7s;
+    }
+    
+    .scroll-reveal-buttons.revealed {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    /* Stats Cards with Stagger */
+    .scroll-reveal-stats {
+        perspective: 1000px;
+    }
+    
+    .stat-card {
+        opacity: 0;
+        transform: translateY(50px) rotateX(20deg);
+        transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    .scroll-reveal-stats.revealed .stat-card {
+        opacity: 1;
+        transform: translateY(0) rotateX(0deg);
+    }
+    
+    .scroll-reveal-stats.revealed .stat-card:nth-child(1) {
+        transition-delay: 0.1s;
+    }
+    
+    .scroll-reveal-stats.revealed .stat-card:nth-child(2) {
+        transition-delay: 0.2s;
+    }
+    
+    .scroll-reveal-stats.revealed .stat-card:nth-child(3) {
+        transition-delay: 0.3s;
+    }
+    
+    .scroll-reveal-stats.revealed .stat-card:nth-child(4) {
+        transition-delay: 0.4s;
+    }
+    
+    /* Counter Number Animation */
+    .counter-number {
+        display: inline-block;
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-card:hover .counter-number {
+        transform: scale(1.2);
+    }
+    
+    /* Keyframe Animations */
+    @keyframes slideUpFade {
+        0% {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes slideUpScale {
+        0% {
+            opacity: 0;
+            transform: translateY(100%) scale(0.8);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    
+    @keyframes expandUnderline {
+        0% {
+            transform: scaleX(0);
+            transform-origin: left;
+        }
+        100% {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+    }
+    
+    /* Pulsing Glow Effect for Stats */
+    @keyframes pulseGlow {
+        0%, 100% {
+            box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+        }
+        50% {
+            box-shadow: 0 0 20px 5px rgba(59, 130, 246, 0.3);
+        }
+    }
+    
+    .stat-card.revealed {
+        animation: pulseGlow 2s ease-in-out infinite;
+        animation-delay: 1s;
+    }
+    
+    /* Performance Optimization */
+    .scroll-reveal-badge,
+    .scroll-reveal-text,
+    .scroll-reveal-buttons,
+    .stat-card {
+        will-change: transform, opacity;
+    }
+    
+    .scroll-reveal-badge.revealed,
+    .scroll-reveal-text.revealed,
+    .scroll-reveal-buttons.revealed,
+    .stat-card.revealed {
+        will-change: auto;
+    }
 </style>
 
 
@@ -196,29 +393,32 @@
             </div>
         </div>
 
-        <!-- Enhanced Typography -->
+        <!-- Enhanced Typography with Scroll Effects -->
         <div class="space-y-6">
-            <div class="inline-block px-6 py-2 bg-gradient-to-r from-[var(--navy)]/10 to-[var(--electric-blue)]/10 rounded-full border border-[var(--electric-blue)]/20 backdrop-blur-sm mb-4">
+            <!-- Badge with Scroll Reveal -->
+            <div class="scroll-reveal-badge inline-block px-6 py-2 bg-gradient-to-r from-[var(--navy)]/10 to-[var(--electric-blue)]/10 rounded-full border border-[var(--electric-blue)]/20 backdrop-blur-sm mb-4">
                 <span class="text-[var(--electric-blue)] font-semibold text-sm uppercase tracking-wider">Líder en Autolavados</span>
             </div>
             
-            <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 text-gray-800 leading-tight">
-                Bienvenido a 
-                <span class="gradient-text relative inline-block">
+            <!-- Main Title with Text Split Animation -->
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 text-gray-800 leading-tight scroll-reveal-title">
+                <span class="text-reveal-line">Bienvenido a</span>
+                <span class="gradient-text relative inline-block text-reveal-word">
                     Autonew
-                    <div class="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-[var(--navy)] to-[var(--electric-blue)] rounded-full transform scale-x-0 animate-pulse" style="animation-delay: 1s; animation-duration: 2s; animation-fill-mode: forwards;"></div>
+                    <div class="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-[var(--navy)] to-[var(--electric-blue)] rounded-full underline-expand"></div>
                 </span>
             </h1>
             
-            <p class="text-xl md:text-2xl lg:text-3xl text-gray-600 max-w-5xl mx-auto leading-relaxed font-light">
+            <!-- Description with Fade Up -->
+            <p class="text-xl md:text-2xl lg:text-3xl text-gray-600 max-w-5xl mx-auto leading-relaxed font-light scroll-reveal-text">
                 En Autonew, nos enorgullece ser la plataforma líder en autolavados, comprometidos con ofrecerte los 
-                <span class="text-[var(--electric-blue)] font-semibold">mejores servicios</span> 
+                <span class="text-[var(--electric-blue)] font-semibold highlight-word">mejores servicios</span> 
                 para el cuidado y mantenimiento de tu vehículo.
             </p>
         </div>
 
-        <!-- Enhanced Action Buttons -->
-        <div class="mt-16 flex flex-col sm:flex-row gap-6 justify-center items-center">
+        <!-- Enhanced Action Buttons with Scroll Reveal -->
+        <div class="mt-16 flex flex-col sm:flex-row gap-6 justify-center items-center scroll-reveal-buttons">
             <button class="group relative px-10 py-5 bg-gradient-to-r from-[var(--navy)] to-[var(--electric-blue)] text-white font-bold rounded-full hover:shadow-2xl transition-all duration-500 transform hover:scale-105 overflow-hidden">
                 <span class="relative z-10 flex items-center gap-3">
                     <i class="fas fa-info-circle"></i>
@@ -236,22 +436,22 @@
             </a>
         </div>
 
-        <!-- Trust Indicators -->
-        <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 opacity-70">
-            <div class="text-center">
-                <div class="text-3xl font-bold text-[var(--navy)]">15+</div>
+        <!-- Trust Indicators with Counter Animation -->
+        <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 scroll-reveal-stats">
+            <div class="text-center stat-card">
+                <div class="text-3xl font-bold text-[var(--navy)] counter-number" data-target="15" data-suffix="+">0+</div>
                 <div class="text-sm text-gray-600 uppercase tracking-wide">Años de Experiencia</div>
             </div>
-            <div class="text-center">
-                <div class="text-3xl font-bold text-[var(--navy)]">1000+</div>
+            <div class="text-center stat-card" style="animation-delay: 0.1s;">
+                <div class="text-3xl font-bold text-[var(--navy)] counter-number" data-target="1000" data-suffix="+">0+</div>
                 <div class="text-sm text-gray-600 uppercase tracking-wide">Clientes Satisfechos</div>
             </div>
-            <div class="text-center">
-                <div class="text-3xl font-bold text-[var(--navy)]">50+</div>
+            <div class="text-center stat-card" style="animation-delay: 0.2s;">
+                <div class="text-3xl font-bold text-[var(--navy)] counter-number" data-target="50" data-suffix="+">0+</div>
                 <div class="text-sm text-gray-600 uppercase tracking-wide">Ubicaciones</div>
             </div>
-            <div class="text-center">
-                <div class="text-3xl font-bold text-[var(--navy)]">24/7</div>
+            <div class="text-center stat-card" style="animation-delay: 0.3s;">
+                <div class="text-3xl font-bold text-[var(--navy)] counter-number" data-target="24" data-suffix="/7">0/7</div>
                 <div class="text-sm text-gray-600 uppercase tracking-wide">Atención al Cliente</div>
             </div>
         </div>
@@ -997,5 +1197,211 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Scroll Reveal JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎨 Inicializando efectos de scroll modernos...');
+    
+    // ========== INTERSECTION OBSERVER FOR SCROLL REVEALS ==========
+    const observerOptions = {
+        threshold: 0.2,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const scrollObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                
+                // Si es una estadística, iniciar el contador
+                if (entry.target.classList.contains('scroll-reveal-stats')) {
+                    animateCounters(entry.target);
+                }
+            }
+        });
+    }, observerOptions);
+    
+    // Observar todos los elementos con scroll reveal
+    const elementsToReveal = [
+        '.scroll-reveal-badge',
+        '.scroll-reveal-text',
+        '.scroll-reveal-buttons',
+        '.scroll-reveal-stats'
+    ];
+    
+    elementsToReveal.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(el => scrollObserver.observe(el));
+    });
+    
+    // ========== COUNTER ANIMATION ==========
+    function animateCounters(statsContainer) {
+        const counters = statsContainer.querySelectorAll('.counter-number');
+        
+        counters.forEach((counter, index) => {
+            const target = parseInt(counter.getAttribute('data-target'));
+            const suffix = counter.getAttribute('data-suffix') || '';
+            const duration = 2000; // 2 segundos
+            const startDelay = index * 100; // Delay escalonado
+            
+            setTimeout(() => {
+                animateValue(counter, 0, target, duration, suffix);
+            }, startDelay);
+        });
+    }
+    
+    function animateValue(element, start, end, duration, suffix) {
+        const range = end - start;
+        const startTime = performance.now();
+        
+        function updateCounter(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Easing function para suavidad
+            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+            const current = Math.floor(start + (range * easeOutQuart));
+            
+            element.textContent = current + suffix;
+            
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            } else {
+                element.textContent = end + suffix;
+                // Efecto de celebración al terminar
+                element.style.transform = 'scale(1.15)';
+                setTimeout(() => {
+                    element.style.transform = 'scale(1)';
+                }, 200);
+            }
+        }
+        
+        requestAnimationFrame(updateCounter);
+    }
+    
+    // ========== ENHANCED HOVER EFFECTS ==========
+    const statCards = document.querySelectorAll('.stat-card');
+    
+    statCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            // Pausar la animación de pulso al hacer hover
+            this.style.animationPlayState = 'paused';
+            
+            // Efecto de brillo
+            this.style.boxShadow = '0 10px 40px rgba(59, 130, 246, 0.4)';
+            this.style.transform = 'translateY(-10px) scale(1.05)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            // Reanudar la animación
+            this.style.animationPlayState = 'running';
+            this.style.boxShadow = '';
+            this.style.transform = '';
+        });
+    });
+    
+    // ========== SMOOTH SCROLL FOR TEXT HIGHLIGHT ==========
+    const highlightWords = document.querySelectorAll('.highlight-word');
+    
+    highlightWords.forEach(word => {
+        word.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.05)';
+            this.style.color = 'var(--navy)';
+        });
+        
+        word.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+            this.style.color = '';
+        });
+    });
+    
+    // ========== PARALLAX EFFECT FOR BADGES ==========
+    let lastScrollY = window.pageYOffset;
+    let ticking = false;
+    
+    function updateParallax() {
+        const badge = document.querySelector('.scroll-reveal-badge');
+        
+        if (badge && badge.classList.contains('revealed')) {
+            const scrolled = window.pageYOffset;
+            const speed = 0.3;
+            const yPos = -(scrolled * speed);
+            
+            badge.style.transform = `translateY(${yPos}px)`;
+        }
+        
+        ticking = false;
+    }
+    
+    window.addEventListener('scroll', () => {
+        lastScrollY = window.pageYOffset;
+        
+        if (!ticking) {
+            window.requestAnimationFrame(updateParallax);
+            ticking = true;
+        }
+    });
+    
+    // ========== BUTTONS RIPPLE EFFECT ==========
+    const buttons = document.querySelectorAll('.scroll-reveal-buttons button, .scroll-reveal-buttons a');
+    
+    buttons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.style.position = 'absolute';
+            ripple.style.borderRadius = '50%';
+            ripple.style.background = 'rgba(255, 255, 255, 0.6)';
+            ripple.style.transform = 'scale(0)';
+            ripple.style.animation = 'ripple-effect 0.6s ease-out';
+            ripple.style.pointerEvents = 'none';
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => ripple.remove(), 600);
+        });
+    });
+    
+    // ========== ADDITIONAL CSS ANIMATIONS ==========
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes ripple-effect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    console.log('✨ Efectos de scroll modernos activados correctamente');
+    console.log('📊 Contadores animados listos');
+    console.log('🎯 Intersection Observer configurado');
+});
+
+// ========== PRELOAD OPTIMIZATION ==========
+window.addEventListener('load', () => {
+    // Forzar verificación de elementos visibles al cargar
+    const allRevealElements = document.querySelectorAll('[class*="scroll-reveal"]');
+    allRevealElements.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+            el.classList.add('revealed');
+        }
+    });
+});
+</script>
 
 {% endblock %}

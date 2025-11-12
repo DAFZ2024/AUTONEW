@@ -674,7 +674,7 @@
                                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 border border-emerald-300" title="{{ reserva_servicio.servicio.nombre_servicio }} - GRATIS (Plan)">
                                                         <i class="fas fa-crown mr-1 text-yellow-600"></i>
                                                         {{ reserva_servicio.servicio.nombre_servicio|truncatechars:16 }}
-                                                        <span class="ml-1 px-1 py-0.5 bg-emerald-600 text-white rounded-full text-xxs font-bold">GRATIS</span>
+                                                        <span class="ml-1 px-1 py-0.5 bg-emerald-600 text-white rounded-full text-xxs font-bold">PLAN</span>
                                                     </span>
                                                 {% else %}
                                                     <!-- Servicio adicional -->
@@ -713,20 +713,76 @@
                                     <td class="px-2 py-2 text-sm">
                                         {% if reserva|todos_servicios_son_plan %}
                                             <!-- Todos los servicios son del plan -->
-                                            <div class="flex flex-col items-center">
+                                            <div class="flex flex-col items-start space-y-1">
+                                                <!-- Precio original del plan (tachado) -->
+                                                {% for reserva_servicio in reserva.reservaservicio_set.all %}
+                                                    {% if forloop.first %}
+                                                        <div class="text-xxs text-gray-500 line-through">
+                                                            Original: ${{ reserva_servicio.precio_original|floatformat:2 }}
+                                                        </div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <!-- Mostrar descuento aplicado -->
+                                                {% for reserva_servicio in reserva.reservaservicio_set.all %}
+                                                    {% if forloop.first and reserva_servicio.descuento_plan_individual > 0 %}
+                                                        <div class="text-xxs text-emerald-600 font-semibold">
+                                                            Descuento: -{{ reserva_servicio.descuento_plan_individual|floatformat:0 }}%
+                                                        </div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <!-- Precio con descuento aplicado -->
                                                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-emerald-400 to-green-500 text-white shadow-sm">
-                                                    <i class="fas fa-gift mr-1"></i>
-                                                    GRATIS
+                                                    <i class="fas fa-tag mr-1"></i>
+                                                    ${{ reserva|calcular_total_reserva_con_descuentos }}
                                                 </span>
-                                                <span class="text-xxs text-emerald-600 mt-0.5">Plan</span>
                                             </div>
                                         {% else %}
-                                            <!-- Hay servicios adicionales -->
-                                            <div class="flex items-center space-x-1">
-                                                <div class="w-5 h-5 bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center">
-                                                    <i class="fas fa-dollar-sign text-green-600 text-xxs"></i>
+                                            <!-- Hay servicios adicionales o mixtos -->
+                                            <div class="flex flex-col items-start space-y-1.5 w-full">
+                                                <!-- Desglose de servicios -->
+                                                <div class="w-full space-y-1">
+                                                    {% for reserva_servicio in reserva.reservaservicio_set.all %}
+                                                        {% if reserva_servicio.es_servicio_plan %}
+                                                            <!-- Servicio del Plan -->
+                                                            <div class="bg-emerald-50 border border-emerald-200 rounded-lg px-2 py-1">
+                                                                <div class="flex items-center justify-between">
+                                                                    <div class="flex items-center space-x-1">
+                                                                        <i class="fas fa-crown text-yellow-500 text-xxs"></i>
+                                                                        <span class="text-xxs text-gray-700 font-medium">Plan</span>
+                                                                    </div>
+                                                                    <div class="flex items-center space-x-1">
+                                                                        <span class="text-xxs text-gray-400 line-through">${{ reserva_servicio.precio_original|floatformat:2 }}</span>
+                                                                        <span class="text-xxs font-bold text-emerald-600">${{ reserva_servicio.precio_aplicado|floatformat:2 }}</span>
+                                                                    </div>
+                                                                </div>
+                                                                {% if reserva_servicio.descuento_plan_individual > 0 %}
+                                                                    <div class="text-xxs text-emerald-600 mt-0.5">
+                                                                        -{{ reserva_servicio.descuento_plan_individual|floatformat:0 }}% descuento
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div>
+                                                        {% else %}
+                                                            <!-- Servicio Adicional -->
+                                                            <div class="bg-blue-50 border border-blue-200 rounded-lg px-2 py-1">
+                                                                <div class="flex items-center justify-between">
+                                                                    <div class="flex items-center space-x-1">
+                                                                        <i class="fas fa-plus-circle text-blue-500 text-xxs"></i>
+                                                                        <span class="text-xxs text-gray-700 font-medium">Adicional</span>
+                                                                    </div>
+                                                                    <span class="text-xxs font-bold text-blue-600">${{ reserva_servicio.precio_aplicado|floatformat:2 }}</span>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endfor %}
                                                 </div>
-                                                <p class="font-bold text-green-600 text-xs">${{ reserva|calcular_precio_servicios_adicionales }}</p>
+                                                
+                                                <!-- Total a Pagar (separador visual) -->
+                                                <div class="w-full pt-1 border-t border-gray-300">
+                                                    <div class="flex items-center justify-between">
+                                                        <span class="text-xxs font-semibold text-gray-700">Total:</span>
+                                                        <span class="text-xs font-bold text-green-600">${{ reserva|calcular_total_reserva_con_descuentos }}</span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         {% endif %}
                                     </td>
@@ -891,14 +947,84 @@
                                             <p class="text-xs text-green-600 uppercase tracking-wider font-bold mb-2">Servicios Solicitados</p>
                                             <div class="space-y-2">
                                                 {% for reserva_servicio in reserva.reservaservicio_set.all %}
-                                                    <div class="flex items-center justify-between bg-white rounded-lg p-2 border border-green-200">
-                                                        <div class="flex items-center space-x-2">
-                                                            <i class="fas fa-star text-green-500"></i>
-                                                            <span class="text-sm font-medium text-gray-900">{{ reserva_servicio.servicio.nombre_servicio }}</span>
+                                                    <div class="bg-white rounded-lg p-3 border-2 {% if reserva_servicio.es_servicio_plan %}border-emerald-300 bg-gradient-to-r from-emerald-50 to-green-50{% else %}border-blue-300 bg-gradient-to-r from-blue-50 to-indigo-50{% endif %}">
+                                                        <!-- Header del servicio -->
+                                                        <div class="flex items-start justify-between mb-2">
+                                                            <div class="flex items-center space-x-2 flex-1">
+                                                                {% if reserva_servicio.es_servicio_plan %}
+                                                                    <div class="flex items-center space-x-1 px-2 py-1 bg-emerald-100 rounded-full">
+                                                                        <i class="fas fa-crown text-yellow-500 text-xs"></i>
+                                                                        <span class="text-xs font-bold text-emerald-700">PLAN</span>
+                                                                    </div>
+                                                                {% else %}
+                                                                    <div class="flex items-center space-x-1 px-2 py-1 bg-blue-100 rounded-full">
+                                                                        <i class="fas fa-plus-circle text-blue-600 text-xs"></i>
+                                                                        <span class="text-xs font-bold text-blue-700">ADICIONAL</span>
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div>
                                                         </div>
-                                                        <span class="text-sm font-bold text-green-600">${{ reserva_servicio.servicio.precio }}</span>
+                                                        
+                                                        <!-- Nombre del servicio -->
+                                                        <div class="mb-2">
+                                                            <span class="text-sm font-semibold text-gray-900">{{ reserva_servicio.servicio.nombre_servicio }}</span>
+                                                        </div>
+                                                        
+                                                        <!-- Desglose de precios -->
+                                                        <div class="border-t border-gray-200 pt-2 space-y-1">
+                                                            {% if reserva_servicio.es_servicio_plan %}
+                                                                <!-- Servicio del Plan -->
+                                                                <div class="flex items-center justify-between">
+                                                                    <span class="text-xs text-gray-600">Precio normal:</span>
+                                                                    <span class="text-xs text-gray-400 line-through">${{ reserva_servicio.precio_original|floatformat:2 }}</span>
+                                                                </div>
+                                                                {% if reserva_servicio.descuento_plan_individual > 0 %}
+                                                                    <div class="flex items-center justify-between">
+                                                                        <span class="text-xs text-emerald-600 font-medium">Descuento plan:</span>
+                                                                        <span class="text-xs text-emerald-600 font-bold">-{{ reserva_servicio.descuento_plan_individual|floatformat:0 }}%</span>
+                                                                    </div>
+                                                                {% endif %}
+                                                                <div class="flex items-center justify-between pt-1 border-t border-emerald-200">
+                                                                    <span class="text-sm font-bold text-gray-900">Con descuento:</span>
+                                                                    <div class="flex items-center space-x-2">
+                                                                        <span class="text-base font-bold text-emerald-600">${{ reserva_servicio.precio_aplicado|floatformat:2 }}</span>
+                                                                    </div>
+                                                                </div>
+                                                            {% else %}
+                                                                <!-- Servicio Adicional -->
+                                                                <div class="flex items-center justify-between">
+                                                                    <span class="text-xs text-gray-600">Precio:</span>
+                                                                    <span class="text-xs text-gray-700 font-medium">${{ reserva_servicio.precio_original|floatformat:2 }}</span>
+                                                                </div>
+                                                                {% if reserva_servicio.descuento_empresarial > 0 %}
+                                                                    <div class="flex items-center justify-between">
+                                                                        <span class="text-xs text-blue-600 font-medium">Descuento:</span>
+                                                                        <span class="text-xs text-blue-600 font-bold">-{{ reserva_servicio.descuento_empresarial|floatformat:0 }}%</span>
+                                                                    </div>
+                                                                {% endif %}
+                                                                <div class="flex items-center justify-between pt-1 border-t border-blue-200">
+                                                                    <span class="text-sm font-bold text-gray-900">Total a pagar:</span>
+                                                                    <span class="text-base font-bold text-blue-600">${{ reserva_servicio.precio_aplicado|floatformat:2 }}</span>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
                                                     </div>
                                                 {% endfor %}
+                                            </div>
+                                            
+                                            <!-- Resumen Total -->
+                                            <div class="mt-3 pt-3 border-t-2 border-green-300">
+                                                <div class="bg-white rounded-lg p-3 border-2 border-green-400">
+                                                    <div class="flex items-center justify-between">
+                                                        <div class="flex items-center space-x-2">
+                                                            <i class="fas fa-receipt text-green-600"></i>
+                                                            <span class="text-sm font-bold text-gray-900">TOTAL DE LA RESERVA:</span>
+                                                        </div>
+                                                        <span class="text-lg font-black text-green-600">
+                                                            ${{ reserva|calcular_total_reserva_con_descuentos }}
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -2071,6 +2197,88 @@
         });
     }
     
+    function generarColumnaPrecios(reserva) {
+        // Verificar si todos los servicios son del plan
+        const todosSonPlan = reserva.servicios.every(servicio => servicio.es_servicio_plan);
+        
+        if (todosSonPlan) {
+            // Todos los servicios son del plan
+            let precioOriginal = 0;
+            let descuento = 0;
+            
+            if (reserva.servicios.length > 0) {
+                precioOriginal = reserva.servicios[0].precio_original;
+                descuento = reserva.servicios[0].descuento_plan_individual;
+            }
+            
+            return `
+                <div class="flex flex-col items-start space-y-1">
+                    ${precioOriginal > 0 ? `<div class="text-xxs text-gray-500 line-through">
+                        Original: $${precioOriginal.toFixed(2)}
+                    </div>` : ''}
+                    ${descuento > 0 ? `<div class="text-xxs text-emerald-600 font-semibold">
+                        Descuento: -${descuento.toFixed(0)}%
+                    </div>` : ''}
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-emerald-400 to-green-500 text-white shadow-sm">
+                        <i class="fas fa-tag mr-1"></i>
+                        $${reserva.total_precio.toFixed(2)}
+                    </span>
+                </div>
+            `;
+        } else {
+            // Hay servicios adicionales o mixtos
+            let desgloseHTML = '';
+            
+            reserva.servicios.forEach(servicio => {
+                if (servicio.es_servicio_plan) {
+                    desgloseHTML += `
+                        <div class="bg-emerald-50 border border-emerald-200 rounded-lg px-2 py-1">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-1">
+                                    <i class="fas fa-crown text-yellow-500 text-xxs"></i>
+                                    <span class="text-xxs text-gray-700 font-medium">Plan</span>
+                                </div>
+                                <div class="flex items-center space-x-1">
+                                    <span class="text-xxs text-gray-400 line-through">$${servicio.precio_original.toFixed(2)}</span>
+                                    <span class="text-xxs font-bold text-emerald-600">$${servicio.precio_aplicado.toFixed(2)}</span>
+                                </div>
+                            </div>
+                            ${servicio.descuento_plan_individual > 0 ? `<div class="text-xxs text-emerald-600 mt-0.5">
+                                -${servicio.descuento_plan_individual.toFixed(0)}% descuento
+                            </div>` : ''}
+                        </div>
+                    `;
+                } else {
+                    desgloseHTML += `
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg px-2 py-1">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-1">
+                                    <i class="fas fa-plus-circle text-blue-500 text-xxs"></i>
+                                    <span class="text-xxs text-gray-700 font-medium">Adicional</span>
+                                </div>
+                                <span class="text-xxs font-bold text-blue-600">$${servicio.precio_aplicado.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            return `
+                <div class="flex flex-col items-start space-y-1.5 w-full">
+                    <div class="w-full space-y-1">
+                        ${desgloseHTML}
+                    </div>
+                    <div class="w-full pt-1 border-t border-gray-300">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xxs font-semibold text-gray-700">Total:</span>
+                            <span class="text-xs font-bold text-green-600">$${reserva.total_precio.toFixed(2)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
     function actualizarTabla(reservas) {
         const tableBody = document.querySelector('#reservas-table-container tbody');
         if (!tableBody) return;
@@ -2094,12 +2302,20 @@
             const estadoColorClasses = obtenerClasesEstado(reserva.estado);
             const estadoBgClasses = obtenerClasesFondoEstado(reserva.estado);
             
-            const serviciosHTML = reserva.servicios.map(servicio => 
-                `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 border border-indigo-200" title="${servicio.nombre} - $${servicio.precio}">
-                    <i class="fas fa-concierge-bell mr-1"></i>
-                    ${servicio.nombre.length > 16 ? servicio.nombre.substring(0, 16) + '...' : servicio.nombre}
-                </span>`
-            ).join(' ');
+            const serviciosHTML = reserva.servicios.map(servicio => {
+                if (servicio.es_servicio_plan) {
+                    return `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 border border-emerald-300" title="${servicio.nombre} - GRATIS (Plan)">
+                        <i class="fas fa-crown mr-1 text-yellow-600"></i>
+                        ${servicio.nombre.length > 16 ? servicio.nombre.substring(0, 16) + '...' : servicio.nombre}
+                        <span class="ml-1 px-1 py-0.5 bg-emerald-600 text-white rounded-full text-xxs font-bold">PLAN</span>
+                    </span>`;
+                } else {
+                    return `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 border border-indigo-200" title="${servicio.nombre} - $${servicio.precio_aplicado}">
+                        <i class="fas fa-concierge-bell mr-1"></i>
+                        ${servicio.nombre.length > 16 ? servicio.nombre.substring(0, 16) + '...' : servicio.nombre}
+                    </span>`;
+                }
+            }).join(' ');
             
             tableHTML += `
                 <tr class="transition-all duration-200 group ${estadoBgClasses}">
@@ -2160,12 +2376,7 @@
                         </div>
                     </td>
                     <td class="px-2 py-2 text-sm">
-                        <div class="flex items-center space-x-1">
-                            <div class="w-5 h-5 bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center">
-                                <i class="fas fa-dollar-sign text-green-600 text-xxs"></i>
-                            </div>
-                            <p class="font-bold text-green-600 text-xs">$${reserva.total_precio.toLocaleString()}</p>
-                        </div>
+                        ${generarColumnaPrecios(reserva)}
                     </td>
                     <td class="px-2 py-2">
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xxs font-semibold border-2 transition-all duration-200 ${obtenerClasesEstadoBadge(reserva.estado)} shadow-sm">
@@ -2260,49 +2471,156 @@
         }
         
         let cardsHTML = '';
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        
         reservas.forEach(reserva => {
             const estadoBg = getEstadoBgClasses(reserva.estado);
-            const serviciosHTML = reserva.servicios.map(servicio => 
-                `<span class="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-lg mr-1">${servicio.nombre}</span>`
-            ).join('');
+            
+            // Generar HTML de servicios con detalles de precios
+            let serviciosHTML = '';
+            reserva.servicios.forEach(servicio => {
+                const bgClass = servicio.es_servicio_plan ? 'from-emerald-50 to-green-50' : 'from-blue-50 to-indigo-50';
+                const borderClass = servicio.es_servicio_plan ? 'border-emerald-300' : 'border-blue-300';
+                
+                serviciosHTML += `
+                    <div class="bg-white rounded-lg p-3 border-2 ${borderClass} bg-gradient-to-r ${bgClass}">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="flex items-center space-x-2 flex-1">
+                                ${servicio.es_servicio_plan ? `
+                                    <div class="flex items-center space-x-1 px-2 py-1 bg-emerald-100 rounded-full">
+                                        <i class="fas fa-crown text-yellow-500 text-xs"></i>
+                                        <span class="text-xs font-bold text-emerald-700">PLAN</span>
+                                    </div>
+                                ` : `
+                                    <div class="flex items-center space-x-1 px-2 py-1 bg-blue-100 rounded-full">
+                                        <i class="fas fa-plus-circle text-blue-600 text-xs"></i>
+                                        <span class="text-xs font-bold text-blue-700">ADICIONAL</span>
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <span class="text-sm font-semibold text-gray-900">${servicio.nombre}</span>
+                        </div>
+                        
+                        <div class="border-t border-gray-200 pt-2 space-y-1">
+                            ${servicio.es_servicio_plan ? `
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-gray-600">Precio normal:</span>
+                                    <span class="text-xs text-gray-400 line-through">$${servicio.precio_original.toFixed(2)}</span>
+                                </div>
+                                ${servicio.descuento_plan_individual > 0 ? `
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-emerald-600 font-medium">Descuento plan:</span>
+                                        <span class="text-xs text-emerald-600 font-bold">-${servicio.descuento_plan_individual.toFixed(0)}%</span>
+                                    </div>
+                                ` : ''}
+                                <div class="flex items-center justify-between pt-1 border-t border-emerald-200">
+                                    <span class="text-sm font-bold text-gray-900">Con descuento:</span>
+                                    <span class="text-base font-bold text-emerald-600">$${servicio.precio_aplicado.toFixed(2)}</span>
+                                </div>
+                            ` : `
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-gray-600">Precio:</span>
+                                    <span class="text-xs text-gray-700 font-medium">$${servicio.precio_original.toFixed(2)}</span>
+                                </div>
+                                ${servicio.descuento_empresarial > 0 ? `
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-blue-600 font-medium">Descuento:</span>
+                                        <span class="text-xs text-blue-600 font-bold">-${servicio.descuento_empresarial.toFixed(0)}%</span>
+                                    </div>
+                                ` : ''}
+                                <div class="flex items-center justify-between pt-1 border-t border-blue-200">
+                                    <span class="text-sm font-bold text-gray-900">Total a pagar:</span>
+                                    <span class="text-base font-bold text-blue-600">$${servicio.precio_aplicado.toFixed(2)}</span>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            });
             
             cardsHTML += `
                 <div class="rounded-2xl border shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${estadoBg}">
-                    <!-- Contenido de la card... -->
-                    <div class="p-4">
-                        <div class="flex justify-between items-start mb-3">
-                            <div>
-                                <h3 class="font-bold text-lg text-slate-800">${reserva.usuario_nombre}</h3>
-                                <p class="text-sm text-gray-600">@${reserva.usuario_username}</p>
+                    <div class="bg-gradient-to-r ${reserva.estado === 'pendiente' ? 'from-yellow-500 to-yellow-600' : reserva.estado === 'completado' ? 'from-green-500 to-green-600' : 'from-red-500 to-red-600'} px-4 py-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-white/20 backdrop-blur rounded-full flex items-center justify-center">
+                                    <i class="fas fa-calendar-check text-white text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-white font-bold text-lg">Cita #${reserva.id_reserva}</h3>
+                                    <div class="flex items-center text-white/90 text-sm">
+                                        <i class="fas fa-calendar-day mr-1"></i>
+                                        <span>${reserva.fecha}</span>
+                                        <span class="mx-2">•</span>
+                                        <i class="fas fa-clock mr-1"></i>
+                                        <span>${reserva.hora}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="text-right">
-                                <span class="text-xs font-medium text-gray-500">ID: ${reserva.id_reserva}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="space-y-2 mb-4">
-                            <div class="flex items-center">
-                                <i class="fas fa-building mr-2 text-gray-500"></i>
-                                <span class="text-sm text-gray-700">${reserva.empresa_nombre}</span>
-                            </div>
-                            <div class="flex items-center">
-                                <i class="fas fa-calendar mr-2 text-gray-500"></i>
-                                <span class="text-sm text-gray-700">${reserva.fecha} - ${reserva.hora}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <p class="text-sm font-medium text-gray-700 mb-2">Servicios:</p>
-                            <div class="flex flex-wrap gap-1">
-                                ${serviciosHTML}
-                            </div>
-                        </div>
-                        
-                        <div class="flex justify-between items-center">
-                            <div class="text-lg font-bold text-green-600">$${reserva.total_precio.toLocaleString()}</div>
-                            <div class="${getEstadoClasses(reserva.estado)}">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/20 text-white border border-white/30 shadow-lg">
                                 <i class="fas ${getEstadoIcon(reserva.estado)} mr-1"></i>
-                                ${reserva.estado.charAt(0).toUpperCase() + reserva.estado.slice(1)}
+                                ${reserva.estado === 'pendiente' ? 'Pendiente' : reserva.estado === 'completado' ? 'Completado' : 'Cancelado'}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 space-y-4">
+                        <div class="grid grid-cols-1 gap-4">
+                            <div class="flex items-start space-x-3 p-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl border border-purple-200">
+                                <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-building text-white text-sm"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs text-purple-600 uppercase tracking-wider font-bold mb-1">Empresa</p>
+                                    <p class="text-base font-bold text-gray-900 truncate">${reserva.empresa_nombre}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-3 p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-xl border border-green-200">
+                                <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-concierge-bell text-white text-sm"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs text-green-600 uppercase tracking-wider font-bold mb-2">Servicios Solicitados</p>
+                                    <div class="space-y-2">
+                                        ${serviciosHTML}
+                                    </div>
+                                    
+                                    <div class="mt-3 pt-3 border-t-2 border-green-300">
+                                        <div class="bg-white rounded-lg p-3 border-2 border-green-400">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center space-x-2">
+                                                    <i class="fas fa-receipt text-green-600"></i>
+                                                    <span class="text-sm font-bold text-gray-900">TOTAL DE LA RESERVA:</span>
+                                                </div>
+                                                <span class="text-lg font-black text-green-600">$${reserva.total_precio.toFixed(2)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-3 p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl border border-blue-200">
+                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-user text-white text-sm"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs text-blue-600 uppercase tracking-wider font-bold mb-1">Cliente</p>
+                                    <p class="text-base font-bold text-gray-900">${reserva.usuario_nombre}</p>
+                                    <div class="flex items-center space-x-4 mt-1">
+                                        <p class="text-sm text-gray-600 flex items-center">
+                                            <i class="fas fa-at mr-1"></i>${reserva.usuario_username}
+                                        </p>
+                                        ${reserva.usuario_telefono ? `
+                                            <p class="text-sm text-gray-600 flex items-center">
+                                                <i class="fas fa-phone mr-1"></i>${reserva.usuario_telefono}
+                                            </p>
+                                        ` : ''}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

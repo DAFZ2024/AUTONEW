@@ -43,7 +43,6 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     id_usuario = models.AutoField(primary_key=True)
     nombre_completo = models.CharField(max_length=255) 
     nombre_usuario = models.CharField(max_length=20, unique=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
     correo = models.EmailField(unique=True)
     telefono = models.CharField(max_length=15, blank=True)
     direccion = models.CharField(max_length=255, blank=True)
@@ -1974,6 +1973,70 @@ class SolicitudContactoPlan(models.Model):
         verbose_name = 'Solicitud de Contacto de Plan'
         verbose_name_plural = 'Solicitudes de Contacto de Planes'
         ordering = ['-fecha_solicitud']
+
+
+# ================== MODELO PARA CONSENTIMIENTO DE POLÍTICAS (LEY 1581) ==================
+class ConsentimientoUsuario(models.Model):
+    """
+    Modelo para registrar el consentimiento explícito de usuarios
+    según la Ley 1581 de 2012 de Protección de Datos Personales
+    """
+    TIPOS_CONSENTIMIENTO = [
+        ('registro', 'Registro Inicial'),
+        ('actualizacion', 'Actualización de Políticas'),
+        ('marketing', 'Comunicaciones de Marketing'),
+    ]
+    
+    id_consentimiento = models.AutoField(primary_key=True)
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='consentimientos')
+    
+    # Consentimientos obligatorios
+    acepta_politica_privacidad = models.BooleanField(default=False, verbose_name="Acepta Aviso de Privacidad")
+    acepta_tratamiento_datos = models.BooleanField(default=False, verbose_name="Acepta Política de Tratamiento de Datos")
+    acepta_terminos_condiciones = models.BooleanField(default=False, verbose_name="Acepta Términos y Condiciones")
+    
+    # Consentimientos opcionales
+    acepta_comunicaciones_comerciales = models.BooleanField(default=False, verbose_name="Acepta Comunicaciones Comerciales")
+    acepta_compartir_datos_terceros = models.BooleanField(default=False, verbose_name="Acepta Compartir Datos con Terceros")
+    
+    # Información de registro
+    tipo_consentimiento = models.CharField(max_length=20, choices=TIPOS_CONSENTIMIENTO, default='registro')
+    fecha_consentimiento = models.DateTimeField(auto_now_add=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True, verbose_name="Dirección IP")
+    user_agent = models.TextField(blank=True, verbose_name="Navegador/Dispositivo")
+    
+    # Versiones de documentos aceptados
+    version_politica_privacidad = models.CharField(max_length=20, default="1.0")
+    version_tratamiento_datos = models.CharField(max_length=20, default="1.0")
+    version_terminos_condiciones = models.CharField(max_length=20, default="1.0")
+    
+    # Información adicional
+    revocado = models.BooleanField(default=False, verbose_name="Consentimiento Revocado")
+    fecha_revocacion = models.DateTimeField(null=True, blank=True)
+    motivo_revocacion = models.TextField(blank=True)
+    
+    def __str__(self):
+        return f"Consentimiento {self.usuario.nombre_usuario} - {self.fecha_consentimiento.strftime('%Y-%m-%d')}"
+    
+    def revocar_consentimiento(self, motivo=""):
+        """Revoca el consentimiento del usuario"""
+        self.revocado = True
+        self.fecha_revocacion = timezone.now()
+        self.motivo_revocacion = motivo
+        self.save()
+    
+    def esta_vigente(self):
+        """Verifica si el consentimiento está vigente (no revocado)"""
+        return not self.revocado
+    
+    class Meta:
+        verbose_name = 'Consentimiento de Usuario'
+        verbose_name_plural = 'Consentimientos de Usuarios'
+        ordering = ['-fecha_consentimiento']
+        indexes = [
+            models.Index(fields=['usuario', 'fecha_consentimiento']),
+            models.Index(fields=['revocado']),
+        ]
 
 
 # ================== MODELOS PARA SISTEMA DE PAGOS A EMPRESAS ==================

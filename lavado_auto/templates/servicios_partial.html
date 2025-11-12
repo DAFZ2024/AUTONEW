@@ -221,62 +221,44 @@
     {% endfor %}
 </div>
 
-<!-- Controles de paginación -->
+<!-- Controles de carrusel -->
 {% if servicios.has_other_pages %}
-<div class="flex justify-center items-center mt-16 mb-8">
-    <nav class="flex items-center space-x-2">
-        <!-- Botón anterior -->
+<div class="relative mt-16 mb-8">
+    <!-- Botón Anterior - Lado Izquierdo -->
+    <div class="absolute left-0 top-1/2 -translate-y-1/2 z-10">
         {% if servicios.has_previous %}
             <a href="#" data-page="{{ servicios.previous_page_number }}" 
-               class="home-servicios-pagination-link group relative inline-flex items-center px-4 py-3 bg-white border border-gray-300 text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+               class="home-servicios-pagination-link group flex items-center justify-center w-14 h-14 bg-white hover:bg-blue-600 border-2 border-gray-300 hover:border-blue-600 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-110">
+                <svg class="w-6 h-6 text-gray-700 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/>
                 </svg>
-                Anterior
             </a>
         {% else %}
-            <span class="inline-flex items-center px-4 py-3 bg-gray-100 border border-gray-200 text-gray-400 rounded-xl font-medium cursor-not-allowed">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            <div class="flex items-center justify-center w-14 h-14 bg-gray-100 border-2 border-gray-200 rounded-full shadow-md opacity-50 cursor-not-allowed">
+                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/>
                 </svg>
-                Anterior
-            </span>
+            </div>
         {% endif %}
+    </div>
 
-        <!-- Números de página -->
-        <div class="flex items-center space-x-1">
-            {% for num in servicios.paginator.page_range %}
-                {% if servicios.number == num %}
-                    <span class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl shadow-lg">
-                        {{ num }}
-                    </span>
-                {% elif num > servicios.number|add:'-3' and num < servicios.number|add:'3' %}
-                    <a href="#" data-page="{{ num }}" 
-                       class="home-servicios-pagination-link inline-flex items-center justify-center w-12 h-12 bg-white border border-gray-300 text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
-                        {{ num }}
-                    </a>
-                {% endif %}
-            {% endfor %}
-        </div>
-
-        <!-- Botón siguiente -->
+    <!-- Botón Siguiente - Lado Derecho -->
+    <div class="absolute right-0 top-1/2 -translate-y-1/2 z-10">
         {% if servicios.has_next %}
             <a href="#" data-page="{{ servicios.next_page_number }}" 
-               class="home-servicios-pagination-link group relative inline-flex items-center px-4 py-3 bg-white border border-gray-300 text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
-                Siguiente
-                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+               class="home-servicios-pagination-link group flex items-center justify-center w-14 h-14 bg-white hover:bg-blue-600 border-2 border-gray-300 hover:border-blue-600 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-110">
+                <svg class="w-6 h-6 text-gray-700 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/>
                 </svg>
             </a>
         {% else %}
-            <span class="inline-flex items-center px-4 py-3 bg-gray-100 border border-gray-200 text-gray-400 rounded-xl font-medium cursor-not-allowed">
-                Siguiente
-                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            <div class="flex items-center justify-center w-14 h-14 bg-gray-100 border-2 border-gray-200 rounded-full shadow-md opacity-50 cursor-not-allowed">
+                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/>
                 </svg>
-            </span>
+            </div>
         {% endif %}
-    </nav>
+    </div>
 </div>
 
 <!-- Información de paginación -->
@@ -286,4 +268,106 @@
         ({{ servicios.paginator.count }} servicios en total)
     </p>
 </div>
+
+<!-- Script para auto-play de paginación -->
+<script>
+// Variables globales para mantener el estado del autoplay
+window.serviciosAutoPlay = window.serviciosAutoPlay || {
+    interval: null,
+    isPlaying: false,
+    wasPlayingBeforeClick: false
+};
+
+(function() {
+    const AUTO_PLAY_DELAY = 5000; // 5 segundos
+
+    // Función para obtener el siguiente botón de página
+    function getNextPageButton() {
+        const paginationLinks = document.querySelectorAll('.home-servicios-pagination-link');
+        
+        if (paginationLinks.length === 0) {
+            return null;
+        }
+        
+        // Obtener la página actual y total de páginas de forma dinámica
+        // Buscar todos los enlaces y determinar cuál tiene el número más alto
+        let maxPage = 0;
+        let currentPage = null;
+        
+        paginationLinks.forEach(link => {
+            const pageNum = parseInt(link.getAttribute('data-page'));
+            if (pageNum > maxPage) {
+                maxPage = pageNum;
+            }
+        });
+        
+        // Si solo hay un botón, es el siguiente
+        if (paginationLinks.length === 1) {
+            return paginationLinks[0];
+        }
+        
+        // Si hay dos botones (anterior y siguiente), el último es el siguiente
+        // Buscar el botón que tiene el mayor data-page
+        let nextButton = null;
+        paginationLinks.forEach(link => {
+            if (!nextButton || parseInt(link.getAttribute('data-page')) > parseInt(nextButton.getAttribute('data-page'))) {
+                nextButton = link;
+            }
+        });
+        
+        return nextButton;
+    }
+
+    // Función para iniciar el auto-play
+    function startAutoPlay() {
+        // Limpiar cualquier intervalo existente
+        if (window.serviciosAutoPlay.interval) {
+            clearInterval(window.serviciosAutoPlay.interval);
+        }
+        
+        window.serviciosAutoPlay.isPlaying = true;
+        
+        window.serviciosAutoPlay.interval = setInterval(function() {
+            const nextButton = getNextPageButton();
+            if (nextButton) {
+                window.serviciosAutoPlay.wasPlayingBeforeClick = true;
+                nextButton.click();
+            }
+        }, AUTO_PLAY_DELAY);
+    }
+
+    // Función para detener el auto-play
+    function stopAutoPlay() {
+        if (window.serviciosAutoPlay.interval) {
+            clearInterval(window.serviciosAutoPlay.interval);
+            window.serviciosAutoPlay.interval = null;
+        }
+        window.serviciosAutoPlay.isPlaying = false;
+    }
+
+    // Marcar clicks manuales
+    const manualPaginationLinks = document.querySelectorAll('.home-servicios-pagination-link');
+    manualPaginationLinks.forEach(function(link) {
+        link.addEventListener('click', function() {
+            // Reset del flag después del click
+            setTimeout(function() {
+                window.serviciosAutoPlay.wasPlayingBeforeClick = false;
+            }, 100);
+        });
+    });
+
+    // Verificar si hay paginación disponible
+    const hasPagination = document.querySelectorAll('.home-servicios-pagination-link').length > 0;
+    
+    if (hasPagination) {
+        // Si el autoplay estaba activo, reiniciarlo
+        if (window.serviciosAutoPlay.isPlaying || window.serviciosAutoPlay.wasPlayingBeforeClick) {
+            startAutoPlay();
+        } else if (!window.serviciosAutoPlay.interval) {
+            // Primera carga - iniciar automáticamente
+            startAutoPlay();
+        }
+    }
+})();
+</script>
 {% endif %}

@@ -382,25 +382,22 @@ Gracias por confiar en AutoNew para el cuidado de tu vehículo.
 
 def home(request):
     comentarios = Comentario.objects.all().order_by('-fecha')  # Recupera todos los comentarios
-    servicios_list = Servicio.objects.all().order_by('nombre_servicio')  # Recupera todos los servicios ordenados
-    empresas_list = Empresa.objects.filter(verificada=True).order_by('nombre_empresa')  # Recupera solo empresas verificadas ordenadas
     
     # Paginación para servicios - 8 por página
-    servicios_paginator = Paginator(servicios_list, 8)  # Mostrar 8 servicios por página
-    servicios_page = request.GET.get('servicios_page')
+    servicios_list = Servicio.objects.all().order_by('nombre_servicio')
+    servicios_paginator = Paginator(servicios_list, 8)
+    servicios_page = request.GET.get('servicios_page', 1)
     
     try:
         servicios = servicios_paginator.page(servicios_page)
     except PageNotAnInteger:
-        # Si page no es un entero, mostrar la primera página
         servicios = servicios_paginator.page(1)
     except EmptyPage:
-        # Si page está fuera del rango, mostrar la última página
         servicios = servicios_paginator.page(servicios_paginator.num_pages)
     
     # Paginación para empresas - 4 por página
-    empresas_paginator = Paginator(empresas_list, 4)  # Mostrar 4 empresas por página
-    
+    empresas_list = Empresa.objects.filter(verificada=True).order_by('nombre_empresa')
+    empresas_paginator = Paginator(empresas_list, 4)
     empresas_page = request.GET.get('empresas_page')
     
     try:
@@ -452,12 +449,12 @@ def blog(request):
     return render(request, 'pages_informativas/blog.html')
 
 def servicios_ajax(request):
-    """Vista AJAX para cargar servicios paginados sin recargar la página"""
+    """Vista AJAX para cargar servicios paginados en el home"""
     servicios_list = Servicio.objects.all().order_by('nombre_servicio')
     
-    # Paginación para servicios - 8 por página
+    # Paginación para servicios - 8 por página en el home
     paginator = Paginator(servicios_list, 8)
-    page = request.GET.get('page')
+    page = request.GET.get('page', 1)
     
     try:
         servicios = paginator.page(page)
@@ -467,7 +464,7 @@ def servicios_ajax(request):
         servicios = paginator.page(paginator.num_pages)
     
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        # Respuesta AJAX - solo renderizar la sección de servicios
+        # Respuesta AJAX - renderizar servicios paginados
         return render(request, 'servicios_partial.html', {'servicios': servicios})
     else:
         # Fallback - redireccionar a home si no es AJAX
@@ -669,7 +666,7 @@ def perfil_usuario(request):
     form = ProfileUserForm(instance=usuario)  # Crea un formulario con los datos del usuario
 
     if request.method == 'POST':
-        form = ProfileUserForm(request.POST, request.FILES, instance=usuario)  # Incluye el usuario existente
+        form = ProfileUserForm(request.POST, instance=usuario)  # Ya no incluye request.FILES
 
         if form.is_valid():
             # Manejar la actualización de la contraseña antes de guardar
@@ -680,15 +677,15 @@ def perfil_usuario(request):
             if contrasena11 or contrasena22:
                 if not contrasena11 or not contrasena22:
                     messages.error(request, 'Debes completar ambos campos de contraseña.')
-                    return render(request, 'perfil_usuario.html', {'usuario': usuario, 'form': form})
+                    return render(request, 'usuarios/perfil_usuario.html', {'usuario': usuario, 'form': form})
                 
                 if contrasena11 != contrasena22:
                     messages.error(request, 'Las contraseñas no coinciden.')
-                    return render(request, 'perfil_usuario.html', {'usuario': usuario, 'form': form})
+                    return render(request, 'usuarios/perfil_usuario.html', {'usuario': usuario, 'form': form})
                 
                 if len(contrasena11) < 6:
                     messages.error(request, 'La contraseña debe tener al menos 6 caracteres.')
-                    return render(request, 'perfil_usuario.html', {'usuario': usuario, 'form': form})
+                    return render(request, 'usuarios/perfil_usuario.html', {'usuario': usuario, 'form': form})
 
             # Guardar los datos del usuario
             usuario_actualizado = form.save()
@@ -725,37 +722,16 @@ def servicios(request):
     comentarios = Comentario.objects.all().order_by('-fecha')  # Recupera todos los comentarios
     servicios_list = Servicio.objects.all().order_by('nombre_servicio')  # Obtener todos los servicios disponibles
     
-    # Paginación para servicios - 6 por página
-    servicios_paginator = Paginator(servicios_list, 6)  # Mostrar 6 servicios por página
-    servicios_page = request.GET.get('page')
-    
-    try:
-        servicios = servicios_paginator.page(servicios_page)
-    except PageNotAnInteger:
-        # Si page no es un entero, mostrar la primera página
-        servicios = servicios_paginator.page(1)
-    except EmptyPage:
-        # Si page está fuera del rango, mostrar la última página
-        servicios = servicios_paginator.page(servicios_paginator.num_pages)
+    # Para el carrusel, mostrar todos los servicios sin paginación
+    servicios = servicios_list
     
     return render(request, 'servicios/servicios.html', {'comentarios': comentarios, 'servicios': servicios})
 
 def servicios_page_ajax(request):
-    """Vista AJAX para cargar servicios paginados en la página de servicios sin recargar la página"""
-    servicios_list = Servicio.objects.all().order_by('nombre_servicio')
+    """Vista AJAX para cargar todos los servicios en el carrusel"""
+    servicios = Servicio.objects.all().order_by('nombre_servicio')
     
-    # Paginación para servicios - 6 por página
-    paginator = Paginator(servicios_list, 6)
-    page = request.GET.get('page')
-    
-    try:
-        servicios = paginator.page(page)
-    except PageNotAnInteger:
-        servicios = paginator.page(1)
-    except EmptyPage:
-        servicios = paginator.page(paginator.num_pages)
-    
-    # Siempre renderizar el template parcial para AJAX
+    # Renderizar el template parcial con todos los servicios
     return render(request, 'servicios/servicios_partial.html', {'servicios': servicios})
 
 @usuario_required
@@ -1849,7 +1825,7 @@ def solicitar_contacto_plan(request):
 
 
 @login_required
-def citas(request):
+def reservas_usuario(request):
     ahora = datetime.now()
     hoy = ahora.date()
     
@@ -2015,7 +1991,7 @@ def citas(request):
     fechas_disponibles = [hoy + timedelta(days=i) for i in range(15)] 
 
     # Renderiza la vista con los datos necesarios
-    return render(request, 'reservas/citas.html', {
+    return render(request, 'reservas/reservas_usuario.html', {
         'reservas_pendientes': reservas_pendientes,
         'reservas_completadas': reservas_completadas,
         'total_reservas': total_reservas,
@@ -3432,7 +3408,15 @@ def citas_crud(request):
                 servicios_lista.append({
                     'nombre': rs.servicio.nombre_servicio,
                     'precio': float(rs.servicio.precio),
+                    'es_servicio_plan': rs.es_servicio_plan,
+                    'precio_original': float(rs.precio_original) if rs.precio_original else float(rs.servicio.precio),
+                    'precio_aplicado': float(rs.precio_aplicado) if rs.precio_aplicado else float(rs.servicio.precio),
+                    'descuento_plan_individual': float(rs.descuento_plan_individual) if rs.descuento_plan_individual else 0,
+                    'descuento_empresarial': float(rs.descuento_empresarial) if rs.descuento_empresarial else 0,
                 })
+            
+            # Calcular el total con descuentos
+            total_con_descuentos = sum(float(rs.precio_aplicado) if rs.precio_aplicado else float(rs.servicio.precio) for rs in reserva.reservaservicio_set.all())
             
             reservas_data.append({
                 'id_reserva': reserva.id_reserva,
@@ -3450,7 +3434,7 @@ def citas_crud(request):
                 'placa_vehiculo': reserva.placa_vehiculo or '',
                 'conductor_asignado': reserva.conductor_asignado or '',
                 'servicios': servicios_lista,
-                'total_precio': sum(float(rs.servicio.precio) for rs in reserva.reservaservicio_set.all()),
+                'total_precio': total_con_descuentos,
             })
         
         return JsonResponse({
@@ -3646,7 +3630,6 @@ def cambiar_estado_reserva(request, reserva_id):
 
 @admin_required
 def servicios_crud(request):
-    from django.core.paginator import Paginator
     from django.db.models import Q
     
     # Filtros de búsqueda
@@ -3664,24 +3647,31 @@ def servicios_crud(request):
             Q(precio__icontains=busqueda)
         )
     
-    # Paginación
-    paginator = Paginator(servicios_qs, 25)  # 25 servicios por página
-    page_number = request.GET.get('page', 1)
+    # Filtrar según los parámetros de búsqueda (para compatibilidad con código existente)
+    nombre_servicio = request.GET.get('nombre_servicio', '')
+    if nombre_servicio and not busqueda:  # Solo si no hay búsqueda general
+        servicios_qs = servicios_qs.filter(nombre_servicio__icontains=nombre_servicio)
+    
+    # Calcular estadísticas de manera más eficiente
+    total_servicios = servicios_qs.count()
+    total_asignaciones = EmpresaServicio.objects.count()
+    total_solicitudes_pendientes = SolicitudServicioEmpresa.objects.filter(estado='pendiente').count()
+    
+    # Paginación de servicios - 8 por página
+    paginator = Paginator(servicios_qs, 8)
+    page = request.GET.get('page', 1)
     
     try:
-        servicios = paginator.get_page(page_number)
-    except:
-        servicios = paginator.get_page(1)
+        servicios = paginator.page(page)
+    except PageNotAnInteger:
+        servicios = paginator.page(1)
+    except EmptyPage:
+        servicios = paginator.page(paginator.num_pages)
     
     # Obtener solicitudes pendientes con limit para no sobrecargar
     solicitudes_servicios = SolicitudServicioEmpresa.objects.filter(
         estado='pendiente'
     ).select_related('empresa', 'servicio_solicitado')[:10]  # Solo las primeras 10
-
-    # Calcular estadísticas de manera más eficiente
-    total_servicios = servicios_qs.count()
-    total_asignaciones = EmpresaServicio.objects.count()
-    total_solicitudes_pendientes = SolicitudServicioEmpresa.objects.filter(estado='pendiente').count()
     
     # Filtros activos para el template
     filtros_activos = {
@@ -3690,11 +3680,6 @@ def servicios_crud(request):
     }
     
     form = ServicioForm()
-
-    # Filtrar según los parámetros de búsqueda (para compatibilidad con código existente)
-    nombre_servicio = request.GET.get('nombre_servicio', '')
-    if nombre_servicio and not busqueda:  # Solo si no hay búsqueda general
-        servicios_qs = servicios_qs.filter(nombre_servicio__icontains=nombre_servicio)
 
     if request.method == "POST":
         # Manejar aprobación/rechazo de solicitudes
@@ -4504,9 +4489,7 @@ def home_crud(request):
     # Ingresos reales con descuentos aplicados (TODAS las reservas completadas)
     try:
         # Obtener TODAS las reservas completadas (sin filtro de fecha)
-        reservas_completadas_todas = Reserva.objects.filter(
-            estado='completado'
-        )
+        reservas_completadas_todas = Reserva.objects.filter(estado='completado')
         
         ingresos_reales_totales = 0
         ingresos_sin_descuento_totales = 0
@@ -4518,21 +4501,29 @@ def home_crud(request):
             reserva_servicios = reserva.reservaservicio_set.all()
             
             for rs in reserva_servicios:
-                # Solo contar si tiene precio_aplicado Y precio_original definidos
+                # Prioridad: usar los precios guardados en ReservaServicio
                 if rs.precio_aplicado is not None and rs.precio_original is not None:
-                    precio_con_descuento = float(rs.precio_aplicado)
-                    precio_sin_descuento = float(rs.precio_original)
+                    # Caso 1: Precios guardados correctamente
+                    precio_real = float(rs.precio_aplicado)  # Lo que realmente se cobró
+                    precio_original = float(rs.precio_original)  # Precio sin descuento
                     
-                    ingresos_reales_totales += precio_con_descuento
-                    ingresos_sin_descuento_totales += precio_sin_descuento
+                    ingresos_reales_totales += precio_real
+                    ingresos_sin_descuento_totales += precio_original
                     
-                    # Solo contar descuento si hay diferencia
-                    if precio_sin_descuento > precio_con_descuento:
-                        total_descuentos_otorgados += (precio_sin_descuento - precio_con_descuento)
+                    # Contar si hubo descuento
+                    if precio_original > precio_real:
+                        descuento = precio_original - precio_real
+                        total_descuentos_otorgados += descuento
                         reservas_con_descuento += 1
                 
-                # Si no tiene precios guardados, usar el precio actual del servicio
-                elif rs.precio_aplicado is None and rs.precio_original is None:
+                elif rs.precio_aplicado is not None and rs.precio_original is None:
+                    # Caso 2: Solo tiene precio_aplicado, usar como ambos valores
+                    precio_real = float(rs.precio_aplicado)
+                    ingresos_reales_totales += precio_real
+                    ingresos_sin_descuento_totales += precio_real
+                
+                else:
+                    # Caso 3: No tiene precios guardados, usar el precio actual del servicio
                     precio_servicio = float(rs.servicio.precio)
                     ingresos_reales_totales += precio_servicio
                     ingresos_sin_descuento_totales += precio_servicio
@@ -4542,8 +4533,16 @@ def home_crud(request):
         if ingresos_sin_descuento_totales > 0:
             porcentaje_descuento_promedio = round((total_descuentos_otorgados / ingresos_sin_descuento_totales) * 100, 1)
         
+        print(f"📊 DEBUG INGRESOS:")
+        print(f"   Reservas completadas: {reservas_completadas_todas.count()}")
+        print(f"   Ingresos reales totales: COP ${ingresos_reales_totales:,.2f}")
+        print(f"   Ingresos sin descuento: COP ${ingresos_sin_descuento_totales:,.2f}")
+        print(f"   Total descuentos otorgados: COP ${total_descuentos_otorgados:,.2f}")
+        print(f"   Servicios con descuento: {reservas_con_descuento}")
+        print(f"   Porcentaje promedio: {porcentaje_descuento_promedio}%")
+        
     except Exception as e:
-        print(f"Error calculando ingresos reales: {e}")
+        print(f"❌ Error calculando ingresos reales: {e}")
         import traceback
         traceback.print_exc()
         ingresos_reales_totales = 0
@@ -5978,6 +5977,45 @@ def perfil_empresa(request):
 
 
 @empresa_required
+def gestion_servicios_empresa(request):
+    """Vista para la página completa de gestión de servicios de empresa"""
+    try:
+        empresa_id = request.session.get('empresa_id')
+        empresa = Empresa.objects.get(id_empresa=empresa_id)
+        
+        # Servicios ya asignados a la empresa
+        servicios_asignados = empresa.servicios.all().order_by('nombre_servicio')
+        
+        # Servicios disponibles que la empresa aún no tiene
+        servicios_disponibles = Servicio.objects.exclude(
+            id_servicio__in=servicios_asignados.values_list('id_servicio', flat=True)
+        ).order_by('nombre_servicio')
+        
+        # Solicitudes pendientes de la empresa
+        solicitudes_pendientes = SolicitudServicioEmpresa.objects.filter(
+            empresa=empresa,
+            estado__in=['pendiente', 'en_revision']
+        ).select_related('servicio_solicitado').order_by('-fecha_solicitud')
+        
+        context = {
+            'empresa': empresa,
+            'servicios_asignados': servicios_asignados,
+            'servicios_disponibles': servicios_disponibles,
+            'solicitudes_pendientes': solicitudes_pendientes,
+        }
+
+        return render(request, 'empresas/gestion_servicios.html', context)
+
+    except Empresa.DoesNotExist:
+        messages.error(request, 'Error: Empresa no encontrada.')
+        return redirect('logincrud')
+    except Exception as e:
+        print(f"❌ Error en gestion_servicios_empresa: {str(e)}")
+        messages.error(request, 'Error interno. Intente nuevamente.')
+        return redirect('home_empresas')
+
+
+@empresa_required
 def solicitar_servicio_empresa(request):
     """Vista para procesar solicitudes de servicios por parte de empresas"""
     print(f"🔍 solicitar_servicio_empresa llamada con método: {request.method}")
@@ -6006,7 +6044,7 @@ def solicitar_servicio_empresa(request):
             if not all([servicio_id, usuario_responsable, telefono_contacto, motivo_solicitud]):
                 print("❌ Faltan campos requeridos")
                 messages.error(request, 'Todos los campos son requeridos.')
-                return redirect('perfil_empresa')
+                return redirect('gestion_servicios_empresa')
             
             try:
                 servicio = Servicio.objects.get(id_servicio=servicio_id)
@@ -6014,13 +6052,13 @@ def solicitar_servicio_empresa(request):
             except Servicio.DoesNotExist:
                 print("❌ Servicio no existe")
                 messages.error(request, 'El servicio solicitado no existe.')
-                return redirect('perfil_empresa')
+                return redirect('gestion_servicios_empresa')
             
             # Verificar si la empresa ya tiene este servicio
             if empresa.servicios.filter(id_servicio=servicio_id).exists():
                 print("⚠️ Empresa ya tiene este servicio")
                 messages.error(request, f'Tu empresa ya tiene acceso al servicio "{servicio.nombre_servicio}".')
-                return redirect('perfil_empresa')
+                return redirect('gestion_servicios_empresa')
             
             # Verificar si ya existe una solicitud pendiente para este servicio
             solicitud_existente = SolicitudServicioEmpresa.objects.filter(
@@ -6032,7 +6070,7 @@ def solicitar_servicio_empresa(request):
             if solicitud_existente:
                 print("⚠️ Ya existe solicitud pendiente")
                 messages.warning(request, f'Ya tienes una solicitud pendiente para el servicio "{servicio.nombre_servicio}".')
-                return redirect('perfil_empresa')
+                return redirect('gestion_servicios_empresa')
             
             # Crear la nueva solicitud
             nueva_solicitud = SolicitudServicioEmpresa.objects.create(
@@ -6054,7 +6092,7 @@ def solicitar_servicio_empresa(request):
             print(f"   - Responsable: {usuario_responsable}")
             print(f"   - ID Solicitud: {nueva_solicitud.id_solicitud}")
             
-            return redirect('perfil_empresa')
+            return redirect('gestion_servicios_empresa')
             
         except Empresa.DoesNotExist:
             messages.error(request, 'Error: Empresa no encontrada.')
@@ -8239,3 +8277,460 @@ def empresa_mis_pagos(request):
     }
     
     return render(request, 'empresas/mis_pagos.html', context)
+
+
+# ==================== VISTAS PARA PÁGINAS LEGALES (LEY 1581 DE 2012) ====================
+
+def aviso_privacidad(request):
+    """Vista para mostrar el Aviso de Privacidad conforme a la Ley 1581 de 2012"""
+    
+    contenido_html = """
+    <div class="space-y-6">
+        <h2>1. Responsable del Tratamiento de Datos</h2>
+        <p>
+            <strong>AUTONEW</strong> es el responsable del tratamiento de sus datos personales. Nos comprometemos a proteger 
+            su información personal y garantizar sus derechos conforme a la <strong>Ley 1581 de 2012</strong> y sus decretos 
+            reglamentarios.
+        </p>
+        
+        <h2>2. Datos que Recopilamos</h2>
+        <p>Para brindarle nuestros servicios de gestión de lavado de vehículos, recopilamos los siguientes tipos de información:</p>
+        <ul>
+            <li><strong>Datos de identificación:</strong> Nombre completo, número de documento de identidad</li>
+            <li><strong>Datos de contacto:</strong> Correo electrónico, número de teléfono, dirección</li>
+            <li><strong>Datos del vehículo:</strong> Placa, marca, modelo, tipo de vehículo</li>
+            <li><strong>Datos de servicio:</strong> Historial de reservas, servicios contratados, preferencias</li>
+            <li><strong>Datos de pago:</strong> Información necesaria para procesar transacciones (no almacenamos datos completos de tarjetas)</li>
+        </ul>
+
+        <h2>3. Finalidad del Tratamiento</h2>
+        <p>Sus datos personales serán utilizados para:</p>
+        <ul>
+            <li>Gestionar y procesar sus reservas de servicios de lavado</li>
+            <li>Enviar confirmaciones, recordatorios y notificaciones sobre sus citas</li>
+            <li>Procesar pagos y generar facturas</li>
+            <li>Mejorar nuestros servicios y experiencia de usuario</li>
+            <li>Enviar información promocional (solo con su consentimiento)</li>
+            <li>Cumplir con obligaciones legales y regulatorias</li>
+            <li>Gestionar solicitudes, quejas y reclamos</li>
+        </ul>
+
+        <h2>4. Sus Derechos como Titular</h2>
+        <p>De acuerdo con la Ley 1581 de 2012, usted tiene derecho a:</p>
+        <ul>
+            <li><strong>Conocer, actualizar y rectificar</strong> sus datos personales</li>
+            <li><strong>Solicitar prueba</strong> de la autorización otorgada</li>
+            <li><strong>Ser informado</strong> sobre el uso de sus datos</li>
+            <li><strong>Revocar la autorización</strong> y solicitar la supresión de datos (excepto cuando exista obligación legal)</li>
+            <li><strong>Acceder gratuitamente</strong> a sus datos personales</li>
+        </ul>
+
+        <h2>5. Seguridad de la Información</h2>
+        <p>
+            Implementamos medidas técnicas, humanas y administrativas para proteger sus datos personales contra pérdida, 
+            uso no autorizado, acceso, divulgación, alteración o destrucción.
+        </p>
+
+        <h2>6. Contacto</h2>
+        <p>Para ejercer sus derechos o realizar consultas sobre el tratamiento de sus datos, puede contactarnos:</p>
+        <ul>
+            <li><strong>Email:</strong> privacidad@autonew.com</li>
+            <li><strong>Teléfono:</strong> +57 300 123 4567</li>
+        </ul>
+    </div>
+    """
+    
+    context = {
+        'titulo': 'Aviso de Privacidad',
+        'contenido': contenido_html,
+        'fecha_actualizacion': '12 de noviembre de 2025'
+    }
+    
+    return render(request, 'legal/documento_legal.html', context)
+
+
+def politica_tratamiento_datos(request):
+    """Vista para mostrar la Política de Tratamiento de Datos Personales"""
+    
+    contenido_html = """
+    <div class="space-y-6">
+        <h2>1. Identificación del Responsable</h2>
+        <p>
+            <strong>AUTONEW</strong> actúa como responsable del tratamiento de datos personales, comprometiéndose a cumplir 
+            con la normativa vigente en Colombia, especialmente la <strong>Ley Estatutaria 1581 de 2012</strong>, 
+            el <strong>Decreto 1377 de 2013</strong> y demás normas complementarias.
+        </p>
+
+        <h2>2. Tratamiento y Finalidades</h2>
+        <p>Los datos personales recopilados serán tratados con las siguientes finalidades específicas:</p>
+        
+        <h3>2.1. Para Usuarios</h3>
+        <ul>
+            <li>Crear y gestionar su cuenta de usuario en la plataforma</li>
+            <li>Procesar reservas de servicios de lavado y mantenimiento vehicular</li>
+            <li>Enviar confirmaciones, recordatorios y actualizaciones sobre sus reservas</li>
+            <li>Gestionar programas de fidelización y suscripciones</li>
+            <li>Procesar pagos y generar comprobantes</li>
+            <li>Proveer soporte técnico y atención al cliente</li>
+            <li>Realizar encuestas de satisfacción y mejora de servicio</li>
+        </ul>
+
+        <h3>2.2. Para Empresas Aliadas</h3>
+        <ul>
+            <li>Gestionar la relación comercial y el registro en nuestra plataforma</li>
+            <li>Coordinar la prestación de servicios a clientes</li>
+            <li>Procesar pagos y liquidaciones</li>
+            <li>Comunicar actualizaciones del sistema y políticas</li>
+        </ul>
+
+        <h2>3. Derechos de los Titulares</h2>
+        <p>Como titular de datos personales, usted cuenta con los siguientes derechos:</p>
+        <ul>
+            <li><strong>Acceso:</strong> Conocer qué datos suyos tenemos almacenados</li>
+            <li><strong>Actualización:</strong> Solicitar la corrección de datos inexactos o incompletos</li>
+            <li><strong>Rectificación:</strong> Modificar datos que considere incorrectos</li>
+            <li><strong>Supresión:</strong> Solicitar la eliminación de sus datos (sujeto a obligaciones legales)</li>
+            <li><strong>Revocación:</strong> Retirar el consentimiento otorgado para el tratamiento</li>
+        </ul>
+
+        <h2>4. Procedimiento para Ejercer sus Derechos</h2>
+        <p>Para ejercer cualquiera de sus derechos, debe enviar una solicitud mediante:</p>
+        <ul>
+            <li><strong>Correo electrónico:</strong> privacidad@autonew.com</li>
+            <li><strong>Formulario web:</strong> Desde su perfil de usuario en la sección "Privacidad"</li>
+        </ul>
+        <p>
+            Responderemos su solicitud en un plazo máximo de <strong>15 días hábiles</strong> contados desde la fecha 
+            de recepción. Si requerimos más información, se lo notificaremos dentro de los primeros 5 días.
+        </p>
+
+        <h2>5. Medidas de Seguridad</h2>
+        <p>AUTONEW implementa las siguientes medidas para proteger sus datos:</p>
+        <ul>
+            <li>Cifrado SSL/TLS en todas las comunicaciones</li>
+            <li>Autenticación de dos factores disponible</li>
+            <li>Controles de acceso basados en roles</li>
+            <li>Auditorías periódicas de seguridad</li>
+            <li>Respaldo regular de información</li>
+            <li>Capacitación continua del personal en protección de datos</li>
+        </ul>
+
+        <h2>6. Almacenamiento y Conservación</h2>
+        <p>
+            Sus datos personales serán conservados durante el tiempo necesario para cumplir con las finalidades 
+            descritas y las obligaciones legales aplicables. Posteriormente, serán eliminados de forma segura 
+            o anonimizados para fines estadísticos.
+        </p>
+
+        <h2>7. Transferencias Internacionales</h2>
+        <p>
+            En caso de requerir transferir datos personales a otros países, garantizamos que dichos países cuenten 
+            con niveles adecuados de protección de datos o, en su defecto, aplicaremos las salvaguardas apropiadas 
+            conforme a la normativa colombiana.
+        </p>
+
+        <h2>8. Modificaciones a esta Política</h2>
+        <p>
+            Nos reservamos el derecho de modificar esta política en cualquier momento. Los cambios significativos 
+            serán notificados a través de nuestra plataforma y correo electrónico con al menos 10 días de anticipación.
+        </p>
+
+        <h2>9. Autoridad de Control</h2>
+        <p>
+            La Superintendencia de Industria y Comercio es la autoridad competente para conocer de las reclamaciones 
+            relacionadas con el tratamiento de datos personales en Colombia.
+        </p>
+
+        <h2>10. Contacto del Área de Privacidad</h2>
+        <p>
+            <strong>Email:</strong> privacidad@autonew.com<br>
+            <strong>Teléfono:</strong> +57 300 123 4567<br>
+            <strong>Horario de atención:</strong> Lunes a Viernes, 8:00 AM - 6:00 PM
+        </p>
+    </div>
+    """
+    
+    context = {
+        'titulo': 'Política de Tratamiento de Datos Personales',
+        'contenido': contenido_html,
+        'fecha_actualizacion': '12 de noviembre de 2025'
+    }
+    
+    return render(request, 'legal/documento_legal.html', context)
+
+
+def terminos_condiciones(request):
+    """Vista para mostrar los Términos y Condiciones de Uso"""
+    
+    contenido_html = """
+    <div class="space-y-6">
+        <h2>1. Aceptación de los Términos</h2>
+        <p>
+            Al acceder y utilizar la plataforma AUTONEW, usted acepta estar sujeto a estos Términos y Condiciones. 
+            Si no está de acuerdo con alguno de estos términos, por favor absténgase de utilizar nuestros servicios.
+        </p>
+
+        <h2>2. Descripción del Servicio</h2>
+        <p>
+            AUTONEW es una plataforma digital que conecta usuarios con empresas prestadoras de servicios de lavado 
+            y mantenimiento vehicular. Facilitamos:
+        </p>
+        <ul>
+            <li>Reserva en línea de servicios de lavado</li>
+            <li>Gestión de citas y horarios</li>
+            <li>Procesamiento de pagos</li>
+            <li>Programas de fidelización y suscripciones</li>
+            <li>Comunicación entre usuarios y empresas aliadas</li>
+        </ul>
+
+        <h2>3. Registro y Cuenta de Usuario</h2>
+        <h3>3.1. Requisitos</h3>
+        <ul>
+            <li>Ser mayor de 18 años o contar con autorización de un representante legal</li>
+            <li>Proporcionar información veraz, precisa y actualizada</li>
+            <li>Mantener la confidencialidad de sus credenciales de acceso</li>
+        </ul>
+
+        <h3>3.2. Responsabilidades</h3>
+        <p>Usted es responsable de todas las actividades realizadas bajo su cuenta. Debe notificarnos inmediatamente 
+        cualquier uso no autorizado.</p>
+
+        <h2>4. Reservas y Cancelaciones</h2>
+        <h3>4.1. Proceso de Reserva</h3>
+        <ul>
+            <li>Las reservas quedan confirmadas una vez completado el proceso en línea</li>
+            <li>Recibirá una confirmación por correo electrónico</li>
+            <li>Debe llegar 10 minutos antes de la hora programada</li>
+        </ul>
+
+        <h3>4.2. Política de Cancelación</h3>
+        <ul>
+            <li>Cancelaciones gratuitas con <strong>12 horas de anticipación</strong></li>
+            <li>Cancelaciones con menos de 12 horas pueden generar un cargo del 50% del servicio</li>
+            <li>No presentarse sin cancelar puede resultar en el cobro total del servicio</li>
+        </ul>
+
+        <h2>5. Pagos y Facturación</h2>
+        <h3>5.1. Métodos de Pago</h3>
+        <p>Aceptamos:</p>
+        <ul>
+            <li>Tarjetas de crédito y débito</li>
+            <li>Transferencias bancarias</li>
+            <li>Pagos en efectivo (directamente en el establecimiento)</li>
+        </ul>
+
+        <h3>5.2. Precios</h3>
+        <ul>
+            <li>Los precios mostrados están en pesos colombianos (COP)</li>
+            <li>Incluyen IVA cuando aplique</li>
+            <li>Pueden estar sujetos a cambios sin previo aviso</li>
+        </ul>
+
+        <h2>6. Planes de Suscripción</h2>
+        <h3>6.1. Renovación Automática</h3>
+        <p>
+            Las suscripciones se renuevan automáticamente al final de cada período, a menos que cancele con 
+            al menos 24 horas de anticipación.
+        </p>
+
+        <h3>6.2. Cancelación de Suscripción</h3>
+        <ul>
+            <li>Puede cancelar en cualquier momento desde su perfil</li>
+            <li>La cancelación será efectiva al final del período actual</li>
+            <li>No se realizan reembolsos por períodos parciales</li>
+        </ul>
+
+        <h2>7. Uso Aceptable</h2>
+        <p>El usuario se compromete a NO:</p>
+        <ul>
+            <li>Usar la plataforma para actividades ilegales o fraudulentas</li>
+            <li>Compartir su cuenta con terceros</li>
+            <li>Intentar acceder sin autorización a otras cuentas</li>
+            <li>Realizar reservas falsas o maliciosas</li>
+            <li>Difamar, acosar o amenazar a otros usuarios o empresas</li>
+            <li>Enviar spam o contenido publicitario no autorizado</li>
+        </ul>
+
+        <h2>8. Propiedad Intelectual</h2>
+        <p>
+            Todo el contenido de la plataforma (textos, imágenes, logotipos, software) es propiedad de AUTONEW 
+            o de sus licenciantes. Está prohibida su reproducción sin autorización expresa.
+        </p>
+
+        <h2>9. Limitación de Responsabilidad</h2>
+        <p>AUTONEW actúa como intermediario entre usuarios y empresas prestadoras de servicios. Por lo tanto:</p>
+        <ul>
+            <li>No somos responsables de la calidad del servicio prestado por terceros</li>
+            <li>No garantizamos la disponibilidad continua de la plataforma (aunque nos esforzamos por ello)</li>
+            <li>No nos hacemos responsables de daños indirectos o consecuentes</li>
+        </ul>
+
+        <h2>10. Quejas y Reclamos</h2>
+        <p>Para presentar quejas o reclamos:</p>
+        <ul>
+            <li><strong>Email:</strong> soporte@autonew.com</li>
+            <li><strong>Formulario web:</strong> Sección "Contacto"</li>
+            <li><strong>Teléfono:</strong> +57 300 123 4567</li>
+        </ul>
+        <p>Responderemos en un plazo máximo de 15 días hábiles.</p>
+
+        <h2>11. Modificaciones</h2>
+        <p>
+            Nos reservamos el derecho de modificar estos términos en cualquier momento. Los cambios importantes 
+            serán notificados con al menos 30 días de anticipación.
+        </p>
+
+        <h2>12. Jurisdicción y Ley Aplicable</h2>
+        <p>
+            Estos términos se rigen por las leyes de la República de Colombia. Cualquier controversia será resuelta 
+            en los tribunales competentes de Colombia.
+        </p>
+
+        <h2>13. Contacto</h2>
+        <p>
+            <strong>AUTONEW</strong><br>
+            Email: legal@autonew.com<br>
+            Teléfono: +57 300 123 4567<br>
+            Ubicación: Colombia
+        </p>
+    </div>
+    """
+    
+    context = {
+        'titulo': 'Términos y Condiciones de Uso',
+        'contenido': contenido_html,
+        'fecha_actualizacion': '12 de noviembre de 2025'
+    }
+    
+    return render(request, 'legal/documento_legal.html', context)
+
+
+def politica_cookies(request):
+    """Vista para mostrar la Política de Cookies"""
+    
+    contenido_html = """
+    <div class="space-y-6">
+        <h2>1. ¿Qué son las Cookies?</h2>
+        <p>
+            Las cookies son pequeños archivos de texto que se almacenan en su dispositivo cuando visita nuestro sitio web. 
+            Nos ayudan a mejorar su experiencia, recordar sus preferencias y analizar el uso de nuestra plataforma.
+        </p>
+
+        <h2>2. Tipos de Cookies que Utilizamos</h2>
+        
+        <h3>2.1. Cookies Esenciales (Obligatorias)</h3>
+        <p>Son necesarias para el funcionamiento básico de la plataforma:</p>
+        <ul>
+            <li><strong>Sesión de usuario:</strong> Mantienen su sesión activa mientras navega</li>
+            <li><strong>Seguridad:</strong> Protegen contra ataques y accesos no autorizados</li>
+            <li><strong>Carrito de servicios:</strong> Recuerdan los servicios que ha seleccionado</li>
+        </ul>
+
+        <h3>2.2. Cookies de Funcionalidad (Opcionales)</h3>
+        <p>Mejoran la funcionalidad y personalización:</p>
+        <ul>
+            <li><strong>Preferencias de idioma:</strong> Recuerdan su idioma preferido</li>
+            <li><strong>Ubicación:</strong> Ayudan a mostrar empresas cercanas</li>
+            <li><strong>Configuración de interfaz:</strong> Guardan preferencias de visualización</li>
+        </ul>
+
+        <h3>2.3. Cookies Analíticas (Opcionales)</h3>
+        <p>Nos ayudan a entender cómo usan los visitantes nuestra plataforma:</p>
+        <ul>
+            <li>Páginas más visitadas</li>
+            <li>Tiempo de permanencia</li>
+            <li>Rutas de navegación</li>
+            <li>Dispositivos utilizados</li>
+        </ul>
+
+        <h3>2.4. Cookies de Marketing (Opcionales)</h3>
+        <p>Permiten mostrar publicidad relevante:</p>
+        <ul>
+            <li>Rastrean visitas a través de sitios web</li>
+            <li>Muestran anuncios personalizados</li>
+            <li>Miden efectividad de campañas</li>
+        </ul>
+
+        <h2>3. Duración de las Cookies</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Duración</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Sesión</td>
+                    <td>Hasta cerrar navegador</td>
+                    <td>Se eliminan automáticamente al cerrar el navegador</td>
+                </tr>
+                <tr>
+                    <td>Persistentes</td>
+                    <td>30 días - 1 año</td>
+                    <td>Permanecen después de cerrar el navegador</td>
+                </tr>
+                <tr>
+                    <td>Autenticación</td>
+                    <td>7-30 días</td>
+                    <td>Mantienen sesión activa si selecciona "Recordarme"</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>4. Control de Cookies</h2>
+        <h3>4.1. En Nuestra Plataforma</h3>
+        <p>
+            Puede gestionar sus preferencias de cookies desde el <strong>Centro de Preferencias</strong> disponible 
+            en el pie de página o desde su perfil de usuario.
+        </p>
+
+        <h3>4.2. En su Navegador</h3>
+        <p>Puede configurar su navegador para:</p>
+        <ul>
+            <li>Rechazar todas las cookies</li>
+            <li>Aceptar solo cookies de sitios específicos</li>
+            <li>Recibir notificación antes de aceptar cookies</li>
+            <li>Eliminar cookies existentes</li>
+        </ul>
+
+        <h2>5. Cookies de Terceros</h2>
+        <p>Utilizamos servicios de terceros que pueden establecer sus propias cookies:</p>
+        <ul>
+            <li><strong>Google Analytics:</strong> Para análisis de tráfico</li>
+            <li><strong>Pasarelas de pago:</strong> Para procesar transacciones seguras</li>
+            <li><strong>Redes sociales:</strong> Para funciones de compartir contenido</li>
+        </ul>
+
+        <h2>6. Impacto de Deshabilitar Cookies</h2>
+        <p>Si deshabilita las cookies, algunas funcionalidades pueden verse afectadas:</p>
+        <ul>
+            <li>No podrá mantener sesión iniciada</li>
+            <li>No podrá completar reservas</li>
+            <li>Las preferencias no se guardarán</li>
+            <li>La experiencia de usuario será limitada</li>
+        </ul>
+
+        <h2>7. Actualización de esta Política</h2>
+        <p>
+            Esta política puede actualizarse periódicamente. La fecha de última actualización se muestra al inicio 
+            del documento. Cambios significativos serán notificados a través de nuestra plataforma.
+        </p>
+
+        <h2>8. Más Información</h2>
+        <p>Para consultas sobre nuestra política de cookies:</p>
+        <ul>
+            <li><strong>Email:</strong> privacidad@autonew.com</li>
+            <li><strong>Teléfono:</strong> +57 300 123 4567</li>
+        </ul>
+    </div>
+    """
+    
+    context = {
+        'titulo': 'Política de Cookies',
+        'contenido': contenido_html,
+        'fecha_actualizacion': '12 de noviembre de 2025'
+    }
+    
+    return render(request, 'legal/documento_legal.html', context)

@@ -1,6 +1,6 @@
 {% load static %}
 
-<!-- Custom CSS for enhanced animations and effects -->
+<!-- Custom CSS for carousel animations and effects -->
 <style>
 /* Line clamp utility for description text */
 .line-clamp-3 {
@@ -10,39 +10,126 @@
     overflow: hidden;
 }
 
-/* Enhanced hover effects */
-.service-card {
+/* Carousel container styles */
+.carousel-container {
     position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    overflow: visible;
+}
+
+.carousel-wrapper {
+    position: relative;
+    width: 100%;
+    height: 700px;
+    perspective: 1500px;
+    overflow: hidden;
+}
+
+/* Navigation buttons - Debajo del carrusel */
+.carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.carousel-nav {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb 0%, #3730a3 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+    transition: all 0.3s ease;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.carousel-nav:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 35px rgba(37, 99, 235, 0.6);
+}
+
+.carousel-nav:active {
+    transform: scale(0.95);
+    box-shadow: 0 5px 20px rgba(37, 99, 235, 0.5);
+}
+
+.carousel-nav i {
+    pointer-events: none;
+    position: relative;
+    z-index: 1;
+}
+
+.carousel-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+}
+
+/* Service card in carousel */
+.service-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 90%;
+    max-width: 600px;
+    transform: translate(-50%, -50%);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    visibility: hidden;
+    z-index: 1;
+}
+
+.service-card.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 10;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.service-card.prev {
+    opacity: 0.3;
+    visibility: visible;
+    z-index: 5;
+    transform: translate(-150%, -50%) scale(0.8) rotateY(25deg);
+}
+
+.service-card.next {
+    opacity: 0.3;
+    visibility: visible;
+    z-index: 5;
+    transform: translate(50%, -50%) scale(0.8) rotateY(-25deg);
+}
+
+/* Enhanced card design */
+.service-card-inner {
+    position: relative;
+    background: white;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.service-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(99, 102, 241, 0.05) 100%);
-    border-radius: 1.5rem;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    pointer-events: none;
+.service-card.active .service-card-inner {
+    box-shadow: 0 30px 80px rgba(59, 130, 246, 0.3);
 }
 
-.service-card:hover::before {
-    opacity: 1;
-}
-
-/* Icon bounce animation */
-@keyframes iconBounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0) scale(1); }
-    40% { transform: translateY(-4px) scale(1.05); }
-    60% { transform: translateY(-2px) scale(1.02); }
-}
-
-.service-card:hover .icon-container {
-    animation: iconBounce 1s ease-in-out;
+.service-card.active .service-card-inner:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 35px 90px rgba(59, 130, 246, 0.4);
 }
 
 /* Gradient text animation */
@@ -97,272 +184,456 @@
     animation: float 3s ease-in-out infinite;
     animation-delay: 1.5s;
 }
+
+/* Progress indicators */
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    max-width: 500px;
+    padding: 0 20px;
+}
+
+.carousel-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.carousel-indicator.active {
+    background: linear-gradient(135deg, #2563eb, #3730a3);
+    width: 40px;
+    border-radius: 6px;
+}
+
+.carousel-indicator:hover {
+    background: #94a3b8;
+    transform: scale(1.2);
+}
+
+/* Service counter */
+.service-counter {
+    text-align: center;
+    color: #64748b;
+    font-size: 18px;
+    font-weight: 600;
+    min-width: 80px;
+}
+
+.service-counter .current {
+    color: #2563eb;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .carousel-container {
+        padding: 40px 20px;
+    }
+    
+    .carousel-wrapper {
+        height: 650px;
+    }
+    
+    .service-card {
+        width: 95%;
+    }
+    
+    .service-card.prev,
+    .service-card.next {
+        display: none;
+    }
+    
+    .carousel-controls {
+        gap: 20px;
+    }
+    
+    .carousel-nav {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+    
+    .carousel-indicators {
+        padding: 0 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .carousel-container {
+        padding: 40px 15px;
+    }
+    
+    .carousel-controls {
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .carousel-nav {
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
+    }
+    
+    .carousel-indicators {
+        order: -1;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+}
 </style>
 
-<!-- Grid de servicios dinámico desde BD -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="servicios-grid">
+<!-- Carousel Container -->
+<div class="carousel-container" id="servicios-carousel">
+    <div class="carousel-wrapper">
+        <div class="carousel-track" id="carousel-track">
     {% for servicio in servicios %}
-    <div class="group service-card relative bg-white border border-gray-200 rounded-3xl overflow-hidden hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 hover:border-blue-300 flex flex-col">
-        <!-- Decorative background elements -->
-        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full -mr-16 -mt-16 opacity-50 group-hover:opacity-80 transition-opacity duration-500 floating"></div>
-        <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-purple-50 to-pink-50 rounded-full -ml-12 -mb-12 opacity-30 group-hover:opacity-60 transition-opacity duration-500 floating-delayed"></div>
-        
-        <!-- Image container with enhanced design -->
-        <div class="icon-container relative z-10 w-full h-52 overflow-hidden shadow-lg">
-            <!-- Imagen dinámica basada en el nombre del servicio -->
-            {% if 'exterior' in servicio.nombre_servicio.lower %}
-                <img src="{% static 'img/servicios/lavado_exterior.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-            {% elif 'interior' in servicio.nombre_servicio.lower and 'húmedo' in servicio.nombre_servicio.lower or 'humedo' in servicio.nombre_servicio.lower %}
-                <img src="{% static 'img/servicios/limpieza_humeda.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-            {% elif 'interior' in servicio.nombre_servicio.lower %}
-                <img src="{% static 'img/servicios/lavado_interior.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-            {% elif 'asiento' in servicio.nombre_servicio.lower %}
-                <img src="{% static 'img/servicios/lavado_asiento.webp' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-            {% elif 'aspirado' in servicio.nombre_servicio.lower or 'aspiradora' in servicio.nombre_servicio.lower %}
-                <img src="{% static 'img/servicios/limpieza_aspiradora.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-            {% elif 'ventana' in servicio.nombre_servicio.lower or 'vidrio' in servicio.nombre_servicio.lower or 'cristal' in servicio.nombre_servicio.lower %}
-                <img src="{% static 'img/servicios/limpieza_ventana.webp' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-            {% elif 'aceite' in servicio.nombre_servicio.lower %}
-                <img src="{% static 'img/servicios/cambio_aceite.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-            {% elif 'freno' in servicio.nombre_servicio.lower %}
-                <img src="{% static 'img/servicios/reparacion_frenos.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-            {% else %}
-                <!-- Imagen por defecto para servicios generales -->
-                <img src="{% static 'img/servicios/lavado_exterior.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-            {% endif %}
+    <div class="service-card {% if forloop.first %}active{% elif forloop.counter == 2 %}next{% endif %}" data-index="{{ forloop.counter0 }}">
+        <div class="service-card-inner">
+            <!-- Decorative background elements -->
+            <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full -mr-16 -mt-16 opacity-50 transition-opacity duration-500 floating"></div>
+            <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-purple-50 to-pink-50 rounded-full -ml-12 -mb-12 opacity-30 transition-opacity duration-500 floating-delayed"></div>
             
-            <!-- Overlay gradient for better text readability and depth -->
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent"></div>
-            
-            <!-- Badge decorativo con precio destacado -->
-            <div class="absolute top-4 right-4 bg-gradient-to-br from-blue-500 to-indigo-600 text-white px-5 py-2.5 rounded-full shadow-xl font-bold text-base transform group-hover:scale-110 transition-transform duration-300 backdrop-blur-sm bg-opacity-95">
-                <span class="flex items-center gap-1">
-                    <i class="fas fa-tag text-xs"></i>
-                    ${{ servicio.precio|floatformat:0 }}
-                </span>
+            <!-- Image container with enhanced design -->
+            <div class="relative z-10 w-full h-64 overflow-hidden">
+                <!-- Imagen dinámica basada en el nombre del servicio -->
+                {% if 'exterior' in servicio.nombre_servicio.lower %}
+                    <img src="{% static 'img/servicios/lavado_exterior.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500">
+                {% elif 'interior' in servicio.nombre_servicio.lower and 'húmedo' in servicio.nombre_servicio.lower or 'humedo' in servicio.nombre_servicio.lower %}
+                    <img src="{% static 'img/servicios/limpieza_humeda.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500">
+                {% elif 'interior' in servicio.nombre_servicio.lower %}
+                    <img src="{% static 'img/servicios/lavado_interior.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500">
+                {% elif 'asiento' in servicio.nombre_servicio.lower %}
+                    <img src="{% static 'img/servicios/lavado_asiento.webp' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500">
+                {% elif 'aspirado' in servicio.nombre_servicio.lower or 'aspiradora' in servicio.nombre_servicio.lower %}
+                    <img src="{% static 'img/servicios/limpieza_aspiradora.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500">
+                {% elif 'ventana' in servicio.nombre_servicio.lower or 'vidrio' in servicio.nombre_servicio.lower or 'cristal' in servicio.nombre_servicio.lower %}
+                    <img src="{% static 'img/servicios/limpieza_ventana.webp' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500">
+                {% elif 'aceite' in servicio.nombre_servicio.lower %}
+                    <img src="{% static 'img/servicios/cambio_aceite.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500">
+                {% elif 'freno' in servicio.nombre_servicio.lower %}
+                    <img src="{% static 'img/servicios/reparacion_frenos.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500">
+                {% else %}
+                    <!-- Imagen por defecto para servicios generales -->
+                    <img src="{% static 'img/servicios/lavado_exterior.jpg' %}" alt="{{ servicio.nombre_servicio }}" class="w-full h-full object-cover transition-transform duration-500">
+                {% endif %}
+                
+                <!-- Overlay gradient for better text readability and depth -->
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent"></div>
+                
+                <!-- Badge decorativo con precio destacado -->
+                <div class="absolute top-4 right-4 bg-gradient-to-br from-blue-500 to-indigo-600 text-white px-5 py-2.5 rounded-full shadow-xl font-bold text-base transform transition-transform duration-300 backdrop-blur-sm bg-opacity-95">
+                    <span class="flex items-center gap-1">
+                        <i class="fas fa-tag text-xs"></i>
+                        ${{ servicio.precio|floatformat:0 }}
+                    </span>
+                </div>
+                
+                <!-- Category badge opcional -->
+                <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm text-slate-700 px-4 py-1.5 rounded-full shadow-lg font-semibold text-xs transform transition-all duration-300">
+                    <i class="fas fa-star text-yellow-500 mr-1"></i>
+                    Servicio Premium
+                </div>
             </div>
             
-            <!-- Category badge opcional -->
-            <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm text-slate-700 px-4 py-1.5 rounded-full shadow-lg font-semibold text-xs transform transition-all duration-300 group-hover:bg-white">
-                <i class="fas fa-star text-yellow-500 mr-1"></i>
-                Servicio Premium
+            <!-- Content wrapper with padding -->
+            <div class="p-8 flex flex-col">
+                <!-- Service title with enhanced design -->
+                <h3 class="relative z-10 text-3xl font-bold text-slate-800 mb-4 leading-tight animated-gradient">
+                    {{ servicio.nombre_servicio }}
+                </h3>
+                
+                <!-- Service description with better styling -->
+                <p class="relative z-10 text-gray-600 mb-6 leading-relaxed text-base">
+                    {{ servicio.descripcion }}
+                </p>
+                
+                <!-- Enhanced features list -->
+                <div class="relative z-10 mb-6">
+                    <h4 class="text-base font-semibold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-shield-alt text-green-500 mr-2"></i>
+                        Beneficios incluidos
+                    </h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-center text-gray-600 text-sm">
+                            <div class="w-2 h-2 bg-gradient-to-r from-green-400 to-green-500 rounded-full mr-3 flex-shrink-0"></div>
+                            Servicio profesional garantizado
+                        </li>
+                        <li class="flex items-center text-gray-600 text-sm">
+                            <div class="w-2 h-2 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full mr-3 flex-shrink-0"></div>
+                            Productos de alta calidad
+                        </li>
+                        <li class="flex items-center text-gray-600 text-sm">
+                            <div class="w-2 h-2 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full mr-3 flex-shrink-0"></div>
+                            Personal especializado
+                        </li>
+                        <li class="flex items-center text-gray-600 text-sm">
+                            <div class="w-2 h-2 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full mr-3 flex-shrink-0"></div>
+                            Satisfacción garantizada
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Action section with enhanced design -->
+                <div class="relative z-10 mt-6">
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'reservas' %}" class="btn-enhanced w-full flex items-center justify-center px-6 py-4 text-white font-bold rounded-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 relative overflow-hidden">
+                            <span class="relative z-10 flex items-center gap-2">
+                                <i class="fas fa-calendar-check"></i>
+                                Reservar Ahora
+                                <i class="fas fa-arrow-right"></i>
+                            </span>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn-enhanced w-full flex items-center justify-center px-6 py-4 bg-gradient-to-r from-gray-600 via-gray-700 to-gray-800 text-white font-bold rounded-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 relative overflow-hidden" title="Inicia sesión para reservar este servicio">
+                            <span class="relative z-10 flex items-center gap-2">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Iniciar Sesión para Reservar
+                            </span>
+                        </a>
+                    {% endif %}
+                </div>
             </div>
+            <!-- End content wrapper -->
         </div>
-        
-        <!-- Content wrapper with padding -->
-        <div class="p-6 flex flex-col flex-grow">
-            <!-- Service title with enhanced design -->
-            <h3 class="relative z-10 text-2xl font-bold text-slate-800 mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-indigo-600 group-hover:bg-clip-text transition-all duration-500 leading-tight">
-                {{ servicio.nombre_servicio }}
-            </h3>
-            
-            <!-- Service description with better styling -->
-            <p class="relative z-10 text-gray-600 mb-6 leading-relaxed text-sm line-clamp-3 group-hover:text-gray-700 transition-colors duration-300">
-                {{ servicio.descripcion }}
-            </p>
-            
-            <!-- Enhanced features list -->
-            <div class="relative z-10 mb-6 flex-grow">
-                <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center">
-                    <i class="fas fa-shield-alt text-green-500 mr-2"></i>
-                    Beneficios incluidos
-                </h4>
-                <ul class="space-y-2">
-                    <li class="flex items-center text-gray-600 text-sm group-hover:text-gray-700 transition-colors duration-300">
-                        <div class="w-2 h-2 bg-gradient-to-r from-green-400 to-green-500 rounded-full mr-3 flex-shrink-0"></div>
-                        Servicio profesional garantizado
-                    </li>
-                    <li class="flex items-center text-gray-600 text-sm group-hover:text-gray-700 transition-colors duration-300">
-                        <div class="w-2 h-2 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full mr-3 flex-shrink-0"></div>
-                    Productos de alta calidad
-                </li>
-                <li class="flex items-center text-gray-600 text-sm group-hover:text-gray-700 transition-colors duration-300">
-                    <div class="w-2 h-2 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full mr-3 flex-shrink-0"></div>
-                    Personal especializado
-                </li>
-                <li class="flex items-center text-gray-600 text-sm group-hover:text-gray-700 transition-colors duration-300">
-                    <div class="w-2 h-2 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full mr-3 flex-shrink-0"></div>
-                    Satisfacción garantizada
-                </li>
-            </ul>
-        </div>
-        
-        <!-- Action section with enhanced design -->
-        <div class="relative z-10 mt-auto">
-            {% if request.user.is_authenticated %}
-                <a href="{% url 'reservas' %}" class="btn-enhanced group/btn w-full flex items-center justify-center px-6 py-4 text-white font-bold rounded-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 relative overflow-hidden">
-                    <span class="relative z-10 flex items-center gap-2">
-                        <i class="fas fa-calendar-check group-hover/btn:animate-pulse"></i>
-                        Reservar Ahora
-                        <i class="fas fa-arrow-right transform group-hover/btn:translate-x-1 transition-transform"></i>
-                    </span>
-                </a>
-            {% else %}
-                <a href="{% url 'login' %}" class="btn-enhanced group/btn w-full flex items-center justify-center px-6 py-4 bg-gradient-to-r from-gray-600 via-gray-700 to-gray-800 text-white font-bold rounded-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 relative overflow-hidden" title="Inicia sesión para reservar este servicio">
-                    <span class="relative z-10 flex items-center gap-2">
-                        <i class="fas fa-sign-in-alt group-hover/btn:animate-pulse"></i>
-                        Iniciar Sesión para Reservar
-                    </span>
-                </a>
-            {% endif %}
-        </div>
-        </div>
-        <!-- End content wrapper -->
-        
-        <!-- Hover effect overlay -->
-        <div class="absolute inset-0 bg-gradient-to-br from-blue-50/0 to-indigo-50/0 group-hover:from-blue-50/30 group-hover:to-indigo-50/20 rounded-3xl transition-all duration-500 pointer-events-none"></div>
     </div>
     {% empty %}
     <!-- Enhanced empty state -->
-    <div class="col-span-full text-center py-20">
-        <div class="relative mx-auto mb-8">
-            <!-- Animated background circles -->
-            <div class="w-32 h-32 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto relative">
-                <div class="w-24 h-24 bg-gradient-to-br from-blue-200 to-indigo-200 rounded-full flex items-center justify-center animate-pulse">
-                    <i class="fas fa-car text-4xl text-blue-500"></i>
+    <div class="service-card active">
+        <div class="service-card-inner">
+            <div class="text-center py-20 px-8">
+                <div class="relative mx-auto mb-8">
+                    <!-- Animated background circles -->
+                    <div class="w-32 h-32 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto relative">
+                        <div class="w-24 h-24 bg-gradient-to-br from-blue-200 to-indigo-200 rounded-full flex items-center justify-center animate-pulse">
+                            <i class="fas fa-car text-4xl text-blue-500"></i>
+                        </div>
+                        <!-- Decorative elements -->
+                        <div class="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-bounce"></div>
+                        <div class="absolute -bottom-2 -left-2 w-6 h-6 bg-gradient-to-br from-green-400 to-green-500 rounded-full animate-bounce" style="animation-delay: 0.5s;"></div>
+                    </div>
                 </div>
-                <!-- Decorative elements -->
-                <div class="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-bounce"></div>
-                <div class="absolute -bottom-2 -left-2 w-6 h-6 bg-gradient-to-br from-green-400 to-green-500 rounded-full animate-bounce" style="animation-delay: 0.5s;"></div>
+                <h3 class="text-3xl font-bold text-gray-700 mb-4">No hay servicios disponibles</h3>
+                <p class="text-gray-500 text-lg max-w-md mx-auto leading-relaxed">
+                    Los servicios se mostrarán aquí una vez que sean agregados por el administrador. 
+                    <br><span class="text-blue-600 font-medium">¡Vuelve pronto!</span>
+                </p>
+                <!-- Optional call to action for admins -->
+                {% if user.is_staff %}
+                <div class="mt-8">
+                    <a href="{% url 'admin:index' %}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-plus mr-2"></i>
+                        Agregar Servicios
+                    </a>
+                </div>
+                {% endif %}
             </div>
         </div>
-        <h3 class="text-3xl font-bold text-gray-700 mb-4">No hay servicios disponibles</h3>
-        <p class="text-gray-500 text-lg max-w-md mx-auto leading-relaxed">
-            Los servicios se mostrarán aquí una vez que sean agregados por el administrador. 
-            <br><span class="text-blue-600 font-medium">¡Vuelve pronto!</span>
-        </p>
-        <!-- Optional call to action for admins -->
-        {% if user.is_staff %}
-        <div class="mt-8">
-            <a href="{% url 'admin:index' %}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300">
-                <i class="fas fa-plus mr-2"></i>
-                Agregar Servicios
-            </a>
-        </div>
-        {% endif %}
     </div>
     {% endfor %}
-</div>
-
-<!-- Paginación con estilos inline para evitar conflictos CSS -->
-{% if servicios.paginator.num_pages > 1 %}
-<div class="pagination-section" style="position: static; display: block; width: 100%; margin: 40px auto; padding: 20px; background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%); border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 800px; clear: both;">
-    <!-- Título -->
-    <div style="text-align: center; margin-bottom: 20px;">
-        <h3 style="color: #1f2937; font-size: 18px; font-weight: 600; margin-bottom: 8px;">Navegación de Servicios</h3>
-        <p style="color: #6b7280; font-size: 14px;">Página {{ servicios.number }} de {{ servicios.paginator.num_pages }} <span style="color: #2563eb; font-weight: 500;">({{ servicios.paginator.count }} servicios en total)</span></p>
+        </div>
     </div>
     
-    <!-- Botones -->
-    <div style="display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap;">
-        <!-- Anterior -->
-        {% if servicios.has_previous %}
-            <a href="?page={{ servicios.previous_page_number }}" data-page="{{ servicios.previous_page_number }}" class="servicios-pagination-link" style="display: inline-flex; align-items: center; padding: 12px 20px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; font-weight: 600; border-radius: 15px; text-decoration: none; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); cursor: pointer; transition: all 0.3s ease;">
-                <span style="pointer-events: none;">← Anterior</span>
-            </a>
-        {% else %}
-            <span style="display: inline-flex; align-items: center; padding: 12px 20px; background: #d1d5db; color: #9ca3af; font-weight: 600; border-radius: 15px; cursor: not-allowed;">← Anterior</span>
-        {% endif %}
-
-        <!-- Números -->
-        <div style="display: flex; gap: 8px; align-items: center;">
-            {% for num in servicios.paginator.page_range %}
-                {% if servicios.number == num %}
-                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); color: white; font-weight: bold; border-radius: 12px; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);">{{ num }}</span>
-                {% elif num > servicios.number|add:'-3' and num < servicios.number|add:'3' %}
-                    <a href="?page={{ num }}" data-page="{{ num }}" class="servicios-pagination-link" style="display: inline-flex; align-items: center; justify-content: center; width: 45px; height: 45px; background: white; color: #374151; font-weight: 600; border-radius: 12px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 2px solid #e5e7eb; cursor: pointer; transition: all 0.3s ease;">
-                        <span style="pointer-events: none;">{{ num }}</span>
-                    </a>
-                {% endif %}
-            {% endfor %}
+    <!-- Controles del Carrusel -->
+    {% if servicios %}
+    <div class="carousel-controls">
+        <!-- Botón Anterior -->
+        <button class="carousel-nav" id="carousel-prev" aria-label="Servicio anterior">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        
+        <!-- Service Counter -->
+        <div class="service-counter">
+            <span class="current" id="current-slide">1</span> / <span id="total-slides">{{ servicios|length }}</span>
         </div>
-
-        <!-- Siguiente -->
-        {% if servicios.has_next %}
-            <a href="?page={{ servicios.next_page_number }}" data-page="{{ servicios.next_page_number }}" class="servicios-pagination-link" style="display: inline-flex; align-items: center; padding: 12px 20px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; font-weight: 600; border-radius: 15px; text-decoration: none; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); cursor: pointer; transition: all 0.3s ease;">
-                <span style="pointer-events: none;">Siguiente →</span>
-            </a>
-        {% else %}
-            <span style="display: inline-flex; align-items: center; padding: 12px 20px; background: #d1d5db; color: #9ca3af; font-weight: 600; border-radius: 15px; cursor: not-allowed;">Siguiente →</span>
-        {% endif %}
+        
+        <!-- Botón Siguiente -->
+        <button class="carousel-nav" id="carousel-next" aria-label="Servicio siguiente">
+            <i class="fas fa-chevron-right"></i>
+        </button>
     </div>
-    
-    <!-- Progreso -->
-    <div style="margin-top: 20px;">
-        {% widthratio servicios.number servicios.paginator.num_pages 100 as progress_percent %}
-        <div style="width: 100%; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden;">
-            <div style="width: {{ progress_percent }}%; height: 100%; background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%); border-radius: 3px;"></div>
-        </div>
-        <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: #6b7280;">
-            <span>Inicio</span>
-            <span>{{ progress_percent }}% completado</span>
-            <span>Final</span>
-        </div>
-    </div>
+    {% endif %}
 </div>
-{% endif %}
 
-<!-- Enhanced JavaScript for better interactions -->
+<!-- Carousel JavaScript -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Script de servicios_partial.html cargado');
+    console.log('Carrusel de servicios inicializado');
     
-    // Inicializar paginación inmediatamente
-    initializePagination();
+    const carousel = document.getElementById('servicios-carousel');
+    if (!carousel) return;
     
-    // Enhanced hover effects for service cards
-    const serviceCards = document.querySelectorAll('.service-card');
+    const cards = Array.from(carousel.querySelectorAll('.service-card'));
+    const currentSlideElement = document.getElementById('current-slide');
+    const totalSlidesElement = document.getElementById('total-slides');
+    const prevButton = document.getElementById('carousel-prev');
+    const nextButton = document.getElementById('carousel-next');
     
-    serviceCards.forEach(card => {
-        let timeout;
+    if (cards.length === 0) return;
+    
+    let currentIndex = 0;
+    let autoplayInterval;
+    const autoplayDelay = 5000; // Cambiar cada 5 segundos
+    
+    // Ocultar botones si solo hay un servicio
+    if (cards.length === 1) {
+        if (prevButton) prevButton.style.display = 'none';
+        if (nextButton) nextButton.style.display = 'none';
+    }
+    
+    // Función para ir a un slide específico
+    function goToSlide(index) {
+        // Detener autoplay al interactuar manualmente
+        stopAutoplay();
         
-        // Add mouse enter effect
-        card.addEventListener('mouseenter', function() {
-            clearTimeout(timeout);
-            
-            // Add subtle rotation based on mouse position
-            card.addEventListener('mousemove', handleMouseMove);
-            
-            // Add loading effect to buttons
-            const button = card.querySelector('.btn-enhanced');
-            if (button) {
-                button.style.transform = 'translateY(-2px)';
+        // Remover todas las clases
+        cards.forEach(card => {
+            card.classList.remove('active', 'prev', 'next');
+        });
+        
+        // Calcular índices
+        const prevIndex = (index - 1 + cards.length) % cards.length;
+        const nextIndex = (index + 1) % cards.length;
+        
+        // Aplicar clases
+        cards[prevIndex].classList.add('prev');
+        cards[index].classList.add('active');
+        cards[nextIndex].classList.add('next');
+        
+        // Actualizar contador
+        if (currentSlideElement) {
+            currentSlideElement.textContent = index + 1;
+        }
+        
+        currentIndex = index;
+        
+        // Reiniciar autoplay después de 3 segundos
+        setTimeout(startAutoplay, 3000);
+    }
+    
+    // Función para ir al siguiente slide
+    function nextSlide() {
+        const nextIndex = (currentIndex + 1) % cards.length;
+        goToSlide(nextIndex);
+    }
+    
+    // Función para ir al slide anterior
+    function prevSlide() {
+        const prevIndex = (currentIndex - 1 + cards.length) % cards.length;
+        goToSlide(prevIndex);
+    }
+    
+    // Iniciar autoplay
+    function startAutoplay() {
+        stopAutoplay();
+        autoplayInterval = setInterval(nextSlide, autoplayDelay);
+    }
+    
+    // Detener autoplay
+    function stopAutoplay() {
+        if (autoplayInterval) {
+            clearInterval(autoplayInterval);
+        }
+    }
+    
+    // Soporte para gestos táctiles
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    carousel.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    carousel.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+    
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+        
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                // Swipe left - next slide
+                nextSlide();
+            } else {
+                // Swipe right - prev slide
+                prevSlide();
             }
+        }
+    }
+    
+    // Event listeners para botones de navegación
+    if (prevButton) {
+        prevButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            prevSlide();
         });
         
-        // Add mouse leave effect
-        card.addEventListener('mouseleave', function() {
-            card.removeEventListener('mousemove', handleMouseMove);
-            
-            // Reset transformations
-            timeout = setTimeout(() => {
-                card.style.transform = '';
-                const button = card.querySelector('.btn-enhanced');
-                if (button) {
-                    button.style.transform = '';
-                }
-            }, 100);
+        // Prevenir comportamiento de focus
+        prevButton.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+        });
+    }
+    
+    if (nextButton) {
+        nextButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            nextSlide();
         });
         
-        function handleMouseMove(e) {
-            const rect = card.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            const deltaX = (e.clientX - centerX) / rect.width;
-            const deltaY = (e.clientY - centerY) / rect.height;
-            
-            // Apply subtle 3D rotation
-            card.style.transform = `
-                rotateY(${deltaX * 5}deg) 
-                rotateX(${-deltaY * 5}deg) 
-                translateY(-12px)
-                scale(1.02)
-            `;
+        // Prevenir comportamiento de focus
+        nextButton.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+        });
+    }
+    
+    // Soporte para teclado
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+            prevSlide();
+        } else if (e.key === 'ArrowRight') {
+            nextSlide();
         }
     });
     
+    // Pausar autoplay al hacer hover
+    carousel.addEventListener('mouseenter', stopAutoplay);
+    carousel.addEventListener('mouseleave', startAutoplay);
+    
+    // Pausar autoplay cuando la pestaña no está visible
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopAutoplay();
+        } else {
+            startAutoplay();
+        }
+    });
+    
+    // Animación de entrada inicial
+    setTimeout(() => {
+        cards[0].classList.add('active');
+        if (cards.length > 1) {
+            cards[1].classList.add('next');
+        }
+    }, 100);
+    
+    // Iniciar autoplay
+    startAutoplay();
+    
     // Add click animation for buttons
-    const buttons = document.querySelectorAll('.btn-enhanced');
+    const buttons = carousel.querySelectorAll('.btn-enhanced');
     buttons.forEach(button => {
         button.addEventListener('click', function(e) {
             // Create ripple effect
@@ -392,134 +663,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 600);
         });
     });
-    
-    // Add stagger animation for cards on page load
-    const cards = document.querySelectorAll('.service-card');
-    cards.forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(50px)';
-        
-        setTimeout(() => {
-            card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-        }, index * 150);
-    });
 });
-
-// Función para inicializar la paginación
-function initializePagination() {
-    const paginationLinks = document.querySelectorAll('.servicios-pagination-link');
-    console.log('Inicializando paginación. Enlaces encontrados:', paginationLinks.length);
-    
-    paginationLinks.forEach((link, index) => {
-        const page = link.getAttribute('data-page');
-        console.log(`Link ${index + 1} con página:`, page);
-        
-        // Remover listeners anteriores si existen
-        link.replaceWith(link.cloneNode(true));
-    });
-    
-    // Volver a obtener los enlaces después de clonarlos
-    const freshLinks = document.querySelectorAll('.servicios-pagination-link');
-    
-    freshLinks.forEach((link) => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const page = this.getAttribute('data-page');
-            console.log('Click en paginación. Página solicitada:', page);
-            
-            if (!page) {
-                console.error('No se encontró data-page en el enlace');
-                return;
-            }
-            
-            // Efecto visual
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 150);
-            
-            // Llamar a la función de carga AJAX
-            loadServiciosPageAjax(page);
-        });
-    });
-}
-
-// Función para cargar página con AJAX
-function loadServiciosPageAjax(page) {
-    const container = document.getElementById('servicios-container');
-    
-    if (!container) {
-        console.error('No se encontró el contenedor servicios-container');
-        return;
-    }
-    
-    console.log('Cargando página:', page);
-    
-    // Mostrar indicador de carga
-    container.style.opacity = '0.5';
-    container.style.pointerEvents = 'none';
-    
-    // Scroll suave hacia el contenedor
-    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    
-    const url = `/ajax/servicios/?page=${page}`;
-    console.log('URL de petición:', url);
-    
-    fetch(url)
-        .then(response => {
-            console.log('Respuesta recibida:', response.status);
-            if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status}`);
-            }
-            return response.text();
-        })
-        .then(html => {
-            console.log('HTML recibido, actualizando contenedor');
-            
-            // Actualizar el contenido
-            container.innerHTML = html;
-            container.style.opacity = '1';
-            container.style.pointerEvents = 'auto';
-            
-            // Reinicializar la paginación para los nuevos enlaces
-            setTimeout(() => {
-                initializePagination();
-            }, 100);
-            
-            console.log('Página cargada exitosamente:', page);
-        })
-        .catch(error => {
-            console.error('Error al cargar servicios:', error);
-            container.style.opacity = '1';
-            container.style.pointerEvents = 'auto';
-            
-            // Mostrar mensaje de error
-            container.innerHTML = `
-                <div class="col-span-full text-center py-16">
-                    <div class="bg-red-100 rounded-3xl p-12 max-w-md mx-auto">
-                        <div class="w-20 h-20 bg-gradient-to-r from-red-400 to-red-500 rounded-full mx-auto mb-6 flex items-center justify-center">
-                            <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
-                        </div>
-                        <h3 class="text-2xl font-bold text-red-800 mb-4">Error al cargar servicios</h3>
-                        <p class="text-red-600 mb-4">Por favor, intenta nuevamente.</p>
-                        <button onclick="location.reload()" class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
-                            Recargar página
-                        </button>
-                    </div>
-                </div>
-            `;
-        });
-}
-
-// Hacer la función disponible globalmente
-if (typeof window !== 'undefined') {
-    window.initializePagination = initializePagination;
-    window.loadServiciosPageAjax = loadServiciosPageAjax;
-}
 
 // Add CSS for ripple animation
 const style = document.createElement('style');
@@ -529,31 +673,6 @@ style.textContent = `
             transform: scale(4);
             opacity: 0;
         }
-    }
-    
-    /* Enhanced price animation */
-    .animated-gradient {
-        animation: gradientShift 4s ease infinite;
-    }
-    
-    /* Smooth transitions for all interactive elements */
-    .service-card * {
-        transition: inherit;
-    }
-    
-    /* Enhanced shadow on scroll */
-    .service-card.in-view {
-        box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.25);
-    }
-    
-    /* Pagination hover effects */
-    .servicios-pagination-link:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4) !important;
-    }
-    
-    .servicios-pagination-link:active {
-        transform: scale(0.95) !important;
     }
 `;
 document.head.appendChild(style);

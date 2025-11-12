@@ -73,7 +73,7 @@ urlpatterns = [
     path('login/',views.login, name = 'login'),
     path('logout/', views.logout, name='logout'),
     path('comentarios/', views.comentarios, name='comentarios'),
-    path('citas/', views.citas, name='citas'),
+    path('reservas-usuario/', views.reservas_usuario, name='reservas_usuario'),
     path('api/hours/', get_horas, name='get_horas'),
     path('perfil/', views.perfil_usuario, name='perfil'),
     path('empresas/', views.empresas, name='empresas'),
@@ -156,6 +156,7 @@ urlpatterns = [
     path('reportes-empresa/',views.reportes_empresa, name='reportes_empresa'),
     path('exportar-reporte-empresa/',views.exportar_reporte_empresa, name='exportar_reporte_empresa'),
     path('perfil-empresa/',views.perfil_empresa, name='perfil_empresa'),
+    path('gestion-servicios-empresa/',views.gestion_servicios_empresa, name='gestion_servicios_empresa'),
     path('solicitar-servicio-empresa/',views.solicitar_servicio_empresa, name='solicitar_servicio_empresa'),
     path('actualizar-estado-cita/', views.actualizar_estado_cita, name='actualizar_estado_cita'),
     path('generar-qr-reserva/<int:reserva_id>/', views.generar_codigo_qr_reserva, name='generar_codigo_qr_reserva'),
@@ -194,6 +195,16 @@ urlpatterns = [
         path('status/', cookie_status, name='cookie_status'),
         path('preferences/', UserPreferencesView.as_view(), name='user_preferences'),
         # path('politica/', CookieConsentView.as_view(), name='cookie_policy'), # Ahora es modal
+    ])),
+    
+    # =================================
+    # URLs PARA DOCUMENTOS LEGALES (LEY 1581 DE 2012)
+    # =================================
+    path('legal/', include([
+        path('aviso-privacidad/', views.aviso_privacidad, name='aviso_privacidad'),
+        path('politica-tratamiento-datos/', views.politica_tratamiento_datos, name='politica_tratamiento_datos'),
+        path('terminos-condiciones/', views.terminos_condiciones, name='terminos_condiciones'),
+        path('politica-cookies/', views.politica_cookies, name='politica_cookies'),
     ])),
 ]
 

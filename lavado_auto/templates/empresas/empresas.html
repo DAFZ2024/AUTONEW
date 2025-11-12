@@ -220,24 +220,24 @@
         </div>
 
         <div class="container mx-auto px-6 relative z-10">
-            <div class="text-center mb-20">
-                <div class="animate-fadeInUp">
+            <div class="text-center mb-20 scroll-reveal" data-reveal="fade-up">
+                <div>
                     <span class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-600 text-sm font-semibold rounded-full uppercase tracking-wider mb-6 shadow-lg">
                         <i class="fas fa-chart-line mr-2 text-sm"></i>
                         Nuestros Números
                     </span>
                 </div>
-                <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-6 animate-fadeInUp" style="animation-delay: 0.2s;">
+                <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-6 scroll-reveal" data-reveal="fade-up" data-delay="100">
                     Resultados que <span class="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Hablan por Sí Solos</span>
                 </h2>
-                <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto animate-fadeInUp" style="animation-delay: 0.4s;">
+                <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto scroll-reveal" data-reveal="fade-up" data-delay="200">
                     Únete a miles de empresarios que ya están transformando sus negocios con AutoNew
                 </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
                 <!-- Estadística 1: Autolavados -->
-                <div class="stats-card group relative animate-fadeInUp" style="animation-delay: 0.6s;">
+                <div class="stats-card group relative scroll-reveal" data-reveal="slide-up" data-delay="100">
                     <div class="relative bg-gradient-to-br from-blue-50 via-blue-50 to-slate-50 rounded-3xl p-8 lg:p-10 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-blue-100 hover:border-blue-200">
                         <!-- Icono flotante -->
                         <div class="absolute -top-6 left-1/2 transform -translate-x-1/2">
@@ -277,7 +277,7 @@
                 </div>
 
                 <!-- Estadística 2: Clientes -->
-                <div class="stats-card group relative animate-fadeInUp" style="animation-delay: 0.8s;">
+                <div class="stats-card group relative scroll-reveal" data-reveal="slide-up" data-delay="200">
                     <div class="relative bg-gradient-to-br from-slate-50 via-gray-50 to-slate-50 rounded-3xl p-8 lg:p-10 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-slate-200 hover:border-slate-300">
                         <!-- Icono flotante -->
                         <div class="absolute -top-6 left-1/2 transform -translate-x-1/2">
@@ -317,7 +317,7 @@
                 </div>
 
                 <!-- Estadística 3: Satisfacción -->
-                <div class="stats-card group relative animate-fadeInUp" style="animation-delay: 1s;">
+                <div class="stats-card group relative scroll-reveal" data-reveal="slide-up" data-delay="300">
                     <div class="relative bg-gradient-to-br from-green-50 via-emerald-50 to-blue-50 rounded-3xl p-8 lg:p-10 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-green-100 hover:border-green-200">
                         <!-- Icono flotante -->
                         <div class="absolute -top-6 left-1/2 transform -translate-x-1/2">
@@ -362,7 +362,7 @@
 
             <!-- Sección adicional de métricas -->
             <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div class="text-center group">
+                <div class="text-center group scroll-reveal" data-reveal="zoom-in" data-delay="100">
                     <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
                         <i class="fas fa-clock text-white"></i>
                     </div>
@@ -370,7 +370,7 @@
                     <div class="text-sm text-gray-600">Horas disponible</div>
                 </div>
 
-                <div class="text-center group">
+                <div class="text-center group scroll-reveal" data-reveal="zoom-in" data-delay="200">
                     <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
                         <i class="fas fa-handshake text-white"></i>
                     </div>
@@ -378,7 +378,7 @@
                     <div class="text-sm text-gray-600">% Confiabilidad</div>
                 </div>
 
-                <div class="text-center group">
+                <div class="text-center group scroll-reveal" data-reveal="zoom-in" data-delay="300">
                     <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
                         <i class="fas fa-rocket text-white"></i>
                     </div>
@@ -386,7 +386,7 @@
                     <div class="text-sm text-gray-600">% Más ventas</div>
                 </div>
 
-                <div class="text-center group">
+                <div class="text-center group scroll-reveal" data-reveal="zoom-in" data-delay="400">
                     <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
                         <i class="fas fa-trophy text-white"></i>
                     </div>
@@ -1557,6 +1557,124 @@
     .animate-fadeInUp {
         animation: fadeInUp 0.6s ease-out forwards;
     }
+
+    /* Estilos para efectos de scroll reveal */
+    .scroll-reveal {
+        opacity: 0;
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .scroll-reveal.revealed {
+        opacity: 1;
+    }
+
+    /* Efecto fade-up */
+    .scroll-reveal[data-reveal="fade-up"] {
+        transform: translateY(60px);
+    }
+
+    .scroll-reveal[data-reveal="fade-up"].revealed {
+        transform: translateY(0);
+    }
+
+    /* Efecto slide-up con rotación sutil */
+    .scroll-reveal[data-reveal="slide-up"] {
+        transform: translateY(80px) scale(0.95) rotateX(10deg);
+        transform-style: preserve-3d;
+        perspective: 1000px;
+    }
+
+    .scroll-reveal[data-reveal="slide-up"].revealed {
+        transform: translateY(0) scale(1) rotateX(0deg);
+    }
+
+    /* Efecto zoom-in */
+    .scroll-reveal[data-reveal="zoom-in"] {
+        transform: scale(0.5);
+        filter: blur(4px);
+    }
+
+    .scroll-reveal[data-reveal="zoom-in"].revealed {
+        transform: scale(1);
+        filter: blur(0);
+    }
+
+    /* Efecto slide desde la izquierda */
+    .scroll-reveal[data-reveal="slide-left"] {
+        transform: translateX(-100px);
+    }
+
+    .scroll-reveal[data-reveal="slide-left"].revealed {
+        transform: translateX(0);
+    }
+
+    /* Efecto slide desde la derecha */
+    .scroll-reveal[data-reveal="slide-right"] {
+        transform: translateX(100px);
+    }
+
+    .scroll-reveal[data-reveal="slide-right"].revealed {
+        transform: translateX(0);
+    }
+
+    /* Efecto flip */
+    .scroll-reveal[data-reveal="flip"] {
+        transform: rotateY(90deg);
+        transform-style: preserve-3d;
+        perspective: 1000px;
+    }
+
+    .scroll-reveal[data-reveal="flip"].revealed {
+        transform: rotateY(0deg);
+    }
+
+    /* Delays para animaciones escalonadas */
+    .scroll-reveal[data-delay="100"].revealed {
+        transition-delay: 0.1s;
+    }
+
+    .scroll-reveal[data-delay="200"].revealed {
+        transition-delay: 0.2s;
+    }
+
+    .scroll-reveal[data-delay="300"].revealed {
+        transition-delay: 0.3s;
+    }
+
+    .scroll-reveal[data-delay="400"].revealed {
+        transition-delay: 0.4s;
+    }
+
+    .scroll-reveal[data-delay="500"].revealed {
+        transition-delay: 0.5s;
+    }
+
+    /* Efecto especial para las tarjetas de estadísticas */
+    .stats-card.revealed {
+        animation: cardReveal 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes cardReveal {
+        0% {
+            opacity: 0;
+            transform: translateY(80px) scale(0.9) rotateX(20deg);
+        }
+        50% {
+            opacity: 0.5;
+            transform: translateY(-10px) scale(1.02) rotateX(-5deg);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1) rotateX(0);
+        }
+    }
+
+    /* Efecto de parallax sutil para los elementos de fondo */
+    @media (prefers-reduced-motion: no-preference) {
+        .scroll-reveal {
+            will-change: transform, opacity;
+        }
+    }
 </style>
 
 <script>
@@ -1781,23 +1899,29 @@
         }, 1000);
     }
 
-    // Animaciones al hacer scroll
+    // Animaciones al hacer scroll mejoradas
     const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
     };
 
-    const observer = new IntersectionObserver((entries) => {
+    const scrollRevealObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('animate-fadeInUp');
+                // Agregar clase revealed con un pequeño delay
+                setTimeout(() => {
+                    entry.target.classList.add('revealed');
+                }, 50);
                 
                 // Animar contadores cuando son visibles
                 const counters = entry.target.querySelectorAll('.counter');
                 counters.forEach(counter => {
                     if (!counter.classList.contains('animated')) {
                         counter.classList.add('animated');
-                        animateCounter(counter);
+                        // Pequeño delay antes de iniciar el contador
+                        setTimeout(() => {
+                            animateCounter(counter);
+                        }, 300);
                     }
                 });
 
@@ -1809,13 +1933,54 @@
                         animateProgressBar(bar);
                     }
                 });
+
+                // Una vez revelado, dejar de observar (opcional: comentar para repetir animación)
+                // scrollRevealObserver.unobserve(entry.target);
             }
         });
     }, observerOptions);
 
-    // Observar elementos que necesitan animación
-    document.querySelectorAll('.group, .stat-card, .timeline-item, .stats-card').forEach(el => {
-        observer.observe(el);
+    // Observar todos los elementos con scroll-reveal
+    function initScrollReveal() {
+        const revealElements = document.querySelectorAll('.scroll-reveal');
+        revealElements.forEach(el => {
+            scrollRevealObserver.observe(el);
+        });
+    }
+
+    // Efecto parallax sutil en el scroll
+    function parallaxEffect() {
+        const scrolled = window.pageYOffset;
+        const parallaxElements = document.querySelectorAll('#stats .absolute');
+        
+        parallaxElements.forEach((element, index) => {
+            const speed = 0.5 + (index * 0.1);
+            const yPos = -(scrolled * speed);
+            element.style.transform = `translateY(${yPos}px)`;
+        });
+    }
+
+    // Agregar efecto parallax suave al hacer scroll
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                parallaxEffect();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+
+    // Inicializar scroll reveal cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+        initScrollReveal();
+        
+        // Agregar animación de entrada al título de la sección stats
+        const statsSection = document.getElementById('stats');
+        if (statsSection) {
+            scrollRevealObserver.observe(statsSection);
+        }
     });
 
     // Inicializar contador cuando se carga la página
